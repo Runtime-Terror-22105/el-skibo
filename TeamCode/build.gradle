@@ -1,0 +1,73 @@
+//
+// build.gradle in TeamCode
+//
+// Most of the definitions for building your module reside in a common, shared
+// file 'build.common.gradle'. Being factored in this way makes it easier to
+// integrate updates to the FTC into your code. If you really need to customize
+// the build definitions, you can place those customizations in this file, but
+// please think carefully as to whether such customizations are really necessary
+// before doing so.
+
+
+// Custom definitions may go here
+
+// Include common definitions from above.
+apply from: '../build.common.gradle'
+apply from: '../build.dependencies.gradle'
+apply plugin: 'kotlin-android'
+
+
+android {
+    namespace = 'org.firstinspires.ftc.teamcode'
+
+    compileSdk 35
+    defaultConfig {
+        minSdk 24
+    }
+
+
+    packagingOptions {
+        jniLibs.useLegacyPackaging true
+    }
+
+    
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+}
+
+repositories {
+    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://maven.brott.dev/' }
+    maven { url = "https://repo.dairy.foundation/releases" }
+}
+
+final String koalaLogVersion = '1.2.2Beta' // i just put this in a variable so that we use the same version both times
+final String solversLibVersion = 'SNAPSHOT-7cdcc66' // TODO: update this when 0.3.3 is released
+final String panelsVersion = '1.0.5'
+dependencies {
+    implementation project(':FtcRobotController')
+    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
+    implementation group: 'org.ejml', name: 'ejml-all', version: '0.43' // the ejml stuff is in case we do the pure pursuit w/ quintic splines
+
+    // TODO: Currently using snapshot version until solverslib 0.3.3 is released
+    implementation "org.solverslib:core:${solversLibVersion}"
+    implementation "org.solverslib:pedroPathing:${solversLibVersion}"
+
+    implementation "com.github.ori-coval.Koala-Log:KoalaLogger:${koalaLogVersion}"
+    annotationProcessor "com.github.ori-coval.Koala-Log:KoalaLoggingProcessor:${koalaLogVersion}"
+
+    implementation "com.bylazar:fullpanels:${panelsVersion}"
+
+    // these are both old versions, but they need to be old
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+
+}
