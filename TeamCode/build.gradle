@@ -43,8 +43,9 @@ android {
 
 repositories {
     maven { url = 'https://jitpack.io' }
-    maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://maven.pedropathing.com' }
     maven { url = "https://repo.dairy.foundation/releases" }
+    maven { url "https://repo.dairy.foundation/snapshots" }
 }
 
 final String koalaLogVersion = '1.2.2Beta' // i just put this in a variable so that we use the same version both times
@@ -58,8 +59,11 @@ dependencies {
     implementation group: 'org.ejml', name: 'ejml-all', version: '0.43' // the ejml stuff is in case we do the pure pursuit w/ quintic splines
 
     // TODO: Currently using snapshot version until solverslib 0.3.3 is released
-    implementation "org.solverslib:core:${solversLibVersion}"
-    implementation "org.solverslib:pedroPathing:${solversLibVersion}"
+//    implementation "org.solverslib:core:${solversLibVersion}"
+//    implementation "org.solverslib:pedroPathing:${solversLibVersion}"
+
+    implementation 'com.pedropathing:ftc:2.0.0'
+    implementation 'com.pedropathing:telemetry:0.0.6'
 
     implementation "com.github.ori-coval.Koala-Log:KoalaLogger:${koalaLogVersion}"
     annotationProcessor "com.github.ori-coval.Koala-Log:KoalaLoggingProcessor:${koalaLogVersion}"
