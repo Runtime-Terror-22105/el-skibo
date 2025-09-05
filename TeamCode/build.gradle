@@ -30,7 +30,7 @@ android {
         jniLibs.useLegacyPackaging true
     }
 
-    
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -44,7 +44,10 @@ android {
 repositories {
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://maven.pedropathing.com' }
+    maven { url = "https://mymaven.bylazar.com/releases" }
     maven { url = "https://repo.dairy.foundation/releases" }
+    maven { url = "https://repo.dairy.foundation/snapshots" }
 }
 
 final String koalaLogVersion = '1.2.2Beta' // i just put this in a variable so that we use the same version both times
@@ -54,7 +57,6 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
     implementation group: 'org.ejml', name: 'ejml-all', version: '0.43' // the ejml stuff is in case we do the pure pursuit w/ quintic splines
 
     // TODO: Currently using snapshot version until solverslib 0.3.3 is released
@@ -64,6 +66,8 @@ dependencies {
     implementation "com.github.ori-coval.Koala-Log:KoalaLogger:${koalaLogVersion}"
     annotationProcessor "com.github.ori-coval.Koala-Log:KoalaLoggingProcessor:${koalaLogVersion}"
 
+    implementation 'com.pedropathing:ftc:2.0.0'
+    implementation 'com.pedropathing:telemetry:0.0.6'
     implementation "com.bylazar:fullpanels:${panelsVersion}"
 
     // these are both old versions, but they need to be old
