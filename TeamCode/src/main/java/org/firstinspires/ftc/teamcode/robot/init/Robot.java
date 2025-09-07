@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
  */
 @Config
 public class Robot {
+
     // States
     public RobotState robotState = null /*RobotState.RESTING*/;
 
