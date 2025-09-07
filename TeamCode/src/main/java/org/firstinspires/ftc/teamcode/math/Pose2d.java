@@ -2,8 +2,7 @@ package org.firstinspires.ftc.teamcode.math;
 
 import androidx.annotation.NonNull;
 
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.Point;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -30,10 +29,6 @@ public class Pose2d {
         this(pose.x, pose.y, pose.h);
     }
 
-    public Pose2d(@NonNull com.pedropathing.pathgen.Point point, double heading) {
-        this(point.getX(), point.getY(), heading);
-    }
-
     public Pose2d(@NonNull org.opencv.core.Point point, double heading) {
         this(point.x, point.y, heading);
     }
@@ -58,10 +53,6 @@ public class Pose2d {
 
     public Pose toPedroPose() {
         return new Pose(this.x, this.y, this.heading);
-    }
-
-    public Point toPedroPoint() {
-        return new Point(this.x, this.y, Point.CARTESIAN);
     }
 
     public Pose2d mult(double scalar) {

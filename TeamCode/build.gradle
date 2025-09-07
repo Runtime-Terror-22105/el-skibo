@@ -60,8 +60,8 @@ dependencies {
     implementation group: 'org.ejml', name: 'ejml-all', version: '0.43' // the ejml stuff is in case we do the pure pursuit w/ quintic splines
 
     // TODO: Currently using snapshot version until solverslib 0.3.3 is released
-//    implementation "org.solverslib:core:${solversLibVersion}"
-//    implementation "org.solverslib:pedroPathing:${solversLibVersion}"
+    implementation "org.solverslib:core:${solversLibVersion}"
+    implementation "org.solverslib:pedroPathing:${solversLibVersion}"
 
     implementation 'com.pedropathing:ftc:2.0.0'
     implementation 'com.pedropathing:telemetry:0.0.6'
