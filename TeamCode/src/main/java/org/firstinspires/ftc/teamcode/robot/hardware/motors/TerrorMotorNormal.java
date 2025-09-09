@@ -229,8 +229,11 @@ public class TerrorMotorNormal implements TerrorWritingDevice, TerrorMotor {
 
             switch (command) {
                 case SET_POWER:
+                    if (this.motor.isOverCurrent()) break;
+
                     // if motor power is 0 (to enforce zero power behav) or change > threshold
-                    if ((this.motorPower == 0 || Math.abs(this.motorPower - this.lastPower) > this.powerThreshold) && !this.motor.isOverCurrent()) {
+                    if ((this.motorPower == 0 && this.lastPower != 0)
+                            || Math.abs(this.motorPower - this.lastPower) > this.powerThreshold) {
                         this.lastPower = this.motorPower;
                         this.motor.setPower(motorPower);
                     }
