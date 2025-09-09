@@ -24,8 +24,11 @@ import java.util.function.Supplier;
 public class P2PFollower implements TerrorFollower {
 //    public static class Builder implements TerrorFollower.Builder {
     public static class Builder {
+        private final Drivetrain drivetrain;
 //        private final Queue<Task> tasks = new LinkedList<>();
         private final List<P2PTask> tasks = new ArrayList<>();
+        private final RobotHardware hardware;
+        private final MultipleTelemetry telemetry;
         private final boolean onlyDoPathing;
         private final boolean useVerboseErrors;
 
@@ -34,6 +37,9 @@ public class P2PFollower implements TerrorFollower {
         }
 
         public Builder(@NonNull Robot robot, boolean onlyDoPathing, boolean useVerboseErrors) {
+            this.drivetrain = robot.drivetrain;
+            this.hardware = robot.hardware;
+            this.telemetry = robot.telemetry;
             this.onlyDoPathing = onlyDoPathing;
             this.useVerboseErrors = useVerboseErrors;
         }
@@ -89,7 +95,7 @@ public class P2PFollower implements TerrorFollower {
                 double reachedTime,
                 double timeLimit
         ) {
-            P2PTask.Context context = new P2PTask.Context(Robot.drivetrain);
+            P2PTask.Context context = new P2PTask.Context(drivetrain);
             P2PTask task = new P2PTask(
                     pointName,
                     context,
@@ -113,7 +119,7 @@ public class P2PFollower implements TerrorFollower {
             double reachedTime,
             double timeLimit
     ) {
-        P2PTask.Context context = new P2PTask.Context(Robot.drivetrain);
+        P2PTask.Context context = new P2PTask.Context(drivetrain);
         P2PTask task = new P2PTask(
                 pointName,
                 context,
@@ -140,7 +146,7 @@ public class P2PFollower implements TerrorFollower {
                 return this;
             }
 
-            P2PTask.Context context = new P2PTask.Context(Robot.drivetrain);
+            P2PTask.Context context = new P2PTask.Context(drivetrain);
             P2PTask task = new P2PTask(
                     taskName,
                     context,
@@ -165,7 +171,7 @@ public class P2PFollower implements TerrorFollower {
         public Builder sleep(int milliseconds) {
             String taskName = "Sleep for " + milliseconds + " ms";
 
-            P2PTask.Context context = new P2PTask.Context(Robot.drivetrain);
+            P2PTask.Context context = new P2PTask.Context(drivetrain);
             P2PTask task = new P2PTask(
                     taskName,
                     context,
@@ -209,7 +215,7 @@ public class P2PFollower implements TerrorFollower {
                 return this;
             }
 
-            P2PTask.Context context = new P2PTask.Context(Robot.drivetrain);
+            P2PTask.Context context = new P2PTask.Context(drivetrain);
             P2PTask task = new P2PTask(
                     taskName,
                     context,
@@ -242,7 +248,7 @@ public class P2PFollower implements TerrorFollower {
                 return this;
             }
 
-            P2PTask.Context context = new P2PTask.Context(Robot.drivetrain);
+            P2PTask.Context context = new P2PTask.Context(drivetrain);
             P2PTask task = new P2PTask(
                     taskName,
                     context,
@@ -276,7 +282,7 @@ public class P2PFollower implements TerrorFollower {
                 return this;
             }
 
-            P2PTask.Context context = new P2PTask.Context(Robot.drivetrain);
+            P2PTask.Context context = new P2PTask.Context(drivetrain);
             P2PTask task = new P2PTask(
                     taskName,
                     context,
@@ -325,7 +331,7 @@ public class P2PFollower implements TerrorFollower {
                 return this;
             }
 
-            P2PTask.Context context = new P2PTask.Context(Robot.drivetrain);
+            P2PTask.Context context = new P2PTask.Context(drivetrain);
             P2PTask task = new P2PTask(
                     "Finish current actions",
                     context,
@@ -343,18 +349,20 @@ public class P2PFollower implements TerrorFollower {
          * @return A new instance of the follower class.
          */
         public P2PFollower build() {
-            return new P2PFollower(new LinkedList<>(tasks), Robot.drivetrain, Robot.telemetry);
+            return new P2PFollower(new LinkedList<>(tasks), drivetrain, hardware, telemetry);
         }
     }
 
     private final Queue<P2PTask> pendingTasks;
     private final ArrayList<P2PTask> runningTasks = new ArrayList<>();
     private final ArrayList<P2PTask> backgroundTasks = new ArrayList<>();
+    private final RobotHardware hardware;
     private final MultipleTelemetry telemetry;
     private final Drivetrain drivetrain;
 
-    private P2PFollower(Queue<P2PTask> tasks, Drivetrain drivetrain, MultipleTelemetry telemetry) {
+    private P2PFollower(Queue<P2PTask> tasks, Drivetrain drivetrain, RobotHardware hardware, MultipleTelemetry telemetry) {
         this.pendingTasks = tasks;
+        this.hardware = hardware;
         this.telemetry = telemetry;
         this.drivetrain = drivetrain;
     }
@@ -376,7 +384,7 @@ public class P2PFollower implements TerrorFollower {
 
         while (!(pendingTasks.isEmpty() && runningTasks.isEmpty() && backgroundTasks.isEmpty()) && opModeIsActive.getAsBoolean()) {
             // clear bulk cache (assume manual is being used)
-            for (LynxModule hub : RobotHardware.allHubs) {
+            for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
             telemetry.clearAll();
