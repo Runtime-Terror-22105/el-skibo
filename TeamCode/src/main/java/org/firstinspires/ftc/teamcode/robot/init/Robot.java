@@ -94,6 +94,6 @@ public class Robot {
      * Commits hardware writes (e.g. setting motor powers).
      */
     public void write() {
-        RobotHardware.write();
+        hardware.write();
     }
 }
