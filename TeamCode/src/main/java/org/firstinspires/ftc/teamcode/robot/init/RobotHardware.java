@@ -25,154 +25,159 @@ import java.util.List;
 @Config
 public class RobotHardware {
     // Drivetrain motors & servos
-    public TerrorMotorNormal motorFrontLeft;
-    public TerrorMotorNormal motorRearRight;
-    public TerrorMotorNormal motorFrontRight;
-    public TerrorMotorNormal motorRearLeft;
+    public static TerrorMotorNormal motorFrontLeft;
+    public static TerrorMotorNormal motorRearRight;
+    public static TerrorMotorNormal motorFrontRight;
+    public static TerrorMotorNormal motorRearLeft;
 
     // Turret
-    public TerrorServo turretYawLeft;
-    public TerrorServo turretYawRight;
-    public TerrorServo turretPitch;
+    public static TerrorServo turretYawLeft;
+    public static TerrorServo turretYawRight;
+    public static TerrorServo turretPitch;
 
     // Shooter
-    public TerrorMotorNormal shooterLeft;
-    public TerrorMotorNormal shooterRight;
+    public static TerrorMotorNormal shooterLeft;
+    public static TerrorMotorNormal shooterRight;
 
     // Spindexer
-    public TerrorMotorNormal spindexerRotate;
+    public static TerrorMotorNormal spindexerRotate;
 
     // Camera
-    public int cameraMonitorViewId;
-    public WebcamName cameraName;
+    public static int cameraMonitorViewId;
+    public static WebcamName cameraName;
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
-    public TerrorPinpoint pinpoint;
+    public static TerrorPinpoint pinpoint;
 
     // Lynx stuff
-    public List<LynxModule> allHubs;
-    public LynxModule controlHub;
+    public static List<LynxModule> allHubs;
+    public static LynxModule controlHub;
 
     // Other
-    public HardwareMap hwMap;
-    private TerrorPublisher publisher = new TerrorPublisher();
+    public static HardwareMap hwMap;
+    private static final TerrorPublisher publisher = new TerrorPublisher();
 
     public enum HardwareOptions {
         CAMERA,
         PINPOINT
     }
 
-    public void init(@NonNull HardwareMap hwMap, @NonNull LynxModule.BulkCachingMode bulkCachingMode, HardwareOptions... options) {
-        this.hwMap = hwMap;
+    public static void assertInitialized() {
+        if (hwMap == null) {
+            throw new IllegalStateException("RobotHardware not initialized");
+        }
+    }
+
+    public static void init(@NonNull HardwareMap hwMap, @NonNull LynxModule.BulkCachingMode bulkCachingMode, HardwareOptions... options) {
+        RobotHardware.hwMap = hwMap;
 
         // Initialize the drivetrain motors
-        this.motorFrontLeft = new TerrorMotorNormal(
+        motorFrontLeft = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorFrontLeft"),
                 0.05,
                 1.0
         );
-        this.motorFrontRight = new TerrorMotorNormal(
+        motorFrontRight = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorFrontRight"),
                 0.05,
                 1.0
         );
-        this.motorRearRight = new TerrorMotorNormal(
+        motorRearRight = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorRearRight"),
                 0.05,
                 1.0
         );
-        this.motorRearLeft = new TerrorMotorNormal(
+        motorRearLeft = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorRearLeft"),
                 0.05,
                 1.0
         );
-        this.motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motorRearRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motorRearLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRearRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRearLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // TODO: figure out drive motor directions
-//        this.motorFrontLeft.setDirection(REVERSE);
-//        this.motorRearLeft.setDirection(REVERSE);
-//        this.motorFrontRight.setDirection(FORWARD);
-//        this.motorRearRight.setDirection(FORWARD);
+//        motorFrontLeft.setDirection(REVERSE);
+//        motorRearLeft.setDirection(REVERSE);
+//        motorFrontRight.setDirection(FORWARD);
+//        motorRearRight.setDirection(FORWARD);
 
-        this.publisher.subscribe(4, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
+        publisher.subscribe(4, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
-//        this.imu = hwMap.get(IMU.class, "imu");
+//        imu = hwMap.get(IMU.class, "imu");
 
         // Initialize the turret
-        this.turretYawLeft = new TerrorServo(hwMap.get(Servo.class, "turretYawLeft"));
-        this.turretYawRight = new TerrorServo(hwMap.get(Servo.class, "turretYawRight"));
-        this.turretPitch = new TerrorServo(hwMap.get(Servo.class, "turretPitch"));
-        this.publisher.subscribe(5, turretYawLeft, turretYawRight, turretPitch);
+        turretYawLeft = new TerrorServo(hwMap.get(Servo.class, "turretYawLeft"));
+        turretYawRight = new TerrorServo(hwMap.get(Servo.class, "turretYawRight"));
+        turretPitch = new TerrorServo(hwMap.get(Servo.class, "turretPitch"));
+        publisher.subscribe(5, turretYawLeft, turretYawRight, turretPitch);
 
         // Initialize the shooter
-        this.shooterLeft = new TerrorMotorNormal(
+        shooterLeft = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "shooterLeft"),
                 0.05,
                 1.0
         );
-        this.shooterRight = new TerrorMotorNormal(
+        shooterRight = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "shooterRight"),
                 0.05,
                 1.0
         );
 
         // TODO: figure out shooter motor directions
-//        this.shooterLeft.setDirection(REVERSE);
-//        this.shooterRight.setDirection(FORWARD);
-        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.publisher.subscribe(5, shooterLeft, shooterRight);
+//        shooterLeft.setDirection(REVERSE);
+//        shooterRight.setDirection(FORWARD);
+        shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        publisher.subscribe(5, shooterLeft, shooterRight);
 
         // Initialize the spindexer
-        this.spindexerRotate = new TerrorMotorNormal(
+        spindexerRotate = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
                 0.05,
                 1.0
         );
-        this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.publisher.subscribe(10, spindexerRotate);
+        spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        publisher.subscribe(10, spindexerRotate);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
-            this.initCamera();
+            initCamera();
         }
-        this.initLynx(bulkCachingMode);
+        initLynx(bulkCachingMode);
 
         // Other Sensors
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.PINPOINT)) {
-            this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
+            pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
         }
     }
 
-    public void write() {
-        this.publisher.write();
+    public static void write() {
+        publisher.write();
     }
 
-    private void initLynx(LynxModule.BulkCachingMode bulkCachingMode) {
+    private static void initLynx(LynxModule.BulkCachingMode bulkCachingMode) {
         // Initialize Lynx stuff
-        this.allHubs = this.hwMap.getAll(LynxModule.class);
-        for (LynxModule hub : this.allHubs) {
+        allHubs = hwMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
             if (hub.isParent() && LynxConstants.isEmbeddedSerialNumber(hub.getSerialNumber())) {
-                this.controlHub = hub;
+                controlHub = hub;
             }
             hub.setBulkCachingMode(bulkCachingMode);
         }
-
     }
 
-    private void initCamera() {
-        this.cameraMonitorViewId = hwMap
+    private static void initCamera() {
+        cameraMonitorViewId = hwMap
                 .appContext
                 .getResources()
                 .getIdentifier(
@@ -180,18 +185,18 @@ public class RobotHardware {
                         "id",
                         hwMap.appContext.getPackageName()
                 );
-        this.cameraName = hwMap.get(WebcamName.class, "Webcam 1");
+        cameraName = hwMap.get(WebcamName.class, "Webcam 1");
 
-//        this.camera = new TerrorCameraVisionPortal.Builder()
+//        camera = new TerrorCameraVisionPortal.Builder()
 //                .setCamera(cameraName)
 //                .setCameraResolution(new Size(1280, 800))
 //                .detectAprilTags()
 //                .init();
 //
-//        if (this.camera.tagProcessor == null) {
+//        if (camera.tagProcessor == null) {
 //            throw new IllegalStateException("AprilTag processor not initialized!");
 //        }
-////        this.camera.tagProcessor.setDecimation(???); // TODO: tune decimation value
-//        this.camera.tagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.APRILTAG_BUILTIN);
+////        camera.tagProcessor.setDecimation(???); // TODO: tune decimation value
+//        camera.tagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.APRILTAG_BUILTIN);
     }
 }
