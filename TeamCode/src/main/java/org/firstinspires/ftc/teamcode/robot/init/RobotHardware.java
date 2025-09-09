@@ -1,15 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.init;
 
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
-import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.lynx.LynxVoltageSensor;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,14 +12,9 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSparkMiniMotor;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorProximitySensor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,41 +24,23 @@ import java.util.List;
  */
 @Config
 public class RobotHardware {
-    public static double ARM_PITCH_ENCODER_OFFSET = -5.6486-1.9792-0.075;
-    public static double PITCH_VOLTAGE_BASELINE = 11.5;
-
     // Drivetrain motors & servos
-    public TerrorMotorNormal motorFrontLeft = null;
-    public TerrorMotorNormal motorRearRight = null;
-    public TerrorMotorNormal motorFrontRight = null;
-    public TerrorMotorNormal motorRearLeft = null;
+    public TerrorMotorNormal motorFrontLeft;
+    public TerrorMotorNormal motorRearRight;
+    public TerrorMotorNormal motorFrontRight;
+    public TerrorMotorNormal motorRearLeft;
 
-//    public IMU imu;
+    // Turret
+    public TerrorServo turretYawLeft;
+    public TerrorServo turretYawRight;
+    public TerrorServo turretPitch;
 
-    // Pink arm stuff
-    public TerrorSparkMiniMotor armPitchMotorLeft = null;
-    public TerrorSparkMiniMotor armPitchMotorRight = null;
-    public TerrorAnalogEncoder armPitchEncoder = null;
-    public TerrorSparkMiniMotor armExtensionMotorLeft = null;
-    public TerrorSparkMiniMotor armExtensionMotorRight = null;
-    public TerrorEncoder armExtensionEncoder = null;
+    // Shooter
+    public TerrorMotorNormal shooterLeft;
+    public TerrorMotorNormal shooterRight;
 
-    // InOutTake
-    public TerrorServo pitchServo;
-
-    public TerrorServo turretServo;
-    public TerrorCRServo intakeServo;
-
-    // Drivetrain PTO for hang
-    public TerrorServo dtPtoLeft;
-    public TerrorServo dtPtoRight;
-
-    // L2 Hang Servos
-    public TerrorCRServo l2HangServoLeft;
-    public TerrorCRServo l2HangServoRight;
-
-    // Other servos
-    public TerrorServo sweeper;
+    // Spindexer
+    public TerrorMotorNormal spindexerRotate;
 
     // Camera
     public int cameraMonitorViewId;
@@ -77,34 +48,23 @@ public class RobotHardware {
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
-//    public PhotonLynxVoltageSensor voltageSensor;
-//    public TerrorSparkFunOTOS otos;
     public TerrorPinpoint pinpoint;
-    public TerrorProximitySensor proximitySensor;
 
     // Lynx stuff
-    public List<LynxModule> allHubs = null;
-    public LynxModule controlHub = null;
-    public LynxVoltageSensor voltageSensor;
+    public List<LynxModule> allHubs;
+    public LynxModule controlHub;
 
     // Other
     public HardwareMap hwMap;
     private TerrorPublisher publisher = new TerrorPublisher();
 
-    private double initialVoltage;
-
-    public static enum HardwareOptions {
+    public enum HardwareOptions {
         CAMERA,
         PINPOINT
     }
 
     public void init(@NonNull HardwareMap hwMap, @NonNull LynxModule.BulkCachingMode bulkCachingMode, HardwareOptions... options) {
         this.hwMap = hwMap;
-
-        this.voltageSensor = (LynxVoltageSensor) hwMap.voltageSensor.iterator().next();
-        this.initialVoltage = voltageSensor.getVoltage();
-        double pitchPowerScale = PITCH_VOLTAGE_BASELINE/initialVoltage;
-//        double powerScale = Math.min(VOLTAGE_BASELINE/initialVoltage, 1.0);
 
         // Initialize the drivetrain motors
         this.motorFrontLeft = new TerrorMotorNormal(
@@ -136,85 +96,54 @@ public class RobotHardware {
         this.motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        this.motorFrontLeft.setDirection(REVERSE);
-        this.motorRearLeft.setDirection(REVERSE);
-        this.motorFrontRight.setDirection(FORWARD);
-        this.motorRearRight.setDirection(FORWARD);
+        // TODO: figure out drive motor directions
+//        this.motorFrontLeft.setDirection(REVERSE);
+//        this.motorRearLeft.setDirection(REVERSE);
+//        this.motorFrontRight.setDirection(FORWARD);
+//        this.motorRearRight.setDirection(FORWARD);
 
         this.publisher.subscribe(4, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
-
 //        this.imu = hwMap.get(IMU.class, "imu");
 
+        // Initialize the turret
+        this.turretYawLeft = new TerrorServo(hwMap.get(Servo.class, "turretYawLeft"));
+        this.turretYawRight = new TerrorServo(hwMap.get(Servo.class, "turretYawRight"));
+        this.turretPitch = new TerrorServo(hwMap.get(Servo.class, "turretPitch"));
+        this.publisher.subscribe(5, turretYawLeft, turretYawRight, turretPitch);
 
-        // Initialize the pink arm motors and sensors
-        this.armPitchMotorLeft = new TerrorSparkMiniMotor(
-                hwMap.get(CRServo.class, "armPitchMotorLeft"),
-                0.02,
-                pitchPowerScale
-        );
-        this.armPitchMotorRight = new TerrorSparkMiniMotor(
-                hwMap.get(CRServo.class, "armPitchMotorRight"),
-                0.02,
-                pitchPowerScale
-        );
-        this.armPitchEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
-//         this.armPitchEncoder.setOffset(2*Math.PI - Math.toRadians(36));
-        this.armPitchEncoder.setOffset(ARM_PITCH_ENCODER_OFFSET);
-        this.armExtensionMotorLeft = new TerrorSparkMiniMotor(
-                hwMap.get(CRServo.class, "armExtensionMotorLeft"),
-                0.02,
-                1.0 //powerScale
-        );
-        this.armExtensionMotorRight = new TerrorSparkMiniMotor(
-                hwMap.get(CRServo.class, "armExtensionMotorRight"),
-                0.02,
-                1.0 //powerScale
-        );
-
-        this.armPitchMotorLeft.setDirection(REVERSE);
-        this.armExtensionMotorLeft.setDirection(FORWARD);
-        this.armExtensionMotorRight.setDirection(REVERSE);
-
-//        this.armExtensionEncoder = new TerrorEncoder(motorFrontRight); // might need to change to motor 2
-        this.armExtensionEncoder = new TerrorEncoder(motorRearRight); // might need to change to motor 2
-        this.armExtensionEncoder.setDirection(TerrorEncoder.Direction.REVERSE);
-
-        this.publisher.subscribe(5, armPitchMotorLeft, armPitchMotorRight);
-        this.publisher.subscribe(3, armExtensionMotorLeft, armExtensionMotorRight);
-
-        // Initialize the inouttake servos and sensors
-        this.pitchServo = new TerrorServo(hwMap.get(Servo.class, "pitchServo"));
-        this.turretServo = new TerrorServo(hwMap.get(Servo.class, "turretServo"));
-        this.intakeServo = new TerrorCRServo(hwMap.get(CRServo.class, "intakeServo"),0.05, 1.0);
-
-        this.intakeServo.setDirection(REVERSE);
-        this.publisher.subscribe(9, pitchServo, intakeServo, turretServo);
-
-        this.l2HangServoLeft = new TerrorCRServo(
-                hwMap.get(CRServo.class, "l2HangServoLeft"),
-                0.02,
+        // Initialize the shooter
+        this.shooterLeft = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "shooterLeft"),
+                0.05,
                 1.0
         );
-        this.l2HangServoRight = new TerrorCRServo(
-                hwMap.get(CRServo.class, "l2HangServoRight"),
-                0.02,
+        this.shooterRight = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "shooterRight"),
+                0.05,
                 1.0
         );
-        this.publisher.subscribe(10, l2HangServoLeft, l2HangServoRight);
 
-        // PTO servos
-        this.dtPtoLeft = new TerrorServo(hwMap.get(Servo.class, "dtPtoLeft"));
-        this.dtPtoRight = new TerrorServo(hwMap.get(Servo.class, "dtPtoRight"));
-        this.publisher.subscribe(7, dtPtoLeft);
-        this.publisher.subscribe(8, dtPtoRight);
+        // TODO: figure out shooter motor directions
+//        this.shooterLeft.setDirection(REVERSE);
+//        this.shooterRight.setDirection(FORWARD);
+        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.publisher.subscribe(5, shooterLeft, shooterRight);
 
+        // Initialize the spindexer
+        this.spindexerRotate = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
+                0.05,
+                1.0
+        );
+        this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.publisher.subscribe(10, spindexerRotate);
 
-        // Other servos
-        this.sweeper = new TerrorServo(hwMap.get(Servo.class, "sweeper"));
-        this.publisher.subscribe(20, sweeper);
-
-//         // Other things
+        // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
             this.initCamera();
         }
@@ -224,9 +153,6 @@ public class RobotHardware {
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.PINPOINT)) {
             this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
         }
-        this.proximitySensor = new TerrorProximitySensor(hwMap, "proximitySensor", 0.20);
-//        this.otos = this.hwMap.get(TerrorSparkFunOTOS.class, "sensor_otos");
-//        this.voltageSensor = hwMap.getAll(PhotonLynxVoltageSensor.class).iterator().next();
     }
 
     public void write() {
