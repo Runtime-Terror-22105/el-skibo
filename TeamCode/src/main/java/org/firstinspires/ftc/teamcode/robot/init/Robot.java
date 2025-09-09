@@ -93,10 +93,9 @@ public class Robot {
     }
 
     /**
-     * Updates all subsystems.
+     * Commits hardware writes (e.g. setting motor powers).
      */
-    public void update() {
-        // TODO: update all subsystems here
+    public void write() {
         RobotHardware.write();
     }
 }
