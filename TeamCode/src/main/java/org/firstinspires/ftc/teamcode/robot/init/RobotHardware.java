@@ -72,7 +72,7 @@ public class RobotHardware {
 
     // Other
     public HardwareMap hwMap;
-    private TerrorPublisher publisher = new TerrorPublisher();
+    private final TerrorPublisher publisher = new TerrorPublisher();
 
     public enum HardwareOptions {
         CAMERA,
@@ -119,8 +119,6 @@ public class RobotHardware {
 //        this.motorRearRight.setDirection(FORWARD);
 
         this.publisher.subscribe(4, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
-
-//        this.imu = hwMap.get(IMU.class, "imu");
 
         // Initialize the turret
         this.turretYawLeft = new TerrorCRServo(
@@ -228,7 +226,6 @@ public class RobotHardware {
             }
             hub.setBulkCachingMode(bulkCachingMode);
         }
-
     }
 
     private void initCamera() {
