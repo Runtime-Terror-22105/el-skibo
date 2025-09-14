@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class VisionConstants {
     public static class APRILTAG {
-        Map<Integer, String> tagMap = new HashMap<Integer, String>() {{
+        public static Map<Integer, String> tagMap = new HashMap<Integer, String>() {{
             put(20, "BLUESCORE");
             put(21, "GPP");
             put(22, "PGP");

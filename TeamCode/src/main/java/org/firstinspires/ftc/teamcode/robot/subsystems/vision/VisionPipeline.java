@@ -3,12 +3,17 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.util.ArrayList;
 
 public class VisionPipeline extends OpenCvPipeline
 {
@@ -23,15 +28,20 @@ public class VisionPipeline extends OpenCvPipeline
             .setNumThreads(3)
             .build();
 
+    private OpenCvCamera camera;
 
-    public VisionPipeline()
+    public VisionPipeline(OpenCvCamera camera)
     {
         this.vPortalBuilder.addProcessor(this.tagProcessor);
+        this.camera = camera;
     }
     boolean viewportPaused;
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
 
-        return this;
+    public ArrayList<AprilTagDetection> getSeenTags()
+    {
+        return tagProcessor.getDetections();
+    }
 
 
     @Override
@@ -59,11 +69,11 @@ public class VisionPipeline extends OpenCvPipeline
 
         if(viewportPaused)
         {
-            webcam.pauseViewport();
+            camera.pauseViewport();
         }
         else
         {
-            webcam.resumeViewport();
+            camera.resumeViewport();
         }
     }
 }
