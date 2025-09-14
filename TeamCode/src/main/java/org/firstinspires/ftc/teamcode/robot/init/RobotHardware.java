@@ -39,23 +39,24 @@ public class RobotHardware {
     // Turret
     public TerrorCRServo turretYawLeft;
     public TerrorCRServo turretYawRight;
-    public TerrorServo turretPitch;
-    public TerrorServo turretCam;
     public TerrorCRServo turretWheels;
     public TerrorAnalogEncoder turretYawEncoder;
 
     // Shooter
     public TerrorMotorNormal shooterLeft;
     public TerrorMotorNormal shooterRight;
+    public TerrorServo shooterPitch;
     public TerrorEncoder shooterEncoder;
 
     // Spindexer
     public TerrorMotorNormal spindexerRotate;
+    public TerrorServo spindexerCam;
     public TerrorAnalogEncoder spindexerEncoder;
     public ColorSensor[] spindexerColors;
 
     // Intake
     public TerrorMotorNormal intake;
+    public TerrorServo intakePitch;
     public TerrorServo intakeDoubleSideSwitch;
 
     // Camera
@@ -131,8 +132,6 @@ public class RobotHardware {
                 0.05,
                 1.0
         );
-        this.turretPitch = new TerrorServo(hwMap.get(Servo.class, "turretPitch"));
-        this.turretCam = new TerrorServo(hwMap.get(Servo.class, "turretCam"));
         this.turretWheels = new TerrorCRServo(
                 hwMap.get(CRServo.class, "turretWheels"),
                 0.05,
@@ -142,7 +141,7 @@ public class RobotHardware {
                 hwMap.get(AnalogInput.class, "turretYawEncoder"),
                 false  // TODO: figure out if reversed
         );
-        this.publisher.subscribe(5, turretYawLeft, turretYawRight, turretPitch, turretCam, turretWheels);
+        this.publisher.subscribe(5, turretYawLeft, turretYawRight, turretWheels);
 
         // Initialize the shooter
         this.shooterLeft = new TerrorMotorNormal(
@@ -164,7 +163,8 @@ public class RobotHardware {
         this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.publisher.subscribe(5, shooterLeft, shooterRight);
+        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterPitch"));
+        this.publisher.subscribe(5, shooterLeft, shooterRight, shooterPitch);
 
         // Initialize the spindexer
         this.spindexerRotate = new TerrorMotorNormal(
@@ -174,6 +174,7 @@ public class RobotHardware {
         );
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.spindexerCam = new TerrorServo(hwMap.get(Servo.class, "spindexerCam"));
         this.spindexerEncoder = new TerrorAnalogEncoder(
                 hwMap.get(AnalogInput.class, "spindexerEncoder"),
                 false  // TODO: figure out if reversed
@@ -186,7 +187,7 @@ public class RobotHardware {
         for (ColorSensor sensor : spindexerColors) {
             sensor.enableLed(true);
         }
-        this.publisher.subscribe(10, spindexerRotate);
+        this.publisher.subscribe(10, spindexerRotate, spindexerCam);
 
         // Initialize the intake
         this.intake = new TerrorMotorNormal(
@@ -198,8 +199,9 @@ public class RobotHardware {
 //        this.intake.setDirection(FORWARD);
         this.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.intakePitch = new TerrorServo(hwMap.get(Servo.class, "intakePitch"));
         this.intakeDoubleSideSwitch = new TerrorServo(hwMap.get(Servo.class, "intakeDoubleSideSwitch"));
-        this.publisher.subscribe(10, intake, intakeDoubleSideSwitch);
+        this.publisher.subscribe(10, intake, intakePitch, intakeDoubleSideSwitch);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
