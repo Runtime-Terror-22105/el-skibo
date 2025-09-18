@@ -15,26 +15,29 @@ public class ShooterSubsystem extends SubsystemBase {
             new PidfController.PidfCoefficients(0.0, 0, 0.00, 0, 0);
     public static double shooterVelocityTolerance = 0.0;
 
-    public double hoodPosition=0.0;
+    public double hoodPosition= 0.0;
+    public double yawPos = 0.0;
 
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterSpeed=0.0;
+
+    public static double turretPosAtZero = 0.0;
+    public static double turretPosAt360 = 0.0;
 
     public static double robotHeight = 14.0; //in, acctually shoudl be where the shooter is
     public static double g = 386.08858267717; //in per sec^2
     public static double goalHeight = 40.0; //doesnt change no matter alliance color
     public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
-    public double goalAngle;
+    public double goalPitch;
     public double goalVelocity;
-    public static double goalHoodPos;
+    public double goalHoodPos;
+    public double goalYawPos;
     public static double minVelocity = 158.4; // in/sec, rn 9mph
     public static double maxVelocity = 299.2; // in/sec, rn 17mph
     public static double hoodPosMax = 1.0; //maximum position the servo can go to
     public static double hoodPosMin = 0.0; //min position the servo can go to
     public static double hoodAngleMax = 1.4; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.17; //radian measure of hood at min pos
-
-
     public boolean isAutoAimOn;
     public ShooterSubsystem(RobotHardware hardware) {
 
@@ -58,19 +61,24 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = true;
         this.doMath(botPos, goalPos, shotType, apexHeight);
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-        this.setSpeed(goalVelocity);
+        this.setSpeed(this.goalVelocity);
         //gets a setpos from the angle from our measured angles for max and min
-        goalHoodPos = ((hoodAngleMax - hoodAngleMin)/(hoodPosMax-hoodPosMin)) * goalAngle;
-        setHoodPosition(goalHoodPos);
+        this.goalHoodPos = ((hoodAngleMax - hoodAngleMin)/(hoodPosMax-hoodPosMin)) * this.goalPitch;
+        this.goalYawPos = (turretPosAtZero-turretPosAt360)/(-2* Math.PI)*this.findYawAngle(botPos, goalPos);
+        this.setHoodPosition(this.goalHoodPos);
+        this.setYawPosition(this.goalYawPos);
     }
-    public void manualAim(double velocity, double angle){
+    public void manualAim(double velocity, double pitch, double yaw){
         /** lets you set a velocity and angle manually*/
         this.isAutoAimOn = false;
-        goalVelocity = velocity;
-        goalAngle = angle;
+        this.goalVelocity = velocity;
+        this.goalPitch = pitch;
         this.setSpeed(goalVelocity);
-        goalHoodPos = ((hoodAngleMax - hoodAngleMin)/(hoodPosMax-hoodPosMin)) * goalAngle;
-        setHoodPosition(goalHoodPos);
+        this.goalHoodPos = ((hoodAngleMax - hoodAngleMin)/(hoodPosMax-hoodPosMin)) * goalPitch;
+        this.goalYawPos = (turretPosAtZero-turretPosAt360)/(-2* Math.PI)*yaw;
+        this.setHoodPosition(this.goalHoodPos);
+        this.setYawPosition(this.goalYawPos);
+
     }
 
     private void doMath(Pose2d botPos, Pose2d goalPos, String shotType, double arcHeight){
@@ -131,23 +139,26 @@ public class ShooterSubsystem extends SubsystemBase {
             }
             else {
                 this.goalVelocity = targetV;
-                this.goalAngle = targetT;
+                this.goalPitch = targetT;
                 break;
 
             }
         }
-
-
-
+    }
+    private double findYawAngle(Pose2d botPos, Pose2d goalPos){
+         double x = Math.abs(botPos.x-goalPos.x);
+         double y = Math.abs(botPos.y- goalPos.y);
+         double angle = Math.tan(y/x);
+         return angle;
     }
     public double getTargetAngle(){
-        return goalAngle;
+        return this.goalPitch;
     }
     public double getTargetVelocity(){
-        return goalVelocity;
+        return this.goalVelocity;
     }
     public double getTargetHoodPos(){
-        return goalHoodPos;
+        return this.goalHoodPos;
     }
 
 
@@ -168,6 +179,10 @@ public class ShooterSubsystem extends SubsystemBase {
         this.hoodPosition=Position;
     }
 
+    public void setYawPosition(double Position){
+        this.yawPos = Position;
+    }
+
 
 
 
@@ -178,6 +193,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         // TODO: do something with hardware.shooter here...
         hardware.hood.setPosition(this.hoodPosition);
+        hardware.turretYawLeft.setPosition(this.yawPos);
+        hardware.turretYawRight.setPosition(this.yawPos);
         this.updateShooter();
         hardware.shooter.setPower(shooterSpeed);
     }
