@@ -56,6 +56,7 @@ public class RobotHardware {
 
     // Spindexer
     public TerrorMotorNormal spindexerRotate;
+    public TerrorMotorNormal spindexerRotate2;
     public TerrorAnalogEncoder spindexerEncoder;
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
 
@@ -181,6 +182,16 @@ public class RobotHardware {
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, spindexerRotate);
+
+
+        this.spindexerRotate2 = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
+                0.05,
+                1.0
+        );
+        this.spindexerRotate2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.spindexerRotate2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.publisher.subscribe(10, spindexerRotate2);
 
         // Initializing the spindexer Encoder
         this.spindexerEncoder=new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
