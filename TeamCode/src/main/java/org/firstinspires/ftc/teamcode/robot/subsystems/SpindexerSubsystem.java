@@ -64,5 +64,6 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware.popper.setPosition(this.PopperPosition);
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
+        this.hardware.spindexerRotate2.setPower(this.spindexerPower);
     }
 }
