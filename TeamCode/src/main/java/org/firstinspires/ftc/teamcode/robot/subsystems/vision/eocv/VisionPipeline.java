@@ -25,13 +25,13 @@ public class VisionPipeline extends OpenCvPipeline
     private final Mat hsv = new Mat();
     private Mat output = new Mat();
 
-    Scalar purpleLow1  = new Scalar(136, 70, 124);
-    Scalar purpleHigh1 = new Scalar(179, 254, 254);
-    Scalar purpleLow2  = new Scalar(0, 70, 124);
-    Scalar purpleHigh2 = new Scalar(148, 95, 254);
+    public static Scalar purpleLow1  = new Scalar(45.3, 77.9, 155.8);
+    public static Scalar purpleHigh1 = new Scalar(121.8, 68, 255);
+    public static Scalar purpleLow2  = new Scalar(117.6, 59.5, 97.8);
+    public static Scalar purpleHigh2 = new Scalar(168.6, 255, 255);
 
-    Scalar greenLow  = new Scalar(82, 255, 109);
-    Scalar greenHigh = new Scalar(83, 254, 245);
+    public static Scalar greenLow  = new Scalar(29.8, 89.3, 19.8);
+    public static Scalar greenHigh = new Scalar(59.5, 144.5, 158.7);
     Mat purpleMask1 = new Mat();
     Mat purpleMask2 = new Mat();
     Mat purpleMask = new Mat();
@@ -48,6 +48,7 @@ public class VisionPipeline extends OpenCvPipeline
             .setSuppressCalibrationWarnings(false)
             .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS)
             .setNumThreads(3)
+            .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
             .build();
 
     private OpenCvCamera camera;
@@ -80,29 +81,40 @@ public class VisionPipeline extends OpenCvPipeline
         Mat masked = new Mat();
         Core.bitwise_and(input, input, masked, combinedMask);
         ArrayList<AprilTagDetection> detections = tagProcessor.getDetections();
-        Imgproc.putText(
-                masked,
-                Integer.toString(detections.size()),
-                new Point(100,300),
-                Imgproc.FONT_HERSHEY_SIMPLEX,
-                10,
-                new Scalar(255, 0, 0),
-                2
-        );
-
-        for (AprilTagDetection tag : detections) {
-            Point[] corners = tag.corners;
-            for (int i = 0; i < 4; i++) {
-                Imgproc.line(
-                        masked,
-                        corners[i],
-                        corners[(i + 1) % 4],
-                        new Scalar(0, 255, 0), 2
-                );
-            }
-        }
-
+//        Imgproc.putText(
+//                masked,
+//                Integer.toString(detections.size()),
+//                new Point(100,300),
+//                Imgproc.FONT_HERSHEY_SIMPLEX,
+//                10,
+//                new Scalar(255, 0, 0),
+//                2
+//        );
+//
+//        for (AprilTagDetection tag : detections) {
+//            Point[] corners = tag.corners;
+//            for (int i = 0; i < 4; i++) {
+//                Imgproc.line(
+//                        masked,
+//                        corners[i],
+//                        corners[(i + 1) % 4],
+//                        new Scalar(0, 255, 0), 2
+//                );
+//            }
+//        }
+//
         return masked;
+//        ArrayList<AprilTagDetection> detections = tagProcessor.getDetections();
+//
+//        for (AprilTagDetection tag : detections) {
+//            Point[] corners = tag.corners;
+//            for (int i = 0; i < 4; i++) {
+//                Imgproc.line(input, corners[i], corners[(i + 1) % 4], new Scalar(0, 255, 0), 2);
+//            }
+//            Imgproc.putText(input, "ID:" + tag.id, corners[0], Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0,0,255), 2);
+//        }
+//
+//        return input;
     }
 
 
