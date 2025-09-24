@@ -171,8 +171,8 @@ public class ShooterSubsystem extends SubsystemBase {
         return this.hardware.shooterEncoder.getVelocity();
     }
 
-    public void updateShooter(){
-        this.shooterSpeed=this.shooterPID.calculatePower(this.getShooterVelocity(),0);
+    public void updateShooter() {
+        this.shooterSpeed = this.shooterPID.calculatePower(this.getShooterVelocity(),0);
     }
 
     public void setHoodPosition(double Position){
@@ -192,10 +192,11 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // TODO: do something with hardware.shooter here...
-        hardware.hood.setPosition(this.hoodPosition);
+        hardware.shooterPitch.setPosition(this.hoodPosition);
         hardware.turretYawLeft.setPosition(this.yawPos);
         hardware.turretYawRight.setPosition(this.yawPos);
         this.updateShooter();
-        hardware.shooter.setPower(shooterSpeed);
+        hardware.shooterLeft.setPower(shooterSpeed);
+        hardware.shooterRight.setPower(shooterSpeed);
     }
 }
