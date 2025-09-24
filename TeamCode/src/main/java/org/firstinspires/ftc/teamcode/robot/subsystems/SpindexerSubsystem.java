@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 public class SpindexerSubsystem extends SubsystemBase {
@@ -61,9 +60,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void periodic() {
         // TODO: do something with hardware.spindexer here...
         this.hardware.shooterIntake.setPower(this.SHOOTER_INTAKE_SPEED);
-        this.hardware.popper.setPosition(this.PopperPosition);
+        this.hardware.spindexerCamPopper.setPosition(this.PopperPosition);
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
-        this.hardware.spindexerRotate2.setPower(this.spindexerPower);
     }
 }
