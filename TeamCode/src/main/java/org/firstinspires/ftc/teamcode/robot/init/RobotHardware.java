@@ -38,14 +38,12 @@ public class RobotHardware {
     // Turret
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
-    public TerrorAnalogEncoder turretYawEncoder;
 
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
     public TerrorMotorNormal shooterRight; // powers the flywheel
     public TerrorServo shooterPitch;       // the hood for the shooter, changes its pitch
     public TerrorEncoder shooterEncoder;   // i forgot to write the comment
-    public TerrorCRServo shooterIntake;    // melonbotics servo that is little wheels that spin to help balls go into the shooter
 
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
@@ -56,7 +54,6 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
     public TerrorServo intakePitch;
-    public TerrorServo intakeDoubleSideSwitch;
 
     // Camera
     public int cameraMonitorViewId;
@@ -127,10 +124,6 @@ public class RobotHardware {
         this.turretYawRight = new TerrorServo(
                 hwMap.get(Servo.class, "turretYawRight")
         );
-        this.turretYawEncoder = new TerrorAnalogEncoder(
-                hwMap.get(AnalogInput.class, "turretYawEncoder"),
-                false  // TODO: figure out if reversed
-        );
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
 
         // Initialize the shooter
@@ -182,14 +175,11 @@ public class RobotHardware {
         this.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.intakePitch = new TerrorServo(hwMap.get(Servo.class, "intakePitch"));
-        this.intakeDoubleSideSwitch = new TerrorServo(hwMap.get(Servo.class, "intakeDoubleSideSwitch"));
-        this.publisher.subscribe(10, intake, intakePitch, intakeDoubleSideSwitch);
+        this.publisher.subscribe(10, intake, intakePitch);
 
         // Initializing the spindexer Encoder
         this.spindexerEncoder=new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
         this.spindexerEncoder.setOffset(SPINDEXER_ENCODER_OFFSET);
-
-        this.shooterIntake= new TerrorCRServo(hwMap.get(CRServo.class, "shooterIntake"), 0.05, 1.0);
 
 
         // Other things
