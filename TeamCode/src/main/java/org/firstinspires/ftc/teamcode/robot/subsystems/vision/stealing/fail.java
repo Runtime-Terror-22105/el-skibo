@@ -1,32 +1,49 @@
-package org.firstinspires.ftc.teamcode.robot.subsystems.vision.eocv;
+/*
+ * Copyright (c) 2021 OpenFTC Team
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
+package org.firstinspires.ftc.teamcode.robot.subsystems.vision.stealing;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.opencv.calib3d.Calib3d;
-import org.opencv.core.CvType;
-import org.opencv.core.MatOfDouble;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.MatOfPoint3f;
-import org.opencv.core.Point;
-import org.opencv.core.Point3;
-import org.openftc.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.apriltag.AprilTagDetectorJNI;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
+import org.opencv.calib3d.Calib3d;
+import org.opencv.core.*;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.apriltag.AprilTagDetectorJNI;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-public class VisionPipeline extends OpenCvPipeline
+
+public class fail extends OpenCvPipeline
 {
+    // STATIC CONSTANTS
+
+    public static Scalar blue = new Scalar(7,197,235,255);
+    public static Scalar red = new Scalar(255,0,0,255);
+    public static Scalar green = new Scalar(0,255,0,255);
+    public static Scalar white = new Scalar(255,255,255,255);
+
+    static final double FEET_PER_METER = 3.28084;
 
 
 
@@ -46,56 +63,68 @@ public class VisionPipeline extends OpenCvPipeline
 
     Mat greenMask = new Mat();
 
-    Mat cameraMatrix;
-
-    private Mat grey = new Mat();
-
+    // Lens intrinsics
+    // UNITS ARE PIXELS
+    // NOTE: this calibration is for the C920 webcam at 800x448.
+    // You will need to do your own calibration for other configurations!
     public static double fx = 578.272;
     public static double fy = 578.272;
     public static double cx = 402.145;
     public static double cy = 221.506;
 
-    static final double FEET_PER_METER = 3.28084;
-
+    // UNITS ARE METERS
     public static double TAG_SIZE = 0.166;
 
-    private long aprilTagDetector;
+    // instance variables
 
-    private ArrayList<org.openftc.apriltag.AprilTagDetection> detections = new ArrayList<>();
+    private long nativeApriltagPtr;
+    private Mat grey = new Mat();
+    private ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
-    private OpenCvCamera camera;
+    private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
+    private final Object detectionsUpdateSync = new Object();
+
+    Mat cameraMatrix;
+
+    double tagsizeX = TAG_SIZE;
+    double tagsizeY = TAG_SIZE;
 
     private float decimation;
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
+
     Telemetry telemetry;
 
-    public VisionPipeline(Telemetry telemetry) {
+    public fail(Telemetry telemetry) {
         this.telemetry = telemetry;
         constructMatrix();
     }
-    boolean viewportPaused;
-    private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
 
     @Override
     public void init(Mat frame)
     {
-        aprilTagDetector = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
+        // Allocate a native context object.
+        nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
 
     @Override
-    public Mat processFrame(Mat input) {
+    public Mat processFrame(Mat input)
+    {
+        // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
 
         synchronized (decimationSync)
         {
             if(needToSetDecimation)
             {
-                AprilTagDetectorJNI.setApriltagDetectorDecimation(aprilTagDetector, decimation);
+                AprilTagDetectorJNI.setApriltagDetectorDecimation(nativeApriltagPtr, decimation);
                 needToSetDecimation = false;
             }
         }
-        aprilTagDetector = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
+
+        // Run AprilTag
+        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, TAG_SIZE, fx, fy, cx, cy);
+
         synchronized (detectionsUpdateSync)
         {
             detectionsUpdate = detections;
@@ -111,12 +140,14 @@ public class VisionPipeline extends OpenCvPipeline
 
         Mat masked = new Mat();
         Core.bitwise_and(input, input, masked, combinedMask);
-        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(aprilTagDetector, grey, TAG_SIZE, fx, fy, cx, cy);
+
+        // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
+        // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
         for(AprilTagDetection detection : detections)
         {
-            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, TAG_SIZE, TAG_SIZE);
-            drawAxisMarker(input, TAG_SIZE/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
-            draw3dCubeMarker(input, TAG_SIZE, TAG_SIZE, TAG_SIZE, 5, pose.rvec, pose.tvec, cameraMatrix);
+            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
+            drawAxisMarker(masked, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
+            draw3dCubeMarker(masked, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
 
             Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
 
@@ -129,18 +160,34 @@ public class VisionPipeline extends OpenCvPipeline
             telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
             telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
         }
+
+        telemetry.update();
+
         return masked;
-//        ArrayList<AprilTagDetection> detections = tagProcessor.getDetections();
-//
-//        for (AprilTagDetection tag : detections) {
-//            Point[] corners = tag.corners;
-//            for (int i = 0; i < 4; i++) {
-//                Imgproc.line(input, corners[i], corners[(i + 1) % 4], new Scalar(0, 255, 0), 2);
-//            }
-//            Imgproc.putText(input, "ID:" + tag.id, corners[0], Imgproc.FONT_HERSHEY_SIMPLEX, 1, new Scalar(0,0,255), 2);
-//        }
-//
-//        return input;
+    }
+
+    public void setDecimation(float decimation)
+    {
+        synchronized (decimationSync)
+        {
+            this.decimation = decimation;
+            needToSetDecimation = true;
+        }
+    }
+
+    public ArrayList<AprilTagDetection> getLatestDetections()
+    {
+        return detections;
+    }
+
+    public ArrayList<AprilTagDetection> getDetectionsUpdate()
+    {
+        synchronized (detectionsUpdateSync)
+        {
+            ArrayList<AprilTagDetection> ret = detectionsUpdate;
+            detectionsUpdate = null;
+            return ret;
+        }
     }
 
     void constructMatrix()
@@ -169,24 +216,15 @@ public class VisionPipeline extends OpenCvPipeline
         cameraMatrix.put(2,2,1);
     }
 
-    class Pose
-    {
-        Mat rvec;
-        Mat tvec;
-
-        public Pose()
-        {
-            rvec = new Mat();
-            tvec = new Mat();
-        }
-
-        public Pose(Mat rvec, Mat tvec)
-        {
-            this.rvec = rvec;
-            this.tvec = tvec;
-        }
-    }
-
+    /**
+     * Draw a 3D axis marker on a detection. (Similar to what Vuforia does)
+     *
+     * @param buf the RGB buffer on which to draw the marker
+     * @param length the length of each of the marker 'poles'
+     * @param rvec the rotation vector of the detection
+     * @param tvec the translation vector of the detection
+     * @param cameraMatrix the camera matrix used when finding the detection
+     */
     void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix)
     {
         // The points in 3D space we wish to project onto the 2D image plane.
@@ -252,6 +290,16 @@ public class VisionPipeline extends OpenCvPipeline
         Imgproc.line(buf, projectedPoints[4], projectedPoints[7], green, thickness);
     }
 
+    /**
+     * Extracts 6DOF pose from a trapezoid, using a camera intrinsics matrix and the
+     * original size of the tag.
+     *
+     * @param points the points which form the trapezoid
+     * @param cameraMatrix the camera intrinsics matrix
+     * @param tagsizeX the original width of the tag
+     * @param tagsizeY the original height of the tag
+     * @return the 6DOF pose of the camera relative to the tag
+     */
     Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY)
     {
         // The actual 2d points of the tag detected in the image
@@ -272,19 +320,25 @@ public class VisionPipeline extends OpenCvPipeline
         return pose;
     }
 
-    @Override
-    public void onViewportTapped()
+    /*
+     * A simple container to hold both rotation and translation
+     * vectors, which together form a 6DOF pose.
+     */
+    class Pose
     {
-//
-//        viewportPaused = !viewportPaused;
-//
-//        if(viewportPaused)
-//        {
-//            camera.pauseViewport();
-//        }
-//        else
-//        {
-//            camera.resumeViewport();
-//        }
+        Mat rvec;
+        Mat tvec;
+
+        public Pose()
+        {
+            rvec = new Mat();
+            tvec = new Mat();
+        }
+
+        public Pose(Mat rvec, Mat tvec)
+        {
+            this.rvec = rvec;
+            this.tvec = tvec;
+        }
     }
 }
