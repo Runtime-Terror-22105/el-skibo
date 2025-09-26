@@ -89,18 +89,23 @@ public class Robot {
         switch (state){
             case RESTING:
                 goToRestingState();
+                break;
 
             case INTAKING:
                 goToIntakingState();
+                break;
             case FULL:
                 goToFullState();
+                break;
             case SHOOTING:
                 //same as full prob, just that spindexer could be in different pos
             // this is assuming diddy climb, could change
             case CLIMBING:
                 goToClimbState();
+                break;
             case DONE_CLIMB:
                 goToClimbDoneState();
+                break;
 
         }
         this.robotState = state;
