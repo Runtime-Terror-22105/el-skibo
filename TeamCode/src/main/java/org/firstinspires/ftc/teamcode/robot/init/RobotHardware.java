@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,9 +17,9 @@ import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,43 +36,24 @@ public class RobotHardware {
     public TerrorMotorNormal motorRearLeft;
 
     // Turret
-    public TerrorServo turretYawLeft;
-    public TerrorServo turretYawRight;
-    public TerrorServo turretPitch;
+    public TerrorServo turretYawLeft;  // rotates the turret yaw
+    public TerrorServo turretYawRight; // rotates the turret yaw
 
     // Shooter
-    public TerrorMotorNormal shooter;
-//    public TerrorMotorNormal shooterRight;
-
-    public TerrorEncoder shooterEncoder = null;
-
-    public TerrorServo hood;
-    
-    
-
-
-
+    public TerrorMotorNormal shooterLeft;  // powers the flywheel
+    public TerrorMotorNormal shooterRight; // powers the flywheel
+    public TerrorServo shooterPitch;       // the hood for the shooter, changes its pitch
+    public TerrorEncoder shooterEncoder;   // i forgot to write the comment
 
     // Spindexer
-    public TerrorMotorNormal spindexerRotate;
-    public TerrorMotorNormal spindexerRotate2;
-    public TerrorAnalogEncoder spindexerEncoder;
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
-
-    public TerrorCRServo shooterIntake;
-
-    public ColorSensor slot1; // color sensor for first spindexer slot
-    public ColorSensor slot2; // color sensor for second spindexer slot
-
-    public ColorSensor slot3; // color sensor for third spindexer slot
-
-
-    public TerrorServo popper;
-
+    public TerrorMotorNormal spindexerRotate;
+    public TerrorServo spindexerCamPopper;
+    public TerrorAnalogEncoder spindexerEncoder;
 
     // Intake
-    public TerrorServo intakeAngle;
-    public TerrorMotorNormal intakeMotor;
+    public TerrorMotorNormal intake;
+    public TerrorServo intakePitch;
 
     // Camera
     public int cameraMonitorViewId;
@@ -89,7 +69,7 @@ public class RobotHardware {
 
     // Other
     public HardwareMap hwMap;
-    private TerrorPublisher publisher = new TerrorPublisher();
+    private final TerrorPublisher publisher = new TerrorPublisher();
 
     public enum HardwareOptions {
         CAMERA,
@@ -137,41 +117,37 @@ public class RobotHardware {
 
         this.publisher.subscribe(4, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
-//        this.imu = hwMap.get(IMU.class, "imu");
-
         // Initialize the turret
-        this.turretYawLeft = new TerrorServo(hwMap.get(Servo.class, "turretYawLeft"));
-        this.turretYawRight = new TerrorServo(hwMap.get(Servo.class, "turretYawRight"));
-        this.turretPitch = new TerrorServo(hwMap.get(Servo.class, "turretPitch"));
-        this.publisher.subscribe(5, turretYawLeft, turretYawRight, turretPitch);
+        this.turretYawLeft = new TerrorServo(
+                hwMap.get(Servo.class, "turretYawLeft")
+        );
+        this.turretYawRight = new TerrorServo(
+                hwMap.get(Servo.class, "turretYawRight")
+        );
+        this.publisher.subscribe(5, turretYawLeft, turretYawRight);
 
         // Initialize the shooter
-        this.shooter = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "shooter"),
+        this.shooterLeft = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "shooterLeft"),
                 0.05,
                 1.0
         );
-
-        this.shooterEncoder=new TerrorEncoder(shooter);
-
-//        this.shooterRight = new TerrorMotorNormal(
-//                (DcMotorEx) hwMap.get(DcMotor.class, "shooterRight"),
-//                0.05,
-//                1.0
-//        );
-        this.hood= new TerrorServo((hwMap.get(Servo.class,"hood")));
-
-
+        this.shooterRight = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "shooterRight"),
+                0.05,
+                1.0
+        );
+        this.shooterEncoder = new TerrorEncoder(shooterLeft);  // TODO: figure out which motor has the encoder
 
         // TODO: figure out shooter motor directions
 //        this.shooter.setDirection(REVERSE);
 //        this.shooterRight.setDirection(FORWARD);
-        this.shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-//        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        this.shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.publisher.subscribe(5, shooter,hood);
-
+        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterPitch"));
+        this.publisher.subscribe(5, shooterLeft, shooterRight, shooterPitch);
 
         // Initialize the spindexer
         this.spindexerRotate = new TerrorMotorNormal(
@@ -181,26 +157,29 @@ public class RobotHardware {
         );
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.publisher.subscribe(10, spindexerRotate);
+        this.spindexerCamPopper = new TerrorServo(hwMap.get(Servo.class, "popper"));
+        this.spindexerEncoder = new TerrorAnalogEncoder(
+                hwMap.get(AnalogInput.class, "spindexerEncoder"),
+                false  // TODO: figure out if reversed
+        );
+        this.publisher.subscribe(10, spindexerRotate, spindexerCamPopper);
 
-
-        this.spindexerRotate2 = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
+        // Initialize the intake
+        this.intake = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "intake"),
                 0.05,
                 1.0
         );
-        this.spindexerRotate2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.spindexerRotate2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.publisher.subscribe(10, spindexerRotate2);
+        // TODO: figure out intake motor direction
+//        this.intake.setDirection(FORWARD);
+        this.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.intakePitch = new TerrorServo(hwMap.get(Servo.class, "intakePitch"));
+        this.publisher.subscribe(10, intake, intakePitch);
 
         // Initializing the spindexer Encoder
         this.spindexerEncoder=new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
         this.spindexerEncoder.setOffset(SPINDEXER_ENCODER_OFFSET);
-
-        // Initializing the spindexers popper
-        this.popper=new TerrorServo(hwMap.get(Servo.class, "Popper"));
-
-        this.shooterIntake= new TerrorCRServo(hwMap.get(CRServo.class, "shooterIntake"), 0.05, 1.0);
 
 
         // Other things
@@ -228,7 +207,6 @@ public class RobotHardware {
             }
             hub.setBulkCachingMode(bulkCachingMode);
         }
-
     }
 
     private void initCamera() {
