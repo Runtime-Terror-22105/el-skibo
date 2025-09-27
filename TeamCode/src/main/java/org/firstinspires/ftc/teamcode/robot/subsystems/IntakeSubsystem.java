@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import com.qualcomm.robotcore.hardware.Servo;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -12,23 +11,25 @@ public class IntakeSubsystem extends SubsystemBase {
     public static double defaultUp = 0.75;
     public static double defaultSpeed = 0.9;
 
-    private double targetPos;
+    private double targetPitch;
     private double targetSpeed;
 
     public IntakeSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
-        this.targetPos = defaultUp;
+        this.targetPitch = defaultUp;
         this.targetSpeed = 0;
     }
+
     public void putDown(){
-        this.targetPos = defaultDown;
+        this.targetPitch = defaultDown;
     }
     public void putUp(){
-        this.targetPos = defaultUp;
+        this.targetPitch = defaultUp;
     }
-    public void setPos(double pos){
-        this.targetPos = pos;
+    public void setPitch(double pitch){
+        this.targetPitch = pitch;
     }
+
     public void turnOn(){
         this.targetSpeed = defaultSpeed;
     }
@@ -38,8 +39,9 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setSpeed(double speed){
         this.targetSpeed = speed;
     }
-    public double getPos(){
-        return this.targetPos;
+
+    public double getPitch(){
+        return this.targetPitch;
     }
     public double getSpeed(){
         return this.targetSpeed;
@@ -49,7 +51,6 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         hardware.intake.setPower(this.targetSpeed);
-        hardware.intakePitch.setPosition(this.targetPos);
-        // TODO: do something with hardware.intake here...
+        hardware.intakePitch.setPosition(this.targetPitch);
     }
 }
