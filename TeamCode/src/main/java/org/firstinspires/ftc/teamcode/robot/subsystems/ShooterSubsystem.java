@@ -191,7 +191,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // TODO: do something with hardware.shooter here...
         hardware.shooterPitch.setPosition(this.hoodPosition);
         hardware.turretYawLeft.setPosition(this.yawPos);
         hardware.turretYawRight.setPosition(this.yawPos);
