@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.robot.subsystems.vision.eocv;
+package org.firstinspires.ftc.teamcode.robot.subsystems.vision.Spindexer;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
@@ -13,7 +12,6 @@ import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
 import org.opencv.core.Point3;
 import org.openftc.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -25,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.*;
 
 import java.util.ArrayList;
 
-public class VisionPipeline extends OpenCvPipeline
+public class SpindexerPipeline extends OpenCvPipeline
 {
 
 
@@ -70,7 +68,7 @@ public class VisionPipeline extends OpenCvPipeline
     private final Object decimationSync = new Object();
     Telemetry telemetry;
 
-    public VisionPipeline(Telemetry telemetry) {
+    public SpindexerPipeline(Telemetry telemetry) {
         this.telemetry = telemetry;
         constructMatrix();
     }
