@@ -41,6 +41,10 @@ public class SpindexerSubsystem extends SubsystemBase {
         // setting pid power into the spindexer
     }
 
+    public double getPosition(){
+        return hardware.spindexerEncoder.getCurrentPosition();
+    }
+
     public void activateTransfer(){
         this.PopperPosition=this.activatePosition;
         this.SHOOTER_INTAKE_SPEED=this.SHOOTER_INTAKING_SPEED;
@@ -59,7 +63,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // TODO: do something with hardware.spindexer here...
-        this.hardware.shooterIntake.setPower(this.SHOOTER_INTAKE_SPEED);
         this.hardware.spindexerCamPopper.setPosition(this.PopperPosition);
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
