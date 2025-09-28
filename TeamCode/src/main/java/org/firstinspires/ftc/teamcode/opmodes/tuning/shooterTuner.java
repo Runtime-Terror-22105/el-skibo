@@ -39,7 +39,7 @@ public class shooterTuner extends LinearOpMode {
 
 
             robot.telemetry.addData("Yaw of Spindexer",goalSpeed);
-            robot.telemetry.addData("Current angle",robot.spindexer.getPosition());
+            robot.telemetry.addData("Current velocity",robot.shooter.getShooterVelocity());
             robot.telemetry.update();
 
         }
