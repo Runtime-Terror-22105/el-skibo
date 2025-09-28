@@ -63,7 +63,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // TODO: do something with hardware.spindexer here...
-        this.hardware.shooterIntake.setPower(this.SHOOTER_INTAKE_SPEED);
         this.hardware.spindexerCamPopper.setPosition(this.PopperPosition);
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
