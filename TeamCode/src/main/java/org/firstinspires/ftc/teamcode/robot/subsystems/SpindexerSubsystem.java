@@ -41,6 +41,10 @@ public class SpindexerSubsystem extends SubsystemBase {
         // setting pid power into the spindexer
     }
 
+    public double getPosition(){
+        return hardware.spindexerEncoder.getCurrentPosition();
+    }
+
     public void activateTransfer(){
         this.PopperPosition=this.activatePosition;
         this.SHOOTER_INTAKE_SPEED=this.SHOOTER_INTAKING_SPEED;

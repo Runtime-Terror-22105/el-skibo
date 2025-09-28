@@ -45,6 +45,8 @@ public class RobotHardware {
     public TerrorServo shooterPitch;       // the hood for the shooter, changes its pitch
     public TerrorEncoder shooterEncoder;   // i forgot to write the comment
 
+    public TerrorCRServo shooterIntake;    // melonbotics servo that is little wheels that spin to help balls go into the shooter
+
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
     public TerrorMotorNormal spindexerRotate;
@@ -147,7 +149,8 @@ public class RobotHardware {
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterPitch"));
-        this.publisher.subscribe(5, shooterLeft, shooterRight, shooterPitch);
+        this.shooterIntake= new TerrorCRServo(hwMap.get(CRServo.class, "shooterIntake"), 0.05, 1.0);
+        this.publisher.subscribe(5, shooterLeft, shooterRight, shooterPitch, shooterIntake);
 
         // Initialize the spindexer
         this.spindexerRotate = new TerrorMotorNormal(
