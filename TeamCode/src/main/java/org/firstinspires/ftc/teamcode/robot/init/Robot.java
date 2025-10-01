@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.init;
 
-import android.util.Size;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -12,9 +10,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.drive.localizer.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.robot.drive.mecanum.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
+import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.TurretSubsystem;
 
 
 /**
@@ -27,9 +25,9 @@ public class Robot {
 
     // Subsystems
     public MecanumDrivetrain drivetrain = null;
-    public TurretSubsystem turret;
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
+    public IntakeSubsystem intake;
 
     // Localizer
     public PinpointLocalizer localizer;
@@ -69,9 +67,9 @@ public class Robot {
                 hardware.motorRearRight,
                 hardware.motorFrontRight
         );
-        this.turret = new TurretSubsystem(hardware);
         this.shooter = new ShooterSubsystem(hardware);
         this.spindexer = new SpindexerSubsystem(hardware);
+        this.intake = new IntakeSubsystem(hardware);
 
         // Set up the camera
         if (hardware.cameraName != null) {
@@ -85,9 +83,57 @@ public class Robot {
 //                    .build();
         }
     }
+    public void setState(RobotState state){
+        switch (state){
+            case RESTING:
+                goToRestingState();
+                break;
 
+            case INTAKING:
+                goToIntakingState();
+                break;
+            case FULL:
+                goToFullState();
+                break;
+            case SHOOTING:
+                //same as full prob, just that spindexer could be in different pos
+            // this is assuming diddy climb, could change
+            case CLIMBING:
+                goToClimbState();
+                break;
+            case DONE_CLIMB:
+                goToClimbDoneState();
+                break;
+
+        }
+        this.robotState = state;
+
+    }
     public RobotState getState() {
         return this.robotState;
+    }
+    private void goToRestingState(){
+        this.shooter.manualAim(0.0, 45.0, 0.0);
+        //spindexer has funnel out
+        //intake up
+    }
+    private void goToIntakingState(){
+        //if intake is up, put down
+        //spin intake in
+        //spindexer has funnel out
+    }
+    private void goToFullState(){
+        //intake spin oppisite
+        //start running autoaim function in loop
+    }
+    private void goToClimbState(){
+        //activate pto
+        hardware.motorRearLeft.setPower(1.0);
+        hardware.motorRearRight.setPower(1.0);
+    }
+    private void goToClimbDoneState(){
+        hardware.motorRearLeft.setPower(0.7);
+        hardware.motorRearRight.setPower(0.7);
     }
 
     /**
