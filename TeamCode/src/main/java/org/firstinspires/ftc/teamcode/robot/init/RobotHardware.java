@@ -39,6 +39,8 @@ public class RobotHardware {
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
 
+    public TerrorServo breakPad;
+
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
     public TerrorMotorNormal shooterRight; // powers the flywheel
@@ -180,6 +182,12 @@ public class RobotHardware {
         // Initializing the spindexer Encoder
         this.spindexerEncoder=new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
         this.spindexerEncoder.setOffset(SPINDEXER_ENCODER_OFFSET);
+
+        // Break pad
+        this.breakPad = new TerrorServo(
+                hwMap.get(Servo.class, "breakPad")
+        );
+        this.publisher.subscribe(10, breakPad);
 
 
         // Other things
