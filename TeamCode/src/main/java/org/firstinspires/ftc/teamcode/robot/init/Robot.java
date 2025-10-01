@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.drive.localizer.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.robot.drive.mecanum.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
+import org.firstinspires.ftc.teamcode.robot.subsystems.BreakpadSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
@@ -28,6 +29,7 @@ public class Robot {
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
     public IntakeSubsystem intake;
+    public BreakpadSubsystem breaks;
 
     // Localizer
     public PinpointLocalizer localizer;
