@@ -123,12 +123,6 @@ public class RobotHardware {
         this.turretYawLeft = new TerrorServo(
                 hwMap.get(Servo.class, "turretYawLeft")
         );
-
-        this.breakPad = new TerrorServo(
-                hwMap.get(Servo.class, "breakPad")
-        );
-        this.publisher.subscribe(10, breakPad);
-
         this.turretYawRight = new TerrorServo(
                 hwMap.get(Servo.class, "turretYawRight")
         );
@@ -188,6 +182,12 @@ public class RobotHardware {
         // Initializing the spindexer Encoder
         this.spindexerEncoder=new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
         this.spindexerEncoder.setOffset(SPINDEXER_ENCODER_OFFSET);
+
+        // Break pad
+        this.breakPad = new TerrorServo(
+                hwMap.get(Servo.class, "breakPad")
+        );
+        this.publisher.subscribe(10, breakPad);
 
 
         // Other things
