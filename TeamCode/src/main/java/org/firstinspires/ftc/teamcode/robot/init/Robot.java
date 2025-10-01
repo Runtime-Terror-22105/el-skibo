@@ -83,9 +83,57 @@ public class Robot {
 //                    .build();
         }
     }
+    public void setState(RobotState state){
+        switch (state){
+            case RESTING:
+                goToRestingState();
+                break;
 
+            case INTAKING:
+                goToIntakingState();
+                break;
+            case FULL:
+                goToFullState();
+                break;
+            case SHOOTING:
+                //same as full prob, just that spindexer could be in different pos
+            // this is assuming diddy climb, could change
+            case CLIMBING:
+                goToClimbState();
+                break;
+            case DONE_CLIMB:
+                goToClimbDoneState();
+                break;
+
+        }
+        this.robotState = state;
+
+    }
     public RobotState getState() {
         return this.robotState;
+    }
+    private void goToRestingState(){
+        this.shooter.manualAim(0.0, 45.0, 0.0);
+        //spindexer has funnel out
+        //intake up
+    }
+    private void goToIntakingState(){
+        //if intake is up, put down
+        //spin intake in
+        //spindexer has funnel out
+    }
+    private void goToFullState(){
+        //intake spin oppisite
+        //start running autoaim function in loop
+    }
+    private void goToClimbState(){
+        //activate pto
+        hardware.motorRearLeft.setPower(1.0);
+        hardware.motorRearRight.setPower(1.0);
+    }
+    private void goToClimbDoneState(){
+        hardware.motorRearLeft.setPower(0.7);
+        hardware.motorRearRight.setPower(0.7);
     }
 
     /**
