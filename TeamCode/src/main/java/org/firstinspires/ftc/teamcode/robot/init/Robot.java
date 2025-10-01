@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.init;
 
-import android.util.Size;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -15,7 +13,6 @@ import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.TurretSubsystem;
 
 
 /**
@@ -28,7 +25,6 @@ public class Robot {
 
     // Subsystems
     public MecanumDrivetrain drivetrain = null;
-    public TurretSubsystem turret;
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
     public IntakeSubsystem intake;
@@ -71,7 +67,6 @@ public class Robot {
                 hardware.motorRearRight,
                 hardware.motorFrontRight
         );
-        this.turret = new TurretSubsystem(hardware);
         this.shooter = new ShooterSubsystem(hardware);
         this.spindexer = new SpindexerSubsystem(hardware);
         this.intake = new IntakeSubsystem(hardware);
