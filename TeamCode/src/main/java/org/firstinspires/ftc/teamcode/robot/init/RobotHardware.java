@@ -58,6 +58,8 @@ public class RobotHardware {
     public TerrorServo intakePitch1;
     public TerrorServo intakePitch2;
 
+    public TerrorServo spindexerPTO;
+
     // Camera
     public int cameraMonitorViewId;
     public WebcamName cameraName;
@@ -179,8 +181,10 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitch1"));
         this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitch2"));
-        this.publisher.subscribe(10, intake, intakePitch1);
-        this.publisher.subscribe(10, intake, intakePitch2);
+        this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
+        this.publisher.subscribe(10,intakePitch1);
+        this.publisher.subscribe(10, intakePitch2);
+        this.publisher.subscribe(10,spindexerPTO);
 
         // Initializing the spindexer Encoder
         this.spindexerEncoder=new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
