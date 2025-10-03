@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.vision.AprilTag;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.apriltag.AprilTagDetection;
@@ -14,19 +13,13 @@ import java.util.ArrayList;
 
 public class AprilTagPipeline extends OpenCvPipeline
 {
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
     public static double fx = 578.272;
     public static double fy = 578.272;
     public static double cx = 402.145;
     public static double cy = 221.506;
 
-    // UNITS ARE METERS
     public static double TAG_SIZE = 0.166;
 
-    // instance variables
 
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
@@ -48,7 +41,6 @@ public class AprilTagPipeline extends OpenCvPipeline
     @Override
     public void init(Mat frame)
     {
-        // Allocate a native context object.
         nativeApriltagPtr = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
 

@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.drive.localizer.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.robot.drive.mecanum.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
+import org.firstinspires.ftc.teamcode.robot.subsystems.BreakpadSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
@@ -27,6 +29,10 @@ public class Robot {
     public MecanumDrivetrain drivetrain = null;
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
+
+    public BreakpadSubsystem breakpad;
+
+    public HangSubsystem hang;
     public IntakeSubsystem intake;
 
     // Localizer
@@ -70,6 +76,8 @@ public class Robot {
         this.shooter = new ShooterSubsystem(hardware);
         this.spindexer = new SpindexerSubsystem(hardware);
         this.intake = new IntakeSubsystem(hardware);
+        this.breakpad = new BreakpadSubsystem(hardware);
+        this.hang = new HangSubsystem(hardware);
 
         // Set up the camera
         if (hardware.cameraName != null) {
