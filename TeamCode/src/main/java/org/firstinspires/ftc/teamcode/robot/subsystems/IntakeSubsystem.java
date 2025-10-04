@@ -47,10 +47,16 @@ public class IntakeSubsystem extends SubsystemBase {
         return this.targetSpeed;
     }
 
+    public void setIntakePitchPosition(double targetPitch)
+    {
+        hardware.intakePitch1.setPosition(targetPitch);
+        hardware.intakePitch2.setPosition(targetPitch);
+    }
+
 
     @Override
     public void periodic() {
         hardware.intake.setPower(this.targetSpeed);
-        hardware.intakePitch.setPosition(this.targetPitch);
+        setIntakePitchPosition(this.targetPitch);
     }
 }
