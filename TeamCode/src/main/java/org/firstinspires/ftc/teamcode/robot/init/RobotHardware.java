@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,7 +13,6 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
@@ -62,7 +60,8 @@ public class RobotHardware {
 
     // Camera
     public int cameraMonitorViewId;
-    public WebcamName cameraName;
+    public WebcamName fieldCamera;
+    public WebcamName spindexerCamera;
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
@@ -233,10 +232,10 @@ public class RobotHardware {
                         "id",
                         hwMap.appContext.getPackageName()
                 );
-        this.cameraName = hwMap.get(WebcamName.class, "Webcam 1");
+        this.fieldCamera = hwMap.get(WebcamName.class, "Webcam 1");
 
 //        this.camera = new TerrorCameraVisionPortal.Builder()
-//                .setCamera(cameraName)
+//                .setCamera(fieldCamera)
 //                .setCameraResolution(new Size(1280, 800))
 //                .detectAprilTags()
 //                .init();
