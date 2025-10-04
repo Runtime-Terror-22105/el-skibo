@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision.Spindexer;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.opencv.core.MatOfPoint;
@@ -22,7 +24,7 @@ import java.util.List;
 public class SpindexerPipeline extends OpenCvPipeline
 {
 
-
+    private static final String TAG = "SpindexerPipeline";
 
     private final Mat hsv = new Mat();
     private Mat output = new Mat();
@@ -62,11 +64,6 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
     private final Object decimationSync = new Object();
 
     private final List<Point> detectedCenters = new ArrayList<>();
-    Telemetry telemetry;
-
-    public SpindexerPipeline(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -126,9 +123,7 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
                     Imgproc.putText(input, colorLabel, center, Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255), 2);
 
 
-                    if (telemetry != null) {
-                        telemetry.addData("Blob", "%s at (%d, %d)", colorLabel, cx, cy);
-                    }
+                    Log.i(TAG, String.format("Blob %s at (%d, %d)", colorLabel, cx, cy));
                 }
             }
         }

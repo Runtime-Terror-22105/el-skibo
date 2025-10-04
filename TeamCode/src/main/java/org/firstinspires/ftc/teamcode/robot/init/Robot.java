@@ -76,9 +76,9 @@ public class Robot {
         this.hang = new HangSubsystem(hardware);
 
         // Set up the camera
-        if (hardware.cameraName != null) {
+        if (hardware.fieldCamera != null) {
 //            this.camera = new TerrorCameraVisionPortal.Builder()
-//                    .setCamera(hardware.cameraName)
+//                    .setCamera(hardware.fieldCamera)
 //                    .setCameraResolution(new Size(320, 240))
 //                    .enableLiveView(true)
 ////                    .detectAprilTags()
