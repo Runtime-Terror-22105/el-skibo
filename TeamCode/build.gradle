@@ -19,6 +19,10 @@ buildscript {
         classpath "dev.frozenmilk:Load:0.2.4"
     }
 }
+
+//regarding sloth related details refer to this
+//https://github.com/Dairy-Foundation/Sloth
+
 // Custom definitions may go here
 
 // Include common definitions from above.
