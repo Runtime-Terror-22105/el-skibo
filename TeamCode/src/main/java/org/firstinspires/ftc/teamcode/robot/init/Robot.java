@@ -31,6 +31,7 @@ public class Robot {
 
     public HangSubsystem hang;
     public IntakeSubsystem intake;
+    public BreakpadSubsystem breaks;
 
     // Localizer
     public PinpointLocalizer localizer;
