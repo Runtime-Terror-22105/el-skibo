@@ -10,6 +10,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
@@ -114,11 +115,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             robot.shooter.doAutoShoot(robot.localizer.getPosition(), this.goalPos);
         }
 
-        //manual breaks
-        if (gamepad1ex.y(TerrorGamepad.State.HOLDING)){
-            robot.breaks.activateBreak();
-        }
-
         //shoot three balls
         if (gamepad1ex.a(RISING)){
             //shoot 3 balls
@@ -154,13 +150,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 
         //climb
-
         if (gamepad1ex.dpad_up(RISING)){
             robot.setState(CLIMBING);
         }
 
-        //end
-        robot.update();
+        // update the subsystems
+        CommandScheduler.getInstance().run();
 
         robot.telemetry.addData("Current State", robot.getState().toString());
         robot.telemetry.addData("Current Pos", robot.localizer.getPosition());
