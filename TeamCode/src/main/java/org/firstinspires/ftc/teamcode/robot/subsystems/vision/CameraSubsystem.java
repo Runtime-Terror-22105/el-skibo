@@ -99,7 +99,6 @@ public class CameraSubsystem extends SubsystemBase
                 gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
                 decodedGlyph = true;
             }
-
         }
     }
 
@@ -111,6 +110,6 @@ public class CameraSubsystem extends SubsystemBase
 
         // todo: choose only one apriltag to use
         AprilTagDetection tag = detections.get(0);
-        return new Pose2d(tag.robotPose.getPosition().x,tag.robotPose.getPosition().y,tag.robotPose.getPosition().z)
+        return new Pose2d(tag.robotPose.getPosition().x,tag.robotPose.getPosition().y,tag.robotPose.getPosition().z);
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot.command;
+package org.firstinspires.ftc.teamcode.robot.command.states;
 
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
