@@ -24,7 +24,7 @@ public class CameraSubsystem extends SubsystemBase
 {
     private OpenCvCamera aprilTagCamera;
     private OpenCvCamera spindexerCamera;
-
+    
     private AprilTagPipeline aprilTagPipeline;
     private SpindexerPipeline spindexerPipeline;
 
