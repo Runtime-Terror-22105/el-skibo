@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+
 
 
 /**
@@ -29,14 +31,15 @@ public class Robot {
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
 
+
+    public CameraSubsystem camera;
     public HangSubsystem hang;
     public IntakeSubsystem intake;
-    public BreakpadSubsystem breaks;
-
     // Localizer
     public PinpointLocalizer localizer;
     public static double PINPOINT_X_OFFSET = 102.5;
     public static double PINPOINT_Y_OFFSET = -170;
+
 
     // Camera stuff TODO
 //    public TerrorCameraVisionPortal camera;
@@ -75,6 +78,7 @@ public class Robot {
         this.spindexer = new SpindexerSubsystem(hardware);
         this.intake = new IntakeSubsystem(hardware);
         this.hang = new HangSubsystem(hardware);
+        this.camera= new CameraSubsystem(hardware, CameraSubsystem.LiveViewSettings.FIELD);
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
