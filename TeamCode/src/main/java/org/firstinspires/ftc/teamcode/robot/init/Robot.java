@@ -31,8 +31,6 @@ public class Robot {
 
     public HangSubsystem hang;
     public IntakeSubsystem intake;
-    public BreakpadSubsystem breaks;
-
     // Localizer
     public PinpointLocalizer localizer;
     public static double PINPOINT_X_OFFSET = 102.5;
