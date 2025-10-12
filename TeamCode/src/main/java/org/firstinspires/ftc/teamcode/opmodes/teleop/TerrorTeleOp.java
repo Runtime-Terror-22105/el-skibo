@@ -58,9 +58,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         waitForStart();
         GamepadEx gamepad1ex=new GamepadEx(gamepad1);
+        GamepadEx gamepad2ex=new GamepadEx(gamepad2);
 
 
-
+        // driver 1
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         GamepadButton intakeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
         GamepadButton rejectButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
@@ -68,7 +69,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
-
 
         hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenPressed(new GoToIntakeStateCommand(robot));
@@ -78,8 +78,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
 
-
-
+        // driver 2
+        GamepadButton motifButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);
 
 
 
