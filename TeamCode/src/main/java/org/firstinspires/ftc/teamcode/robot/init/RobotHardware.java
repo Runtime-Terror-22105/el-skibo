@@ -49,7 +49,7 @@ public class RobotHardware {
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerTransferRamp;   // for transfer from spindexer to shooter
-    public TerrorAnalogEncoder spindexerEncoder;
+    public TerrorEncoder spindexerEncoder;
 
     // Intake
     public TerrorMotorNormal intake;
@@ -162,10 +162,7 @@ public class RobotHardware {
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.spindexerTransferRamp = new TerrorServo(hwMap.get(Servo.class, "spindexerTransferRamp"));
-        this.spindexerEncoder = new TerrorAnalogEncoder(
-                hwMap.get(AnalogInput.class, "spindexerEncoder"),
-                false  // TODO: figure out if reversed
-        );
+        this.spindexerEncoder = new TerrorEncoder(spindexerRotate); // TODO: figure out which motor has the encoder
         this.publisher.subscribe(10, spindexerRotate, spindexerTransferRamp);
 
         // Initialize the intake
