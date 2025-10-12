@@ -68,6 +68,19 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
         this.telemetry = telemetry;
     }
 
+    private char[] spindexerPositions = {'N','N','N'};
+    private char[] newPositions = {'N', 'N', 'N'};
+
+    //yummy
+    /**
+     * @return order of the balls in the spindexer with top:0 right:1 left:2
+     * G/P:colors, N:no ball detected
+     */
+    public char[] getBalls()
+    {
+        return spindexerPositions;
+    }
+
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
@@ -75,56 +88,57 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
         Core.inRange(hsv, purpleLow2, purpleHigh2, purpleMask2);
         Core.bitwise_or(purpleMask1, purpleMask2, purpleMask);
         Core.inRange(hsv, greenLow, greenHigh, greenMask);
-
         Mat combinedMask = new Mat();
         Core.bitwise_or(purpleMask, greenMask, combinedMask);
-
-        // Find contours (blobs)
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(combinedMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        // Clear old centers
         detectedCenters.clear();
-
-        double minArea = 500.0; // tune this for noise filtering
-
+        double minArea = 500.0;
+        for(int i=0;i<3;i++)
+        {
+            newPositions[i] = 'N';
+        }
         for (MatOfPoint contour : contours) {
             double area = Imgproc.contourArea(contour);
             if (area > minArea) {
                 Moments m = Imgproc.moments(contour);
+
                 if (m.m00 != 0) {
                     int cx = (int)(m.m10 / m.m00);
                     int cy = (int)(m.m01 / m.m00);
                     Point center = new Point(cx, cy);
                     String point = "";
-
+                    int spindex = -1;
                     if(center.y < (double)input.height()/2)
                     {
                         point = "up";
+                        spindex = 0;
+
                     }
                     else if(center.x < (double)input.width()/2)
                     {
                         point = "left";
+                        spindex = 2;
                     }
                     else
                     {
+                        spindex = 1;
                         point = "right";
                     }
 
-                    // Determine color
                     String colorLabel = "Unknown";
                     if (purpleMask.get(cy, cx)[0] > 0) {
+                        newPositions[spindex] = 'P';
                         colorLabel = "Purple" + point;
                     } else if (greenMask.get(cy, cx)[0] > 0) {
+                        newPositions[spindex] = 'G';
                         colorLabel = "Green" + point;
                     }
 
-                    // Save center
                     detectedCenters.add(center);
                     Imgproc.circle(input, center, 5, new Scalar(255, 0, 0), -1);
                     Imgproc.putText(input, colorLabel, center, Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255), 2);
-
 
                     if (telemetry != null) {
                         telemetry.addData("Blob", "%s at (%d, %d)", colorLabel, cx, cy);
@@ -132,7 +146,7 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
                 }
             }
         }
-
+        spindexerPositions = newPositions;
         Mat masked = new Mat();
         Core.bitwise_and(input, input, masked, combinedMask);
         return masked;

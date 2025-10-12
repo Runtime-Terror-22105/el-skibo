@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
-
     public static double activatePosition=1.0; // cams up
 
     public static double deactivatePosition=0.0; // cams down
@@ -56,12 +56,15 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.SHOOTER_INTAKE_SPEED=0.0;
     }
 
-
-
-
-
     @Override
     public void periodic() {
+
+        //to the spindexers of Australia: Robot.camera.getBalls();
+        //G:green P:purple N:none
+        //0:top 1:right 2:left
+        //returns char[]
+        Robot.camera.getBalls();
+
         this.hardware.spindexerCamPopper.setPosition(this.PopperPosition);
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
