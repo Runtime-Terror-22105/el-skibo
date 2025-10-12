@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision.Spindexer;
 
+import android.graphics.Canvas;
+import android.util.Log;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.MatOfPoint;
 
 import org.opencv.core.Point;
@@ -19,10 +24,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpindexerPipeline extends OpenCvPipeline
+public class SpindexerPipeline implements VisionProcessor
 {
 
-
+    private static final String TAG = "SpindexerPipeline";
 
     private final Mat hsv = new Mat();
     private Mat output = new Mat();
@@ -34,9 +39,9 @@ public class SpindexerPipeline extends OpenCvPipeline
     public static Scalar purpleLow2  = new Scalar(117.6, 59.5, 97.8);
     public static Scalar purpleHigh2 = new Scalar(168.6, 255, 255);
 
-//    public static Scalar greenLow  = new Scalar(29.8, 89.3, 19.8);
-//    public static Scalar greenHigh = new Scalar(59.5, 144.5, 158.7);
-public static Scalar greenLow  = new Scalar(35, 40, 40);
+    //    public static Scalar greenLow  = new Scalar(29.8, 89.3, 19.8);
+    //    public static Scalar greenHigh = new Scalar(59.5, 144.5, 158.7);
+    public static Scalar greenLow  = new Scalar(35, 40, 40);
     // Upper bound for green
     public static Scalar greenHigh = new Scalar(85, 255, 255);
     Mat purpleMask1 = new Mat();
@@ -62,10 +67,10 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
     private final Object decimationSync = new Object();
 
     private final List<Point> detectedCenters = new ArrayList<>();
-    Telemetry telemetry;
 
-    public SpindexerPipeline(Telemetry telemetry) {
-        this.telemetry = telemetry;
+    @Override
+    public void init(int i, int i1, CameraCalibration cameraCalibration) {
+
     }
 
     private char[] spindexerPositions = {'N','N','N'};
@@ -82,7 +87,7 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
     }
 
     @Override
-    public Mat processFrame(Mat input) {
+    public Object processFrame(Mat input, long l) {
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
         Core.inRange(hsv, purpleLow1, purpleHigh1, purpleMask1);
         Core.inRange(hsv, purpleLow2, purpleHigh2, purpleMask2);
@@ -140,9 +145,7 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
                     Imgproc.circle(input, center, 5, new Scalar(255, 0, 0), -1);
                     Imgproc.putText(input, colorLabel, center, Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255), 2);
 
-                    if (telemetry != null) {
-                        telemetry.addData("Blob", "%s at (%d, %d)", colorLabel, cx, cy);
-                    }
+                    Log.i(TAG, String.format("Blob %s at (%d, %d)", colorLabel, cx, cy)); //i trust aadit is a genius
                 }
             }
         }
@@ -150,5 +153,10 @@ public static Scalar greenLow  = new Scalar(35, 40, 40);
         Mat masked = new Mat();
         Core.bitwise_and(input, input, masked, combinedMask);
         return masked;
+    }
+
+    @Override
+    public void onDrawFrame(Canvas canvas, int i, int i1, float v, float v1, Object o) {
+
     }
 }
