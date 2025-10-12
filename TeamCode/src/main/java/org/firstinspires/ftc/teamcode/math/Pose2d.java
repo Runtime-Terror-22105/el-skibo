@@ -43,7 +43,7 @@ public class Pose2d {
         return new Pose2d(
                 pose1.x+ pose2.x,
                 pose1.y+pose2.y,
-                pose1.heading+pose2.heading
+                Angle.angleWrap(pose1.heading+pose2.heading)
         );
     }
 
