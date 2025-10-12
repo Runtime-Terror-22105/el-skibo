@@ -6,7 +6,17 @@ import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class SpindexerSubsystem extends SubsystemBase {
+
+    private enum COLOR
+    {
+        GREEN,PURPLE
+    }
+    double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
+
     private final RobotHardware hardware;
     public static double activatePosition=1.0; // cams up
 
@@ -45,6 +55,17 @@ public class SpindexerSubsystem extends SubsystemBase {
         return hardware.spindexerEncoder.getCurrentPosition();
     }
 
+    public void selectColor(char color)
+    {
+        int nearestIndex = new String(Robot.camera.getBalls()).indexOf(color);
+        if(nearestIndex == -1)
+        {
+            //TODO: add error handling here some telemetry message abt not having balls or smth
+            return;
+        }
+        setYaw(this.yawPid.getTargetPosition() + yawOffsets[nearestIndex]);
+    }
+
     public void activateTransfer(){
         this.PopperPosition=this.activatePosition;
         this.SHOOTER_INTAKE_SPEED=this.SHOOTER_INTAKING_SPEED;
@@ -63,7 +84,6 @@ public class SpindexerSubsystem extends SubsystemBase {
         //G:green P:purple N:none
         //0:top 1:right 2:left
         //returns char[]
-        Robot.camera.getBalls();
 
         this.hardware.spindexerCamPopper.setPosition(this.PopperPosition);
         this.updateSpindexer();
