@@ -30,7 +30,8 @@ import org.firstinspires.ftc.teamcode.robot.hardware.TerrorGamepad;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.StateTag;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.*;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
 public abstract class TerrorTeleOp extends LinearOpMode {
@@ -79,8 +80,14 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 
         // driver 2
-        GamepadButton motifButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);
+        GamepadButton motifPGPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);
+        GamepadButton motifGPPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.Y);
+        GamepadButton motifPPGButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
 
+
+        motifPGPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PGP ));
+        motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
+        motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
 
 
 

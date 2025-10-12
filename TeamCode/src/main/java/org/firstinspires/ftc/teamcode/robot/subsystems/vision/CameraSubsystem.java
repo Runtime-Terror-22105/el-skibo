@@ -29,7 +29,7 @@ public class CameraSubsystem extends SubsystemBase
     public enum LiveViewSettings { OFF, SPINDEXER, FIELD }
 
 
-    private GLYPH gameGlyph;
+    public GLYPH gameGlyph;
     private boolean decodedGlyph = false; //when the movie uses the title of the movie
 
     public GLYPH getGlyph()
