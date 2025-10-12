@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 
 /**
@@ -34,6 +35,8 @@ public class Robot {
 
     public HangSubsystem hang;
     public IntakeSubsystem intake;
+
+    public static CameraSubsystem camera; //idk if this is allowed in FTC code but it was safe in FRC so its probably ok
 
     // Localizer
     public PinpointLocalizer localizer;
