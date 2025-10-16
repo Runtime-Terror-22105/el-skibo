@@ -37,8 +37,8 @@ public class CameraSubsystem extends SubsystemBase
         return gameGlyph;
     }
 
-    public final SpindexerPipeline spindexerPipeline;
-    public final AprilTagProcessor atagPipeline;
+    private final SpindexerPipeline spindexerPipeline;
+    private final AprilTagProcessor atagPipeline;
     public final VisionPortal vPortalField;
     public final VisionPortal vPortalSpindexer;
 
@@ -100,6 +100,10 @@ public class CameraSubsystem extends SubsystemBase
                 decodedGlyph = true;
             }
         }
+    }
+
+    public boolean hasDetection() {
+        return !detections.isEmpty();
     }
 
     public Pose2d getPositionCamera()
