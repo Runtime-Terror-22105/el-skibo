@@ -40,8 +40,7 @@ public class LocalizationSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        ArrayList<AprilTagDetection> atagDetections = camlocalizer.atagPipeline.getDetections();
-        if (!atagDetections.isEmpty()) {
+        if (camlocalizer.hasDetection()) {
             Pose2d badPosition=pinpointLocalizer.getPosition();
             this.currentPosition=camlocalizer.getPositionCamera();
             this.offset_x=currentPosition.x-badPosition.x;
