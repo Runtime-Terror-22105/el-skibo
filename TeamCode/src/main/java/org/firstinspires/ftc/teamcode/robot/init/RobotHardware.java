@@ -7,6 +7,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
@@ -37,8 +38,6 @@ public class RobotHardware {
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
 
-    public TerrorServo breakPad;
-
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
     public TerrorMotorNormal shooterRight; // powers the flywheel
@@ -66,6 +65,7 @@ public class RobotHardware {
 
     // Sensors
     public TerrorPinpoint pinpoint;
+    public DigitalChannel spindexerLimitSwitch;
 
     // Lynx stuff
     public List<LynxModule> allHubs;
@@ -189,12 +189,9 @@ public class RobotHardware {
         this.spindexerEncoder=new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
         this.spindexerEncoder.setOffset(SPINDEXER_ENCODER_OFFSET);
 
-        // Break pad
-        this.breakPad = new TerrorServo(
-                hwMap.get(Servo.class, "breakPad")
-        );
-        this.publisher.subscribe(10, breakPad);
-
+        // Limit switch
+        this.spindexerLimitSwitch = hwMap.get(DigitalChannel.class, "spindexerLimitSwitch");
+        this.spindexerLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
