@@ -78,7 +78,6 @@ public class Robot {
         this.spindexer = new SpindexerSubsystem(hardware);
         this.intake = new IntakeSubsystem(hardware);
         this.hang = new HangSubsystem(hardware);
-        this.camera= new CameraSubsystem(hardware, CameraSubsystem.LiveViewSettings.FIELD);
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
