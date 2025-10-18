@@ -130,7 +130,7 @@ public class ShooterSubsystem extends SubsystemBase {
         double targetV;
         double targetT;
 
-        while (true){
+        for(int failcount=0;failcount<8;failcount++){
             //my formulas
             double horDist = Math.sqrt(Math.pow((botPos.x-goalPos.x),2) +
                     Math.pow((botPos.y-goalPos.y),2)); //simple pythagrean therom
@@ -170,7 +170,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 else if (targetV > maxVelocity || targetT > hoodAngleMax){
                     h -= 5;
                 }
-                failCount += 1;
+
             }
             else {
                 this.goalVelocity = targetV;
