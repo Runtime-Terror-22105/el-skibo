@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
  * the reset() method.
  */
 public class TerrorEncoder {
+
     public enum Direction {
         FORWARD(1),
         REVERSE(-1);
@@ -33,10 +34,17 @@ public class TerrorEncoder {
 
     public int offset;
 
+    private double ticksPerRevolution = -1;
+
     public TerrorEncoder(TerrorMotorNormal motor) {
         this.motor = motor;
         this.direction = Direction.FORWARD;
         this.offset = 0;
+    }
+
+    public TerrorEncoder(TerrorMotorNormal motor, double ticksPerRevolution) {
+        this(motor);
+        this.ticksPerRevolution = ticksPerRevolution;
     }
 
     public Direction getDirection() {
@@ -68,6 +76,14 @@ public class TerrorEncoder {
 
     public double getVelocity() {
         return motor.getVelocity() * getMultiplier();
+    }
+
+    public double getPositionDegrees() {
+        if (this.ticksPerRevolution == -1) {
+            throw new IllegalStateException("ticksPerRevolution was not set in constructor");
+        }
+
+        return getCurrentPosition() * 360.0 / this.ticksPerRevolution;
     }
 
 //    /**
