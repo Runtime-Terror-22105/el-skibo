@@ -7,6 +7,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
@@ -37,8 +38,6 @@ public class RobotHardware {
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
 
-    public TerrorServo breakPad;
-
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
     public TerrorMotorNormal shooterRight; // powers the flywheel
@@ -49,7 +48,7 @@ public class RobotHardware {
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerCamPopper;
-    public TerrorAnalogEncoder spindexerEncoder;
+    public TerrorEncoder spindexerEncoder;
 
     // Intake
     public TerrorMotorNormal intake;
@@ -66,6 +65,7 @@ public class RobotHardware {
 
     // Sensors
     public TerrorPinpoint pinpoint;
+    public DigitalChannel spindexerLimitSwitch;
 
     // Lynx stuff
     public List<LynxModule> allHubs;
@@ -121,6 +121,7 @@ public class RobotHardware {
 
         this.publisher.subscribe(4, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
+
         // Initialize the turret
         this.turretYawLeft = new TerrorServo(
                 hwMap.get(Servo.class, "turretYawLeft")
@@ -129,6 +130,7 @@ public class RobotHardware {
                 hwMap.get(Servo.class, "turretYawRight")
         );
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
+
 
         // Initialize the shooter
         this.shooterLeft = new TerrorMotorNormal(
@@ -153,6 +155,7 @@ public class RobotHardware {
         this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterPitch"));
         this.publisher.subscribe(5, shooterLeft, shooterRight, shooterPitch);
 
+
         // Initialize the spindexer
         this.spindexerRotate = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
@@ -161,12 +164,15 @@ public class RobotHardware {
         );
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         this.spindexerCamPopper = new TerrorServo(hwMap.get(Servo.class, "popper"));
-        this.spindexerEncoder = new TerrorAnalogEncoder(
-                hwMap.get(AnalogInput.class, "spindexerEncoder"),
-                false  // TODO: figure out if reversed
-        );
         this.publisher.subscribe(10, spindexerRotate, spindexerCamPopper);
+
+        // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
+        // and motor has 28 ticks per revolution
+        // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
+        this.spindexerEncoder = new TerrorEncoder(spindexerRotate, ((1D+(46D/11D))*28D) * 5.6D);
+//        this.spindexerEncoder.setDirection(TerrorEncoder.Direction.REVERSE); // TODO: figure out spindexer encoder direction
 
         // Initialize the intake
         this.intake = new TerrorMotorNormal(
@@ -185,16 +191,9 @@ public class RobotHardware {
         this.publisher.subscribe(10, intakePitch2);
         this.publisher.subscribe(10,spindexerPTO);
 
-        // Initializing the spindexer Encoder
-        this.spindexerEncoder=new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "armPitchEncoder"), true);
-        this.spindexerEncoder.setOffset(SPINDEXER_ENCODER_OFFSET);
-
-        // Break pad
-        this.breakPad = new TerrorServo(
-                hwMap.get(Servo.class, "breakPad")
-        );
-        this.publisher.subscribe(10, breakPad);
-
+        // Limit switch
+        this.spindexerLimitSwitch = hwMap.get(DigitalChannel.class, "spindexerLimitSwitch");
+        this.spindexerLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
