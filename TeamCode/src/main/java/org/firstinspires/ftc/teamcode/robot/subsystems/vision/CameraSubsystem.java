@@ -26,7 +26,6 @@ public class CameraSubsystem extends SubsystemBase
     private OpenCvCamera spindexerCamera;
     
     private AprilTagPipeline aprilTagPipeline;
-    private SpindexerPipeline spindexerPipeline;
 
     Telemetry telemetry;
     private AprilTagProcessor aTagProcessor;
@@ -49,10 +48,10 @@ public class CameraSubsystem extends SubsystemBase
      * @return order of the balls in the spindexer with top:0 right:1 left:2
      * G/P:colors, N:no ball detected
      */
-    public char[] getBalls()
-    {
-        return spindexerPipeline.getBalls();
-    }
+//    public char[] getBalls()
+//    {
+//        return spindexerPipeline.getBalls();
+//    }
 
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public final VisionPortal vPortalField;
@@ -62,7 +61,7 @@ public class CameraSubsystem extends SubsystemBase
 
     public CameraSubsystem(RobotHardware hardware, LiveViewSettings liveViewSettings) {
         this.aTagProcessor = createAprilTagProcessor();
-        this.spindexerPipeline = new SpindexerPipeline(telemetry);
+//        this.spindexerPipeline = new SpindexerPipeline(telemetry);
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
@@ -70,10 +69,10 @@ public class CameraSubsystem extends SubsystemBase
 //                .addProcessor(this.spindexerPipeline) //sad emoji
                 .addProcessor(this.aTagProcessor);
 
-        VisionPortal.Builder vPortalSpindexerBuilder = new VisionPortal.Builder()
-                .setCamera(hardware.fieldCamera)
-                .setCameraResolution(new Size(320, 240))
-                .addProcessor(this.spindexerPipeline);
+//        VisionPortal.Builder vPortalSpindexerBuilder = new VisionPortal.Builder()
+//                .setCamera(hardware.fieldCamera)
+//                .setCameraResolution(new Size(320, 240))
+//                .addProcessor(this.spindexerPipeline);
 
 
         switch (liveViewSettings) {
@@ -86,7 +85,7 @@ public class CameraSubsystem extends SubsystemBase
         }
 
         vPortalField = vPortalFieldBuilder.build();
-        vPortalSpindexer = vPortalSpindexerBuilder.build();
+//        vPortalSpindexer = vPortalSpindexerBuilder.build();
     }
 
     private AprilTagProcessor createAprilTagProcessor() {

@@ -5,9 +5,11 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
 
@@ -50,6 +53,13 @@ public class RobotHardware {
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerCamPopper;
     public TerrorAnalogEncoder spindexerEncoder;
+    public TerrorColorSensor topSensor;
+    public TerrorColorSensor leftSensor;
+    public TerrorColorSensor rightSensor;
+    /*
+             top (the one that shoots)
+        left      right
+     */
 
     // Intake
     public TerrorMotorNormal intake;
@@ -61,7 +71,6 @@ public class RobotHardware {
     // Camera
     public int cameraMonitorViewId;
     public WebcamName fieldCamera;
-    public WebcamName spindexerCamera;
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
@@ -104,6 +113,17 @@ public class RobotHardware {
                 0.05,
                 1.0
         );
+
+        this.topSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "topSensor")
+        );
+        this.leftSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "leftSensor")
+        );
+        this.rightSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "rightSensor")
+        );
+
         this.motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.motorRearRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
