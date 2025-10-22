@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.drive.localizer.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
-import java.util.ArrayList;
 
 public class LocalizationSubsystem extends SubsystemBase {
 
@@ -31,7 +26,7 @@ public class LocalizationSubsystem extends SubsystemBase {
     public LocalizationSubsystem(Pose2d startPos, RobotHardware hardware, Robot robot ){
         this.hardware = hardware;
         this.currentPosition=startPos;
-        this.pinpointLocalizer=robot.localizer;
+        this.pinpointLocalizer=robot.pinpoint;
         this.robot=robot;
     }
 
