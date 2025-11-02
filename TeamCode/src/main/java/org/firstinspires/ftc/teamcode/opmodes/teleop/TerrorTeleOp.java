@@ -89,6 +89,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
         motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
 
+        // homing command executing here
+        SpindexerHoming homingCommand=new SpindexerHoming(robot.spindexer);
 
 
         while (opModeIsActive()){
