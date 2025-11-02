@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
+    public double spindexer_offset=0;
+
     public static double activatePosition=1.0; // cams up
 
     public static double deactivatePosition=0.0; // cams down
@@ -35,14 +37,18 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(angle);
     }
 
+    public boolean getLimitSwitchState(){
+        return this.hardware.spindexerLimitSwitch.getState();
+    }
+
     public void updateSpindexer(){
 //        if(hardware.spindexerEncoder.getCurrentPosition())
-        this.spindexerPower= yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition(),0);
+        this.spindexerPower= yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition()+this.spindexer_offset,0);
         // setting pid power into the spindexer
     }
 
     public double getPosition(){
-        return hardware.spindexerEncoder.getCurrentPosition();
+        return hardware.spindexerEncoder.getCurrentPosition()-this.spindexer_offset;
     }
 
     public void activateTransfer(){
@@ -57,7 +63,13 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
 
+    public void setSpindexerOffset(double offset){
+        this.spindexer_offset=offset;
+    }
 
+    public void setSpindexerPower(double power){
+        this.spindexerPower=power;
+    }
 
 
     @Override
