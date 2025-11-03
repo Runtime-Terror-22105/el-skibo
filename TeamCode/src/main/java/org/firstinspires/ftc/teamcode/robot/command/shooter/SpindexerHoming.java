@@ -6,12 +6,11 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 public class SpindexerHoming extends InstantCommand {
 
-    public SpindexerHoming(SpindexerSubsystem spindexer){
+    public void HomeSpindexer(SpindexerSubsystem spindexer){
         while(!spindexer.getLimitSwitchState()) {
             spindexer.setSpindexerPower(0.5);
         }
         spindexer.setSpindexerOffset(spindexer.getPosition());
         spindexer.setSpindexerPower(0.0);
-
     }
 }
