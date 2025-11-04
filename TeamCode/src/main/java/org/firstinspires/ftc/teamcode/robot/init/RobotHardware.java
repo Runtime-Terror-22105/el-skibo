@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -16,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
 
@@ -47,7 +45,9 @@ public class RobotHardware {
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
     public TerrorMotorNormal spindexerRotate;
-    public TerrorServo spindexerCamPopper;
+    public TerrorServo spindexerIntakeRampServo;
+    public TerrorServo spindexerShooterRampServo;
+    public TerrorServo spindexerWallServo;
     public TerrorEncoder spindexerEncoder;
 
     // Intake
@@ -165,8 +165,10 @@ public class RobotHardware {
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        this.spindexerCamPopper = new TerrorServo(hwMap.get(Servo.class, "popper"));
-        this.publisher.subscribe(10, spindexerRotate, spindexerCamPopper);
+        this.spindexerIntakeRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp"));
+        this.spindexerShooterRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
+        this.spindexerWallServo = new TerrorServo(hwMap.get(Servo.class, "spindexerWall"));
+        this.publisher.subscribe(10, spindexerRotate, spindexerIntakeRampServo, spindexerWallServo, spindexerShooterRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
