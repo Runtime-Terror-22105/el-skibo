@@ -44,7 +44,7 @@ public class SpindexerHoming extends CommandBase {
             switchStart = pos;
         }
 
-        // detect end of the true-range (true -> false transition)
+        // detect end of the range where the switch returns true
         if (seenSwitchStart && !Double.isNaN(switchStart) && !limit && Double.isNaN(switchEnd)) {
             switchEnd = pos;
             finalizeHoming();
