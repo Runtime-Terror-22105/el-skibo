@@ -8,19 +8,24 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public double spindexer_offset=0;
+    public double spindexerOffset = 0;
 
-    public static double activatePosition=1.0; // cams up
+    public static double INTAKE_RAMP_ACTIVE = 1.0;
+    public static double INTAKE_RAMP_DEACTIVE = 0.0;
+    public static double SHOOTER_RAMP_ACTIVE = 1.0;
+    public static double SHOOTER_RAMP_DEACTIVE = 0.0;
+    public static double WALL_ACTIVE = 1.0;
+    public static double WALL_DEACTIVE = 0.0;
 
-    public static double deactivatePosition=0.0; // cams down
+    public double SHOOTER_INTAKE_SPEED = 0.0; // this is the speed where the shooter melonbotic servo intakes the balls
 
-    public double SHOOTER_INTAKE_SPEED=0.0; // this is the speed where the shooter melonbotic servo intakes the balls
+    public static double SHOOTER_INTAKING_SPEED = 1.0;
 
-    public static double SHOOTER_INTAKING_SPEED=1.0;
+    public double intakeRampPosition = INTAKE_RAMP_DEACTIVE;
+    public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
+    public double wallPosition = WALL_DEACTIVE;
 
-    public double PopperPosition=deactivatePosition;
-
-    public double spindexerPower=0.0;
+    public double spindexerPower = 0.0;
     public static PidfController.PidfCoefficients turningPidCoefficients =
             new PidfController.PidfCoefficients(0.014, 0, 0, 1, 0);
     public static double yawPidTolerance = 0.1;
@@ -37,44 +42,48 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(angle);
     }
 
-    public boolean getLimitSwitchState(){
+    public boolean getLimitSwitchState() {
         return this.hardware.spindexerLimitSwitch.getState();
     }
 
     public void updateSpindexer(){
 //        if(hardware.spindexerEncoder.getCurrentPosition())
-        this.spindexerPower= yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition()+this.spindexer_offset,0);
+        this.spindexerPower= yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition()+this.spindexerOffset,0);
         // setting pid power into the spindexer
     }
 
-    public double getPosition(){
-        return hardware.spindexerEncoder.getCurrentPosition()-this.spindexer_offset;
+    public double getPosition() {
+        return hardware.spindexerEncoder.getCurrentPosition() - this.spindexerOffset;
     }
 
-    public void activateTransfer(){
-        this.PopperPosition=this.activatePosition;
-        this.SHOOTER_INTAKE_SPEED=this.SHOOTER_INTAKING_SPEED;
-
+    public void activateTransfer() {
+        this.intakeRampPosition = INTAKE_RAMP_ACTIVE;
+        this.shooterRampPosition = SHOOTER_RAMP_ACTIVE;
+        this.wallPosition = WALL_ACTIVE;
+        this.SHOOTER_INTAKE_SPEED = SHOOTER_INTAKING_SPEED;
     }
 
-    public void deactivateTransfer(){
-        this.PopperPosition=this.deactivatePosition;
-        this.SHOOTER_INTAKE_SPEED=0.0;
+    public void deactivateTransfer() {
+        this.intakeRampPosition = INTAKE_RAMP_DEACTIVE;
+        this.shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
+        this.wallPosition = WALL_DEACTIVE;
+        this.SHOOTER_INTAKE_SPEED = 0.0;
     }
 
-
-    public void setSpindexerOffset(double offset){
-        this.spindexer_offset=offset;
+    public void setSpindexerOffset(double offset) {
+        this.spindexerOffset = offset;
     }
 
-    public void setSpindexerPower(double power){
-        this.spindexerPower=power;
+    public void setSpindexerPower(double power) {
+        this.spindexerPower = power;
     }
-
 
     @Override
     public void periodic() {
-        this.hardware.spindexerCamPopper.setPosition(this.PopperPosition);
+        this.hardware.spindexerIntakeRampServo.setPosition(this.intakeRampPosition);
+        this.hardware.spindexerShooterRampServo.setPosition(this.shooterRampPosition);
+        this.hardware.spindexerWallServo.setPosition(this.wallPosition);
+
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
     }
