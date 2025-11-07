@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-
+import com.seattlesolvers.solverslib.util.MathUtils;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
@@ -26,6 +26,22 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double wallPosition = WALL_DEACTIVE;
 
     public double spindexerPower = 0.0;
+
+    public static double leftPosition =(4/3)* Math.PI;
+    public static double rightPosition =(2/3)* Math.PI;
+    public static double backPosition = 0.0;
+    public static double readyPosition = (1/6)* Math.PI; //position for the first ball as the ramp goes down
+
+
+
+
+    public double spindexerPower=0.0;
+    public enum position{
+        LEFT,
+        RIGHT,
+        BACK
+
+    }
     public static PidfController.PidfCoefficients turningPidCoefficients =
             new PidfController.PidfCoefficients(0.014, 0, 0, 1, 0);
     public static double yawPidTolerance = 0.1;
@@ -73,7 +89,57 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void setSpindexerOffset(double offset) {
         this.spindexerOffset = offset;
     }
+//
+//    public void initMotifPos(){
+//        double startPos = this.getPosition();
+//        int fullCount = 0;
+//        double greenPos;
+//        for (ColorSensor sensor in this.colorSensors){
+//            if (sensor == has ball){
+//                fullCount += 1;
+//                if (sensor.color == green){
+//                    if (sensor.pos == position.LEFT){
+//                        greenPos = this.leftPosition;
+//                    }
+//                    else if (sensor.pos == position.RIGHT){
+//                        greenPos = this.rightPosition;
+//                    }
+//                    else {
+//                        greenPos = this.backPosition;
+//                    }
+//
+//                }
+//            }
+//        }
+//        if (fullCount == 3){
+//            if (motif == GPP) {
+//                double normalizedError = MathUtils.normalizeRadians((this.readyPosition-greenPos), true);
+//                if (normalizedError >= 0.1){
+//                    normalizedError = -((2* Math.PI) - normalizedError);
+//                }
+//                this.setYaw(startPos + normalizedError);
+//
+//            }
+//            else if (motif == PGP) {
+//                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((2/3)*Math.PI))-greenPos), true);
+//                if (normalizedError >= 0.1){
+//                    normalizedError = -((2* Math.PI) - normalizedError);
+//                }
+//                this.setYaw(startPos + normalizedError);
+//
+//            }
+//            else {
+//                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((4/3)*Math.PI))-greenPos), true);
+//                if (normalizedError >= 0.1){
+//                    normalizedError = -((2* Math.PI) - normalizedError);
+//                }
+//                this.setYaw(startPos + normalizedError);
+//            }
+//        }
+//
+//    }
 
+  
     public void setSpindexerPower(double power) {
         this.spindexerPower = power;
     }

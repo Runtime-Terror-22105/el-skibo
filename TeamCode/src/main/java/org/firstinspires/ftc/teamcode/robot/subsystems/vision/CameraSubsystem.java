@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.Spindexer.SpindexerPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 
@@ -77,9 +78,9 @@ public class CameraSubsystem extends SubsystemBase
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
                 .setSuppressCalibrationWarnings(false)
+                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
 //                    .setLensIntrinsics() // TODO: placeholder to remind us to calibrate the camera
-//                    .setTagFamily() // TODO: placeholder
-//                    .setTagLibrary() // TODO: placeholder
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .build();
