@@ -20,9 +20,6 @@ import java.util.ArrayList;
 @TeleOp
 public class CameraSubsystem extends SubsystemBase
 {
-    private OpenCvCamera aprilTagCamera;
-    private OpenCvCamera spindexerCamera;
-
     public enum GLYPH {
         GPP,PGP,PPG
     }
