@@ -16,10 +16,12 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
     public static double WALL_ACTIVE = 1.0;
     public static double WALL_DEACTIVE = 0.0;
+    public static double RESTING_SPINDEX_POS = 0.0;
 
     public double SHOOTER_INTAKE_SPEED = 0.0; // this is the speed where the shooter melonbotic servo intakes the balls
 
     public static double SHOOTER_INTAKING_SPEED = 1.0;
+    public static double SHOOT_ONE_ROTATION = -(2/3)* Math.PI;
 
     public double intakeRampPosition = INTAKE_RAMP_DEACTIVE;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
@@ -33,9 +35,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double readyPosition = (1/6)* Math.PI; //position for the first ball as the ramp goes down
 
 
-
-
-    public double spindexerPower=0.0;
     public enum position{
         LEFT,
         RIGHT,
@@ -73,6 +72,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void activateTransfer() {
+        //this.initShootPos();
         this.intakeRampPosition = INTAKE_RAMP_ACTIVE;
         this.shooterRampPosition = SHOOTER_RAMP_ACTIVE;
         this.wallPosition = WALL_ACTIVE;
@@ -84,20 +84,25 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
         this.wallPosition = WALL_DEACTIVE;
         this.SHOOTER_INTAKE_SPEED = 0.0;
+        this.setYaw(this.getPosition()-((1/6)*Math.PI));
+
     }
 
     public void setSpindexerOffset(double offset) {
         this.spindexerOffset = offset;
     }
-//
-//    public void initMotifPos(){
+
+//    public void initShootPos(){
 //        double startPos = this.getPosition();
 //        int fullCount = 0;
 //        double greenPos;
+//        int greenCount = 0;
+//        int purpleCount = 0;
 //        for (ColorSensor sensor in this.colorSensors){
 //            if (sensor == has ball){
 //                fullCount += 1;
 //                if (sensor.color == green){
+//                    greenCount +=1;
 //                    if (sensor.pos == position.LEFT){
 //                        greenPos = this.leftPosition;
 //                    }
@@ -109,9 +114,13 @@ public class SpindexerSubsystem extends SubsystemBase {
 //                    }
 //
 //                }
+//                else {
+//                    purpleCount += 1;
+//                }
+//
 //            }
 //        }
-//        if (fullCount == 3){
+//        if (purpleCount == 2 && greenCount == 1){
 //            if (motif == GPP) {
 //                double normalizedError = MathUtils.normalizeRadians((this.readyPosition-greenPos), true);
 //                if (normalizedError >= 0.1){
@@ -136,10 +145,25 @@ public class SpindexerSubsystem extends SubsystemBase {
 //                this.setYaw(startPos + normalizedError);
 //            }
 //        }
+//        else {
+//            this.setYaw(readyPosition);
+//        }
 //
 //    }
 
-  
+
+    public void shootBall(){
+        // TODO: Chack if transfer is down before running
+        this.setYaw(this.getPosition() + SHOOT_ONE_ROTATION);
+
+    }
+    public void shootThree(){
+        for (int i = 0; i < 3; i++){
+            this.shootBall();
+        }
+
+    }
+
     public void setSpindexerPower(double power) {
         this.spindexerPower = power;
     }
