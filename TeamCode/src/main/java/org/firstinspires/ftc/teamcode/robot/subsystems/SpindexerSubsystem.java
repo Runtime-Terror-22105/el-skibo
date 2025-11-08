@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-
+import com.seattlesolvers.solverslib.util.MathUtils;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -15,20 +15,41 @@ public class SpindexerSubsystem extends SubsystemBase {
         GREEN, PURPLE
     }
 
-    double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
-
     private final RobotHardware hardware;
-    public static double activatePosition = 1.0; // cams up
 
-    public static double deactivatePosition = 0.0; // cams down
+    public double spindexerOffset = 0;
+
+    public static double INTAKE_RAMP_ACTIVE = 1.0;
+    public static double INTAKE_RAMP_DEACTIVE = 0.0;
+    public static double SHOOTER_RAMP_ACTIVE = 1.0;
+    public static double SHOOTER_RAMP_DEACTIVE = 0.0;
+    public static double WALL_ACTIVE = 1.0;
+    public static double WALL_DEACTIVE = 0.0;
+    public static double RESTING_SPINDEX_POS = 0.0;
 
     public double SHOOTER_INTAKE_SPEED = 0.0; // this is the speed where the shooter melonbotic servo intakes the balls
 
     public static double SHOOTER_INTAKING_SPEED = 1.0;
+    public static double SHOOT_ONE_ROTATION = -(2/3)* Math.PI;
 
-    public double PopperPosition = deactivatePosition;
+    public double intakeRampPosition = INTAKE_RAMP_DEACTIVE;
+    public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
+    public double wallPosition = WALL_DEACTIVE;
 
     public double spindexerPower = 0.0;
+
+    public static double leftPosition =(4/3)* Math.PI;
+    public static double rightPosition =(2/3)* Math.PI;
+    public static double backPosition = 0.0;
+    public static double readyPosition = (1/6)* Math.PI; //position for the first ball as the ramp goes down
+    double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)}; // todo: this is currently duplicate, make it so it just uses the above 3 variables
+
+
+    public enum position {
+        LEFT,
+        RIGHT,
+        BACK
+    }
     public static PidfController.PidfCoefficients turningPidCoefficients =
             new PidfController.PidfCoefficients(0.014, 0, 0, 1, 0);
     public static double yawPidTolerance = 0.1;
@@ -45,14 +66,14 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(angle);
     }
 
-    public void updateSpindexer() {
-//        if(hardware.spindexerEncoder.getCurrentPosition())
-        this.spindexerPower = yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition(), 0);
-        // setting pid power into the spindexer
+    public boolean getLimitSwitchState() {
+        return this.hardware.spindexerLimitSwitch.getState();
     }
 
-    public double getPosition() {
-        return hardware.spindexerEncoder.getCurrentPosition();
+    public void updateSpindexer(){
+//        if(hardware.spindexerEncoder.getCurrentPosition())
+        this.spindexerPower= yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition()+this.spindexerOffset,0);
+        // setting pid power into the spindexer
     }
 
     public char[] getBallPositions()
@@ -71,28 +92,118 @@ public class SpindexerSubsystem extends SubsystemBase {
         setYaw(this.yawPid.getTargetPosition() + yawOffsets[nearestIndex]);
     }
 
-    public void activateTransfer(){
-        this.PopperPosition=this.activatePosition;
-        this.SHOOTER_INTAKE_SPEED=this.SHOOTER_INTAKING_SPEED;
+    public double getPosition() {
+        return hardware.spindexerEncoder.getCurrentPosition() - this.spindexerOffset;
+    }
+
+    public void activateTransfer() {
+        //this.initShootPos();
+        this.intakeRampPosition = INTAKE_RAMP_ACTIVE;
+        this.shooterRampPosition = SHOOTER_RAMP_ACTIVE;
+        this.wallPosition = WALL_ACTIVE;
+        this.SHOOTER_INTAKE_SPEED = SHOOTER_INTAKING_SPEED;
+    }
+
+    public void deactivateTransfer() {
+        this.intakeRampPosition = INTAKE_RAMP_DEACTIVE;
+        this.shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
+        this.wallPosition = WALL_DEACTIVE;
+        this.SHOOTER_INTAKE_SPEED = 0.0;
+        this.setYaw(this.getPosition()-((1/6)*Math.PI));
 
     }
 
-    public void deactivateTransfer(){
-        this.PopperPosition=this.deactivatePosition;
-        this.SHOOTER_INTAKE_SPEED=0.0;
+    public void setSpindexerOffset(double offset) {
+        this.spindexerOffset = offset;
     }
 
-    public
+//    public void initShootPos(){
+//        double startPos = this.getPosition();
+//        int fullCount = 0;
+//        double greenPos;
+//        int greenCount = 0;
+//        int purpleCount = 0;
+//        for (ColorSensor sensor in this.colorSensors){
+//            if (sensor == has ball){
+//                fullCount += 1;
+//                if (sensor.color == green){
+//                    greenCount +=1;
+//                    if (sensor.pos == position.LEFT){
+//                        greenPos = this.leftPosition;
+//                    }
+//                    else if (sensor.pos == position.RIGHT){
+//                        greenPos = this.rightPosition;
+//                    }
+//                    else {
+//                        greenPos = this.backPosition;
+//                    }
+//
+//                }
+//                else {
+//                    purpleCount += 1;
+//                }
+//
+//            }
+//        }
+//        if (purpleCount == 2 && greenCount == 1){
+//            if (motif == GPP) {
+//                double normalizedError = MathUtils.normalizeRadians((this.readyPosition-greenPos), true);
+//                if (normalizedError >= 0.1){
+//                    normalizedError = -((2* Math.PI) - normalizedError);
+//                }
+//                this.setYaw(startPos + normalizedError);
+//
+//            }
+//            else if (motif == PGP) {
+//                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((2/3)*Math.PI))-greenPos), true);
+//                if (normalizedError >= 0.1){
+//                    normalizedError = -((2* Math.PI) - normalizedError);
+//                }
+//                this.setYaw(startPos + normalizedError);
+//
+//            }
+//            else {
+//                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((4/3)*Math.PI))-greenPos), true);
+//                if (normalizedError >= 0.1){
+//                    normalizedError = -((2* Math.PI) - normalizedError);
+//                }
+//                this.setYaw(startPos + normalizedError);
+//            }
+//        }
+//        else {
+//            this.setYaw(readyPosition);
+//        }
+//
+//    }
+
+
+    public void shootBall(){
+        // TODO: Chack if transfer is down before running
+        this.setYaw(this.getPosition() + SHOOT_ONE_ROTATION);
+
+    }
+    public void shootThree(){
+        for (int i = 0; i < 3; i++){
+            this.shootBall();
+        }
+
+    }
+
+    public void setSpindexerPower(double power) {
+        this.spindexerPower = power;
+    }
 
     @Override
     public void periodic() {
-
         //to the spindexers of Australia: Robot.camera.getBalls();
         //G:green P:purple N:none
         //0:top 1:right 2:left
         //returns char[]
 
-        this.hardware.spindexerCamPopper.setPosition(this.PopperPosition);
+        this.hardware.spindexerIntakeRampServo.setPosition(this.intakeRampPosition);
+        this.hardware.spindexerShooterRampServo.setPosition(this.shooterRampPosition);
+        this.hardware.spindexerWallServo.setPosition(this.wallPosition);
+
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
     }
