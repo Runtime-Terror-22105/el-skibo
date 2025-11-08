@@ -37,6 +37,7 @@ public class Robot {
     public CameraSubsystem camera;
     public HangSubsystem hang;
     public IntakeSubsystem intake;
+
     // Localizer
     public PinpointLocalizer pinpoint;
     public LocalizationSubsystem localizer;

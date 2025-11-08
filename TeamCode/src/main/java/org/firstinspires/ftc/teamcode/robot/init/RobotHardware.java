@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
 
@@ -50,6 +53,14 @@ public class RobotHardware {
     public TerrorServo spindexerWallServo;
     public TerrorEncoder spindexerEncoder;
 
+    /*
+             top (the one that shoots)
+        left      right
+     */
+    public TerrorColorSensor topSensor;
+    public TerrorColorSensor leftSensor;
+    public TerrorColorSensor rightSensor;
+
     // Intake
     public TerrorMotorNormal intake;
     public TerrorServo intakePitch1;
@@ -60,7 +71,6 @@ public class RobotHardware {
     // Camera
     public int cameraMonitorViewId;
     public WebcamName fieldCamera;
-    public WebcamName spindexerCamera;
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
@@ -104,6 +114,7 @@ public class RobotHardware {
                 0.05,
                 1.0
         );
+
         this.motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.motorRearRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -164,6 +175,16 @@ public class RobotHardware {
         );
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        
+        this.topSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "topSensor")
+        );
+        this.leftSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "leftSensor")
+        );
+        this.rightSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "rightSensor")
+        );
 
         this.spindexerIntakeRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp"));
         this.spindexerShooterRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
