@@ -3,9 +3,18 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class SpindexerSubsystem extends SubsystemBase {
+
+    private enum COLOR {
+        GREEN, PURPLE
+    }
+
     private final RobotHardware hardware;
 
     public double spindexerOffset = 0;
@@ -33,13 +42,13 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double rightPosition =(2/3)* Math.PI;
     public static double backPosition = 0.0;
     public static double readyPosition = (1/6)* Math.PI; //position for the first ball as the ramp goes down
+    double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)}; // todo: this is currently duplicate, make it so it just uses the above 3 variables
 
 
-    public enum position{
+    public enum position {
         LEFT,
         RIGHT,
         BACK
-
     }
     public static PidfController.PidfCoefficients turningPidCoefficients =
             new PidfController.PidfCoefficients(0.014, 0, 0, 1, 0);
@@ -53,7 +62,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(0.0);
     }
 
-    public void setYaw(double angle){ //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
+    public void setYaw(double angle) { //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
         this.yawPid.setTargetPosition(angle);
     }
 
@@ -65,6 +74,22 @@ public class SpindexerSubsystem extends SubsystemBase {
 //        if(hardware.spindexerEncoder.getCurrentPosition())
         this.spindexerPower= yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition()+this.spindexerOffset,0);
         // setting pid power into the spindexer
+    }
+
+    public char[] getBallPositions()
+    {
+        return new char[]{hardware.topSensor.getGreenOrPurple(), hardware.rightSensor.getGreenOrPurple(), hardware.leftSensor.getGreenOrPurple()};
+    }
+
+    public void selectColor(char color)
+    {
+        int nearestIndex = new String(getBallPositions()).indexOf(color);
+        if(nearestIndex == -1)
+        {
+            //TODO: add error handling here some telemetry message abt not having balls or smth
+            return;
+        }
+        setYaw(this.yawPid.getTargetPosition() + yawOffsets[nearestIndex]);
     }
 
     public double getPosition() {
@@ -170,6 +195,11 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        //to the spindexers of Australia: Robot.camera.getBalls();
+        //G:green P:purple N:none
+        //0:top 1:right 2:left
+        //returns char[]
+
         this.hardware.spindexerIntakeRampServo.setPosition(this.intakeRampPosition);
         this.hardware.spindexerShooterRampServo.setPosition(this.shooterRampPosition);
         this.hardware.spindexerWallServo.setPosition(this.wallPosition);
