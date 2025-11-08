@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.util.MathUtils;
-import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
-import org.firstinspires.ftc.teamcode.robot.init.Robot;
-import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
-import java.util.Arrays;
-import java.util.Collections;
+import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 public class SpindexerSubsystem extends SubsystemBase {
 
@@ -19,8 +15,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public double spindexerOffset = 0;
 
-    public static double INTAKE_RAMP_ACTIVE = 1.0;
-    public static double INTAKE_RAMP_DEACTIVE = 0.0;
+    public static double INTAKE_RAMP_1_ACTIVE = 1.0;
+    public static double INTAKE_RAMP_1_DEACTIVE = 0.0;
+    public static double INTAKE_RAMP_2_ACTIVE = 1.0;
+    public static double INTAKE_RAMP_2_DEACTIVE = 0.0;
     public static double SHOOTER_RAMP_ACTIVE = 1.0;
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
     public static double WALL_ACTIVE = 1.0;
@@ -32,16 +30,17 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_INTAKING_SPEED = 1.0;
     public static double SHOOT_ONE_ROTATION = -(2/3)* Math.PI;
 
-    public double intakeRampPosition = INTAKE_RAMP_DEACTIVE;
+    public double intakeRampPosition1 = INTAKE_RAMP_1_DEACTIVE;
+    public double intakeRampPosition2 = INTAKE_RAMP_2_DEACTIVE;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
     public double wallPosition = WALL_DEACTIVE;
 
     public double spindexerPower = 0.0;
 
-    public static double leftPosition =(4/3)* Math.PI;
-    public static double rightPosition =(2/3)* Math.PI;
+    public static double leftPosition =(4D/3D)* Math.PI;
+    public static double rightPosition =(2D/3D)* Math.PI;
     public static double backPosition = 0.0;
-    public static double readyPosition = (1/6)* Math.PI; //position for the first ball as the ramp goes down
+    public static double readyPosition = (1D/6D)* Math.PI; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)}; // todo: this is currently duplicate, make it so it just uses the above 3 variables
 
 
@@ -98,14 +97,16 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void activateTransfer() {
         //this.initShootPos();
-        this.intakeRampPosition = INTAKE_RAMP_ACTIVE;
+        this.intakeRampPosition1 = INTAKE_RAMP_1_ACTIVE;
+        this.intakeRampPosition2 = INTAKE_RAMP_2_ACTIVE;
         this.shooterRampPosition = SHOOTER_RAMP_ACTIVE;
         this.wallPosition = WALL_ACTIVE;
         this.SHOOTER_INTAKE_SPEED = SHOOTER_INTAKING_SPEED;
     }
 
     public void deactivateTransfer() {
-        this.intakeRampPosition = INTAKE_RAMP_DEACTIVE;
+        this.intakeRampPosition1 = INTAKE_RAMP_1_DEACTIVE;
+        this.intakeRampPosition2 = INTAKE_RAMP_2_DEACTIVE;
         this.shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
         this.wallPosition = WALL_DEACTIVE;
         this.SHOOTER_INTAKE_SPEED = 0.0;
@@ -200,9 +201,10 @@ public class SpindexerSubsystem extends SubsystemBase {
         //0:top 1:right 2:left
         //returns char[]
 
-        this.hardware.spindexerIntakeRampServo.setPosition(this.intakeRampPosition);
-        this.hardware.spindexerShooterRampServo.setPosition(this.shooterRampPosition);
-        this.hardware.spindexerWallServo.setPosition(this.wallPosition);
+        this.hardware.spindexerIntakeRampServo1.setPosition(this.intakeRampPosition1);
+        this.hardware.spindexerIntakeRampServo2.setPosition(this.intakeRampPosition2);
+        this.hardware.spindexerTransferRampServo.setPosition(this.shooterRampPosition);
+        this.hardware.spindexerDiddyServo.setPosition(this.wallPosition);
 
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);

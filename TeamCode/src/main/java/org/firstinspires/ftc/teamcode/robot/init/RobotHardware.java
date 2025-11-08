@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
@@ -48,9 +47,10 @@ public class RobotHardware {
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
     public TerrorMotorNormal spindexerRotate;
-    public TerrorServo spindexerIntakeRampServo;
-    public TerrorServo spindexerShooterRampServo;
-    public TerrorServo spindexerWallServo;
+    public TerrorServo spindexerIntakeRampServo1;
+    public TerrorServo spindexerIntakeRampServo2;
+    public TerrorServo spindexerDiddyServo;
+    public TerrorServo spindexerTransferRampServo;
     public TerrorEncoder spindexerEncoder;
 
     /*
@@ -186,10 +186,12 @@ public class RobotHardware {
                 hwMap.get(ColorSensor.class, "rightSensor")
         );
 
-        this.spindexerIntakeRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp"));
-        this.spindexerShooterRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
-        this.spindexerWallServo = new TerrorServo(hwMap.get(Servo.class, "spindexerWall"));
-        this.publisher.subscribe(10, spindexerRotate, spindexerIntakeRampServo, spindexerWallServo, spindexerShooterRampServo);
+        this.spindexerIntakeRampServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp1"));
+        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
+        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
+        this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "spindexerWall"));
+        this.publisher.subscribe(10, spindexerRotate, spindexerIntakeRampServo1,
+                spindexerIntakeRampServo2, spindexerDiddyServo, spindexerTransferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
