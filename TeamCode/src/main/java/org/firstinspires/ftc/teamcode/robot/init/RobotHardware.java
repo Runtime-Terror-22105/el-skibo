@@ -171,14 +171,15 @@ public class RobotHardware {
 
 
         // Initialize the spindexer
-//        this.spindexerRotate = new TerrorMotorNormal(
-//                (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
-//                0.05,
-//                1.0
-//        );
-//        this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//
+        this.spindexerRotate = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
+                0.05,
+                1.0
+        );
+        this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.publisher.subscribe(10, spindexerRotate);
+
 //        this.topSensor = new TerrorColorSensor(
 //                hwMap.get(ColorSensor.class, "topSensor")
 //        );
@@ -193,7 +194,7 @@ public class RobotHardware {
 //        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
 //        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
 //        this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "spindexerWall"));
-//        this.publisher.subscribe(10, spindexerRotate, spindexerIntakeRampServo1,
+//        this.publisher.subscribe(10, spindexerIntakeRampServo1,
 //                spindexerIntakeRampServo2, spindexerDiddyServo, spindexerTransferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
@@ -203,15 +204,17 @@ public class RobotHardware {
         this.spindexerEncoder.setDirection(TerrorEncoder.Direction.FORWARD); // TODO: figure out spindexer encoder direction
 
         // Initialize the intake
-//        this.intake = new TerrorMotorNormal(
-//                (DcMotorEx) hwMap.get(DcMotor.class, "intake"),
-//                0.05,
-//                1.0
-//        );
+        this.intake = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "intake"),
+                0.05,
+                1.0
+        );
         // TODO: figure out intake motor direction
-//        this.intake.setDirection(FORWARD);
-//        this.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.intake.setDirection(FORWARD);
+        this.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.publisher.subscribe(10, intake);
+
 //        this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitch1"));
 //        this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitch2"));
 //        this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
