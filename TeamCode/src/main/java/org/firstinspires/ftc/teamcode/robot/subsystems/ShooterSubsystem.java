@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import static org.firstinspires.ftc.teamcode.robot.subsystems.ShotType.Arc;
+import static org.firstinspires.ftc.teamcode.robot.subsystems.ShotType.Straight;
+
 import android.util.Log;
 
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -75,10 +78,10 @@ public class ShooterSubsystem extends SubsystemBase {
         /** this is the function that should be called every loop
          rn i just have it supplying the bot pos, when we get localizer class i can impliment that instead
          i also take in the goal pos bc like red v blue, if theres a better way to do this lmk*/
-        this.doAutoShoot(botPos, goalPos, "arc");
+        this.doAutoShoot(botPos, goalPos, Arc);
     }
 
-    public void doAutoShoot(Pose2d botPos, Pose2d goalPos, String shotType){
+    public void doAutoShoot(Pose2d botPos, Pose2d goalPos, ShotType shotType){
         this.isAutoAimOn = true;
         this.doMath(botPos, goalPos, shotType, apexHeight);
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
@@ -113,7 +116,7 @@ public class ShooterSubsystem extends SubsystemBase {
         manualAim(this.goalVelocity, this.goalPitch, yaw);
     }
 
-    private void doMath(Pose2d botPos, Pose2d goalPos, String shotType, double arcHeight){
+    private void doMath(Pose2d botPos, Pose2d goalPos, ShotType shotType, double arcHeight){
         /**
          * attempts to calculate a velocity and angle from the robot position and our apex height
          * i let you pass in a different value other than apexHeight above bc we might want to change that later
@@ -127,7 +130,7 @@ public class ShooterSubsystem extends SubsystemBase {
         double targetV;
         double targetT;
 
-        while (true){
+        for(int failcount=0;failcount<8;failcount++){
             //my formulas
             double horDist = Math.sqrt(Math.pow((botPos.x-goalPos.x),2) +
                     Math.pow((botPos.y-goalPos.y),2)); //simple pythagrean therom
@@ -139,7 +142,7 @@ public class ShooterSubsystem extends SubsystemBase {
             double v1 = (Math.sqrt(2*g*h))/Math.sin(theta1);
             double v2 = (Math.sqrt(2*g*h))/Math.sin(theta2);
             //as said above, first values are more of an arc shot
-            if (shotType == "arc"){
+            if (shotType == Arc){
                 targetT = theta1;
                 targetV = v1;
             }
@@ -154,8 +157,8 @@ public class ShooterSubsystem extends SubsystemBase {
             if (targetV < minVelocity || targetV > maxVelocity || targetT < hoodAngleMin || targetT > hoodAngleMax){
                 if (failCount == 4){
                     h = apexHeight;
-                    if (shotType == "arc") shotType = "backboard";
-                    else shotType = "arc";
+                    if (shotType == Arc) shotType = Straight;
+                    else shotType = Arc;
                 }
                 else if (failCount == 8){
                     Log.e("shooter", "no valid velocity and angle found with given location and h");
@@ -167,7 +170,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 else if (targetV > maxVelocity || targetT > hoodAngleMax){
                     h -= 5;
                 }
-                failCount += 1;
+
             }
             else {
                 this.goalVelocity = targetV;
