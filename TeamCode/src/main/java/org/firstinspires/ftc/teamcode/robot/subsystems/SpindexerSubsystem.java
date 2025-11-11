@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
+@Config
 public class SpindexerSubsystem extends SubsystemBase {
 
     private enum COLOR {
@@ -59,6 +61,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(0.0);
+    }
+
+    public double getTargetYaw() {
+        return this.yawPid.getTargetPosition();
     }
 
     public void setYaw(double angle) { //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
