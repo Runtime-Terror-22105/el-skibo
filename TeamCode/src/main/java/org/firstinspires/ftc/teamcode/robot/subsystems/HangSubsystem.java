@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-
+@Config
 public class HangSubsystem extends SubsystemBase {
 
     private final RobotHardware hardware;
 
     private boolean ptoEngaged = false;
 
-    private double engagedPosition = 1;
-    private double disgagePosition = -1;
+    public static double engagedPosition = 1;
+    public static double disgagePosition = -1;
 
     public void setPTOState(boolean state)
     {
