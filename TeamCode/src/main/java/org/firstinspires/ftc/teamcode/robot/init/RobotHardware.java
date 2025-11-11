@@ -185,9 +185,9 @@ public class RobotHardware {
 //        this.leftSensor = new TerrorColorSensor(
 //                hwMap.get(ColorSensor.class, "leftSensor")
 //        );
-//        this.rightSensor = new TerrorColorSensor(
-//                hwMap.get(ColorSensor.class, "rightSensor")
-//        );
+        this.rightSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "rightSensor")
+        );
 
 //        this.spindexerIntakeRampServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp1"));
 //        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
