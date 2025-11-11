@@ -21,9 +21,37 @@ public class TerrorColorSensor implements ColorSensor {
     /**
     * returns if the color sensor sees this as G,P,orN(none)
      */
-    public char getGreenOrPurple()
-    {
-        return //i dont want to do this rn do something about sensor.red within range and the stuff just steal my color masking or smth im tired
+    public char getGreenOrPurple() {
+        int r = red();
+        int g = green();
+        int b = blue();
+
+        float[] hsv = new float[3];
+        Color.RGBToHSV(
+            Math.max(0, Math.min(255, r)),
+            Math.max(0, Math.min(255, g)),
+            Math.max(0, Math.min(255, b)),
+            hsv
+        );
+
+        float hue = hsv[0];
+        float sat = hsv[1];
+        float val = hsv[2];
+
+        // low brightness/saturation = probs nothing
+        if (val < 0.15f || sat < 0.2f) {
+            return 'N';
+        }
+
+        if (hue >= 80f && hue <= 160f) { // green hue range (~80–160 deg)
+            return 'G';
+        }
+
+        if (hue >= 250f && hue <= 320f) { // purple hue range (~250–320 deg)
+            return 'P';
+        }
+
+        return 'N';
     }
 
     @Override
