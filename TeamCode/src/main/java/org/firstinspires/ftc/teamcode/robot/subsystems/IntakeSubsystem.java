@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
+@Config
 public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
