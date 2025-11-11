@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 import android.util.Size;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.AprilTag.AprilTagPipeline;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.Spindexer.SpindexerPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -20,13 +19,12 @@ import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.ArrayList;
 
-@TeleOp
+@Config
 public class CameraSubsystem extends SubsystemBase
 {
     private OpenCvCamera aprilTagCamera;
     private OpenCvCamera spindexerCamera;
     
-    private AprilTagPipeline aprilTagPipeline;
 
     Telemetry telemetry;
     private AprilTagProcessor aTagProcessor;
@@ -56,7 +54,6 @@ public class CameraSubsystem extends SubsystemBase
 
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public final VisionPortal vPortalField;
-    public final VisionPortal vPortalSpindexer;
 
     private ArrayList<AprilTagDetection> detections;
 
@@ -118,7 +115,7 @@ public class CameraSubsystem extends SubsystemBase
         }
     }
 
-    public boolean hasDetection() {
+    public boolean hasDetections() {
         return !detections.isEmpty();
     }
 
