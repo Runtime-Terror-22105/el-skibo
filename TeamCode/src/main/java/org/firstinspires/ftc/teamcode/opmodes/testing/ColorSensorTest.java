@@ -21,6 +21,14 @@ public class ColorSensorTest extends LinearOpMode {
             telemetry.addData("right sensor green", hardware.rightSensor.green());
             telemetry.addData("right sensor blue", hardware.rightSensor.blue());
 
+            telemetry.addData("left sensor red", hardware.leftSensor.red());
+            telemetry.addData("left sensor green", hardware.leftSensor.green());
+            telemetry.addData("left sensor blue", hardware.leftSensor.blue());
+
+            telemetry.addData("top sensor red", hardware.topSensor.red());
+            telemetry.addData("top sensor green", hardware.topSensor.green());
+            telemetry.addData("top sensor blue", hardware.topSensor.blue());
+            telemetry.update();
         }
     }
 }
