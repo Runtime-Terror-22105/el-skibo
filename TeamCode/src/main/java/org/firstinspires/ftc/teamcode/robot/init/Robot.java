@@ -103,4 +103,12 @@ public class Robot {
     public void write() {
         hardware.write();
     }
+
+    /**
+     * Returns the robot's current state.
+     * @return the robot's current state.
+     */
+    public RobotState getState() {
+        return robotState;
+    }
 }
