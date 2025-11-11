@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 @Config
-@TeleOp(group="Shooter Tuner")
-public class shooterTuner extends LinearOpMode {
+@TeleOp(name="Shooter Tuner", group="Tuning")
+public class ShooterTuner extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
