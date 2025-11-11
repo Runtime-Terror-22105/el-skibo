@@ -16,6 +16,9 @@ public class MotorTest extends LinearOpMode {
     public static double REAR_LEFT_POWER = 0;
     public static double REAR_RIGHT_POWER = 0;
 
+    public static double spindexerRotateMotorPower = 0;
+    public static double intakeMotorPower = 0;
+
     private final RobotHardware hardware = new RobotHardware();
 
     @Override
@@ -34,6 +37,8 @@ public class MotorTest extends LinearOpMode {
             hardware.motorFrontRight.setPower(FRONT_RIGHT_POWER);
             hardware.motorRearLeft.setPower(REAR_LEFT_POWER);
             hardware.motorRearRight.setPower(REAR_RIGHT_POWER);
+            hardware.spindexerRotate.setPower(spindexerRotateMotorPower);
+            hardware.intake.setPower(intakeMotorPower);
 
             hardware.write();
         }
