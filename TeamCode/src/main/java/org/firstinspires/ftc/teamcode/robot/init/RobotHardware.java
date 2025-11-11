@@ -179,15 +179,15 @@ public class RobotHardware {
 //        this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //
-//        this.topSensor = new TerrorColorSensor(
-//                hwMap.get(ColorSensor.class, "topSensor")
-//        );
-//        this.leftSensor = new TerrorColorSensor(
-//                hwMap.get(ColorSensor.class, "leftSensor")
-//        );
-//        this.rightSensor = new TerrorColorSensor(
-//                hwMap.get(ColorSensor.class, "rightSensor")
-//        );
+        this.topSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "topSensor")
+        );
+        this.leftSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "leftSensor")
+        );
+        this.rightSensor = new TerrorColorSensor(
+                hwMap.get(ColorSensor.class, "rightSensor")
+        );
 
 //        this.spindexerIntakeRampServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp1"));
 //        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
