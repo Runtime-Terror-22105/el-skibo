@@ -4,6 +4,9 @@ import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.AprilTag.AprilTagPipeline;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -11,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.Spindexer.SpindexerPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 
@@ -21,7 +25,11 @@ public class CameraSubsystem extends SubsystemBase
 {
     private OpenCvCamera aprilTagCamera;
     private OpenCvCamera spindexerCamera;
+    
+    private AprilTagPipeline aprilTagPipeline;
 
+    Telemetry telemetry;
+    private AprilTagProcessor aTagProcessor;
     public enum GLYPH {
         GPP,PGP,PPG
     }
@@ -29,7 +37,7 @@ public class CameraSubsystem extends SubsystemBase
     public enum LiveViewSettings { OFF, SPINDEXER, FIELD }
 
 
-    private GLYPH gameGlyph;
+    public GLYPH gameGlyph;
     private boolean decodedGlyph = false; //when the movie uses the title of the movie
 
     public GLYPH getGlyph()
@@ -37,27 +45,35 @@ public class CameraSubsystem extends SubsystemBase
         return gameGlyph;
     }
 
-    public final SpindexerPipeline spindexerPipeline;
-    public final AprilTagProcessor atagPipeline;
+    /**
+     * @return order of the balls in the spindexer with top:0 right:1 left:2
+     * G/P:colors, N:no ball detected
+     */
+//    public char[] getBalls()
+//    {
+//        return spindexerPipeline.getBalls();
+//    }
+
+    private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public final VisionPortal vPortalField;
     public final VisionPortal vPortalSpindexer;
 
     private ArrayList<AprilTagDetection> detections;
 
     public CameraSubsystem(RobotHardware hardware, LiveViewSettings liveViewSettings) {
-        this.atagPipeline = createAprilTagProcessor();
-        this.spindexerPipeline = new SpindexerPipeline();
+        this.aTagProcessor = createAprilTagProcessor();
+//        this.spindexerPipeline = new SpindexerPipeline(telemetry);
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
                 .setCameraResolution(new Size(320, 240))
-//                .addProcessor(this.spindexerPipeline)
-                .addProcessor(this.atagPipeline);
+//                .addProcessor(this.spindexerPipeline) //sad emoji
+                .addProcessor(this.aTagProcessor);
 
-        VisionPortal.Builder vPortalSpindexerBuilder = new VisionPortal.Builder()
-                .setCamera(hardware.fieldCamera)
-                .setCameraResolution(new Size(320, 240))
-                .addProcessor(this.spindexerPipeline);
+//        VisionPortal.Builder vPortalSpindexerBuilder = new VisionPortal.Builder()
+//                .setCamera(hardware.fieldCamera)
+//                .setCameraResolution(new Size(320, 240))
+//                .addProcessor(this.spindexerPipeline);
 
 
         switch (liveViewSettings) {
@@ -70,7 +86,7 @@ public class CameraSubsystem extends SubsystemBase
         }
 
         vPortalField = vPortalFieldBuilder.build();
-        vPortalSpindexer = vPortalSpindexerBuilder.build();
+//        vPortalSpindexer = vPortalSpindexerBuilder.build();
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
@@ -80,9 +96,9 @@ public class CameraSubsystem extends SubsystemBase
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
                 .setSuppressCalibrationWarnings(false)
+                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
 //                    .setLensIntrinsics() // TODO: placeholder to remind us to calibrate the camera
-//                    .setTagFamily() // TODO: placeholder
-//                    .setTagLibrary() // TODO: placeholder
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .build();
@@ -90,7 +106,7 @@ public class CameraSubsystem extends SubsystemBase
 
     @Override
     public void periodic() {
-        this.detections = atagPipeline.getDetections();
+        this.detections = aTagProcessor.getDetections();
 
         for(AprilTagDetection tag : detections)
         {
@@ -100,6 +116,10 @@ public class CameraSubsystem extends SubsystemBase
                 decodedGlyph = true;
             }
         }
+    }
+
+    public boolean hasDetection() {
+        return !detections.isEmpty();
     }
 
     public Pose2d getPositionCamera()

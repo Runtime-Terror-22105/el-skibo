@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
 public class GoToClimbStateCommand extends SequentialCommandGroup {
+    public Robot robot;
     public GoToClimbStateCommand(Robot robot) {
         super(new ParallelCommandGroup(
                 new InstantCommand(() -> robot.robotState = RobotState.CLIMBING),

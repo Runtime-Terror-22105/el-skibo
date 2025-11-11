@@ -5,28 +5,38 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.CLIMBING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.button.GamepadButton;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
+import com.seattlesolvers.solverslib.gamepad.ToggleButtonReader;
+import com.seattlesolvers.solverslib.gamepad.TriggerReader;
 
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorGamepad;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.StateTag;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.*;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
 public abstract class TerrorTeleOp extends LinearOpMode {
 
-    public static double ROTATION_MULTIPLIER = 0.56;
-    // If you use a manual override on the turret, it will take this long before it starts autoaiming again
+    public static double ROTATION_MULTIPLIER = 0.56; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
     public static double TURRET_OVERRIDE_COOLDOWN = 2.0;
 
     private RobotHardware hardware = new RobotHardware();
@@ -42,139 +52,71 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
 
     public void runOpMode(){
-        if (isFieldCentric) {
-            hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.PINPOINT);
-        } else {
-            hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        }
+
+        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
+
         robot.init(hardware, telemetry);
 
         waitForStart();
+        GamepadEx gamepad1ex=new GamepadEx(gamepad1);
+        GamepadEx gamepad2ex=new GamepadEx(gamepad2);
 
-        TerrorGamepad gamepad1ex = new TerrorGamepad();
-        TerrorGamepad gamepad2ex = new TerrorGamepad();
 
-        ElapsedTime loopTimer = new ElapsedTime();
-        ElapsedTime turretOverrideTimer = new ElapsedTime();
+        // driver 1
+        GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
+        GamepadButton intakeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
+        GamepadButton rejectButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
+        GamepadButton restingButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
 
-        robot.setState(RESTING);
+        GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
+        GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
+
+        hangButton.whenPressed(new GoToClimbStateCommand(robot));
+        intakeButton.whenPressed(new GoToIntakeStateCommand(robot));
+        shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter));
+        shoot1button.whenPressed(new ShootOneBallCommand(robot.shooter));
+        rejectButton.whenPressed(new StartShooterRejectCommand(robot.shooter));
+        restingButton.whenPressed(new GoToRestingStateCommand(robot));
+
+
+        // driver 2
+        GamepadButton motifPGPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);
+        GamepadButton motifGPPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.Y);
+        GamepadButton motifPPGButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
+
+
+        motifPGPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PGP ));
+        motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
+        motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
+
+        // homing command executing here
+        SpindexerHoming homingCommand = new SpindexerHoming(robot.spindexer);
+        CommandScheduler.getInstance().schedule(homingCommand);
 
         while (opModeIsActive()){
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
 
-            //update gamepads
-            gamepad1ex.update(gamepad1);
-            gamepad2ex.update(gamepad2);
+            //gamepad 1
 
-
-            //driving, I just copied from last years teleop
+            // driving
             double deadzone_amt = 0;
-
-            double left_x = gamepad1ex.left_stick_x();
-            double left_y = -gamepad1ex.left_stick_y();
-            double right_x = gamepad1ex.right_stick_x();
-
+            double left_x = gamepad1ex.getLeftX();
+            double left_y = -gamepad1ex.getLeftY();
+            double right_x = gamepad1ex.getRightX();
             left_x = Math.signum(left_x) * Algebra.mapRange(Math.abs(left_x), deadzone_amt, 1.0, 0.0, 1.0);
             left_y = Math.signum(left_y) * Algebra.mapRange(Math.abs(left_y), deadzone_amt, 1.0, 0.0, 1.0);
             right_x = Math.signum(right_x) * Algebra.mapRange(Math.abs(right_x), deadzone_amt, 1.0, 0.0, 1.0);
-
             Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
-
             double rotation = slr(right_x)*ROTATION_MULTIPLIER;
-            if (isFieldCentric) {
-                robot.localizer.readIMU();
-                double robotAngle = robot.localizer.getHeading();
-                if (Double.isNaN(robotAngle)) {
-                    // don't drive if NaN
-                    direction = new Coordinate(0, 0);
-                } else {
-                    direction.rotate(-robotAngle);
-                }
-            }
 
         }
-
-        //manual turret override with joystick
-
-        //deadzone in 0.2, unless you are already adjusting the turret
-        double deadzoneTurret = 0.2;
-        if (turretOverrideTimer.seconds() < TURRET_OVERRIDE_COOLDOWN){
-            deadzoneTurret = 0.0;
-        }
-
-        double right_y = gamepad1ex.right_stick_y();
-        double pitch_angle = Algebra.mapRange(right_y, -1, 1.0, ShooterSubsystem.hoodAngleMin, ShooterSubsystem.hoodAngleMax);
-        if (Math.abs(right_y) < deadzoneTurret){
-            turretOverrideTimer.reset();
-            robot.shooter.setPitch(pitch_angle);
-        }
-
-        if (robot.getState().checkTag(StateTag.FLYWHEEL_ON) && turretOverrideTimer.seconds() > TURRET_OVERRIDE_COOLDOWN){
-            robot.shooter.doAutoShoot(robot.localizer.getPosition(), this.goalPos);
-        }
-
-        //shoot three balls
-        if (gamepad1ex.a(RISING)){
-            //shoot 3 balls
-        }
-
-        //reject ball
-        if (gamepad1ex.b(RISING)){
-            turretOverrideTimer.reset();
-            robot.shooter.manualAim(ShooterSubsystem.minVelocity, ShooterSubsystem.hoodAngleMax, robot.shooter.getTargetAngle());
-            //shoot
-        }
-
-        //shoot 1 ball
-        if (gamepad1ex.x(RISING)){
-            //shoot 1 ball
-        }
-
-        //manual spindexer overide
-        if (gamepad1ex.left_bumper(RISING)) {
-            //rotate spindexer to the right
-        }
-        if (gamepad1ex.right_bumper(RISING)){
-            //rotate spindexer to the left
-        }
-
-        //set shooting and intaking atate
-        if (gamepad1ex.left_trigger() > 0.5){
-            robot.setState(SHOOTING);
-        }
-        else if(gamepad1ex.right_trigger() > 0.5){
-            robot.setState(INTAKING);
-        }
-
-
-        //climb
-        if (gamepad1ex.dpad_up(RISING)){
-            robot.setState(CLIMBING);
-        }
-
-        // update the subsystems
-        CommandScheduler.getInstance().run();
-
-        robot.telemetry.addData("Current State", robot.getState().toString());
-        robot.telemetry.addData("Current Pos", robot.localizer.getPosition());
-        robot.telemetry.addData("Is auto aim on", robot.shooter.isAutoAimOn);
-        robot.telemetry.addData("Shooter Goal velocity", robot.shooter.getTargetVelocity());
-        robot.telemetry.addData("Shooter Goal pitch", robot.shooter.getTargetPitch());
-        robot.telemetry.addData("Shooter Goal angle", robot.shooter.getTargetAngle());
-        //prob some more stuff about
-
-
-        robot.telemetry.update();
-
-        // endregion
-
-        loopTimer.reset();
-
-
 
     }
+
+
+
     public double slr(double joystick_value) {
         return Math.pow(joystick_value, 5);
     }
