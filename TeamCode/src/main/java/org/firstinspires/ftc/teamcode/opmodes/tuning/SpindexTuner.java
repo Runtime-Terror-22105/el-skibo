@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 @Config
-@TeleOp(group="Spindexer Tuner")
-public class spindexTuner extends LinearOpMode {
+@TeleOp(name="Spindexer Tuner", group="Tuning")
+public class SpindexTuner extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
