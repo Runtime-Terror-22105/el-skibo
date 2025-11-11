@@ -171,7 +171,6 @@ public class RobotHardware {
 
 
         // Initialize the spindexer
-<<<<<<< HEAD
         this.spindexerRotate = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
                 0.05,
