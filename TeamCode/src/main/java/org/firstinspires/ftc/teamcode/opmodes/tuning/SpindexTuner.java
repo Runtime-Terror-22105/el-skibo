@@ -40,7 +40,7 @@ public class SpindexTuner extends LinearOpMode {
             hardware.write();
 
             robot.telemetry.addData("Yaw of Spindexer",goalAngle);
-            robot.telemetry.addData("Current angle",robot.shooter.getShooterVelocity());
+            robot.telemetry.addData("Current angle",robot.spindexer.getPosition());
             robot.telemetry.update();
 
         }

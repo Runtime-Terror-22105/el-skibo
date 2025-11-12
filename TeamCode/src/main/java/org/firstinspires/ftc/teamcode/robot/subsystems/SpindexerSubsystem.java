@@ -77,7 +77,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void updateSpindexer(){
 //        if(hardware.spindexerEncoder.getCurrentPosition())
-        this.spindexerPower= yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition()+this.spindexerOffset,0);
+        this.spindexerPower= yawPid.calculatePower(getPosition(),0);
         // setting pid power into the spindexer
     }
 
