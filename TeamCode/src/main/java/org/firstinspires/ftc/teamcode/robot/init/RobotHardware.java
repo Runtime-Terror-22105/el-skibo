@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -181,15 +182,14 @@ public class RobotHardware {
         this.publisher.subscribe(10, spindexerRotate);
 
         this.topSensor = new TerrorColorSensor(
-                hwMap.get(ColorSensor.class, "topSensor")
+                hwMap.get(RevColorSensorV3.class, "topSensor")
         );
         this.leftSensor = new TerrorColorSensor(
-                hwMap.get(ColorSensor.class, "leftSensor")
+                hwMap.get(RevColorSensorV3.class, "leftSensor")
         );
         this.rightSensor = new TerrorColorSensor(
-                hwMap.get(ColorSensor.class, "rightSensor")
+                hwMap.get(RevColorSensorV3.class, "rightSensor")
         );
-
 //        this.spindexerIntakeRampServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp1"));
 //        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
 //        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
@@ -209,8 +209,7 @@ public class RobotHardware {
                 0.05,
                 1.0
         );
-        // TODO: figure out intake motor direction
-        this.intake.setDirection(FORWARD);
+        this.intake.setDirection(REVERSE);
         this.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
