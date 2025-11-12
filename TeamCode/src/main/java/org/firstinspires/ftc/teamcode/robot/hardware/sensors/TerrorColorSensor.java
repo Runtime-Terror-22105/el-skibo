@@ -4,15 +4,17 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class TerrorColorSensor implements ColorSensor {
 
-    private final ColorSensor sensor;
+    private final RevColorSensorV3 sensor;
 
-    public TerrorColorSensor(@NonNull ColorSensor sensor)
+    public TerrorColorSensor(@NonNull RevColorSensorV3 sensor)
     {
         this.sensor = sensor;
     }
@@ -22,15 +24,13 @@ public class TerrorColorSensor implements ColorSensor {
     * returns if the color sensor sees this as G,P,orN(none)
      */
     public char getGreenOrPurple() {
-        int r = red();
-        int g = green();
-        int b = blue();
+        NormalizedRGBA colors = getNormalizedColors();
 
         float[] hsv = new float[3];
         Color.RGBToHSV(
-            Math.max(0, Math.min(255, r)),
-            Math.max(0, Math.min(255, g)),
-            Math.max(0, Math.min(255, b)),
+            Math.max(0, (int) (Math.min(255, colors.red) * 255)),
+            Math.max(0, (int) (Math.min(255, colors.green) * 255)),
+            Math.max(0, (int) (Math.min(255, colors.blue) * 255)),
             hsv
         );
 
@@ -52,6 +52,10 @@ public class TerrorColorSensor implements ColorSensor {
         }
 
         return 'N';
+    }
+
+    public NormalizedRGBA getNormalizedColors() {
+        return sensor.getNormalizedColors();
     }
 
     @Override
