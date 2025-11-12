@@ -222,8 +222,8 @@ public class RobotHardware {
 //        this.publisher.subscribe(10,spindexerPTO);
 
         // Limit switch
-//        this.spindexerLimitSwitch = hwMap.get(DigitalChannel.class, "spindexerLimitSwitch");
-//        this.spindexerLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        this.spindexerLimitSwitch = hwMap.get(DigitalChannel.class, "spindexerLimitSwitch");
+        this.spindexerLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
