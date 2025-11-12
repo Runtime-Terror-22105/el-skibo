@@ -52,7 +52,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         BACK
     }
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.014, 0, 0, 1, 0);
+            new PidfController.PidfCoefficients(0.011, 0, 0.00001, 0, 0);
     public static double yawPidTolerance = 0.1;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
@@ -77,7 +77,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void updateSpindexer(){
 //        if(hardware.spindexerEncoder.getCurrentPosition())
-        this.spindexerPower= yawPid.calculatePower(hardware.spindexerEncoder.getCurrentPosition()+this.spindexerOffset,0);
+        this.spindexerPower= yawPid.calculatePower(getPosition(),0);
         // setting pid power into the spindexer
     }
 
