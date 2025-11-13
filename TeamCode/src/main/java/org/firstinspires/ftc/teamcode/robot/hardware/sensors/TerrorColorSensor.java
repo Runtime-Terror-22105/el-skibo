@@ -7,10 +7,11 @@ import androidx.annotation.NonNull;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class TerrorColorSensor implements ColorSensor {
+public class TerrorColorSensor implements NormalizedColorSensor {
 
     private final RevColorSensorV3 sensor;
 
@@ -59,43 +60,13 @@ public class TerrorColorSensor implements ColorSensor {
     }
 
     @Override
-    public int red() {
-        return sensor.red();
+    public float getGain() {
+        return 0;
     }
 
     @Override
-    public int green() {
-        return sensor.green();
-    }
+    public void setGain(float newGain) {
 
-    @Override
-    public int blue() {
-        return sensor.blue();
-    }
-
-    @Override
-    public int alpha() {
-        return sensor.alpha();
-    }
-
-    @Override
-    public int argb() {
-        return sensor.argb();
-    }
-
-    @Override
-    public void enableLed(boolean enable) {
-        sensor.enableLed(enable);
-    }
-
-    @Override
-    public void setI2cAddress(I2cAddr newAddress) {
-        sensor.setI2cAddress(newAddress);
-    }
-
-    @Override
-    public I2cAddr getI2cAddress() {
-        return sensor.getI2cAddress();
     }
 
     @Override
