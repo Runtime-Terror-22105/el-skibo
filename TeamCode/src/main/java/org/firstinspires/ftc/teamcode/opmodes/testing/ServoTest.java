@@ -4,15 +4,21 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+
+import java.util.Objects;
 
 @TeleOp(name = "Servo Test", group = "Testing")
 @Config
 public class ServoTest extends LinearOpMode {
     // targets
-    public static double TURRET_YAW_LEFT_POS = 0.5;
-    public static double TURRET_YAW_RIGHT_POS = 0.5;
+    public static String servoName = "";
+    public static double servoPosition = 0D;
+//    public static double TURRET_YAW_LEFT_POS = 0.5;
+//    public static double TURRET_YAW_RIGHT_POS = 0.5;
 //    public static double SHOOTER_PITCH_POS = 0.5;
 //    public static double SPINDEXER_INTAKE_RAMP_1_POS = 0.5;
 //    public static double SPINDEXER_INTAKE_RAMP_2_POS = 0.5;
@@ -21,9 +27,9 @@ public class ServoTest extends LinearOpMode {
 //    public static double INTAKE_PITCH_1_POS = 0.5;
 //    public static double INTAKE_PITCH_2_POS = 0.5;
 //    public static double SPINDEXER_PTO_POS = 0.5;
-
-    public static boolean doTurretLeft = false;
-    public static boolean doTurretRight = false;
+//
+//    public static boolean doTurretLeft = false;
+//    public static boolean doTurretRight = false;
 //    public static boolean doShooterPitch = false;
 //    public static boolean doSpindexerIntakeRamps = false;
 //    public static boolean doSpindexerDiddy = false;
@@ -45,11 +51,15 @@ public class ServoTest extends LinearOpMode {
                 }
             }
 
-            if (doTurretLeft) {
-                if (hardware.turretYawLeft != null) hardware.turretYawLeft.setPosition(TURRET_YAW_LEFT_POS);
+            if (!servoName.isEmpty()) {
+                hardwareMap.get(Servo.class, servoName).setPosition(servoPosition);
             }
-            if (doTurretRight)
-                if (hardware.turretYawRight != null) hardware.turretYawRight.setPosition(TURRET_YAW_RIGHT_POS);
+
+//            if (doTurretLeft) {
+//                if (hardware.turretYawLeft != null) hardware.turretYawLeft.setPosition(TURRET_YAW_LEFT_POS);
+//            }
+//            if (doTurretRight)
+//                if (hardware.turretYawRight != null) hardware.turretYawRight.setPosition(TURRET_YAW_RIGHT_POS);
 //            if (doShooterPitch && hardware.shooterPitch != null) {
 //                hardware.shooterPitch.setPosition(SHOOTER_PITCH_POS);
 //            }
