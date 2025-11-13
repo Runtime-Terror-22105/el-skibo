@@ -111,6 +111,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
             double rotation = slr(right_x)*ROTATION_MULTIPLIER;
 
+            CommandScheduler.getInstance().run();
         }
 
     }
