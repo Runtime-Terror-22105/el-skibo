@@ -31,7 +31,7 @@ public class SpindexHomingTest extends LinearOpMode {
                 hub.clearBulkCache();
             }
 
-            robot.spindexer.periodic();
+            CommandScheduler.getInstance().run();
 
 
             hardware.write();
