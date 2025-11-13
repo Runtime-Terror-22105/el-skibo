@@ -39,6 +39,7 @@ public class SpindexHomingTest extends LinearOpMode {
 
             robot.telemetry.addData("Current Position", robot.spindexer.getPosition());
             robot.telemetry.addData("Switch Pos", homing.limit);
+            robot.telemetry.addData("Raw Switch Pos", hardware.spindexerLimitSwitch.getState());
             robot.telemetry.addData("Seen Switch Start", homing.seenSwitchStart);
             robot.telemetry.addData("Switch Start", homing.switchStart);
             robot.telemetry.addData("Switch End", homing.switchEnd);
