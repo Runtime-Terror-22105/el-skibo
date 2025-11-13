@@ -42,10 +42,11 @@ public class RobotHardware {
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
 
+    public TerrorServo ramp;
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
     public TerrorMotorNormal shooterRight; // powers the flywheel
-    public TerrorServo shooterPitch;       // the hood for the shooter, changes its pitch
+    public TerrorServo shooterPitch;// the hood for the shooter, changes its pitch
     public TerrorEncoder shooterEncoder;   // i forgot to write the comment
 
     // Spindexer
@@ -214,9 +215,10 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-//        this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitch1"));
-//        this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitch2"));
-//        this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
+        this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitch1"));
+        this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitch2"));
+        this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
+        this.ramp = new TerrorServo(hwMap.get(Servo.class, "ramp"));
 //        this.publisher.subscribe(10,intakePitch1);
 //        this.publisher.subscribe(10, intakePitch2);
 //        this.publisher.subscribe(10,spindexerPTO);
