@@ -139,13 +139,13 @@ public class RobotHardware {
 
 
         // Initialize the turret
-//        this.turretYawLeft = new TerrorServo(
-//                hwMap.get(Servo.class, "turretYawLeft")
-//        );
-//        this.turretYawRight = new TerrorServo(
-//                hwMap.get(Servo.class, "turretYawRight")
-//        );
-//        this.publisher.subscribe(5, turretYawLeft, turretYawRight);
+        this.turretYawLeft = new TerrorServo(
+                hwMap.get(Servo.class, "turretYawLeft")
+        );
+        this.turretYawRight = new TerrorServo(
+                hwMap.get(Servo.class, "turretYawRight")
+        );
+        this.publisher.subscribe(5, turretYawLeft, turretYawRight);
 
 
         // Initialize the shooter
@@ -168,8 +168,8 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterPitch"));
-//        this.publisher.subscribe(5, shooterLeft, shooterRight, shooterPitch);
+        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterPitch"));
+        this.publisher.subscribe(5, shooterPitch);
 
 
         // Initialize the spindexer
