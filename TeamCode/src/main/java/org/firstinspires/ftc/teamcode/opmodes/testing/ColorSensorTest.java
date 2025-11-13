@@ -14,7 +14,6 @@ public class ColorSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO);
-
         waitForStart();
         while (opModeIsActive())
         {
