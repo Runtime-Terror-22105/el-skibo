@@ -15,8 +15,8 @@ public class SpindexerHoming extends CommandBase {
     public double switchEnd = Double.NaN;
     private double initialPosition = 0.0;
 
-    public static double MAX_ROTATION_TICKS = 120.0;
-    public static double POWER = 0.5;
+    public static double MAX_ROTATION_TICKS = 1200.0;
+    public static double POWER = 0.2;
 
     public SpindexerHoming(SpindexerSubsystem spindexer) {
         this.spindexer = spindexer;
