@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 @TeleOp
@@ -18,22 +19,19 @@ public class ColorSensorTest extends LinearOpMode {
         while (opModeIsActive())
         {
             NormalizedRGBA right = hardware.rightSensor.getNormalizedColors();
-            telemetry.addData("right sensor red", right.red * 255);
-            telemetry.addData("right sensor red RAW", right.red);
-            telemetry.addData("right sensor green", right.green * 255);
-            telemetry.addData("right sensor blue", right.blue * 255);
+            telemetry.addData("color", hardware.rightSensor.getVersion());
+
+
+            telemetry.addData("right sensor red", hardware.rightSensor.getRed());
+            telemetry.addData("right sensor green",  hardware.rightSensor.getGreen());
+            telemetry.addData("right sensor blue", hardware.rightSensor.getBlue());
             telemetry.addData("right sensor color", hardware.rightSensor.getGreenOrPurple());
+            telemetry.addData("distance", hardware.rightSensor.getDist(DistanceUnit.MM));
 
             NormalizedRGBA left = hardware.leftSensor.getNormalizedColors();
-            telemetry.addData("left sensor red", left.red * 255);
-            telemetry.addData("left sensor green", left.green * 255);
-            telemetry.addData("left sensor blue", left.blue * 255);
             telemetry.addData("left sensor color", hardware.leftSensor.getGreenOrPurple());
 
             NormalizedRGBA top = hardware.topSensor.getNormalizedColors();
-            telemetry.addData("top sensor red", top.red * 255);
-            telemetry.addData("top sensor green", top.green * 255);
-            telemetry.addData("top sensor blue", top.blue * 255);
             telemetry.addData("top sensor color", hardware.topSensor.getGreenOrPurple());
             telemetry.update();
         }

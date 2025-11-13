@@ -5,11 +5,10 @@ import android.graphics.Color;
 import androidx.annotation.NonNull;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class TerrorColorSensor implements NormalizedColorSensor {
 
@@ -24,14 +23,30 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     /**
     * returns if the color sensor sees this as G,P,orN(none)
      */
+    public double getGreen(){
+        return ((double)sensor.green())/65535.0*255.0;
+    }
+
+    public double getRed(){
+        return ((double)sensor.red())/65535.0*255.0;
+    }
+
+    public double getBlue(){
+        return ((double)sensor.blue())/65535.0*255.0;
+    }
+
+    public double getDist(DistanceUnit unit){
+        return sensor.getDistance(unit);
+    }
+
     public char getGreenOrPurple() {
-        NormalizedRGBA colors = getNormalizedColors();
 
         float[] hsv = new float[3];
+
         Color.RGBToHSV(
-                (int)colors.red*255,
-                (int)colors.green*255,
-                (int)colors.blue*255,
+                sensor.red(),
+                sensor.green(),
+                sensor.blue(),
                 hsv
         );
 
