@@ -29,17 +29,17 @@ public class TerrorColorSensor implements NormalizedColorSensor {
 
         float[] hsv = new float[3];
         Color.RGBToHSV(
-            Math.max(0, (int) (Math.min(255, colors.red) * 255)),
-            Math.max(0, (int) (Math.min(255, colors.green) * 255)),
-            Math.max(0, (int) (Math.min(255, colors.blue) * 255)),
-            hsv
+                (int)colors.red*255,
+                (int)colors.green*255,
+                (int)colors.blue*255,
+                hsv
         );
 
         float hue = hsv[0];
         float sat = hsv[1];
         float val = hsv[2];
 
-        // low brightness/saturation = probs nothing
+//        // low brightness/saturation = probs nothing
         if (val < 0.15f || sat < 0.2f) {
             return 'N';
         }
