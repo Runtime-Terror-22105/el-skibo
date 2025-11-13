@@ -7,10 +7,11 @@ import androidx.annotation.NonNull;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class TerrorColorSensor implements ColorSensor {
+public class TerrorColorSensor implements NormalizedColorSensor {
 
     private final RevColorSensorV3 sensor;
 
@@ -28,17 +29,17 @@ public class TerrorColorSensor implements ColorSensor {
 
         float[] hsv = new float[3];
         Color.RGBToHSV(
-            Math.max(0, (int) (Math.min(255, colors.red) * 255)),
-            Math.max(0, (int) (Math.min(255, colors.green) * 255)),
-            Math.max(0, (int) (Math.min(255, colors.blue) * 255)),
-            hsv
+                (int)colors.red*255,
+                (int)colors.green*255,
+                (int)colors.blue*255,
+                hsv
         );
 
         float hue = hsv[0];
         float sat = hsv[1];
         float val = hsv[2];
 
-        // low brightness/saturation = probs nothing
+//        // low brightness/saturation = probs nothing
         if (val < 0.15f || sat < 0.2f) {
             return 'N';
         }
@@ -59,43 +60,13 @@ public class TerrorColorSensor implements ColorSensor {
     }
 
     @Override
-    public int red() {
-        return sensor.red();
+    public float getGain() {
+        return 0;
     }
 
     @Override
-    public int green() {
-        return sensor.green();
-    }
+    public void setGain(float newGain) {
 
-    @Override
-    public int blue() {
-        return sensor.blue();
-    }
-
-    @Override
-    public int alpha() {
-        return sensor.alpha();
-    }
-
-    @Override
-    public int argb() {
-        return sensor.argb();
-    }
-
-    @Override
-    public void enableLed(boolean enable) {
-        sensor.enableLed(enable);
-    }
-
-    @Override
-    public void setI2cAddress(I2cAddr newAddress) {
-        sensor.setI2cAddress(newAddress);
-    }
-
-    @Override
-    public I2cAddr getI2cAddress() {
-        return sensor.getI2cAddress();
     }
 
     @Override
