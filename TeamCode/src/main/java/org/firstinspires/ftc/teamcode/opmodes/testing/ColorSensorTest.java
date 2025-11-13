@@ -14,24 +14,27 @@ public class ColorSensorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO);
-
         waitForStart();
         while (opModeIsActive())
         {
             NormalizedRGBA right = hardware.rightSensor.getNormalizedColors();
             telemetry.addData("right sensor red", right.red * 255);
+            telemetry.addData("right sensor red RAW", right.red);
             telemetry.addData("right sensor green", right.green * 255);
             telemetry.addData("right sensor blue", right.blue * 255);
+            telemetry.addData("right sensor color", hardware.rightSensor.getGreenOrPurple());
 
             NormalizedRGBA left = hardware.leftSensor.getNormalizedColors();
             telemetry.addData("left sensor red", left.red * 255);
             telemetry.addData("left sensor green", left.green * 255);
             telemetry.addData("left sensor blue", left.blue * 255);
+            telemetry.addData("left sensor color", hardware.leftSensor.getGreenOrPurple());
 
             NormalizedRGBA top = hardware.topSensor.getNormalizedColors();
             telemetry.addData("top sensor red", top.red * 255);
             telemetry.addData("top sensor green", top.green * 255);
             telemetry.addData("top sensor blue", top.blue * 255);
+            telemetry.addData("top sensor color", hardware.topSensor.getGreenOrPurple());
             telemetry.update();
         }
     }
