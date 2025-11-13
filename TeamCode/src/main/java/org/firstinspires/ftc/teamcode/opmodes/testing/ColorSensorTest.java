@@ -19,6 +19,7 @@ public class ColorSensorTest extends LinearOpMode {
         {
             NormalizedRGBA right = hardware.rightSensor.getNormalizedColors();
             telemetry.addData("right sensor red", right.red * 255);
+            telemetry.addData("right sensor red RAW", right.red);
             telemetry.addData("right sensor green", right.green * 255);
             telemetry.addData("right sensor blue", right.blue * 255);
             telemetry.addData("right sensor color", hardware.rightSensor.getGreenOrPurple());
