@@ -7,6 +7,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 public class ShootThreeBallsCommand extends InstantCommand {
     public ShootThreeBallsCommand(ShooterSubsystem shooter) {
         // TODO: start auto-aiming once ShooterSubsystem supports it
-        throw new UnsupportedOperationException();
+        // throw new UnsupportedOperationException();
     }
 }

@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
 public class SpindexerSubsystem extends SubsystemBase {
@@ -15,7 +19,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
 
+
     private final RobotHardware hardware;
+    private final Robot robot;
 
     public double spindexerOffset = 0;
 
@@ -60,7 +66,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
-    public SpindexerSubsystem(RobotHardware hardware) {
+    public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
+        this.robot = robot;
         this.hardware = hardware;
         this.sensors  = new TerrorColorSensor[] {hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
 
@@ -136,64 +143,64 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.spindexerOffset = offset;
     }
 
-//    public void initShootPos(){
-//        double startPos = this.getPosition();
-//        int fullCount = 0;
-//        double greenPos;
-//        int greenCount = 0;
-//        int purpleCount = 0;
-//        for (ColorSensor sensor in this.colorSensors){
-//            if (sensor == has ball){
-//                fullCount += 1;
-//                if (sensor.color == green){
-//                    greenCount +=1;
-//                    if (sensor.pos == position.LEFT){
-//                        greenPos = this.leftPosition;
-//                    }
-//                    else if (sensor.pos == position.RIGHT){
-//                        greenPos = this.rightPosition;
-//                    }
-//                    else {
-//                        greenPos = this.backPosition;
-//                    }
-//
-//                }
-//                else {
-//                    purpleCount += 1;
-//                }
-//
-//            }
-//        }
-//        if (purpleCount == 2 && greenCount == 1){
-//            if (motif == GPP) {
-//                double normalizedError = MathUtils.normalizeRadians((this.readyPosition-greenPos), true);
-//                if (normalizedError >= 0.1){
-//                    normalizedError = -((2* Math.PI) - normalizedError);
-//                }
-//                this.setYaw(startPos + normalizedError);
-//
-//            }
-//            else if (motif == PGP) {
-//                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((2/3)*Math.PI))-greenPos), true);
-//                if (normalizedError >= 0.1){
-//                    normalizedError = -((2* Math.PI) - normalizedError);
-//                }
-//                this.setYaw(startPos + normalizedError);
-//
-//            }
-//            else {
-//                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((4/3)*Math.PI))-greenPos), true);
-//                if (normalizedError >= 0.1){
-//                    normalizedError = -((2* Math.PI) - normalizedError);
-//                }
-//                this.setYaw(startPos + normalizedError);
-//            }
-//        }
-//        else {
-//            this.setYaw(readyPosition);
-//        }
-//
-//    }
+    public void initShootPos(){
+        double startPos = this.getPosition();
+        int fullCount = 0;
+        double greenPos = 0.0;
+        int greenCount = 0;
+        int purpleCount = 0;
+        for (TerrorColorSensor sensor : this.sensors){
+            if (sensor.getGreenOrPurple() != 'N'){
+                fullCount += 1;
+                if (sensor.getGreenOrPurple() == 'G'){
+                    greenCount +=1;
+                    if (sensor.position.equals(position.LEFT)){
+                        greenPos = this.leftPosition;
+                    }
+                    else if (sensor.position.equals(position.RIGHT)){
+                        greenPos = this.rightPosition;
+                    }
+                    else {
+                        greenPos = this.backPosition;
+                    }
+
+                }
+                else {
+                    purpleCount += 1;
+                }
+
+            }
+        }
+        if (purpleCount == 2 && greenCount == 1){
+            if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
+                double normalizedError = MathUtils.normalizeRadians((this.readyPosition-greenPos), true);
+                if (normalizedError >= 0.1){
+                    normalizedError = -((2* Math.PI) - normalizedError);
+                }
+                this.setYaw(startPos + normalizedError);
+
+            }
+            else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
+                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((2/3)*Math.PI))-greenPos), true);
+                if (normalizedError >= 0.1){
+                    normalizedError = -((2* Math.PI) - normalizedError);
+                }
+                this.setYaw(startPos + normalizedError);
+
+            }
+            else {
+                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((4/3)*Math.PI))-greenPos), true);
+                if (normalizedError >= 0.1){
+                    normalizedError = -((2* Math.PI) - normalizedError);
+                }
+                this.setYaw(startPos + normalizedError);
+            }
+        }
+        else {
+            this.setYaw(readyPosition);
+        }
+
+    }
 
 
     public void shootBall(){

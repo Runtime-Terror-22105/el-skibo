@@ -35,7 +35,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.*;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
-@TeleOp(name = "TerrorTeleOp", group = "TeleOp")
+
 public abstract class TerrorTeleOp extends LinearOpMode {
 
     public static double ROTATION_MULTIPLIER = 0.56;
@@ -53,7 +53,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
     public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
 
-    @Override
+
     public void runOpMode(){
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
