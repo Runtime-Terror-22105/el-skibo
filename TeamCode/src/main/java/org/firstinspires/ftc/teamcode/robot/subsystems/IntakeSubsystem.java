@@ -9,10 +9,10 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public static double defaultDown1 = 0.5; //servo pos
-    public static double defaultDown2 = 0.5;
-    public static double defaultUp1 = 0.75;
-    public static double defaultUp2 = 0.75;
+    public static double defaultDown1 = 0.05; //servo pos
+    public static double defaultDown2 = 1.0;
+    public static double defaultUp1 = 0.2;
+    public static double defaultUp2 = 0.84;
     public static double defaultSpeed = 0.9;
 
     private double targetPitch1;
