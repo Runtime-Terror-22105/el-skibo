@@ -46,7 +46,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double wallPosition = WALL_DEACTIVE;
 
     public double spindexerPower = 0.0;
-    TerrorColorSensor[] sensors;
+    public TerrorColorSensor[] sensors;
+
+    public boolean transferActive = false;
 
     public static double leftPosition =(4D/3D)* Math.PI;
     public static double rightPosition =(2D/3D)* Math.PI;
@@ -121,7 +123,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void activateTransfer() {
-        //this.initShootPos();
+        this.initShootPos();
+        this.transferActive = true;
         this.intakeRampPosition1 = INTAKE_RAMP_1_ACTIVE;
         this.intakeRampPosition2 = INTAKE_RAMP_2_ACTIVE;
         this.shooterRampPosition = SHOOTER_RAMP_ACTIVE;
@@ -130,6 +133,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void deactivateTransfer() {
+        this.transferActive = false;
         this.intakeRampPosition1 = INTAKE_RAMP_1_DEACTIVE;
         this.intakeRampPosition2 = INTAKE_RAMP_2_DEACTIVE;
         this.shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
@@ -204,8 +208,15 @@ public class SpindexerSubsystem extends SubsystemBase {
 
 
     public void shootBall(){
-        // TODO: Chack if transfer is down before running
-        this.setYaw(this.getPosition() + SHOOT_ONE_ROTATION);
+        if (transferActive){
+            this.setYaw(this.getPosition() + SHOOT_ONE_ROTATION);
+        }
+        else {
+            this.activateTransfer();
+            this.shootBall();
+
+        }
+
 
     }
     public void shootThree(){
