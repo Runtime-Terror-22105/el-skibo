@@ -21,18 +21,17 @@ public class ColorSensorTest extends LinearOpMode {
             NormalizedRGBA right = hardware.rightSensor.getNormalizedColors();
             telemetry.addData("color", hardware.rightSensor.getVersion());
 
-
-            telemetry.addData("right sensor red", hardware.rightSensor.getRed());
-            telemetry.addData("right sensor green",  hardware.rightSensor.getGreen());
-            telemetry.addData("right sensor blue", hardware.rightSensor.getBlue());
             telemetry.addData("right sensor color", hardware.rightSensor.getGreenOrPurple());
-            telemetry.addData("distance", hardware.rightSensor.getDist(DistanceUnit.MM));
 
             NormalizedRGBA left = hardware.leftSensor.getNormalizedColors();
             telemetry.addData("left sensor color", hardware.leftSensor.getGreenOrPurple());
 
             NormalizedRGBA top = hardware.topSensor.getNormalizedColors();
             telemetry.addData("top sensor color", hardware.topSensor.getGreenOrPurple());
+
+            telemetry.addData("distance", hardware.rightSensor.getDist(DistanceUnit.MM));
+            telemetry.addData("distance", hardware.leftSensor.getDist(DistanceUnit.MM));
+            telemetry.addData("distance", hardware.topSensor.getDist(DistanceUnit.MM));
             telemetry.update();
         }
     }
