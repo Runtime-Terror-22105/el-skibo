@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 @Config
@@ -12,6 +13,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     private enum COLOR {
         GREEN, PURPLE
     }
+
 
     private final RobotHardware hardware;
 
@@ -38,6 +40,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double wallPosition = WALL_DEACTIVE;
 
     public double spindexerPower = 0.0;
+    TerrorColorSensor[] sensors;
 
     public static double leftPosition =(4D/3D)* Math.PI;
     public static double rightPosition =(2D/3D)* Math.PI;
@@ -59,6 +62,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public SpindexerSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
+        this.sensors  = new TerrorColorSensor[] {hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
 
         this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(0.0);

@@ -13,10 +13,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class TerrorColorSensor implements NormalizedColorSensor {
 
     private final RevColorSensorV3 sensor;
+    public enum side {
+        LEFT,
+        TOP,
+        RIGHT
+    }
+    public side position;
 
     public TerrorColorSensor(@NonNull RevColorSensorV3 sensor)
     {
+
         this.sensor = sensor;
+        if (this.sensor.getDeviceName() == "topSensor"){
+            this.position = side.TOP;
+        }
+        else if (this.sensor.getDeviceName() == "rightSensor"){
+            this.position = side.RIGHT;
+        }
+        else if (this.sensor.getDeviceName() == "leftSensor"){
+            this.position = side.LEFT;
+        }
     }
 
 

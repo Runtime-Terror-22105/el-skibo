@@ -36,8 +36,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 @Config
 public abstract class TerrorTeleOp extends LinearOpMode {
 
-    public static double ROTATION_MULTIPLIER = 0.56; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
-    public static double TURRET_OVERRIDE_COOLDOWN = 2.0;
+    public static double ROTATION_MULTIPLIER = 0.56;
+    public static double TURRET_OVERRIDE_COOLDOWN = 2.0; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
 
     private RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -110,6 +110,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             right_x = Math.signum(right_x) * Algebra.mapRange(Math.abs(right_x), deadzone_amt, 1.0, 0.0, 1.0);
             Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
             double rotation = slr(right_x)*ROTATION_MULTIPLIER;
+
+            this.robot.drivetrain.move(direction, rotation);
 
             CommandScheduler.getInstance().run();
         }
