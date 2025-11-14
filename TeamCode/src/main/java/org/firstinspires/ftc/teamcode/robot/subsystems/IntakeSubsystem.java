@@ -15,9 +15,12 @@ public class IntakeSubsystem extends SubsystemBase {
     public static double defaultUp2 = 0.84;
     public static double defaultSpeed = 0.9;
 
+    public boolean isUp = false;
+
     private double targetPitch1;
     private double targetPitch2;
     private double targetSpeed;
+
 
     public IntakeSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
@@ -27,10 +30,12 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void putDown(){
+        this.isUp = false;
         this.targetPitch1 = defaultDown1;
         this.targetPitch2 = defaultDown2;
     }
     public void putUp(){
+        this.isUp = true;
         this.targetPitch1 = defaultUp1;
         this.targetPitch2 = defaultUp2;
     }
