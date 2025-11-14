@@ -24,16 +24,18 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     * returns if the color sensor sees this as G,P,orN(none)
      */
     public double getGreen(){
-        return ((double)sensor.green())/65535.0*255.0;
+        return ((double)sensor.green());
     }
 
     public double getRed(){
-        return ((double)sensor.red())/65535.0*255.0;
+        return ((double)sensor.red());
     }
 
     public double getBlue(){
-        return ((double)sensor.blue())/65535.0*255.0;
+        return ((double)sensor.blue());
     }
+
+
 
     public double getDist(DistanceUnit unit){
         return sensor.getDistance(unit);
@@ -41,31 +43,16 @@ public class TerrorColorSensor implements NormalizedColorSensor {
 
     public char getGreenOrPurple() {
 
-        float[] hsv = new float[3];
-
-        Color.RGBToHSV(
-                sensor.red(),
-                sensor.green(),
-                sensor.blue(),
-                hsv
-        );
-
-        float hue = hsv[0];
-        float sat = hsv[1];
-        float val = hsv[2];
-
-//        // low brightness/saturation = probs nothing
-        if (val < 0.15f || sat < 0.2f) {
+        double[]rgb= {getRed(),getGreen(),getBlue()};
+        if(getDist(DistanceUnit.MM)>=30.0){
             return 'N';
         }
-
-        if (hue >= 80f && hue <= 160f) { // green hue range (~80–160 deg)
+        else if(rgb[2]>rgb[1] && rgb[2]>rgb[0]){
+            return 'P';
+        } else if (rgb[1]>rgb[2]&&rgb[1]>rgb[0]) {
             return 'G';
         }
 
-        if (hue >= 250f && hue <= 320f) { // purple hue range (~250–320 deg)
-            return 'P';
-        }
 
         return 'N';
     }
