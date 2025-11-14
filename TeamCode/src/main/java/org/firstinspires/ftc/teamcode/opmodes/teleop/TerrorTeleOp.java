@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -34,6 +35,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.*;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
+@TeleOp(name = "TerrorTeleOp", group = "TeleOp")
 public abstract class TerrorTeleOp extends LinearOpMode {
 
     public static double ROTATION_MULTIPLIER = 0.56;
@@ -51,6 +53,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
     public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
 
+    @Override
     public void runOpMode(){
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
