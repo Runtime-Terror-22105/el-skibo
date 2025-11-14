@@ -149,17 +149,17 @@ public class RobotHardware {
 
 
         // Initialize the shooter
-//        this.shooterLeft = new TerrorMotorNormal(
-//                (DcMotorEx) hwMap.get(DcMotor.class, "shooterLeft"),
-//                0.05,
-//                1.0
-//        );
-//        this.shooterRight = new TerrorMotorNormal(
-//                (DcMotorEx) hwMap.get(DcMotor.class, "shooterRight"),
-//                0.05,
-//                1.0
-//        );
-//        this.shooterEncoder = new TerrorEncoder(shooterLeft);  // TODO: figure out which motor has the encoder
+        this.shooterLeft = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "shooterLeft"),
+                0.05,
+                1.0
+        );
+        this.shooterRight = new TerrorMotorNormal(
+                (DcMotorEx) hwMap.get(DcMotor.class, "shooterRight"),
+                0.05,
+                1.0
+        );
+        this.shooterEncoder = new TerrorEncoder(shooterLeft);  // TODO: figure out which motor has the encoder
 
         // TODO: figure out shooter motor directions
 //        this.shooter.setDirection(REVERSE);
