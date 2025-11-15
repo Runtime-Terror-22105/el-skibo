@@ -7,8 +7,10 @@ import android.util.Log;
 
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 
@@ -50,6 +52,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double hoodAngleMax = 1.4; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.78; //radian measure of hood at min pos
     public boolean isAutoAimOn;
+    private final Robot robot;
 
     // turret stuff
     // 320 deg of servo rotation = 408 deg of turret rotation
@@ -62,8 +65,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double YAW_RIGHT_MIN_POS = 0.0;
     public static double YAW_RIGHT_MAX_POS = 1.0;
 
-    public ShooterSubsystem(RobotHardware hardware) {
-
+    public ShooterSubsystem(RobotHardware hardware, Robot robot) {
+        this.robot = robot;
         this.hardware = hardware;
 
         this.shooterPID.setTolerance(this.shooterVelocityTolerance);
@@ -74,14 +77,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
-    public void doAutoShoot(Pose2d botPos, Pose2d goalPos){
-        /** this is the function that should be called every loop
-         rn i just have it supplying the bot pos, when we get localizer class i can impliment that instead
-         i also take in the goal pos bc like red v blue, if theres a better way to do this lmk*/
-        this.doAutoShoot(botPos, goalPos, Arc);
+    public void doAutoShoot(Pose2d goalPos){
+
+        this.doAutoShoot(goalPos, Arc);
     }
 
-    public void doAutoShoot(Pose2d botPos, Pose2d goalPos, ShotType shotType){
+    public void doAutoShoot( Pose2d goalPos, ShotType shotType){
+        Pose2d botPos = this.robot.localizer.getCurrentPosition();
         this.isAutoAimOn = true;
         this.doMath(botPos, goalPos, shotType, apexHeight);
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
@@ -89,9 +91,8 @@ public class ShooterSubsystem extends SubsystemBase {
         //gets a setpos from the angle from our measured angles for max and min
         this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.goalYaw = this.findYawAngle(botPos, goalPos);
-        this.goalYawPos = (turretPosAtZero-turretPosAt360)/(-2* Math.PI)*this.goalYaw;
         this.setHoodPosition(this.goalHoodPos);
-        this.setTurretAngle(this.goalYawPos);
+
     }
 
     public void manualAim(double velocity, double pitch, double yaw){
