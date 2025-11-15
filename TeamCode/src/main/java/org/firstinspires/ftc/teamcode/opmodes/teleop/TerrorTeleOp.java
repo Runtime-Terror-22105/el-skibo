@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static org.firstinspires.ftc.teamcode.robot.hardware.TerrorGamepad.State.RISING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.CLIMBING;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.FULL;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
@@ -26,6 +27,7 @@ import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
@@ -84,7 +86,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
 
         hangButton.whenPressed(new GoToClimbStateCommand(robot));
-        intakeButton.whenPressed(new GoToIntakeStateCommand(robot));
+        intakeButton.whenPressed(new GoToIntakeStateCommand(robot, new TransferCommand(robot.spindexer)));
         shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter,robot.spindexer));
         shoot1button.whenPressed(new ShootOneBallCommand(robot.shooter));
         rejectButton.whenPressed(new StartShooterRejectCommand(robot.shooter));
@@ -121,7 +123,15 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
             double rotation = slr(right_x)*ROTATION_MULTIPLIER;
 
+            if(robot.robotState == INTAKING || robot.robotState == SHOOTING || robot.robotState == FULL){
+                robot.shooter.doAutoShoot(this.goalPos);
+            }
+            else {
+                robot.shooter.isAutoAimOn = false;
+            }
+
             this.robot.drivetrain.move(direction, rotation);
+
 
             CommandScheduler.getInstance().run();
 
