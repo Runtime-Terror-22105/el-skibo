@@ -191,12 +191,12 @@ public class RobotHardware {
         this.rightSensor = new TerrorColorSensor(
                 hwMap.get(RevColorSensorV3.class, "rightSensor")
         );
-//        this.spindexerIntakeRampServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp1"));
-//        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
-//        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
-//        this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "spindexerWall"));
-//        this.publisher.subscribe(10, spindexerIntakeRampServo1,
-//                spindexerIntakeRampServo2, spindexerDiddyServo, spindexerTransferRampServo);
+        this.spindexerIntakeRampServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp1"));
+        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
+        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
+        this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "spindexerWall"));
+        this.publisher.subscribe(10, spindexerIntakeRampServo1,
+                spindexerIntakeRampServo2, spindexerDiddyServo, spindexerTransferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
