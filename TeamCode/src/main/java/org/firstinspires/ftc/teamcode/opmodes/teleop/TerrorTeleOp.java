@@ -43,14 +43,11 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 @Config
 
 public abstract class TerrorTeleOp extends LinearOpMode {
-
-    public static double ROTATION_MULTIPLIER = 0.8;
     public static double TURRET_OVERRIDE_COOLDOWN = 2.0; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
 
     private RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    private boolean isFieldCentric = false;
     private Pose2d goalPos;
 
 
@@ -75,7 +72,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         robot.drivetrain
                 .setDefaultCommand(new DriveCommand(
                         () -> (double) gamepad1.left_stick_x,
-                        () -> (double) -gamepad1.left_stick_y,
+                        () -> (double) gamepad1.left_stick_y,
                         () -> (double) gamepad1.right_stick_x, robot)
                        );
 
@@ -114,25 +111,13 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 hub.clearBulkCache();
             }
 
-            // driving
-            double deadzone_amt = 0;
-            double left_x = gamepad1ex.getLeftX();
-            double left_y = -gamepad1ex.getLeftY();
-            double right_x = gamepad1ex.getRightX();
-            left_x = Math.signum(left_x) * Algebra.mapRange(Math.abs(left_x), deadzone_amt, 1.0, 0.0, 1.0);
-            left_y = Math.signum(left_y) * Algebra.mapRange(Math.abs(left_y), deadzone_amt, 1.0, 0.0, 1.0);
-            right_x = Math.signum(right_x) * Algebra.mapRange(Math.abs(right_x), deadzone_amt, 1.0, 0.0, 1.0);
-            Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
-            double rotation = slr(right_x)*ROTATION_MULTIPLIER;
+//            if(robot.robotState == INTAKING || robot.robotState == SHOOTING || robot.robotState == FULL){
+//                robot.shooter.doAutoShoot(this.goalPos);
+//            }
+//            else {
+//                robot.shooter.isAutoAimOn = false;
+//            }
 
-            if(robot.robotState == INTAKING || robot.robotState == SHOOTING || robot.robotState == FULL){
-                robot.shooter.doAutoShoot(this.goalPos);
-            }
-            else {
-                robot.shooter.isAutoAimOn = false;
-            }
-
-            this.robot.drivetrain.move(direction, rotation);
 
 
             CommandScheduler.getInstance().run();
@@ -143,13 +128,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         }
 
     }
-
-
-
-    public double slr(double joystick_value) {
-        return Math.pow(joystick_value, 5);
-    }
-
 
 
 }
