@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 public abstract class TerrorTeleOp extends LinearOpMode {
 
-    public static double ROTATION_MULTIPLIER = 0.56;
+    public static double ROTATION_MULTIPLIER = 0.8;
     public static double TURRET_OVERRIDE_COOLDOWN = 2.0; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
 
     private RobotHardware hardware = new RobotHardware();
@@ -73,10 +73,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         // driver 1
         robot.drivetrain
-                .setDefaultCommand(new PerpetualCommand(new DriveCommand(
+                .setDefaultCommand(new DriveCommand(
                         () -> (double) gamepad1.left_stick_x,
-                        () -> (double) gamepad1.left_stick_y,
-                        () -> (double) gamepad1.right_stick_y, robot))
+                        () -> (double) -gamepad1.left_stick_y,
+                        () -> (double) gamepad1.right_stick_x, robot)
                        );
 
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
@@ -139,6 +139,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
             robot.telemetry.addData("Ball Positions", robot.spindexer.getBallPositions());
             robot.telemetry.addData("Yaw Goal", robot.shooter.goalYaw);
+            hardware.write();
         }
 
     }
