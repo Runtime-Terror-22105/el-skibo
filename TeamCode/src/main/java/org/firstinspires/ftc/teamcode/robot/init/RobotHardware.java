@@ -129,9 +129,9 @@ public class RobotHardware {
 
         // TODO: figure out drive motor directions
         this.motorFrontLeft.setDirection(FORWARD);
-        this.motorRearLeft.setDirection(REVERSE);
+        this.motorRearLeft.setDirection(FORWARD);
         this.motorFrontRight.setDirection(REVERSE);
-        this.motorRearRight.setDirection(FORWARD);
+        this.motorRearRight.setDirection(REVERSE);
 
         this.publisher.subscribe(4, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
