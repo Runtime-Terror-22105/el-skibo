@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot.command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerTransferEnabledCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
