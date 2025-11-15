@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -51,6 +50,8 @@ public class RobotHardware {
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
     public TerrorMotorNormal spindexerRotate;
+    public TerrorServo spindexerIntakeWallServo1;
+    public TerrorServo spindexerIntakeWallServo2;
     public TerrorServo spindexerDiddyServo;
     public TerrorServo spindexerTransferRampServo;
     public TerrorEncoder spindexerEncoder;
@@ -67,7 +68,6 @@ public class RobotHardware {
     public TerrorMotorNormal intake;
     public TerrorServo intakePitch1;
     public TerrorServo intakePitch2;
-    public TerrorServo intakeWallServo;
 
     public TerrorServo spindexerPTO;
 
@@ -189,9 +189,12 @@ public class RobotHardware {
         this.rightSensor = new TerrorColorSensor(
                 hwMap.get(RevColorSensorV3.class, "rightSensor")
         );
+        this.spindexerIntakeWallServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall1"));
+        this.spindexerIntakeWallServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall2"));
         this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerTransferRamp"));
         this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "diddyServo"));
-//        this.publisher.subscribe(10, spindexerDiddyServo, spindexerTransferRampServo);
+        this.publisher.subscribe(10, spindexerIntakeWallServo1,
+                spindexerIntakeWallServo2, spindexerDiddyServo, spindexerTransferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
@@ -212,7 +215,6 @@ public class RobotHardware {
 
         this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitchLeft"));
         this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitchRight"));
-        this.intakeWallServo = new TerrorServo(hwMap.get(Servo.class, "intakeWall"));
         this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
 //        this.publisher.subscribe(10,intakePitch1);
 //        this.publisher.subscribe(10, intakePitch2);
