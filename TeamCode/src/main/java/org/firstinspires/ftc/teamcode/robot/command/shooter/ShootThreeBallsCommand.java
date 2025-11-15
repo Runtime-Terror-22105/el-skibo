@@ -24,12 +24,10 @@ public class ShootThreeBallsCommand extends InstantCommand {
 
     }
 
-    public void startShooting(){
+    public void execute(){
         spindexer.setSpindexerPower(spindexLoadingPower);
     }
-    public void stopshooting(){
-        spindexer.setYaw(0.0);
-    }
+
 
 
 

@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
-public class transfercommand extends InstantCommand {
+public class TransferCommand extends InstantCommand {
     SpindexerSubsystem spindexer;
-    public transfercommand(SpindexerSubsystem spindexer) {
+    public TransferCommand(SpindexerSubsystem spindexer) {
         this.spindexer=spindexer;
     }
 
@@ -32,10 +34,16 @@ public class transfercommand extends InstantCommand {
     }
 
     public void setupTransfer(){
-        phase1();
-        phase2();
-        phase3();
-        phase4();
+        SequentialCommandGroup group = new SequentialCommandGroup(
+                new InstantCommand(() -> phase1() ),
+                new InstantCommand(() -> phase2() ),
+                new InstantCommand(() -> phase3() ),
+                new InstantCommand(() -> phase4() )
+        );
+        CommandScheduler.getInstance().schedule(group);
+
+
+
     }
 
 
