@@ -91,7 +91,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenPressed(new GoToIntakeStateCommand(robot));
-        shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter));
+        shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter,robot.spindexer));
         shoot1button.whenPressed(new ShootOneBallCommand(robot.shooter));
         rejectButton.whenPressed(new StartShooterRejectCommand(robot.shooter));
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
