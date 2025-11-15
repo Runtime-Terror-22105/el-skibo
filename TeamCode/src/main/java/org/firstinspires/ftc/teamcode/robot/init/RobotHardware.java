@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -42,7 +41,6 @@ public class RobotHardware {
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
 
-    public TerrorServo ramp;
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
     public TerrorMotorNormal shooterRight; // powers the flywheel
@@ -52,8 +50,8 @@ public class RobotHardware {
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
     public TerrorMotorNormal spindexerRotate;
-    public TerrorServo spindexerIntakeRampServo1;
-    public TerrorServo spindexerIntakeRampServo2;
+    public TerrorServo spindexerIntakeWallServo1;
+    public TerrorServo spindexerIntakeWallServo2;
     public TerrorServo spindexerDiddyServo;
     public TerrorServo spindexerTransferRampServo;
     public TerrorEncoder spindexerEncoder;
@@ -168,7 +166,7 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterPitch"));
+        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterHood"));
         this.publisher.subscribe(5, shooterPitch);
 
 
@@ -191,12 +189,12 @@ public class RobotHardware {
         this.rightSensor = new TerrorColorSensor(
                 hwMap.get(RevColorSensorV3.class, "rightSensor")
         );
-        this.spindexerIntakeRampServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp1"));
-        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
-        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
-        this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "spindexerWall"));
-        this.publisher.subscribe(10, spindexerIntakeRampServo1,
-                spindexerIntakeRampServo2, spindexerDiddyServo, spindexerTransferRampServo);
+        this.spindexerIntakeWallServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall1"));
+        this.spindexerIntakeWallServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall2"));
+        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerTransferRamp"));
+        this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "diddyServo"));
+        this.publisher.subscribe(10, spindexerIntakeWallServo1,
+                spindexerIntakeWallServo2, spindexerDiddyServo, spindexerTransferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
@@ -215,10 +213,9 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitch1"));
-        this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitch2"));
+        this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitchLeft"));
+        this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitchRight"));
         this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
-        this.ramp = new TerrorServo(hwMap.get(Servo.class, "ramp"));
 //        this.publisher.subscribe(10,intakePitch1);
 //        this.publisher.subscribe(10, intakePitch2);
 //        this.publisher.subscribe(10,spindexerPTO);

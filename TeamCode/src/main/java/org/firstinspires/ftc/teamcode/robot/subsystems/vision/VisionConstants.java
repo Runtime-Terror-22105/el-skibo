@@ -12,5 +12,23 @@ public class VisionConstants {
             put(23,"PPG");
             put(24, "REDSCORE");
         }};
+
+        //assuming the robot is facing forward these should be relative
+        /*
+        top down view
+        ^
+        |
+        |
+        x (center of the robot 0,0)
+
+         */
+        public static class cameraOffset {
+            static final double x = 5; //meters or whatever unit is read from the camera
+            static final double y = 5;
+            static final double z = 5;
+            static final double pitchRad = 0;//if the camera was the head of the robot this would be like looking up/down
+            static final double pitchYaw = 0; //angle difference between the forward facing vector drawn above
+
+        }
     }
 }

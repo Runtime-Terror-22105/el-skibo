@@ -127,6 +127,6 @@ public class CameraSubsystem extends SubsystemBase
 
         // todo: choose only one apriltag to use
         AprilTagDetection tag = detections.get(0);
-        return new Pose2d(tag.robotPose.getPosition().x,tag.robotPose.getPosition().y,tag.robotPose.getPosition().z);
+        return new Pose2d(tag.robotPose.getPosition().x-VisionConstants.APRILTAG.cameraOffset.x,tag.robotPose.getPosition().y-VisionConstants.APRILTAG.cameraOffset.y,tag.robotPose.getPosition().z-VisionConstants.APRILTAG.cameraOffset.z);
     }
 }
