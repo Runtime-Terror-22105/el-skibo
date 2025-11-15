@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.PerpetualCommand;
+import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
@@ -71,11 +73,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         // driver 1
         robot.drivetrain
-                .setDefaultCommand(
-                        new DriveCommand(
-                                () -> (double) gamepad1.left_stick_x,
-                                () -> (double) gamepad1.left_stick_y,
-                                () -> (double) gamepad1.right_stick_y));
+                .setDefaultCommand(new PerpetualCommand(new DriveCommand(
+                        () -> (double) gamepad1.left_stick_x,
+                        () -> (double) gamepad1.left_stick_y,
+                        () -> (double) gamepad1.right_stick_y, robot))
+                       );
 
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         GamepadButton intakeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);

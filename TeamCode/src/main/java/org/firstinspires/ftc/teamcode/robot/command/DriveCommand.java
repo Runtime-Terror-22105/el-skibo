@@ -14,15 +14,15 @@ import java.util.function.Supplier;
 
 public class DriveCommand extends CommandBase {
 
-    Robot robot = new Robot();
     public static double driveSpeed = 0.9;
-
+    private final Robot robot;
     private final Supplier<Double> x, y, turn;
 
     public DriveCommand(
             Supplier<Double> x,
             Supplier<Double> y,
-            Supplier<Double> turn) {
+            Supplier<Double> turn, Robot robot) {
+        this.robot = robot;
         this.x = x;
         this.y = y;
         this.turn = turn;
