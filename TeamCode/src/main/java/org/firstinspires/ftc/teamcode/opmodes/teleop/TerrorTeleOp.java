@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.CLIMBING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
+
+import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -61,11 +63,18 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         robot.init(hardware, telemetry);
 
         waitForStart();
-        GamepadEx gamepad1ex=new GamepadEx(gamepad1);
-        GamepadEx gamepad2ex=new GamepadEx(gamepad2);
+        GamepadEx gamepad1ex = new GamepadEx(gamepad1);
+        GamepadEx gamepad2ex = new GamepadEx(gamepad2);
 
 
         // driver 1
+        robot.drivetrain
+                .setDefaultCommand(
+                        new DriveCommand(
+                                () -> (double) gamepad1.left_stick_x,
+                                () -> (double) gamepad1.left_stick_y,
+                                () -> (double) gamepad1.right_stick_y));
+
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         GamepadButton intakeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
         GamepadButton rejectButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
@@ -76,7 +85,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenPressed(new GoToIntakeStateCommand(robot));
-        shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter));
+        shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter,robot.spindexer));
         shoot1button.whenPressed(new ShootOneBallCommand(robot.shooter));
         rejectButton.whenPressed(new StartShooterRejectCommand(robot.shooter));
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
@@ -100,8 +109,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
-
-            //gamepad 1
 
             // driving
             double deadzone_amt = 0;
