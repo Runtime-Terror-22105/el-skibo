@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.CLIMBING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
+
+import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -66,6 +68,19 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 
         // driver 1
+
+        double leftJoystickX = gamepad1ex.getLeftX();
+        double leftJoystickY = gamepad1ex.getLeftY();
+        double rightJoystickX = gamepad1ex.getRightX();
+        double rightJoystickY = gamepad1ex.getRightY();
+
+        robot.drivetrain
+                .setDefaultCommand(
+                        new DriveCommand(
+                                () -> leftJoystickX,
+                                () -> leftJoystickY,
+                                () -> rightJoystickX));
+
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         GamepadButton intakeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
         GamepadButton rejectButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
