@@ -50,10 +50,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
     private Pose2d goalPos;
 
-
-    public void setFieldCentric(boolean fieldCentric) {
-        this.isFieldCentric = fieldCentric;
-    }
     public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
 
 
