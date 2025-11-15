@@ -79,10 +79,10 @@ public class Robot {
                 hardware.motorRearRight,
                 hardware.motorFrontRight
         );
-//        this.shooter = new ShooterSubsystem(hardware);
-        this.spindexer = new SpindexerSubsystem(hardware);
-//        this.intake = new IntakeSubsystem(hardware);
-//        this.hang = new HangSubsystem(hardware);
+        this.shooter = new ShooterSubsystem(hardware, this);
+        this.spindexer = new SpindexerSubsystem(hardware, this);
+        this.intake = new IntakeSubsystem(hardware);
+        this.hang = new HangSubsystem(hardware);
 
         // Set up the camera
         if (hardware.fieldCamera != null) {

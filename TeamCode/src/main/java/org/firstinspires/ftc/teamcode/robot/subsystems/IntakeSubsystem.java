@@ -9,27 +9,39 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public static double defaultDown = 0.5; //servo pos
-    public static double defaultUp = 0.75;
+    public static double defaultDown1 = 0.05; //servo pos
+    public static double defaultDown2 = 1.0;
+    public static double defaultUp1 = 0.2;
+    public static double defaultUp2 = 0.84;
     public static double defaultSpeed = 0.9;
 
-    private double targetPitch;
+    public boolean isUp = false;
+
+    private double targetPitch1;
+    private double targetPitch2;
     private double targetSpeed;
+
 
     public IntakeSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
-        this.targetPitch = defaultUp;
+        this.targetPitch1 = defaultUp1;
+        this.targetPitch2 = defaultUp2;
         this.targetSpeed = 0;
     }
 
     public void putDown(){
-        this.targetPitch = defaultDown;
+        this.isUp = false;
+        this.targetPitch1 = defaultDown1;
+        this.targetPitch2 = defaultDown2;
     }
     public void putUp(){
-        this.targetPitch = defaultUp;
+        this.isUp = true;
+        this.targetPitch1 = defaultUp1;
+        this.targetPitch2 = defaultUp2;
     }
     public void setPitch(double pitch){
-        this.targetPitch = pitch;
+        this.targetPitch1 = pitch;
+        this.targetPitch2 = 0.5 - (0.5 - pitch);
     }
 
     public void turnOn(){
@@ -43,22 +55,22 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public double getPitch(){
-        return this.targetPitch;
+        return this.targetPitch1;
     }
     public double getSpeed(){
         return this.targetSpeed;
     }
 
-    public void setIntakePitchPosition(double targetPitch)
+    public void setIntakePitchPosition()
     {
-        hardware.intakePitch1.setPosition(targetPitch);
-        hardware.intakePitch2.setPosition(targetPitch);
+        hardware.intakePitch1.setPosition(targetPitch1);
+        hardware.intakePitch2.setPosition(targetPitch2);
     }
 
 
     @Override
     public void periodic() {
         hardware.intake.setPower(this.targetSpeed);
-        setIntakePitchPosition(this.targetPitch);
+        setIntakePitchPosition();
     }
 }

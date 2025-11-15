@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -34,10 +35,11 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.*;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
+
 public abstract class TerrorTeleOp extends LinearOpMode {
 
-    public static double ROTATION_MULTIPLIER = 0.56; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
-    public static double TURRET_OVERRIDE_COOLDOWN = 2.0;
+    public static double ROTATION_MULTIPLIER = 0.56;
+    public static double TURRET_OVERRIDE_COOLDOWN = 2.0; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
 
     private RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -50,6 +52,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         this.isFieldCentric = fieldCentric;
     }
     public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
+
 
     public void runOpMode(){
 
@@ -111,7 +114,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
             double rotation = slr(right_x)*ROTATION_MULTIPLIER;
 
+            this.robot.drivetrain.move(direction, rotation);
+
             CommandScheduler.getInstance().run();
+
+            robot.telemetry.addData("Ball Positions", robot.spindexer.getBallPositions());
+            robot.telemetry.addData("Yaw Goal", robot.shooter.goalYaw);
         }
 
     }
