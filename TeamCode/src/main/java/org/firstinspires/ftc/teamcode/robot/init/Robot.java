@@ -79,7 +79,7 @@ public class Robot {
                 hardware.motorRearRight,
                 hardware.motorFrontRight
         );
-        this.shooter = new ShooterSubsystem(hardware);
+        this.shooter = new ShooterSubsystem(hardware, this);
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(hardware);
         this.hang = new HangSubsystem(hardware);

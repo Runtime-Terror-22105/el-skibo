@@ -119,6 +119,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             CommandScheduler.getInstance().run();
 
             robot.telemetry.addData("Ball Positions", robot.spindexer.getBallPositions());
+            robot.telemetry.addData("Yaw Goal", robot.shooter.goalYaw);
         }
 
     }
