@@ -35,6 +35,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double WALL_DEACTIVE = 0.0;
     public static double RESTING_SPINDEX_POS = 0.0;
 
+    public static double spindexTransferPower=0.0;
+
     public double SHOOTER_INTAKE_SPEED = 0.0; // this is the speed where the shooter melonbotic servo intakes the balls
 
     public static double SHOOTER_INTAKING_SPEED = 1.0;
@@ -43,7 +45,18 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double intakeRampPosition1 = INTAKE_RAMP_1_DEACTIVE;
     public double intakeRampPosition2 = INTAKE_RAMP_2_DEACTIVE;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
+
+    public static double diddypole_Active=1.0;
+
+    public static double diddyPole_Deactive=0.0;
+
+    public static double shooter_ramp_active=1.0;
+    public static double shooter_ramp_deactive=0.0;
+
+    public double diddyPos=diddyPole_Deactive;
     public double wallPosition = WALL_DEACTIVE;
+
+    public boolean usespindexPID=true;
 
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
@@ -83,6 +96,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setYaw(double angle) { //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
         this.yawPid.setTargetPosition(angle);
+        this.usespindexPID=true;
     }
 
     public boolean getLimitSwitchState() {
@@ -99,6 +113,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         if (pidEnabled) {
             this.spindexerPower = yawPid.calculatePower(getPosition(), 0);
         }
+
         // setting pid power into the spindexer
     }
 
@@ -122,32 +137,35 @@ public class SpindexerSubsystem extends SubsystemBase {
         return hardware.spindexerEncoder.getCurrentPosition() - this.spindexerOffset;
     }
 
-    public void activateTransfer() {
-        this.initShootPos();
-        this.transferActive = true;
-        this.intakeRampPosition1 = INTAKE_RAMP_1_ACTIVE;
-        this.intakeRampPosition2 = INTAKE_RAMP_2_ACTIVE;
-        this.shooterRampPosition = SHOOTER_RAMP_ACTIVE;
-        this.wallPosition = WALL_ACTIVE;
-        this.SHOOTER_INTAKE_SPEED = SHOOTER_INTAKING_SPEED;
+
+    public void setWallActive(){
+        this.intakeRampPosition1=INTAKE_RAMP_1_ACTIVE;
+        this.intakeRampPosition2=INTAKE_RAMP_2_ACTIVE;
+    }
+    public void setWallDeactive(){
+        this.intakeRampPosition1=INTAKE_RAMP_1_DEACTIVE;
+        this.intakeRampPosition2=INTAKE_RAMP_2_DEACTIVE;
     }
 
-    public void deactivateTransfer() {
-        this.transferActive = false;
-        this.intakeRampPosition1 = INTAKE_RAMP_1_DEACTIVE;
-        this.intakeRampPosition2 = INTAKE_RAMP_2_DEACTIVE;
-        this.shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
-        this.wallPosition = WALL_DEACTIVE;
-        this.SHOOTER_INTAKE_SPEED = 0.0;
-        this.setYaw(this.getPosition()-((1/6)*Math.PI));
+    public void Oilup(){
+        this.diddyPos=diddypole_Active;
+    }
 
+
+
+    public void enableRamp(){
+        shooterRampPosition=shooter_ramp_active;
+    }
+
+    public void disableRamp(){
+        shooterRampPosition=shooter_ramp_deactive;
     }
 
     public void setSpindexerOffset(double offset) {
         this.spindexerOffset = offset;
     }
 
-    public void initShootPos(){
+    public void sortBalls(){
         double startPos = this.getPosition();
         int fullCount = 0;
         double greenPos = 0.0;
@@ -212,7 +230,6 @@ public class SpindexerSubsystem extends SubsystemBase {
             this.setYaw(this.getPosition() + SHOOT_ONE_ROTATION);
         }
         else {
-            this.activateTransfer();
             this.shootBall();
 
         }
@@ -228,6 +245,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setSpindexerPower(double power) {
         this.spindexerPower = power;
+        this.usespindexPID=false;
     }
 
     @Override
@@ -244,5 +262,9 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
+        this.hardware.spindexerIntakeRampServo1.setPosition(intakeRampPosition1);
+        this.hardware.spindexerIntakeRampServo2.setPosition(intakeRampPosition2);
+        this.hardware.spindexerDiddyServo.setPosition(diddyPos);
+
     }
 }
