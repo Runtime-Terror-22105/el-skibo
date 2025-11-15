@@ -5,7 +5,6 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -25,14 +24,12 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public double spindexerOffset = 0;
 
-    public static double INTAKE_RAMP_1_ACTIVE = 1.0;
-    public static double INTAKE_RAMP_1_DEACTIVE = 0.0;
-    public static double INTAKE_RAMP_2_ACTIVE = 1.0;
-    public static double INTAKE_RAMP_2_DEACTIVE = 0.0;
+    public static double INTAKE_WALL_1_ACTIVE = 1.0;
+    public static double INTAKE_WALL_1_DEACTIVE = 0.0;
+    public static double INTAKE_WALL_2_ACTIVE = 1.0;
+    public static double INTAKE_WALL_2_DEACTIVE = 0.0;
     public static double SHOOTER_RAMP_ACTIVE = 1.0;
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
-    public static double WALL_ACTIVE = 1.0;
-    public static double WALL_DEACTIVE = 0.0;
     public static double RESTING_SPINDEX_POS = 0.0;
 
     public static double spindexTransferPower=0.0;
@@ -42,8 +39,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_INTAKING_SPEED = 1.0;
     public static double SHOOT_ONE_ROTATION = -(2/3)* Math.PI;
 
-    public double intakeRampPosition1 = INTAKE_RAMP_1_DEACTIVE;
-    public double intakeRampPosition2 = INTAKE_RAMP_2_DEACTIVE;
+    public double intakeWallPosition1 = INTAKE_WALL_1_DEACTIVE;
+    public double intakeWallPosition2 = INTAKE_WALL_2_DEACTIVE;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
     public static double diddypole_Active=1.0;
@@ -54,7 +51,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double shooter_ramp_deactive=0.0;
 
     public double diddyPos=diddyPole_Deactive;
-    public double wallPosition = WALL_DEACTIVE;
 
     public boolean usespindexPID=true;
 
@@ -139,12 +135,12 @@ public class SpindexerSubsystem extends SubsystemBase {
 
 
     public void setWallActive(){
-        this.intakeRampPosition1=INTAKE_RAMP_1_ACTIVE;
-        this.intakeRampPosition2=INTAKE_RAMP_2_ACTIVE;
+        this.intakeWallPosition1 = INTAKE_WALL_1_ACTIVE;
+        this.intakeWallPosition2 = INTAKE_WALL_2_ACTIVE;
     }
     public void setWallDeactive(){
-        this.intakeRampPosition1=INTAKE_RAMP_1_DEACTIVE;
-        this.intakeRampPosition2=INTAKE_RAMP_2_DEACTIVE;
+        this.intakeWallPosition1 = INTAKE_WALL_1_DEACTIVE;
+        this.intakeWallPosition2 = INTAKE_WALL_2_DEACTIVE;
     }
 
     public void Oilup(){
@@ -262,8 +258,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
-        this.hardware.spindexerIntakeRampServo1.setPosition(intakeRampPosition1);
-        this.hardware.spindexerIntakeRampServo2.setPosition(intakeRampPosition2);
+        this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
+        this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
         this.hardware.spindexerDiddyServo.setPosition(diddyPos);
 
     }
