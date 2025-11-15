@@ -63,23 +63,17 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         robot.init(hardware, telemetry);
 
         waitForStart();
-        GamepadEx gamepad1ex=new GamepadEx(gamepad1);
-        GamepadEx gamepad2ex=new GamepadEx(gamepad2);
+        GamepadEx gamepad1ex = new GamepadEx(gamepad1);
+        GamepadEx gamepad2ex = new GamepadEx(gamepad2);
 
 
         // driver 1
-
-        double leftJoystickX = gamepad1ex.getLeftX();
-        double leftJoystickY = gamepad1ex.getLeftY();
-        double rightJoystickX = gamepad1ex.getRightX();
-        double rightJoystickY = gamepad1ex.getRightY();
-
         robot.drivetrain
                 .setDefaultCommand(
                         new DriveCommand(
-                                () -> leftJoystickX,
-                                () -> leftJoystickY,
-                                () -> rightJoystickX));
+                                () -> (double) gamepad1.left_stick_x,
+                                () -> (double) gamepad1.left_stick_y,
+                                () -> (double) gamepad1.right_stick_y));
 
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         GamepadButton intakeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
@@ -115,8 +109,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
-
-            //gamepad 1
 
             // driving
             double deadzone_amt = 0;
