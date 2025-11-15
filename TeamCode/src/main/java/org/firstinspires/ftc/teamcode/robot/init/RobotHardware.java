@@ -52,8 +52,6 @@ public class RobotHardware {
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET=0.0;
     public TerrorMotorNormal spindexerRotate;
-    public TerrorServo spindexerIntakeRampServo1;
-    public TerrorServo spindexerIntakeRampServo2;
     public TerrorServo spindexerDiddyServo;
     public TerrorServo spindexerTransferRampServo;
     public TerrorEncoder spindexerEncoder;
@@ -70,6 +68,7 @@ public class RobotHardware {
     public TerrorMotorNormal intake;
     public TerrorServo intakePitch1;
     public TerrorServo intakePitch2;
+    public TerrorServo intakeWallServo;
 
     public TerrorServo spindexerPTO;
 
@@ -168,7 +167,7 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterPitch"));
+        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterHood"));
         this.publisher.subscribe(5, shooterPitch);
 
 
@@ -191,12 +190,9 @@ public class RobotHardware {
         this.rightSensor = new TerrorColorSensor(
                 hwMap.get(RevColorSensorV3.class, "rightSensor")
         );
-//        this.spindexerIntakeRampServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp1"));
-//        this.spindexerIntakeRampServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeRamp2"));
-//        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerShooterRamp"));
-//        this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "spindexerWall"));
-//        this.publisher.subscribe(10, spindexerIntakeRampServo1,
-//                spindexerIntakeRampServo2, spindexerDiddyServo, spindexerTransferRampServo);
+        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerTransferRamp"));
+        this.spindexerDiddyServo = new TerrorServo(hwMap.get(Servo.class, "diddyServo"));
+//        this.publisher.subscribe(10, spindexerDiddyServo, spindexerTransferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
@@ -215,8 +211,9 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitch1"));
-        this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitch2"));
+        this.intakePitch1 = new TerrorServo(hwMap.get(Servo.class, "intakePitchLeft"));
+        this.intakePitch2 = new TerrorServo(hwMap.get(Servo.class, "intakePitchRight"));
+        this.intakeWallServo = new TerrorServo(hwMap.get(Servo.class, "intakeWall"));
         this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
         this.ramp = new TerrorServo(hwMap.get(Servo.class, "ramp"));
 //        this.publisher.subscribe(10,intakePitch1);
