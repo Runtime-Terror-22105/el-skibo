@@ -28,7 +28,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double INTAKE_WALL_1_DEACTIVE = 0.0;
     public static double INTAKE_WALL_2_ACTIVE = 1.0;
     public static double INTAKE_WALL_2_DEACTIVE = 0.0;
-    public static double SHOOTER_RAMP_ACTIVE = 1.0;
+    public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
     public static double RESTING_SPINDEX_POS = 0.0;
 
@@ -46,9 +46,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double diddypole_Active=1.0;
 
     public static double diddyPole_Deactive=0.0;
-
-    public static double shooter_ramp_active=1.0;
-    public static double shooter_ramp_deactive=0.0;
 
     public double diddyPos=diddyPole_Deactive;
 
@@ -150,11 +147,11 @@ public class SpindexerSubsystem extends SubsystemBase {
 
 
     public void enableRamp(){
-        shooterRampPosition=shooter_ramp_active;
+        shooterRampPosition=SHOOTER_RAMP_ACTIVE;
     }
 
     public void disableRamp(){
-        shooterRampPosition=shooter_ramp_deactive;
+        shooterRampPosition=SHOOTER_RAMP_DEACTIVE;
     }
 
     public void setSpindexerOffset(double offset) {
@@ -261,6 +258,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
         this.hardware.spindexerDiddyServo.setPosition(diddyPos);
+        this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
     }
 }

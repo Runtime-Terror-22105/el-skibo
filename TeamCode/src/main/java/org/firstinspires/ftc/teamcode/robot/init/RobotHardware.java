@@ -53,7 +53,7 @@ public class RobotHardware {
     public TerrorServo spindexerIntakeWallServo1;
     public TerrorServo spindexerIntakeWallServo2;
     public TerrorServo spindexerDiddyServo;
-    public TerrorServo spindexerTransferRampServo;
+    public TerrorServo spindexerTransferRampServo; // todo -- in position: 0, out position: 0.3
     public TerrorEncoder spindexerEncoder;
 
     /*
