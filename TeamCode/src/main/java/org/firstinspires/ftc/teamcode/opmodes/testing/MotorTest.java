@@ -29,7 +29,7 @@ public class MotorTest extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         waitForStart();
-
+        double maxvel=0;
         while (opModeIsActive()) {
             if (!motorName.isEmpty()) {
                 hardwareMap.get(DcMotor.class, motorName).setPower(motorPower);
@@ -45,6 +45,9 @@ public class MotorTest extends LinearOpMode {
 
                 // I'm pretty sure we're using this motor? https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
                 telemetry.addData("Current velocity (rpm)", shooterEncoder.getVelocity() * 60 / 145.1); // 145.1 ticks per revolution
+                maxvel=Math.max(maxvel,shooterEncoder.getVelocity() * 60 / 145.1);
+                telemetry.addData("Max Velocity(rpm)", maxvel); // 145.1 ticks per revolution
+                telemetry.update();
             }
         }
     }
