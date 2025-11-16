@@ -24,7 +24,7 @@ import org.opencv.core.Point;
  * A class containing all the robot's subsystems.
  */
 @Config
-public class Robot {
+public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     // States
     public RobotState robotState = null /*RobotState.RESTING*/;
 
@@ -62,15 +62,15 @@ public class Robot {
         this.telemetry = new MultipleTelemetry(tele, dashboard.getTelemetry());
 
         // Initialize the localizer
-//        if (hardware.pinpoint != null) {
-//            this.pinpoint = new PinpointLocalizer(hardware.pinpoint/*, hardware.imu*/);
-//            pinpoint.init(new PinpointLocalizer.Parameters(
-//                    PINPOINT_X_OFFSET, PINPOINT_Y_OFFSET,
-//                    TerrorPinpoint.GoBildaOdometryPods.goBILDA_4_BAR_POD,
-//                    TerrorPinpoint.EncoderDirection.FORWARD, TerrorPinpoint.EncoderDirection.REVERSED
-//            ));
-//        }
-//        localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
+        if (hardware.pinpoint != null) {
+            this.pinpoint = new PinpointLocalizer(hardware.pinpoint/*, hardware.imu*/);
+            pinpoint.init(new PinpointLocalizer.Parameters(
+                    PINPOINT_X_OFFSET, PINPOINT_Y_OFFSET,
+                    TerrorPinpoint.GoBildaOdometryPods.goBILDA_4_BAR_POD,
+                    TerrorPinpoint.EncoderDirection.FORWARD, TerrorPinpoint.EncoderDirection.REVERSED
+            ));
+        }
+        localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
 
         // Initialize the drivetrain
         this.drivetrain = new MecanumDrivetrain(
@@ -83,6 +83,8 @@ public class Robot {
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(hardware);
         this.hang = new HangSubsystem(hardware);
+
+        register(drivetrain, shooter, spindexer, intake, hang, localizer);
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
