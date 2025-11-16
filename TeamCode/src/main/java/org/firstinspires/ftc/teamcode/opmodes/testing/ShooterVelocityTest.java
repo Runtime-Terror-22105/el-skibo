@@ -23,6 +23,8 @@ public class ShooterVelocityTest extends LinearOpMode {
         robot.init(hardware, telemetry);
         waitForStart();
 
+        double maxvel=0;
+
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
@@ -35,8 +37,10 @@ public class ShooterVelocityTest extends LinearOpMode {
 
             hardware.write();
 
+            maxvel=Math.max(maxvel,robot.shooter.getShooterVelocity());
             robot.telemetry.addData("Current velocity", robot.shooter.getShooterVelocity());
-            robot.telemetry.addData("Current velocity", robot.shooter.getShooterVelocity());
+            robot.telemetry.addData("Max velocity so far",maxvel);
+
             robot.telemetry.update();
 
         }
