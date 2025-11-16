@@ -5,6 +5,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -62,12 +63,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double readyPosition = (1D/6D)* Math.PI; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)}; // todo: this is currently duplicate, make it so it just uses the above 3 variables
 
-
-    public enum position {
-        LEFT,
-        RIGHT,
-        BACK
-    }
     public static PidfController.PidfCoefficients turningPidCoefficients =
             new PidfController.PidfCoefficients(0.011, 0, 0.00001, 0, 0);
     public static double yawPidTolerance = 0.1;
@@ -169,10 +164,10 @@ public class SpindexerSubsystem extends SubsystemBase {
                 fullCount += 1;
                 if (sensor.getGreenOrPurple() == 'G'){
                     greenCount +=1;
-                    if (sensor.position.equals(position.LEFT)){
+                    if (sensor.position.equals(TerrorColorSensor.side.LEFT)){
                         greenPos = this.leftPosition;
                     }
-                    else if (sensor.position.equals(position.RIGHT)){
+                    else if (sensor.position.equals(TerrorColorSensor.side.RIGHT)){
                         greenPos = this.rightPosition;
                     }
                     else {
