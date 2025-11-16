@@ -70,7 +70,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
                     TerrorPinpoint.EncoderDirection.FORWARD, TerrorPinpoint.EncoderDirection.REVERSED
             ));
         }
-        localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
+//        localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
 
         // Initialize the drivetrain
         this.drivetrain = new MecanumDrivetrain(
@@ -84,7 +84,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.intake = new IntakeSubsystem(hardware);
         this.hang = new HangSubsystem(hardware);
 
-        register(drivetrain, shooter, spindexer, intake, hang, localizer);
+        register(drivetrain, shooter, spindexer, intake, hang/*, localizer*/);
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
