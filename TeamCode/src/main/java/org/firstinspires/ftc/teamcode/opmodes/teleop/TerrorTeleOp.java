@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.PerpetualCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
@@ -83,15 +84,31 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
 
-        hangButton.whenPressed(new GoToClimbStateCommand(robot));
-        intakeButton.whenPressed(new SequentialCommandGroup(
-                new GoToIntakeStateCommand(robot, new TransferCommand(robot.spindexer)),
-                new WaitForIntakeCommand(robot),
-                new GoToFullStateCommand(robot)
+//        hangButton.whenPressed(new GoToClimbStateCommand(robot));
+        intakeButton.whenPressed(new ConditionalCommand(
+                new SequentialCommandGroup(
+                    new GoToIntakeStateCommand(robot, new TransferCommand(robot.spindexer)),
+                    new WaitForIntakeCommand(robot),
+                    new GoToFullStateCommand(robot)
+                ),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != FULL && robot.robotState != SHOOTING
         ));
-        shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter,robot.spindexer));
-        shoot1button.whenPressed(new ShootOneBallCommand(robot.shooter));
-        rejectButton.whenPressed(new StartShooterRejectCommand(robot.shooter));
+        shoot3button.whenPressed(new ConditionalCommand(
+                new ShootThreeBallsCommand(robot.shooter,robot.spindexer),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState == FULL
+        ));
+        shoot1button.whenPressed(new ConditionalCommand(
+                new ShootOneBallCommand(robot.shooter),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState == FULL
+        ));
+        rejectButton.whenPressed(new ConditionalCommand(
+                new StartShooterRejectCommand(robot.shooter),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState == FULL
+        ));
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
 
