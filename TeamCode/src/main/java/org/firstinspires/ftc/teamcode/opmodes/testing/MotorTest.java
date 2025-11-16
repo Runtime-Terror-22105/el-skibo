@@ -12,6 +12,9 @@ public class MotorTest extends LinearOpMode {
     public static String motorName = "";
     public static double motorPower = 0D;
 
+    public static String motorName2 = "";
+    public static double motorPower2 = 0D;
+
 
     @Override
     public void runOpMode() {
@@ -20,6 +23,10 @@ public class MotorTest extends LinearOpMode {
         while (opModeIsActive()) {
             if (!motorName.isEmpty()) {
                 hardwareMap.get(DcMotor.class, motorName).setPower(motorPower);
+            }
+
+            if (!motorName2.isEmpty()) {
+                hardwareMap.get(DcMotor.class, motorName2).setPower(motorPower2);
             }
         }
     }
