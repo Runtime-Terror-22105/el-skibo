@@ -43,11 +43,11 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double intakeWallPosition2 = INTAKE_WALL_2_DEACTIVE;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double diddypole_Active=1.0;
+    public static double DIDDY_POLE_ACTIVE = 0.6;
 
-    public static double diddyPole_Deactive=0.0;
+    public static double DIDDY_POLE_DEACITVE = 0.98;
 
-    public double diddyPos=diddyPole_Deactive;
+    public double diddyPos= DIDDY_POLE_DEACITVE;
 
     public boolean usespindexPID=true;
 
@@ -141,7 +141,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void Oilup(){
-        this.diddyPos=diddypole_Active;
+        this.diddyPos= DIDDY_POLE_ACTIVE;
     }
 
 
