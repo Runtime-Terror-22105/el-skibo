@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.command.shooter;
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
+import android.util.Log;
 
 @Config
 public class SpindexerHoming extends CommandBase {
@@ -89,6 +90,8 @@ public class SpindexerHoming extends CommandBase {
     public void end(boolean interrupted) {
         spindexer.setSpindexerPower(0.0);
         spindexer.setPidEnabled(true);
+        spindexer.setYaw(0.0);
+        Log.d("homing","reached the end portion where we set the pid to enable and we set the yaw to 0");
     }
 
     @Override
