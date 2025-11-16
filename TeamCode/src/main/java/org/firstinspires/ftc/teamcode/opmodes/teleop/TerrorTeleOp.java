@@ -67,6 +67,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
         GamepadEx gamepad2ex = new GamepadEx(gamepad2);
 
+        hardware.intakePitchLeft.setPosition(0.5);
+        hardware.intakePitchRight.setPosition(0.5);
+
 
         // driver 1
         robot.drivetrain
@@ -143,6 +146,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
             robot.telemetry.addData("Ball Positions", robot.spindexer.getBallPositions());
             robot.telemetry.addData("Yaw Goal", robot.shooter.goalYaw);
+            robot.telemetry.addData("Intake isUp", robot.intake.isUp);
             robot.telemetry.update();
             hardware.write();
         }
