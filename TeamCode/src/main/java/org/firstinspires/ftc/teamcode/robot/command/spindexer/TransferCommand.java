@@ -33,6 +33,7 @@ public class TransferCommand extends InstantCommand {
 
     public void phase5(){
         spindexer.setSpindexerPower(spindexer.spindexTransferPower);
+        spindexer.sortBalls();
     }
 
     public void execute(){
