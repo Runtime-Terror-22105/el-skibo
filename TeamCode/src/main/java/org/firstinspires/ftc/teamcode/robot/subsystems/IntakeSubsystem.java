@@ -9,39 +9,39 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public static double defaultDown1 = 0.05; //servo pos
-    public static double defaultDown2 = 1.0;
-    public static double defaultUp1 = 0.2;
-    public static double defaultUp2 = 0.84;
+    public static double defaultDownLeft = 0.84; //servo pos
+    public static double defaultDownRight = 0.19;
+    public static double defaultUpLeft = 0.4;
+    public static double defaultUpRight = 0.6;
     public static double defaultSpeed = 0.9;
 
     public boolean isUp = false;
 
-    private double targetPitch1;
-    private double targetPitch2;
+    private double targetPitchLeft;
+    private double targetPitchRight;
     private double targetSpeed;
 
 
     public IntakeSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
-        this.targetPitch1 = defaultUp1;
-        this.targetPitch2 = defaultUp2;
+        this.targetPitchLeft = defaultUpLeft;
+        this.targetPitchRight = defaultUpRight;
         this.targetSpeed = 0;
     }
 
     public void putDown(){
         this.isUp = false;
-        this.targetPitch1 = defaultDown1;
-        this.targetPitch2 = defaultDown2;
+        this.targetPitchLeft = defaultDownLeft;
+        this.targetPitchRight = defaultDownRight;
     }
     public void putUp(){
         this.isUp = true;
-        this.targetPitch1 = defaultUp1;
-        this.targetPitch2 = defaultUp2;
+        this.targetPitchLeft = defaultUpLeft;
+        this.targetPitchRight = defaultUpRight;
     }
     public void setPitch(double pitch){
-        this.targetPitch1 = pitch;
-        this.targetPitch2 = 0.5 - (0.5 - pitch);
+        this.targetPitchLeft = pitch;
+        this.targetPitchRight = 0.5 - (0.5 - pitch);
     }
 
     public void turnOn(){
@@ -55,7 +55,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public double getPitch(){
-        return this.targetPitch1;
+        return this.targetPitchLeft;
     }
     public double getSpeed(){
         return this.targetSpeed;
@@ -63,8 +63,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void setIntakePitchPosition()
     {
-        hardware.intakePitch1.setPosition(targetPitch1);
-        hardware.intakePitch2.setPosition(targetPitch2);
+        hardware.intakePitchLeft.setPosition(targetPitchLeft);
+        hardware.intakePitchRight.setPosition(targetPitchRight);
     }
 
 

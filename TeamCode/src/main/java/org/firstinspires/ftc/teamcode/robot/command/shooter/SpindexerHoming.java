@@ -40,6 +40,7 @@ public class SpindexerHoming extends CommandBase {
     public void execute() {
         if (homed) return;
 
+        // todo: check if this wraps around, bc if so then that will cause the rotatedenough condition to not work
         double pos = spindexer.getPosition();
         limit = spindexer.getLimitSwitchState();
 
@@ -67,10 +68,10 @@ public class SpindexerHoming extends CommandBase {
             if (!seenSwitchStart) {
                 spindexer.setSpindexerOffset(pos);
                 spindexer.setSpindexerPower(0.0);
-                homed = true;
-                return;
             }
+            homed = true;
             finalizeHoming();
+            return;
         }
         // otherwise keep spinning until we actually find it
     }

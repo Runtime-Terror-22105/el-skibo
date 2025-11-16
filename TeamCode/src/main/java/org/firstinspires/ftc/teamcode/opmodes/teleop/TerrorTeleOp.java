@@ -53,7 +53,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
 
 
-    public void runOpMode(){
+    public void runOpMode() {
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
@@ -102,7 +102,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         SpindexerHoming homingCommand = new SpindexerHoming(robot.spindexer);
         CommandScheduler.getInstance().schedule(homingCommand);
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
@@ -114,12 +114,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //                robot.shooter.isAutoAimOn = false;
 //            }
 
-
-
             CommandScheduler.getInstance().run();
 
             robot.telemetry.addData("Ball Positions", robot.spindexer.getBallPositions());
             robot.telemetry.addData("Yaw Goal", robot.shooter.goalYaw);
+            robot.telemetry.update();
             hardware.write();
         }
 
