@@ -129,23 +129,15 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         CommandScheduler.getInstance().schedule(homing);
 
         while (opModeIsActive()) {
+            // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
+            // vals would be used.
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
 
-//            if(robot.robotState == INTAKING || robot.robotState == SHOOTING || robot.robotState == FULL){
-//                robot.shooter.doAutoShoot(this.goalPos);
-//            }
-//            else {
-//                robot.shooter.isAutoAimOn = false;
-//            }
+            CommandScheduler.getInstance().run();
 
-//            CommandScheduler.getInstance().run();
 
-            robot.telemetry.addData("Ball Positions", robot.spindexer.getBallPositions());
-            robot.telemetry.addData("Yaw Goal", robot.shooter.goalYaw);
-            robot.telemetry.addData("Intake isUp", robot.intake.isUp);
-            robot.telemetry.update();
             hardware.write();
         }
 
