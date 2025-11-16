@@ -67,13 +67,12 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         hardware.intakePitchLeft.setPosition(targetPitchLeft);
         hardware.intakePitchRight.setPosition(targetPitchRight);
-        Log.d("Intake", "setting intake pos");
+
     }
 
 
     @Override
     public void periodic() {
-        Log.d("Intake", "periodic");
         hardware.intake.setPower(this.targetSpeed);
         setIntakePitchPosition();
     }

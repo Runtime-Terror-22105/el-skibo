@@ -67,8 +67,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
         GamepadEx gamepad2ex = new GamepadEx(gamepad2);
 
-        hardware.intakePitchLeft.setPosition(0.5);
-        hardware.intakePitchRight.setPosition(0.5);
 
 
         // driver 1
@@ -103,9 +101,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState == FULL
         ));
         shoot1button.whenPressed(new ConditionalCommand(
-                new ShootOneBallCommand(robot.shooter),
+                new TransferCommand(robot.spindexer),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState == FULL
+                () -> true
         ));
         rejectButton.whenPressed(new ConditionalCommand(
                 new StartShooterRejectCommand(robot.shooter),
@@ -125,10 +123,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
         motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
 
-        // homing command executing here
+        //homing command executing here
         SpindexerHoming homingCommand = new SpindexerHoming(robot.spindexer);
         CommandScheduler.getInstance().schedule(homingCommand);
         CommandScheduler.getInstance().run();
+        hardware.write();
+        robot.spindexer.periodic();
 
         while (opModeIsActive()) {
             for (LynxModule hub : hardware.allHubs) {
@@ -142,7 +142,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //                robot.shooter.isAutoAimOn = false;
 //            }
 
-            CommandScheduler.getInstance().run();
+//            CommandScheduler.getInstance().run();
 
             robot.telemetry.addData("Ball Positions", robot.spindexer.getBallPositions());
             robot.telemetry.addData("Yaw Goal", robot.shooter.goalYaw);
