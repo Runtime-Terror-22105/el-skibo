@@ -82,15 +82,13 @@ public class SpindexerHoming extends CommandBase {
         double end = Double.isNaN(switchEnd) ? spindexer.getPosition() : switchEnd;
         double avg = (start + end) / 2.0;
         spindexer.setSpindexerOffset(avg);
-        spindexer.setSpindexerPower(0.0);
         homed = true;
     }
 
     @Override
     public void end(boolean interrupted) {
-        spindexer.setSpindexerPower(0.0);
-        spindexer.setPidEnabled(true);
         spindexer.setYaw(0.0);
+        spindexer.setPidEnabled(true);
         Log.d("homing","reached the end portion where we set the pid to enable and we set the yaw to 0");
     }
 
