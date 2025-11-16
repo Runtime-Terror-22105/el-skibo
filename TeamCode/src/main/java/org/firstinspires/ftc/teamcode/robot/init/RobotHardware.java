@@ -216,9 +216,9 @@ public class RobotHardware {
         this.intakePitchLeft = new TerrorServo(hwMap.get(Servo.class, "intakePitchLeft"));
         this.intakePitchRight = new TerrorServo(hwMap.get(Servo.class, "intakePitchRight"));
         this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
-        this.publisher.subscribe(10,intakePitchLeft);
-        this.publisher.subscribe(10, intakePitchRight);
-        this.publisher.subscribe(10,spindexerPTO);
+        this.publisher.subscribe(10,intakePitchRight);
+        this.publisher.subscribe(10, intakePitchLeft);
+//        this.publisher.subscribe(10,spindexerPTO);
 
         // Limit switch
         this.spindexerLimitSwitch = hwMap.get(DigitalChannel.class, "spindexerLimitSwitch");
