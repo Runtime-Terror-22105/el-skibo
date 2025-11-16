@@ -13,14 +13,12 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class ShooterVelocityTest extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
-    private final Robot robot = new Robot();
 
     public static double power = 0.0;
 
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        robot.init(hardware, telemetry);
         waitForStart();
 
         double maxvel=0;
@@ -37,11 +35,15 @@ public class ShooterVelocityTest extends LinearOpMode {
 
             hardware.write();
 
-            maxvel=Math.max(maxvel,robot.shooter.getShooterVelocity());
-            robot.telemetry.addData("Current velocity", robot.shooter.getShooterVelocity());
-            robot.telemetry.addData("Max velocity so far",maxvel);
+            telemetry.addData("Current velocity (ticks/sec)", hardware.shooterEncoder.getVelocity());
 
-            robot.telemetry.update();
+            // I'm pretty sure we're using this motor? https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
+            telemetry.addData("Current velocity (rpm)", hardware.shooterEncoder.getVelocity() * 60 / 145.1); // 145.1 ticks per revolution
+            maxvel=Math.max(maxvel, hardware.shooterEncoder.getVelocity() * 60 / 145.1);
+            telemetry.addData("Max Velocity(rpm)", maxvel); // 145.1 ticks per revolution
+            telemetry.update();
+
+            telemetry.update();
 
         }
 
