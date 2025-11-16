@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
+import android.util.Log;
+
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -33,12 +35,14 @@ public class TransferCommand extends InstantCommand {
         spindexer.setSpindexerPower(spindexer.spindexTransferPower);
     }
 
-    public void setupTransfer(){
+    public void execute(){
+        Log.d("transfer", "command running");
         SequentialCommandGroup group = new SequentialCommandGroup(
                 new InstantCommand(() -> phase1() ),
                 new InstantCommand(() -> phase2() ),
                 new InstantCommand(() -> phase3() ),
-                new InstantCommand(() -> phase4() )
+                new InstantCommand(() -> phase4() ),
+                new InstantCommand(() -> phase5())
         );
         CommandScheduler.getInstance().schedule(group);
 
