@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -9,13 +11,13 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public static double defaultDownLeft = 0.84; //servo pos
-    public static double defaultDownRight = 0.19;
+    public static double defaultDownLeft = 0.91; //servo pos
+    public static double defaultDownRight = 0.09;
     public static double defaultUpLeft = 0.4;
     public static double defaultUpRight = 0.6;
     public static double defaultSpeed = 0.9;
 
-    public boolean isUp = false;
+    public boolean isUp = true;
 
     private double targetPitchLeft;
     private double targetPitchRight;
@@ -65,11 +67,13 @@ public class IntakeSubsystem extends SubsystemBase {
     {
         hardware.intakePitchLeft.setPosition(targetPitchLeft);
         hardware.intakePitchRight.setPosition(targetPitchRight);
+        Log.d("Intake", "setting intake pos");
     }
 
 
     @Override
     public void periodic() {
+        Log.d("Intake", "periodic");
         hardware.intake.setPower(this.targetSpeed);
         setIntakePitchPosition();
     }
