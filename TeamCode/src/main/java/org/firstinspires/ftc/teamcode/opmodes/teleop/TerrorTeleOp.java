@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
+import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -19,6 +20,7 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.PerpetualCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
@@ -31,6 +33,7 @@ import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToFullStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorGamepad;
@@ -81,7 +84,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
 
         hangButton.whenPressed(new GoToClimbStateCommand(robot));
-        intakeButton.whenPressed(new GoToIntakeStateCommand(robot, new TransferCommand(robot.spindexer)));
+        intakeButton.whenPressed(new SequentialCommandGroup(
+                new GoToIntakeStateCommand(robot, new TransferCommand(robot.spindexer)),
+                new WaitForIntakeCommand(robot),
+                new GoToFullStateCommand(robot)
+        ));
         shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter,robot.spindexer));
         shoot1button.whenPressed(new ShootOneBallCommand(robot.shooter));
         rejectButton.whenPressed(new StartShooterRejectCommand(robot.shooter));
