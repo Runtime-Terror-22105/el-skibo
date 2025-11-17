@@ -4,13 +4,13 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
-public class SetSpindexerWallActive extends InstantCommand {
-    public SetSpindexerWallActive(SpindexerSubsystem spindexer, boolean active) {
+public class SetSpindexerWallDown extends InstantCommand {
+    public SetSpindexerWallDown(SpindexerSubsystem spindexer, boolean down) {
         super(() -> {
-            if (active) {
-                spindexer.setWallActive();
+            if (down) {
+                spindexer.setWallDown();
             } else {
-                spindexer.setWallDeactive();
+                spindexer.setWallUp();
             }
         });
     }

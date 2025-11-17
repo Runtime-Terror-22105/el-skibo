@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeDownCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerPoleActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerWallActive;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterManualAimCommand;

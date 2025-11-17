@@ -6,12 +6,10 @@ import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
-import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class TransferCommand extends SequentialCommandGroup {
@@ -27,6 +25,7 @@ public class TransferCommand extends SequentialCommandGroup {
     public TransferCommand(Robot robot) {
         super(
                 // Phase 1 and 2: ???
+                new SetSpindexerWallDown(robot.spindexer, false),
                 new SetSpindexerPoleActive(robot.spindexer, true),
                 new WaitCommand(500),
 
