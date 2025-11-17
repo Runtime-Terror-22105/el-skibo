@@ -17,7 +17,10 @@ public class CameraTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO, RobotHardware.HardwareOptions.CAMERA);
+        robot.init(hardware, telemetry);
+
         waitForStart();
+
         while (opModeIsActive())
         {
             telemetry.addData("seenglyph",robot.camera.getGlyph());
