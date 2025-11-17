@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -32,14 +33,14 @@ public class ShooterTuner extends LinearOpMode {
 
             robot.shooter.setSpeed(goalSpeed);
 
-            robot.spindexer.periodic();
-
+//            CommandScheduler.getInstance().run();
+            robot.shooter.periodic();
 
             hardware.write();
 
 
             robot.telemetry.addData("Goal Velocity",goalSpeed);
-            robot.telemetry.addData("Current velocity",robot.shooter.getShooterVelocity());
+            robot.telemetry.addData("Current velocity",robot.shooter.getVelocityRpm());
             robot.telemetry.update();
 
         }
