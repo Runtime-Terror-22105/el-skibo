@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import static org.firstinspires.ftc.teamcode.robot.hardware.TerrorGamepad.State.RISING;
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.CLIMBING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.FULL;
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
@@ -14,34 +10,21 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.PerpetualCommand;
-import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
-import com.seattlesolvers.solverslib.gamepad.ToggleButtonReader;
-import com.seattlesolvers.solverslib.gamepad.TriggerReader;
 
-import org.firstinspires.ftc.teamcode.math.Algebra;
-import org.firstinspires.ftc.teamcode.math.Angle;
-import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
-import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToFullStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
-import org.firstinspires.ftc.teamcode.robot.hardware.TerrorGamepad;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.init.StateTag;
-import org.firstinspires.ftc.teamcode.robot.subsystems.*;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
