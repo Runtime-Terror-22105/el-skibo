@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,8 +24,21 @@ import java.util.ArrayList;
 @Config
 public class CameraSubsystem extends SubsystemBase
 {
+
+    //TODO: turrentCenterDists, turretRadiusvalue, cameraphasechange all values needed, and the pose2d in
+    //TODO: getRobotCenterCoordinateToAprilTag heading is needed
+
     private OpenCvCamera aprilTagCamera;
     private OpenCvCamera spindexerCamera;
+
+    private double turretCenterToRobotCenterUnitNeededX = -1;
+    private double turretCenterToRobotCenterUnitNeededY = 1;
+
+    private double turretRadiusUnitNeeded = 1;
+
+    private double cameraPhaseChangeAngleRadians = 90;
+
+
     
 
     Telemetry telemetry;
@@ -33,6 +48,8 @@ public class CameraSubsystem extends SubsystemBase
     }
 
     public enum LiveViewSettings { OFF, FIELD }
+
+    public Robot robot = new Robot();
 
 
     public GLYPH gameGlyph;
@@ -121,15 +138,33 @@ public class CameraSubsystem extends SubsystemBase
         return !detections.isEmpty();
     }
 
-    public Pose2d getPositionCamera()
+//    public Pose2d getPositionCamera()
+//    {
+//
+//        if (detections.isEmpty()) {
+//            return null;
+//        }
+//
+//        // todo: choose only one apriltag to use
+//        AprilTagDetection tag = detections.get(0);
+//        return new Pose2d(tag.robotPose.getPosition().x-VisionConstants.APRILTAG.cameraOffset.x,tag.robotPose.getPosition().y-VisionConstants.APRILTAG.cameraOffset.y,tag.robotPose.getPosition().z-VisionConstants.APRILTAG.cameraOffset.z);
+//    }
+
+    //this gives the actual coords from the robot center to the april tag which makes the robot center 0,0 relative
+    //to the outputed value
+
+    private double getCoordinateComponentX(AprilTagDetection tag)
     {
-
-        if (detections.isEmpty()) {
-            return null;
-        }
-
-        // todo: choose only one apriltag to use
-        AprilTagDetection tag = detections.get(0);
-        return new Pose2d(tag.robotPose.getPosition().x-VisionConstants.APRILTAG.cameraOffset.x,tag.robotPose.getPosition().y-VisionConstants.APRILTAG.cameraOffset.y,tag.robotPose.getPosition().z-VisionConstants.APRILTAG.cameraOffset.z);
+        return (tag.ftcPose.x + Math.cos(robot.shooter.turretAngle+cameraPhaseChangeAngleRadians)+turretCenterToRobotCenterUnitNeededX);
     }
-}
+
+    private double getCoordinateComponentY(AprilTagDetection tag)
+    {
+        return (tag.ftcPose.y + Math.sin(robot.shooter.turretAngle+cameraPhaseChangeAngleRadians)+turretCenterToRobotCenterUnitNeededY);
+    }
+
+    public Pose2d getRobotCenterCoordinateToAprilTag()
+    {
+        AprilTagDetection tag = detections.get(0);
+        return new Pose2d(getCoordinateComponentX(tag),getCoordinateComponentY(tag),null);
+    }
