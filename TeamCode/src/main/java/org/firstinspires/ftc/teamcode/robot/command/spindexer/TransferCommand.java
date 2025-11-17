@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -17,6 +20,7 @@ public class TransferCommand extends SequentialCommandGroup {
     public static int PRE_YAW_DELAY = 250;  // milliseconds
     public static int RAMP_DELAY = 500;  // milliseconds
     public static int TRANSFER_TIME = 2000;  // milliseconds
+    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
 
     private final Robot robot;
 
@@ -42,24 +46,30 @@ public class TransferCommand extends SequentialCommandGroup {
                 new WaitCommand(RAMP_DELAY),
 
                 // Phase 5: transfer balls
-                // TODO: this is really sus disabling the PID...
-                //  imo we should have a setting to slow down the PID
-                new InstantCommand(() -> {
-                    robot.spindexer.setPidEnabled(false);
-                    robot.spindexer.setSpindexerPower(SpindexerSubsystem.TRANSFER_POWER);
-                }),
-                new WaitCommand(TRANSFER_TIME),
-                new InstantCommand(() -> {
-                    robot.spindexer.setPidEnabled(true);
-                    robot.spindexer.setSpindexerPower(0.0);
-                }),
+//                new InstantCommand(() -> {
+//                    robot.spindexer.setPidEnabled(false);
+//                    robot.spindexer.setSpindexerPower(SpindexerSubsystem.TRANSFER_POWER);
+//                }),
+                new ChangeSpindexerYawCommand(robot.spindexer, SPINDEX_ROTATIONS*2*Math.PI),
+                new ParallelRaceGroup( // keep going for either 2 rotations or until all balls are gone
+                    new WaitForSpindexerYawCommand(robot.spindexer)
+//                    new WaitUntilCommand(() -> {
+//                        char[] balls = robot.spindexer.getBallPositions();
+//                        return balls[0] == 'N' && balls[1] == 'N' && balls[2] == 'N';
+//                    })
+                ),
 
-                new SetIntakeSpeedCommand(robot.intake, 0),
-                new InstantCommand(() -> {
-                    robot.hardware.shooterLeft.setPower(0);
-                    robot.hardware.shooterRight.setPower(0);
-                }),
-                new SetSpindexerPoleActive(robot.spindexer, false)
+                // reset spindexer, intake, shooter, and pole
+                new ParallelCommandGroup(
+                    new InstantCommand(() -> robot.spindexer.setYaw(robot.spindexer.getPosition())),
+                    new SetIntakeSpeedCommand(robot.intake, 0),
+                    new InstantCommand(() -> {
+                        robot.hardware.shooterLeft.setPower(0);
+                        robot.hardware.shooterRight.setPower(0);
+                    }),
+                    new SetSpindexerPoleActive(robot.spindexer, false),
+                    new SetSpindexerRampActive(robot.spindexer, false)
+                )
         );
         this.robot = robot;
     }

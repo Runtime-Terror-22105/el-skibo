@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
@@ -108,8 +109,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         //homing command executing here
 
-        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
-        CommandScheduler.getInstance().schedule(homing);
+//        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
+        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
+                new SpindexerHoming(robot.spindexer),
+                new GoToRestingStateCommand(robot)
+        ));
 
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
