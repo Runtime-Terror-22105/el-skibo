@@ -58,6 +58,7 @@ public class CameraSubsystem extends SubsystemBase
     private ArrayList<AprilTagDetection> detections;
 
     public CameraSubsystem(RobotHardware hardware, LiveViewSettings liveViewSettings) {
+        this.detections = new ArrayList<>();
         this.aTagProcessor = createAprilTagProcessor();
 //        this.spindexerPipeline = new SpindexerPipeline(telemetry);
 
@@ -121,6 +122,7 @@ public class CameraSubsystem extends SubsystemBase
 
     public Pose2d getPositionCamera()
     {
+
         if (detections.isEmpty()) {
             return null;
         }
