@@ -71,7 +71,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenPressed(new ConditionalCommand(
                 new SequentialCommandGroup(
-                    new GoToIntakeStateCommand(robot, new TransferCommand(robot.spindexer)),
+                    new GoToIntakeStateCommand(robot, new TransferCommand(robot)),
                     new WaitForIntakeCommand(robot),
                     new GoToFullStateCommand(robot)
                 ),
@@ -84,7 +84,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState == FULL
         ));
         shoot1button.whenPressed(new ConditionalCommand(
-                new TransferCommand(robot.spindexer),
+                new TransferCommand(robot),
                 new InstantCommand(() -> {} ),
                 () -> true
         ));

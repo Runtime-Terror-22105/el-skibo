@@ -5,51 +5,61 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class TransferCommand extends SequentialCommandGroup {
-    public static double PRE_YAW_ANGLE = 20.0;  // degrees
+    public static double PRE_YAW_ANGLE = 30.0;  // degrees
     public static int PRE_YAW_DELAY = 250;  // milliseconds
     public static int RAMP_DELAY = 500;  // milliseconds
-    public static int TRANSFER_TIME = 1500;  // milliseconds
+    public static int TRANSFER_TIME = 2500;  // milliseconds
 
-    private final SpindexerSubsystem spindexer;
+    private final Robot robot;
 
-    public TransferCommand(SpindexerSubsystem spindexer) {
+    public TransferCommand(Robot robot) {
         super(
                 // Phase 1 and 2: ???
+                new SetSpindexerPoleActive(robot.spindexer, true),
+                new WaitCommand(500),
 
                 // Phase 3: rotate to pre-transfer yaw
                 // TODO: angle needs to be relative to current position, NOT absolute
-                new SetSpindexerYawCommand(spindexer, Math.toRadians(PRE_YAW_ANGLE)),
-                new WaitForSpindexerYawCommand(spindexer).withTimeout(2000),
+                new SetSpindexerYawCommand(robot.spindexer, Math.toRadians(PRE_YAW_ANGLE)),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(PRE_YAW_DELAY),
 
-                // Phase 4: drop down ramp
-                new SetSpindexerRampActive(spindexer, true),
+                // Phase 4: drop down ramp and start intake
+                new SetSpindexerRampActive(robot.spindexer, true),
+                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.defaultSpeed),
                 new WaitCommand(RAMP_DELAY),
 
                 // Phase 5: transfer balls
                 // TODO: this is really sus disabling the PID...
                 //  imo we should have a setting to slow down the PID
                 new InstantCommand(() -> {
-                    spindexer.setPidEnabled(false);
-                    spindexer.setSpindexerPower(SpindexerSubsystem.TRANSFER_POWER);
+                    robot.spindexer.setPidEnabled(false);
+                    robot.spindexer.setSpindexerPower(SpindexerSubsystem.TRANSFER_POWER);
                 }),
                 new WaitCommand(TRANSFER_TIME),
                 new InstantCommand(() -> {
-                    spindexer.setPidEnabled(true);
-                    spindexer.setSpindexerPower(0.0);
-                })
+                    robot.spindexer.setPidEnabled(true);
+                    robot.spindexer.setSpindexerPower(0.0);
+                }),
+
+                new SetIntakeSpeedCommand(robot.intake, 0),
+                new SetSpindexerPoleActive(robot.spindexer, false)
         );
-        this.spindexer = spindexer;
+        this.robot = robot;
     }
 
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
-        spindexer.setPidEnabled(true);
+        robot.spindexer.setPidEnabled(true);
+        robot.intake.setSpeed(0);
     }
 
     //    public void phase1() {
