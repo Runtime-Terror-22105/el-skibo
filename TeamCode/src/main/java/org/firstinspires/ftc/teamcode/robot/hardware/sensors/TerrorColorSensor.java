@@ -12,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class TerrorColorSensor implements NormalizedColorSensor {
 
+    public static double MAX_DIST = 50;
+
     private final RevColorSensorV3 sensor;
     public enum side {
         LEFT,
@@ -60,7 +62,7 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     public char getGreenOrPurple() {
 
         double[]rgb= {getRed(),getGreen(),getBlue()};
-        if(getDist(DistanceUnit.MM)>=30.0){
+        if(getDist(DistanceUnit.MM) >= MAX_DIST){
             return 'N';
         }
         else if(rgb[2]>rgb[1] && rgb[2]>rgb[0]){
