@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.hardware.motors;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,7 +17,7 @@ public class TerrorServo implements TerrorWritingDevice {
     private final Servo servo;  // The underlying PhotonServo instance
     private double servoPosition;     // Current position of the servo
     private double lastPosition;      // Last set position to prevent unnecessary updates
-    private final double tolerance = 0.0001; // Small tolerance to avoid float comparison issues
+    private final double tolerance = 0.0; // Small tolerance to avoid float comparison issues
     private ServoCommand command = ServoCommand.NONE;
 
     /**
