@@ -5,7 +5,6 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -35,7 +34,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
     public static double RESTING_SPINDEX_POS = 0.0;
 
-    public static double spindexTransferPower=0.0;
+    public static double TRANSFER_POWER =0.0;
 
     public double SHOOTER_INTAKE_SPEED = 0.0; // this is the speed where the shooter melonbotic servo intakes the balls
 
@@ -139,6 +138,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void Oilup(){
         this.diddyPos= DIDDY_POLE_ACTIVE;
+    }
+
+    public void Oildown() {
+        this.diddyPos = DIDDY_POLE_DEACITVE;
     }
 
 
