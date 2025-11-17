@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
+
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -27,23 +29,29 @@ public class LocalizationSubsystem extends SubsystemBase {
         this.hardware = hardware;
         this.currentPosition=startPos;
         this.pinpointLocalizer=robot.pinpoint;
-        this.robot=robot;
+        this.robot = robot;
     }
 
     public Pose2d getCurrentPosition(){return this.currentPosition;}
 
     @Override
     public void periodic() {
-        if (robot.camera.hasDetections()) {
-            Pose2d badPosition=pinpointLocalizer.getPosition();
+        robot.pinpoint.read();
+
+        if (robot.camera != null && robot.camera.hasDetections()) {
+            if (robot.camera == null) Log.w("LocalizationSubsystem", "No camera was found!");
+
+            Pose2d badPosition = pinpointLocalizer.getPosition();
             this.currentPosition=robot.camera.getPositionCamera();
             this.offset_x=currentPosition.x-badPosition.x;
             this.offset_y=currentPosition.y-badPosition.y;
             this.offset_yaw=currentPosition.heading-badPosition.heading;
+            Log.i("LocalizationSubsystem", "Updating pinpoint position based on AprilTags.");
         }
         else {
-            Pose2d pinpointposition=pinpointLocalizer.getPosition();
+            Pose2d pinpointposition = pinpointLocalizer.getPosition();
             this.currentPosition= Pose2d.add(pinpointposition, new Pose2d(offset_x,offset_y,offset_yaw));
+            Log.i("LocalizationSubsystem", "No AprilTag data was found, using pinpoint...");
         }
     }
 
