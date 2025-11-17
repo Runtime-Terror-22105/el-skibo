@@ -23,10 +23,11 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * 5.6D;
 
-    public static double INTAKE_WALL_1_ACTIVE = 1.0;
-    public static double INTAKE_WALL_1_DEACTIVE = 0.0;
-    public static double INTAKE_WALL_2_ACTIVE = 1.0;
-    public static double INTAKE_WALL_2_DEACTIVE = 0.0;
+    public static double INTAKE_WALL_1_DOWN = 0.3;
+    public static double INTAKE_WALL_1_UP = 0.7;
+    public static double INTAKE_WALL_2_DOWN = 0.6;
+    public static double INTAKE_WALL_2_UP = 0.2;
+
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
     public static double RESTING_SPINDEX_POS = 0.0;
@@ -38,8 +39,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_INTAKING_SPEED = 1.0;
     public static double SHOOT_ONE_ROTATION = -(2 / 3) * Math.PI;
 
-    public double intakeWallPosition1 = INTAKE_WALL_1_DEACTIVE;
-    public double intakeWallPosition2 = INTAKE_WALL_2_DEACTIVE;
+    public double intakeWallPosition1 = INTAKE_WALL_1_UP;
+    public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
     public static double DIDDY_POLE_ACTIVE = 0.6;
@@ -134,14 +135,14 @@ public class SpindexerSubsystem extends SubsystemBase {
         return ticksToRadians(getPositionTicks());
     }
 
-    public void setWallActive() {
-        this.intakeWallPosition1 = INTAKE_WALL_1_ACTIVE;
-        this.intakeWallPosition2 = INTAKE_WALL_2_ACTIVE;
+    public void setWallDown() {
+        this.intakeWallPosition1 = INTAKE_WALL_1_DOWN;
+        this.intakeWallPosition2 = INTAKE_WALL_2_DOWN;
     }
 
-    public void setWallDeactive() {
-        this.intakeWallPosition1 = INTAKE_WALL_1_DEACTIVE;
-        this.intakeWallPosition2 = INTAKE_WALL_2_DEACTIVE;
+    public void setWallUp() {
+        this.intakeWallPosition1 = INTAKE_WALL_1_UP;
+        this.intakeWallPosition2 = INTAKE_WALL_2_UP;
     }
 
     public void Oilup() {

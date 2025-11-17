@@ -12,7 +12,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
     public static double defaultDownLeft = 0.91; //servo pos
-    public static double defaultDownRight = 0.09;
+    public static double defaultDownRight = 0.08;
     public static double defaultUpLeft = 0.4;
     public static double defaultUpRight = 0.6;
     public static double defaultSpeed = 0.9;
