@@ -31,7 +31,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
     public static double RESTING_SPINDEX_POS = 0.0;
 
-    public static double TRANSFER_POWER = 0.0;
+    public static double TRANSFER_POWER = -0.2;
 
     public double SHOOTER_INTAKE_SPEED = 0.0; // this is the speed where the shooter melonbotic servo intakes the balls
 
