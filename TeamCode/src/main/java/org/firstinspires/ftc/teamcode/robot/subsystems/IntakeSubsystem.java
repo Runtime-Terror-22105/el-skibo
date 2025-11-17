@@ -14,9 +14,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public static double PITCH_DOWN_RIGHT = 0.0;
     public static double PITCH_UP_RIGHT = 0.5;
 
-    public static double defaultSpeed = 0.9;
-
-    public boolean isUp = true;
+    public static double DEFAULT_SPEED = 0.9;
 
     private double targetPitchLeft;
     private double targetPitchRight;
@@ -31,27 +29,33 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void putDown(){
-        this.isUp = false;
         this.targetPitchLeft = PITCH_DOWN_LEFT;
         this.targetPitchRight = PITCH_DOWN_RIGHT;
     }
+
     public void putUp(){
-        this.isUp = true;
         this.targetPitchLeft = PITCH_UP_LEFT;
         this.targetPitchRight = PITCH_UP_RIGHT;
     }
-    public void setPitch(double pitch){
+
+    public boolean isUp() {
+        return this.targetPitchLeft == PITCH_UP_LEFT && this.targetPitchRight == PITCH_UP_RIGHT;
+    }
+
+    public void setPitch(double pitch) {
         // TODO: this method should map each of the ranges to 0-1
 //        this.targetPitchLeft = pitch;
 //        this.targetPitchRight = 0.5 - (0.5 - pitch);
     }
 
     public void turnOn(){
-        this.targetSpeed = defaultSpeed;
+        this.targetSpeed = DEFAULT_SPEED;
     }
-    public void turnOff(){
+
+    public void turnOff() {
         this.targetSpeed = 0.0;
     }
+
     public void setSpeed(double speed){
         this.targetSpeed = speed;
     }
@@ -59,6 +63,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public double getPitch(){
         return this.targetPitchLeft;
     }
+
     public double getSpeed(){
         return this.targetSpeed;
     }

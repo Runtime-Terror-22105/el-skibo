@@ -15,7 +15,7 @@ public class GoToFullStateCommand extends SequentialCommandGroup {
     public GoToFullStateCommand(Robot robot) {
         super(new ParallelCommandGroup(
                 new InstantCommand(() -> robot.robotState = RobotState.FULL),
-                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.defaultSpeed),
+                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                 new SetSpindexerPoleActive(robot.spindexer, true)
 //                TODO? new StartShooterAutoAimCommand(robot.shooter)
         ));
