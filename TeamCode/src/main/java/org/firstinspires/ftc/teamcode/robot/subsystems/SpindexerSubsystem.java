@@ -48,8 +48,6 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public double diddyPos = DIDDY_POLE_DEACITVE;
 
-    public boolean usespindexPID = true;
-
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
 
@@ -95,7 +93,6 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setYaw(double angle) { //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
         this.yawPid.setTargetPosition(radiansToTicks(angle));
-        this.usespindexPID = true;
     }
 
     public boolean getLimitSwitchState() {
@@ -242,7 +239,6 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setSpindexerPower(double power) {
         this.spindexerPower = power;
-        this.usespindexPID = false;
     }
 
     @Override
