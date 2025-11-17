@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -120,6 +121,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             // vals would be used.
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
+            }
+
+            char[] balls = robot.spindexer.getBallPositions();
+            if (balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N') {
+                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
             }
 
             CommandScheduler.getInstance().run();
