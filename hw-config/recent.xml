@@ -17,6 +17,8 @@
             <Servo name="spindexerTransferRamp" port="0" />
             <Servo name="intakePitchLeft" port="1" />
             <Servo name="intakePitchRight" port="2" />
+            <Servo name="turretYawLeft" port="3" />
+            <Servo name="turretYawRight" port="4" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="motorFrontLeft" port="0" />
