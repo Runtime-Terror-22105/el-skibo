@@ -63,7 +63,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
             new PidfController.PidfCoefficients(0.011, 0, 0.00001, 0, 0);
-    public static double yawPidTolerance = 0.1;
+    public static double yawPidTolerance = Math.toRadians(10); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
@@ -72,7 +72,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware = hardware;
         this.sensors = new TerrorColorSensor[]{hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
 
-        this.yawPid.setTolerance(yawPidTolerance);
+        this.yawPid.setTolerance(radiansToTicks(yawPidTolerance));
         this.yawPid.setTargetPosition(0.0);
     }
 
