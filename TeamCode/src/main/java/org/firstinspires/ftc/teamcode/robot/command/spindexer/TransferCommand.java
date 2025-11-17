@@ -17,14 +17,16 @@ public class TransferCommand extends SequentialCommandGroup {
 
     public TransferCommand(SpindexerSubsystem spindexer) {
         super(
-                // Phase 3: drop down ramp
+                // Phase 1 and 2: ???
+
+                // Phase 3: rotate to pre-transfer yaw
+                new SetSpindexerYawCommand(spindexer, 0.20), // TODO: fix angle
+                new WaitForSpindexerYawCommand(spindexer).withTimeout(2000),
+                new WaitCommand(PRE_YAW_DELAY),
+
+                // Phase 4: drop down ramp
                 new SetSpindexerRampActive(spindexer, true),
                 new WaitCommand(RAMP_DELAY),
-
-                // Phase 4: rotate to pre-transfer yaw
-                new SetSpindexerYawCommand(spindexer, 0.20), // TODO: fix angle
-                new WaitForSpindexerYawCommand(spindexer),
-                new WaitCommand(PRE_YAW_DELAY),
 
                 // Phase 5: transfer balls
                 // TODO: this is really sus disabling the PID...
