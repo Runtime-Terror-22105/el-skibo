@@ -23,7 +23,7 @@ public class TransferCommand extends SequentialCommandGroup {
 
                 // Phase 4: rotate to pre-transfer yaw
                 new SetSpindexerYawCommand(spindexer, 0.20), // TODO: fix angle
-                // TODO: use pid feedback to wait for yaw
+                new WaitForSpindexerYawCommand(spindexer),
                 new WaitCommand(PRE_YAW_DELAY),
 
                 // Phase 5: transfer balls

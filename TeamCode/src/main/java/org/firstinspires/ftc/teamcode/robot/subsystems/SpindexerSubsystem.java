@@ -83,6 +83,11 @@ public class SpindexerSubsystem extends SubsystemBase {
         return this.yawPid.getTargetPosition();
     }
 
+    public boolean atTargetYaw() {
+        // TODO: potentially beware of angle wrapping here
+        return this.yawPid.atTargetPosition(getPosition());
+    }
+
     public void setYaw(double angle) { //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
         this.yawPid.setTargetPosition(angle);
         this.usespindexPID=true;
