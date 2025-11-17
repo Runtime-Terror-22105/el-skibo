@@ -25,6 +25,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public double spindexerOffset = 0;
 
+    public static double TICKS_PER_REVOLUTION = ((1D+(46D/11D))*28D) * 5.6D;
+
     public static double INTAKE_WALL_1_ACTIVE = 1.0;
     public static double INTAKE_WALL_1_DEACTIVE = 0.0;
     public static double INTAKE_WALL_2_ACTIVE = 1.0;
