@@ -25,6 +25,9 @@ import org.opencv.core.Point;
  */
 @Config
 public class Robot extends com.seattlesolvers.solverslib.command.Robot {
+    // only use for debug cus aadit says static vars are sus
+    public static MultipleTelemetry debugTelemetry;
+
     // States
     public RobotState robotState = null /*RobotState.RESTING*/;
 
@@ -60,6 +63,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         // Set up dashboard stuff
         this.dashboard = FtcDashboard.getInstance();
         this.telemetry = new MultipleTelemetry(tele, dashboard.getTelemetry());
+        debugTelemetry = telemetry;
 
         // Initialize the localizer
         if (hardware.pinpoint != null) {
