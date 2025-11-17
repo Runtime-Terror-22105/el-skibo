@@ -64,7 +64,8 @@ public class CameraSubsystem extends SubsystemBase
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
-                .setCameraResolution(new Size(320, 240))
+                .setCameraResolution(new Size(1280, 800))
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
 //                .addProcessor(this.spindexerPipeline) //sad emoji
                 .addProcessor(this.aTagProcessor);
 
