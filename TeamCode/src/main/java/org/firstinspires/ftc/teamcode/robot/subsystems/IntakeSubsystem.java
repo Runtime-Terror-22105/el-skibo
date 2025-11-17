@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -11,10 +9,11 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public static double defaultDownLeft = 0.91; //servo pos
-    public static double defaultDownRight = 0.08;
-    public static double defaultUpLeft = 0.4;
-    public static double defaultUpRight = 0.6;
+    public static double PITCH_DOWN_LEFT = 0.41; //servo pos
+    public static double PITCH_UP_LEFT = 0.91;
+    public static double PITCH_DOWN_RIGHT = 0.0;
+    public static double PITCH_UP_RIGHT = 0.5;
+
     public static double defaultSpeed = 0.9;
 
     public boolean isUp = true;
@@ -26,24 +25,25 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
-        this.targetPitchLeft = defaultUpLeft;
-        this.targetPitchRight = defaultUpRight;
+        this.targetPitchLeft = PITCH_UP_LEFT;
+        this.targetPitchRight = PITCH_UP_RIGHT;
         this.targetSpeed = 0;
     }
 
     public void putDown(){
         this.isUp = false;
-        this.targetPitchLeft = defaultDownLeft;
-        this.targetPitchRight = defaultDownRight;
+        this.targetPitchLeft = PITCH_DOWN_LEFT;
+        this.targetPitchRight = PITCH_DOWN_RIGHT;
     }
     public void putUp(){
         this.isUp = true;
-        this.targetPitchLeft = defaultUpLeft;
-        this.targetPitchRight = defaultUpRight;
+        this.targetPitchLeft = PITCH_UP_LEFT;
+        this.targetPitchRight = PITCH_UP_RIGHT;
     }
     public void setPitch(double pitch){
-        this.targetPitchLeft = pitch;
-        this.targetPitchRight = 0.5 - (0.5 - pitch);
+        // TODO: this method should map each of the ranges to 0-1
+//        this.targetPitchLeft = pitch;
+//        this.targetPitchRight = 0.5 - (0.5 - pitch);
     }
 
     public void turnOn(){
@@ -63,17 +63,10 @@ public class IntakeSubsystem extends SubsystemBase {
         return this.targetSpeed;
     }
 
-    public void setIntakePitchPosition()
-    {
-        hardware.intakePitchLeft.setPosition(targetPitchLeft);
-        hardware.intakePitchRight.setPosition(targetPitchRight);
-
-    }
-
-
     @Override
     public void periodic() {
         hardware.intake.setPower(this.targetSpeed);
-        setIntakePitchPosition();
+        hardware.intakePitchLeft.setPosition(targetPitchLeft);
+        hardware.intakePitchRight.setPosition(targetPitchRight);
     }
 }
