@@ -5,7 +5,14 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 
 public class StartShooterRejectCommand extends InstantCommand {
+    ShooterSubsystem shooter;
     public StartShooterRejectCommand(ShooterSubsystem shooter) {
+        this.shooter=shooter;
 
+    }
+    public void reject(){
+        shooter.setHoodPosition(0.95);
+        shooter.shooterSpeed=1.0;
+        shooter.setSpeed(1.0);
     }
 }

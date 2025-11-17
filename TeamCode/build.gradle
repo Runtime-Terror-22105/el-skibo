@@ -66,7 +66,7 @@ repositories {
 }
 
 final String koalaLogVersion = '1.2.2Beta' // i just put this in a variable so that we use the same version both times
-final String solversLibVersion = 'SNAPSHOT-7cdcc66' // TODO: update this when 0.3.3 is released
+final String solversLibVersion = '0.3.3' // TODO: update this when 0.3.3 is released
 final String panelsVersion = '1.0.5'
 dependencies {
 //    implementation("dev.frozenmilk.dairy:Core:2.2.4")

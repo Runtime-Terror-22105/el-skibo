@@ -1,46 +1,54 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.lynx.LynxModule;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 
 @TeleOp(name = "Motor Test", group = "Testing")
 @Config
 public class MotorTest extends LinearOpMode {
     // targets
-    public static double FRONT_LEFT_POWER = 0;
-    public static double FRONT_RIGHT_POWER = 0;
-    public static double REAR_LEFT_POWER = 0;
-    public static double REAR_RIGHT_POWER = 0;
+    public static String motorName = "";
+    public static double motorPower = 0D;
 
-    public static double spindexerRotateMotorPower = 0;
-    public static double intakeMotorPower = 0;
+    public static String motorName2 = "";
+    public static double motorPower2 = 0D;
 
-    private final RobotHardware hardware = new RobotHardware();
+    public static boolean showEncoderOutput = true;
+
 
     @Override
     public void runOpMode() {
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        waitForStart();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        waitForStart();
+        double maxvel=0;
         while (opModeIsActive()) {
-            if (hardware.allHubs != null) {
-                for (LynxModule hub : hardware.allHubs) {
-                    hub.clearBulkCache();
-                }
+            if (!motorName.isEmpty()) {
+                hardwareMap.get(DcMotor.class, motorName).setPower(motorPower);
             }
 
-            hardware.motorFrontLeft.setPower(FRONT_LEFT_POWER);
-            hardware.motorFrontRight.setPower(FRONT_RIGHT_POWER);
-            hardware.motorRearLeft.setPower(REAR_LEFT_POWER);
-            hardware.motorRearRight.setPower(REAR_RIGHT_POWER);
-            hardware.spindexerRotate.setPower(spindexerRotateMotorPower);
-            hardware.intake.setPower(intakeMotorPower);
+            if (!motorName2.isEmpty()) {
+                hardwareMap.get(DcMotor.class, motorName2).setPower(motorPower2);
+            }
 
-            hardware.write();
+            if (showEncoderOutput && !motorName.isEmpty()) {
+                TerrorEncoder shooterEncoder = new TerrorEncoder(new TerrorMotorNormal((DcMotorEx) hardwareMap.get(DcMotor.class, "shooterLeft"), 0.05, 1.0));
+                telemetry.addData("Current velocity (ticks/sec)", shooterEncoder.getVelocity());
+
+                // I'm pretty sure we're using this motor? https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
+                telemetry.addData("Current velocity (rpm)", shooterEncoder.getVelocity() * 60 / 145.1); // 145.1 ticks per revolution
+                maxvel=Math.max(maxvel,shooterEncoder.getVelocity() * 60 / 145.1);
+                telemetry.addData("Max Velocity(rpm)", maxvel); // 145.1 ticks per revolution
+                telemetry.update();
+            }
         }
     }
 }
