@@ -9,9 +9,10 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class TransferCommand extends SequentialCommandGroup {
+    public static double PRE_YAW_ANGLE = 20.0;  // degrees
+    public static int PRE_YAW_DELAY = 250;  // milliseconds
     public static int RAMP_DELAY = 500;  // milliseconds
-    public static int PRE_YAW_DELAY = 500; // milliseconds
-    public static int TRANSFER_TIME = 1000; // milliseconds
+    public static int TRANSFER_TIME = 1500;  // milliseconds
 
     private final SpindexerSubsystem spindexer;
 
@@ -21,7 +22,7 @@ public class TransferCommand extends SequentialCommandGroup {
 
                 // Phase 3: rotate to pre-transfer yaw
                 // TODO: angle needs to be relative to current position, NOT absolute
-                new SetSpindexerYawCommand(spindexer, Math.toRadians(20)),
+                new SetSpindexerYawCommand(spindexer, Math.toRadians(PRE_YAW_ANGLE)),
                 new WaitForSpindexerYawCommand(spindexer).withTimeout(2000),
                 new WaitCommand(PRE_YAW_DELAY),
 
@@ -31,6 +32,7 @@ public class TransferCommand extends SequentialCommandGroup {
 
                 // Phase 5: transfer balls
                 // TODO: this is really sus disabling the PID...
+                //  imo we should have a setting to slow down the PID
                 new InstantCommand(() -> {
                     spindexer.setPidEnabled(false);
                     spindexer.setSpindexerPower(SpindexerSubsystem.TRANSFER_POWER);
