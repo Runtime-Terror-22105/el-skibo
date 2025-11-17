@@ -19,6 +19,7 @@
             <Servo name="intakePitchRight" port="2" />
             <Servo name="turretYawLeft" port="3" />
             <Servo name="turretYawRight" port="4" />
+            <Servo name="shooterHood" port="5" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="motorFrontLeft" port="0" />
