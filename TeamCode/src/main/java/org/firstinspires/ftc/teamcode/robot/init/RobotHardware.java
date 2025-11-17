@@ -161,12 +161,12 @@ public class RobotHardware {
         this.publisher.subscribe(5, shooterLeft, shooterRight);
 
         // TODO: figure out shooter motor directions
-//        this.shooter.setDirection(REVERSE);
-//        this.shooterRight.setDirection(FORWARD);
+        this.shooterLeft.setDirection(FORWARD);
+        this.shooterRight.setDirection(FORWARD);
 //        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterHood"));
         this.publisher.subscribe(5, shooterPitch);
 

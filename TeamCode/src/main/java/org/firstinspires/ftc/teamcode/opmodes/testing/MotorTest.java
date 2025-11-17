@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
+import static org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem.TICKS_PER_REV;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -22,8 +24,6 @@ public class MotorTest extends LinearOpMode {
     public static double motorPower2 = 0D;
 
     public static boolean showEncoderOutput = true;
-    public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
-
 
     @Override
     public void runOpMode() {

@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.robot.subsystems.ShotType.Straight;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -14,8 +15,11 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 
+@Config
 public class ShooterSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
+
+    public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
@@ -204,12 +208,20 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPID.setTargetPosition(goal);
     }
 
-    public double getShooterVelocity() {
+    public double getVelocity() {
         return this.hardware.shooterEncoder.getVelocity();
     }
 
+    public double getVelocityRpm() {
+        return ticksToRpm(getVelocity());
+    }
+
+    public double ticksToRpm(double ticksPerSec) {
+        return ticksPerSec * 60.0 / TICKS_PER_REV;
+    }
+
     public void updateShooter() {
-        this.shooterSpeed = this.shooterPID.calculatePower(this.getShooterVelocity(),0);
+        this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
 
     public void setHoodPosition(double position){
@@ -234,8 +246,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // flywheel pids
         this.updateShooter();
-//        hardware.shooterLeft.setPower(shooterSpeed);
-//        hardware.shooterRight.setPower(shooterSpeed);
+        hardware.shooterLeft.setPower(shooterSpeed);
+        hardware.shooterRight.setPower(shooterSpeed);
 
         // shooter rotation for turret
 //        double servoYaw = this.turretAngle / YAW_GEAR_RATIO;
