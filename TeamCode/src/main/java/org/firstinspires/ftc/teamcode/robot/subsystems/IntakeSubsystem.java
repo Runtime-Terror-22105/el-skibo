@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public static double PITCH_DOWN_LEFT = 0.41; //servo pos
-    public static double PITCH_UP_LEFT = 0.91;
+    public static double PITCH_DOWN_LEFT = 0.91; //servo pos
+    public static double PITCH_UP_LEFT = 0.41;
     public static double PITCH_DOWN_RIGHT = 0.0;
     public static double PITCH_UP_RIGHT = 0.5;
 
