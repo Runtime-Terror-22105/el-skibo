@@ -60,23 +60,16 @@ public class CameraSubsystem extends SubsystemBase
     public CameraSubsystem(RobotHardware hardware, LiveViewSettings liveViewSettings) {
         this.detections = new ArrayList<>();
         this.aTagProcessor = createAprilTagProcessor();
-//        this.spindexerPipeline = new SpindexerPipeline(telemetry);
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
                 .setCameraResolution(new Size(320, 240))
-//                .addProcessor(this.spindexerPipeline) //sad emoji
                 .addProcessor(this.aTagProcessor);
-
-//        VisionPortal.Builder vPortalSpindexerBuilder = new VisionPortal.Builder()
-//                .setCamera(hardware.fieldCamera)
-//                .setCameraResolution(new Size(320, 240))
-//                .addProcessor(this.spindexerPipeline);
-
 
         switch (liveViewSettings) {
             case FIELD:
                 vPortalFieldBuilder.enableLiveView(true);
+//                        .setLiveViewContainerId(hardware.cameraMonitorViewId);
                 // note: to have this appear in dashboard, you need to have the pipeline implement CameraStreamSource
                 // see last year's code for reference, I'm too lazy to do this rn
 //                FtcDashboard.getInstance().startCameraStream(atagPipeline, 0);
