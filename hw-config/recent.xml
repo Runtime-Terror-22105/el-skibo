@@ -33,4 +33,5 @@
             <TerrorgoBILDAPinpoint name="pinpoint" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
+    <Webcam name="Webcam 1" serialNumber="UC762" />
 </Robot>

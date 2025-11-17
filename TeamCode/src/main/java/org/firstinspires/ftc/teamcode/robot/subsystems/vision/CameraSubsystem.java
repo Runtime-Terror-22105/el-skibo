@@ -32,7 +32,7 @@ public class CameraSubsystem extends SubsystemBase
         GPP,PGP,PPG
     }
 
-    public enum LiveViewSettings { OFF, SPINDEXER, FIELD }
+    public enum LiveViewSettings { OFF, FIELD }
 
 
     public GLYPH gameGlyph;

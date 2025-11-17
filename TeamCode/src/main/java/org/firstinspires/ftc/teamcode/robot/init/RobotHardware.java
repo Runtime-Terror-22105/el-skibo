@@ -232,9 +232,9 @@ public class RobotHardware {
         this.initLynx(bulkCachingMode);
 
         // Other Sensors
-//        if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.PINPOINT)) {
-//            this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
-//        }
+        if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.PINPOINT)) {
+            this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
+        }
     }
 
     public void write() {

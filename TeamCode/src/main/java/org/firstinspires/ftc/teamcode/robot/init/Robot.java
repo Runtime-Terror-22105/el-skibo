@@ -73,8 +73,9 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
                     TerrorPinpoint.GoBildaOdometryPods.goBILDA_4_BAR_POD,
                     TerrorPinpoint.EncoderDirection.FORWARD, TerrorPinpoint.EncoderDirection.REVERSED
             ));
+
+            localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
         }
-//        localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
 
         // Initialize the drivetrain
         this.drivetrain = new MecanumDrivetrain(
@@ -92,6 +93,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
+            this.camera = new CameraSubsystem(hardware, CameraSubsystem.LiveViewSettings.FIELD);
 //            this.camera = new TerrorCameraVisionPortal.Builder()
 //                    .setCamera(hardware.fieldCamera)
 //                    .setCameraResolution(new Size(320, 240))
