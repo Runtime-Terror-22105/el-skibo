@@ -17,7 +17,7 @@ public class GoToIntakeStateCommand extends SequentialCommandGroup {
         super(new ParallelCommandGroup(
                 new InstantCommand(() -> robot.robotState = RobotState.INTAKING),
                 new SetIntakeDownCommand(robot.intake, true),
-                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.defaultSpeed),
+                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                 new SetSpindexerWallDown(robot.spindexer, true)
 //              I don't think this should be here:  new InstantCommand(() -> transfer.setupTransfer())
 
