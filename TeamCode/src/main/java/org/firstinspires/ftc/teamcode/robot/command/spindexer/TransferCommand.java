@@ -20,7 +20,8 @@ public class TransferCommand extends SequentialCommandGroup {
                 // Phase 1 and 2: ???
 
                 // Phase 3: rotate to pre-transfer yaw
-                new SetSpindexerYawCommand(spindexer, 0.20), // TODO: fix angle
+                // TODO: angle needs to be relative to current position, NOT absolute
+                new SetSpindexerYawCommand(spindexer, Math.toRadians(20)),
                 new WaitForSpindexerYawCommand(spindexer).withTimeout(2000),
                 new WaitCommand(PRE_YAW_DELAY),
 

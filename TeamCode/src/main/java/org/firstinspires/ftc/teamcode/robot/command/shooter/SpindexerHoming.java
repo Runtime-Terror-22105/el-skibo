@@ -31,7 +31,7 @@ public class SpindexerHoming extends CommandBase {
         seenSwitchStart = false;
         switchStart = Double.NaN;
         switchEnd = Double.NaN;
-        initialPosition = spindexer.getPosition();
+        initialPosition = spindexer.getPositionTicks();
         // start moving toward the limit switch
         spindexer.setPidEnabled(false);
         spindexer.setSpindexerPower(POWER);
@@ -42,7 +42,7 @@ public class SpindexerHoming extends CommandBase {
         if (homed) return;
 
         // todo: check if this wraps around, bc if so then that will cause the rotatedenough condition to not work
-        double pos = spindexer.getPosition();
+        double pos = spindexer.getPositionTicks();
         limit = spindexer.getLimitSwitchState();
 
         // detect start of the true-range
@@ -78,8 +78,8 @@ public class SpindexerHoming extends CommandBase {
     }
 
     private void finalizeHoming() {
-        double start = Double.isNaN(switchStart) ? spindexer.getPosition() : switchStart;
-        double end = Double.isNaN(switchEnd) ? spindexer.getPosition() : switchEnd;
+        double start = Double.isNaN(switchStart) ? spindexer.getPositionTicks() : switchStart;
+        double end = Double.isNaN(switchEnd) ? spindexer.getPositionTicks() : switchEnd;
         double avg = (start + end) / 2.0;
         spindexer.setSpindexerOffset(avg);
         homed = true;

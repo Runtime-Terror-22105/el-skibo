@@ -76,17 +76,25 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(0.0);
     }
 
+    private static double ticksToRadians(double ticks) {
+        return (ticks / TICKS_PER_REVOLUTION) * 2.0 * Math.PI;
+    }
+
+    private static double radiansToTicks(double radians) {
+        return (radians / (2.0 * Math.PI)) * TICKS_PER_REVOLUTION;
+    }
+
     public double getTargetYaw() {
-        return this.yawPid.getTargetPosition();
+        return ticksToRadians(this.yawPid.getTargetPosition());
     }
 
     public boolean atTargetYaw() {
         // TODO: potentially beware of angle wrapping here
-        return this.yawPid.atTargetPosition(getPosition());
+        return this.yawPid.atTargetPosition(getPositionTicks());
     }
 
     public void setYaw(double angle) { //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
-        this.yawPid.setTargetPosition(angle);
+        this.yawPid.setTargetPosition(radiansToTicks(angle));
         this.usespindexPID = true;
     }
 
@@ -102,7 +110,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void updateSpindexer() {
 //        if(hardware.spindexerEncoder.getCurrentPosition())
         if (pidEnabled) {
-            this.spindexerPower = yawPid.calculatePower(getPosition(), 0);
+            this.spindexerPower = yawPid.calculatePower(getPositionTicks(), 0);
         }
 
         // setting pid power into the spindexer
@@ -121,10 +129,13 @@ public class SpindexerSubsystem extends SubsystemBase {
         setYaw(this.yawPid.getTargetPosition() + yawOffsets[nearestIndex]);
     }
 
-    public double getPosition() {
+    public double getPositionTicks() {
         return hardware.spindexerEncoder.getCurrentPosition() - this.spindexerOffset;
     }
 
+    public double getPosition() {
+        return ticksToRadians(getPositionTicks());
+    }
 
     public void setWallActive() {
         this.intakeWallPosition1 = INTAKE_WALL_1_ACTIVE;
@@ -158,7 +169,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void sortBalls() {
-        double startPos = this.getPosition();
+        double startPos = this.getPositionTicks();
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
@@ -213,7 +224,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void shootBall() {
         if (transferActive) {
-            this.setYaw(this.getPosition() + SHOOT_ONE_ROTATION);
+            this.setYaw(this.getPositionTicks() + SHOOT_ONE_ROTATION);
         } else {
             this.shootBall();
 
