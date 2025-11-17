@@ -12,10 +12,11 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class TransferCommand extends SequentialCommandGroup {
+    public static double SHOOTER_POWER = 1.0;
     public static double PRE_YAW_ANGLE = 30.0;  // degrees
     public static int PRE_YAW_DELAY = 250;  // milliseconds
     public static int RAMP_DELAY = 500;  // milliseconds
-    public static int TRANSFER_TIME = 2500;  // milliseconds
+    public static int TRANSFER_TIME = 2000;  // milliseconds
 
     private final Robot robot;
 
@@ -34,6 +35,10 @@ public class TransferCommand extends SequentialCommandGroup {
                 // Phase 4: drop down ramp and start intake
                 new SetSpindexerRampActive(robot.spindexer, true),
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.defaultSpeed),
+                new InstantCommand(() -> {
+                    robot.hardware.shooterLeft.setPower(SHOOTER_POWER);
+                    robot.hardware.shooterRight.setPower(SHOOTER_POWER);
+                }),
                 new WaitCommand(RAMP_DELAY),
 
                 // Phase 5: transfer balls
@@ -50,6 +55,10 @@ public class TransferCommand extends SequentialCommandGroup {
                 }),
 
                 new SetIntakeSpeedCommand(robot.intake, 0),
+                new InstantCommand(() -> {
+                    robot.hardware.shooterLeft.setPower(0);
+                    robot.hardware.shooterRight.setPower(0);
+                }),
                 new SetSpindexerPoleActive(robot.spindexer, false)
         );
         this.robot = robot;
@@ -60,6 +69,8 @@ public class TransferCommand extends SequentialCommandGroup {
         super.end(interrupted);
         robot.spindexer.setPidEnabled(true);
         robot.intake.setSpeed(0);
+        robot.hardware.shooterLeft.setPower(0);
+        robot.hardware.shooterRight.setPower(0);
     }
 
     //    public void phase1() {

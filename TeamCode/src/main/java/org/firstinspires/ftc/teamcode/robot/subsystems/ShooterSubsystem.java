@@ -234,8 +234,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // flywheel pids
         this.updateShooter();
-        hardware.shooterLeft.setPower(shooterSpeed);
-        hardware.shooterRight.setPower(shooterSpeed);
+//        hardware.shooterLeft.setPower(shooterSpeed);
+//        hardware.shooterRight.setPower(shooterSpeed);
 
         // shooter rotation for turret
 //        double servoYaw = this.turretAngle / YAW_GEAR_RATIO;
