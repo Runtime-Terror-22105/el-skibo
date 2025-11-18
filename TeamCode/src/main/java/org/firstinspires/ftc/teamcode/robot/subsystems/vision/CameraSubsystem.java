@@ -22,8 +22,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import java.util.ArrayList;
 
 @Config
-public class CameraSubsystem extends SubsystemBase
-{
+public class CameraSubsystem extends SubsystemBase {
 
     //TODO: turrentCenterDists, turretRadiusvalue, cameraphasechange all values needed, and the pose2d in
     //TODO: getRobotCenterCoordinateToAprilTag heading is needed
@@ -39,15 +38,14 @@ public class CameraSubsystem extends SubsystemBase
     private double cameraPhaseChangeAngleRadians = 90;
 
 
-    
-
     Telemetry telemetry;
     private AprilTagProcessor aTagProcessor;
+
     public enum GLYPH {
-        GPP,PGP,PPG
+        GPP, PGP, PPG
     }
 
-    public enum LiveViewSettings { OFF, FIELD }
+    public enum LiveViewSettings {OFF, FIELD}
 
     public Robot robot = new Robot();
 
@@ -55,8 +53,7 @@ public class CameraSubsystem extends SubsystemBase
     public GLYPH gameGlyph;
     private boolean decodedGlyph = false; //when the movie uses the title of the movie
 
-    public GLYPH getGlyph()
-    {
+    public GLYPH getGlyph() {
         return gameGlyph;
     }
 
@@ -118,10 +115,8 @@ public class CameraSubsystem extends SubsystemBase
     public void periodic() {
         this.detections = aTagProcessor.getDetections();
 
-        for(AprilTagDetection tag : detections)
-        {
-            if(tag.id >= 21 && tag.id <= 23 && !decodedGlyph)
-            {
+        for (AprilTagDetection tag : detections) {
+            if (tag.id >= 21 && tag.id <= 23 && !decodedGlyph) {
                 gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
                 decodedGlyph = true;
             }
@@ -132,33 +127,31 @@ public class CameraSubsystem extends SubsystemBase
         return !detections.isEmpty();
     }
 
-//    public Pose2d getPositionCamera()
-//    {
-//
-//        if (detections.isEmpty()) {
-//            return null;
-//        }
-//
-//        // todo: choose only one apriltag to use
-//        AprilTagDetection tag = detections.get(0);
-//        return new Pose2d(tag.robotPose.getPosition().x-VisionConstants.APRILTAG.cameraOffset.x,tag.robotPose.getPosition().y-VisionConstants.APRILTAG.cameraOffset.y,tag.robotPose.getPosition().z-VisionConstants.APRILTAG.cameraOffset.z);
-//    }
+    public Pose2d getPositionCamera()
+    {
+
+        if (detections.isEmpty()) {
+            return null;
+        }
+
+        // todo: choose only one apriltag to use
+        AprilTagDetection tag = detections.get(0);
+        return new Pose2d(tag.robotPose.getPosition().x-VisionConstants.APRILTAG.cameraOffset.x,tag.robotPose.getPosition().y-VisionConstants.APRILTAG.cameraOffset.y,tag.robotPose.getPosition().z-VisionConstants.APRILTAG.cameraOffset.z);
+    }
 
     //this gives the actual coords from the robot center to the april tag which makes the robot center 0,0 relative
     //to the outputed value
 
-    private double getCoordinateComponentX(AprilTagDetection tag)
-    {
-        return (tag.ftcPose.x + Math.cos(robot.shooter.turretAngle+cameraPhaseChangeAngleRadians)+turretCenterToRobotCenterUnitNeededX);
+    private double getCoordinateComponentX(AprilTagDetection tag) {
+        return (tag.ftcPose.x + Math.cos(robot.shooter.turretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterUnitNeededX);
     }
 
-    private double getCoordinateComponentY(AprilTagDetection tag)
-    {
-        return (tag.ftcPose.y + Math.sin(robot.shooter.turretAngle+cameraPhaseChangeAngleRadians)+turretCenterToRobotCenterUnitNeededY);
+    private double getCoordinateComponentY(AprilTagDetection tag) {
+        return (tag.ftcPose.y + Math.sin(robot.shooter.turretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterUnitNeededY);
     }
 
-    public Pose2d getRobotCenterCoordinateToAprilTag()
-    {
+    public Pose2d getRobotCenterCoordinateToAprilTag() {
         AprilTagDetection tag = detections.get(0);
-        return new Pose2d(getCoordinateComponentX(tag),getCoordinateComponentY(tag),null);
+        return new Pose2d(getCoordinateComponentX(tag), getCoordinateComponentY(tag), 0.0);
     }
+}
