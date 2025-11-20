@@ -81,30 +81,30 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
-                    new GoToIntakeStateCommand(robot, new TransferCommand(robot)),
-                    new WaitForIntakeCommand(robot),
-                    new GoToFullStateCommand(robot)
+                    new GoToIntakeStateCommand(robot, new TransferCommand(robot))
+//                    new WaitForIntakeCommand(robot),
+//                    new GoToFullStateCommand(robot)
                 ),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != FULL && robot.robotState != SHOOTING
+                () ->  robot.robotState != SHOOTING //robot.robotState != FULL &&
         ));
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != FULL && robot.robotState != SHOOTING
+                () -> robot.robotState != SHOOTING //robot.robotState != FULL &&
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(
                 new SetIntakeSpeedCommand(robot.intake, -1.0),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != FULL && robot.robotState != SHOOTING
+                () -> robot.robotState != SHOOTING //robot.robotState != FULL
         ));
         reverseIntakeButton.whenInactive(new SetIntakeSpeedCommand(robot.intake, 0.0));
 
         shoot3button.whenPressed(new ConditionalCommand(
                 new TransferCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState == FULL
+                () -> true //robot.robotState == FULL
         ));
 
         shoot1button.whenPressed(new ConditionalCommand(
@@ -116,7 +116,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         rejectButton.whenPressed(new ConditionalCommand(
                 new StartShooterRejectCommand(robot.shooter),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState == FULL
+                () -> true //robot.robotState == FULL
         ));
 
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
@@ -149,10 +149,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 hub.clearBulkCache();
             }
 
-            char[] balls = robot.spindexer.getBallPositions();
-            if (balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N') {
-                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
-            }
+//            char[] balls = robot.spindexer.getBallPositions();
+//            if (balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N') {
+//                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
+//            }
 
             CommandScheduler.getInstance().run();
 

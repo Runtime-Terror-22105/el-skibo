@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.robot.init;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -240,9 +242,7 @@ public class RobotHardware {
         this.initLynx(bulkCachingMode);
 
         // Other Sensors
-        if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.PINPOINT)) {
-            this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
-        }
+        this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
     }
 
     private void updateColorSensors() {
