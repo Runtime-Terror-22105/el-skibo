@@ -4,11 +4,17 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.hardware.broadcom.BatchColorSensor;
+import com.qualcomm.hardware.broadcom.BroadcomColorSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.util.TypeConversion;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public class TerrorColorSensor implements NormalizedColorSensor {
 
@@ -22,7 +28,7 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     }
     public side position;
 
-    private int argb;
+    private BatchColorSensor reading = new BatchColorSensor();
 
     public TerrorColorSensor(@NonNull RevColorSensorV3 sensor)
     {
@@ -39,29 +45,28 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         }
     }
 
-    public void updateColors() {
-        argb = sensor.argb();
+    public void update() {
+        reading.read(sensor);
     }
 
     /**
     * returns if the color sensor sees this as G,P,orN(none)
      */
     public double getRed(){
-        return argb >> 16 & 0xff;
+        return reading.red;
     }
 
     public double getGreen(){
-        return argb >> 8 & 0xff;
+        return reading.green;
     }
 
     public double getBlue(){
-        return argb & 0xff;
+        return reading.blue;
     }
 
-
-
     public double getDist(DistanceUnit unit){
-        return sensor.getDistance(unit);
+//        return sensor.getDistance(unit);
+        return unit.fromUnit(DistanceUnit.INCH, reading.distance);
     }
 
     public char getGreenOrPurple() {

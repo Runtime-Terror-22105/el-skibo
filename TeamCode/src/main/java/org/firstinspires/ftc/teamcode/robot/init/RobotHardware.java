@@ -247,7 +247,7 @@ public class RobotHardware {
 
     private void updateColorSensors() {
         // Update one color sensor per call to spread out the I2C load
-        this.colorSensors[this.colorSensorIndex].updateColors();
+        this.colorSensors[this.colorSensorIndex].update();
         this.colorSensorIndex = (this.colorSensorIndex + 1) % this.colorSensors.length;
     }
 
