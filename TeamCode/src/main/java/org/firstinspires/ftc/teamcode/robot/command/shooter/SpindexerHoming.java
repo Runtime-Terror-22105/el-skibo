@@ -15,6 +15,8 @@ public class SpindexerHoming extends CommandBase {
     public double switchStart = Double.NaN;
     public double switchEnd = Double.NaN;
     private double initialPosition = 0.0;
+    private int count;
+    public static double offset = 0.0;
 
     public static double MAX_ROTATION_TICKS = 1200.0;
     public static double POWER = 0.2;
@@ -74,14 +76,17 @@ public class SpindexerHoming extends CommandBase {
             finalizeHoming();
             return;
         }
+        this.count++;
+
         // otherwise keep spinning until we actually find it
     }
 
     private void finalizeHoming() {
+        Log.d("homing", String.valueOf(count));
         double start = Double.isNaN(switchStart) ? spindexer.getPositionTicks() : switchStart;
         double end = Double.isNaN(switchEnd) ? spindexer.getPositionTicks() : switchEnd;
         double avg = (start + end) / 2.0;
-        spindexer.setSpindexerOffset(avg);
+        spindexer.setSpindexerOffset(avg - offset);
         homed = true;
     }
 
