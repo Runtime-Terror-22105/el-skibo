@@ -47,6 +47,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public static double PINPOINT_X_OFFSET = 102.5;
     public static double PINPOINT_Y_OFFSET = -170;
 
+    public Pose2d goalPos;
+
 
     // Camera stuff TODO
 //    public TerrorCameraVisionPortal camera;
