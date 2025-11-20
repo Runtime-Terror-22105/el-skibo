@@ -11,8 +11,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
     public static double DOWN_LEFT = 0.91; //servo pos
-    public static double DOWN_RIGHT = 0.0;
     public static double UP_LEFT = 0.41;
+    public static double DOWN_RIGHT = 0.0;
     public static double UP_RIGHT = 0.5;
 
     public static double MIN_LEFT = 0.41;
@@ -58,7 +58,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         hardware.intake.setPower(this.targetSpeed);
-        hardware.intakePitchLeft.setPosition(Math.max(MIN_LEFT, Math.max(MAX_LEFT, pitch.left.get())));
-        hardware.intakePitchRight.setPosition(Math.max(MIN_RIGHT, Math.max(MAX_RIGHT, pitch.right.get())));
+        hardware.intakePitchLeft.setPosition(Math.max(MIN_LEFT, Math.min(MAX_LEFT, pitch.left.get())));
+        hardware.intakePitchRight.setPosition(Math.max(MIN_RIGHT, Math.min(MAX_RIGHT, pitch.right.get())));
     }
 }
