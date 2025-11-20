@@ -76,10 +76,11 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
                     TerrorPinpoint.EncoderDirection.FORWARD, TerrorPinpoint.EncoderDirection.REVERSED
             ));
 
-            localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
+//            localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
         }
 
         // Initialize the drivetrain
+        // NB: SubsystemBase will automatically register the subsystems for us
         this.drivetrain = new MecanumDrivetrain(
                 hardware.motorRearLeft,
                 hardware.motorFrontLeft,
@@ -90,8 +91,6 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(hardware);
         this.hang = new HangSubsystem(hardware);
-
-        register(drivetrain, shooter, spindexer, intake, hang/*, localizer*/);
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
