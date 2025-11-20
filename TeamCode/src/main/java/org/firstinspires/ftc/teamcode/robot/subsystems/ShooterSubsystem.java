@@ -275,7 +275,7 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // shooter pitch
-        hardware.shooterPitch.setPosition(this.hoodPosition);
+        hardware.shooterPitch.setPosition(Math.max(hoodPosMin, Math.min(hoodPosMax, this.hoodPosition)));
 
         // flywheel pids
         this.updateShooter();
