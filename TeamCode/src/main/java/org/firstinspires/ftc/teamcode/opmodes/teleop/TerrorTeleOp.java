@@ -40,6 +40,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     private final Robot robot = new Robot();
 
     private Pose2d goalPos;
+    private long lastLoop = System.nanoTime();
 
     public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
     public TerrorTeleOp(Pose2d goalPos){
@@ -139,6 +140,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 new GoToRestingStateCommand(robot)
         ));
 
+        lastLoop = System.nanoTime();
+
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
@@ -155,6 +158,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 
             hardware.write();
+
+            long time = System.nanoTime();
+            long dt = time - lastLoop;
+            lastLoop = time;
+            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
             robot.telemetry.update();
         }
 
