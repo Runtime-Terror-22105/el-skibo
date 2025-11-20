@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
@@ -274,6 +275,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
+                robot.getState() == RobotState.SHOOTING){
+            this.doAutoShoot(robot.goalPos);
+        }
         // shooter pitch
         hardware.shooterPitch.setPosition(Math.max(hoodPosMin, Math.min(hoodPosMax, this.hoodPosition)));
 
