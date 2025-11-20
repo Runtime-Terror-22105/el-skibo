@@ -42,7 +42,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     private Pose2d goalPos;
 
     public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
+    public TerrorTeleOp(Pose2d goalPos){
+        this.setGoalPos(goalPos);
+        robot.goalPos = goalPos;
 
+    }
 
     public void runOpMode() {
 
