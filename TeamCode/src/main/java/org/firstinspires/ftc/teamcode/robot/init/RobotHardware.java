@@ -60,6 +60,8 @@ public class RobotHardware {
              top (the one that shoots)
         left      right
      */
+    private int colorSensorIndex;
+    private TerrorColorSensor[] colorSensors;
     public TerrorColorSensor topSensor;
     public TerrorColorSensor leftSensor;
     public TerrorColorSensor rightSensor;
@@ -190,6 +192,12 @@ public class RobotHardware {
         this.rightSensor = new TerrorColorSensor(
                 hwMap.get(RevColorSensorV3.class, "rightSensor")
         );
+        this.colorSensorIndex = 0;
+        this.colorSensors = new TerrorColorSensor[] {
+                this.leftSensor,
+                this.topSensor,
+                this.rightSensor
+        };
         this.spindexerIntakeWallServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall1"));
         this.spindexerIntakeWallServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall2"));
         this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerTransferRamp"));
@@ -237,8 +245,15 @@ public class RobotHardware {
         }
     }
 
+    private void updateColorSensors() {
+        // Update one color sensor per call to spread out the I2C load
+        this.colorSensors[this.colorSensorIndex].updateColors();
+        this.colorSensorIndex = (this.colorSensorIndex + 1) % this.colorSensors.length;
+    }
+
     public void write() {
         this.publisher.write();
+        this.updateColorSensors();
     }
 
     private void initLynx(LynxModule.BulkCachingMode bulkCachingMode) {

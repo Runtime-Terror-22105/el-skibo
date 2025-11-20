@@ -22,6 +22,8 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     }
     public side position;
 
+    private int argb;
+
     public TerrorColorSensor(@NonNull RevColorSensorV3 sensor)
     {
 
@@ -37,20 +39,23 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         }
     }
 
+    public void updateColors() {
+        argb = sensor.argb();
+    }
 
     /**
     * returns if the color sensor sees this as G,P,orN(none)
      */
-    public double getGreen(){
-        return ((double)sensor.green());
+    public double getRed(){
+        return argb >> 16 & 0xff;
     }
 
-    public double getRed(){
-        return ((double)sensor.red());
+    public double getGreen(){
+        return argb >> 8 & 0xff;
     }
 
     public double getBlue(){
-        return ((double)sensor.blue());
+        return argb & 0xff;
     }
 
 
