@@ -14,7 +14,7 @@ public class TerrorLight implements TerrorWritingDevice{
     public enum LightColors {
         // OFF to WHITE are all includded in GoBilda's diagram, others are custom
         // OFF to RED is just all OFF
-        // RED to VIOLET goes through all the hues of colors (todo: interpolate this in future)
+        // RED to VIOLET goes through all the hues of colors (todo: maybe interpolate this in future)
         // VIOLET to WHITE is just all white
         OFF(0.0),
         RED(0.277),
