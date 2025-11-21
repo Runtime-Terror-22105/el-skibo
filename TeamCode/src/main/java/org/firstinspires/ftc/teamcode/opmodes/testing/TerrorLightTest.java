@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.SpindexerHoming;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
-@Config
+//@Config
 @TeleOp(name="Light Test", group="Testing")
 public class TerrorLightTest extends LinearOpMode {
 

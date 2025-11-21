@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShotType;
 
-@Config
+//@Config
 @TeleOp(name="Shooter Aim Tuner", group="Tuning")
 public class ShooterAimingTuner extends LinearOpMode {
 

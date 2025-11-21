@@ -5,7 +5,7 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import android.util.Log;
 
-@Config
+//@Config
 public class SpindexerHoming extends CommandBase {
 
     private final SpindexerSubsystem spindexer;

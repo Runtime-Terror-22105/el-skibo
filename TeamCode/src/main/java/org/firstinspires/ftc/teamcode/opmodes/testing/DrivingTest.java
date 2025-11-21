@@ -35,7 +35,7 @@ import org.firstinspires.ftc.teamcode.robot.init.StateTag;
 import org.firstinspires.ftc.teamcode.robot.subsystems.*;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
-@Config
+//@Config
 @TeleOp
 public class DrivingTest extends LinearOpMode {
 
