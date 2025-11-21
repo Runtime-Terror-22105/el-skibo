@@ -145,6 +145,8 @@ public class RobotHardware {
         this.turretYawRight = new TerrorServo(
                 hwMap.get(Servo.class, "turretYawRight")
         );
+        this.turretYawLeft.setPwmRange(500, 2500);
+        this.turretYawRight.setPwmRange(500, 2500);
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
 
 
