@@ -87,7 +87,6 @@ public class RobotHardware {
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
-    public TerrorPinpoint pinpoint;
     public DigitalChannel spindexerLimitSwitch;
 
     // Lynx stuff
@@ -254,7 +253,6 @@ public class RobotHardware {
         this.initLynx(bulkCachingMode);
 
         // Other Sensors
-        this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
     }
 
     private void updateColorSensors() {
