@@ -69,7 +69,7 @@ public class TerrorServo implements TerrorWritingDevice {
      * The position will only be updated if:
      * <ol>
      *   <li>A {@link #setPosition(double)} command was issued.</li>
-     *   <li>The difference between the current position and the last set position exceeds the defined tolerance of {@value #tolerance}.</li>
+     *   <li>The difference between the current position and the last set position exceeds the defined tolerance of {@value}.</li>
      * </ol>
      * This tolerance helps avoid unnecessary servo updates.
      * <p>
