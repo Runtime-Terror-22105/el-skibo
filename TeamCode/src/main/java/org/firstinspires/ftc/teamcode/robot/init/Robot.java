@@ -73,7 +73,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(hardware);
         this.hang = new HangSubsystem(hardware);
-        this.lightControl = new LightControl(hardware);
+        this.lightControl = new LightControl(hardware,this);
 
 
         // Set up the camera
