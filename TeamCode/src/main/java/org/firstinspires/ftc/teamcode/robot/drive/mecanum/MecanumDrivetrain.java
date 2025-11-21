@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.robot.auto.followers.PidToPoint;
+//import org.firstinspires.ftc.teamcode.robot.auto.followers.PidToPoint;
 import org.firstinspires.ftc.teamcode.robot.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotor;
 
@@ -21,7 +21,7 @@ public class MecanumDrivetrain extends SubsystemBase implements Drivetrain {
     private final TerrorMotor motorRearRight;
     private final TerrorMotor motorFrontRight;
 
-    public final PidToPoint controller;
+    //public final PidToPoint controller;
 
     private ElapsedTime freezeTimer;
     private boolean frozen = false;
@@ -40,7 +40,7 @@ public class MecanumDrivetrain extends SubsystemBase implements Drivetrain {
         this.motorRearRight = motorRearRight;
         this.motorFrontRight = motorFrontRight;
 
-        this.controller = new PidToPoint();
+        //this.controller = new PidToPoint();
         unfreeze();
     }
 
@@ -67,12 +67,12 @@ public class MecanumDrivetrain extends SubsystemBase implements Drivetrain {
     }
 
     public void setGoal(@NonNull Pose2d goal, @NonNull Pose2d tolerances, double speed, double reachedTime) {
-        this.controller.setGoal(goal, tolerances, speed, reachedTime);
+        //this.controller.setGoal(goal, tolerances, speed, reachedTime);
         unfreeze();
     }
 
     public void updatePid(@NonNull Pose2d currentPosition) {
-        this.controller.calculate(currentPosition);
+        //this.controller.calculate(currentPosition);
 
         if (this.frozen) {
             if (this.freezeTimer == null) {
@@ -86,8 +86,8 @@ public class MecanumDrivetrain extends SubsystemBase implements Drivetrain {
             return;
         }
 
-        this.move(this.controller.getPowers());
-        this.controller.resetMovingPowers();
+        //this.move(this.controller.getPowers());
+        //this.controller.resetMovingPowers();
     }
 
     public void freeze() {
