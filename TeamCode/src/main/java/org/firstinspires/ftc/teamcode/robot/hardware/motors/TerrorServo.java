@@ -4,7 +4,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorWritingDevice;
 
@@ -40,6 +42,19 @@ public class TerrorServo implements TerrorWritingDevice {
     }
 
     /**
+     *
+     * @param usPulseLower Microsecond pulse lower
+     * @param usPulseHigher Microsecond pulse higher
+     */
+    synchronized public void setPwmRange(double usPulseLower, double usPulseHigher) {
+        int portNumber = servo.getPortNumber();
+        PwmControl.PwmRange customRange = new PwmControl.PwmRange(500, 2500);  // Adjust based on servo specs
+
+        ServoControllerEx servoController = (ServoControllerEx) servo.getController();
+        servoController.setServoPwmRange(portNumber, customRange);
+    }
+
+    /**
      * Sets the position of the servo. The actual position update will only occur during the
      * {@link #write()} method if the difference between the new position and the last position
      * is greater than the tolerance.
@@ -69,7 +84,7 @@ public class TerrorServo implements TerrorWritingDevice {
      * The position will only be updated if:
      * <ol>
      *   <li>A {@link #setPosition(double)} command was issued.</li>
-     *   <li>The difference between the current position and the last set position exceeds the defined tolerance of {@value #tolerance}.</li>
+     *   <li>The difference between the current position and the last set position exceeds the defined tolerance of {@value}.</li>
      * </ol>
      * This tolerance helps avoid unnecessary servo updates.
      * <p>
