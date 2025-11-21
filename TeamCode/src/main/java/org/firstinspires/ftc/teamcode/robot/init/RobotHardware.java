@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
@@ -42,6 +43,11 @@ public class RobotHardware {
     // Turret
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
+
+
+
+    // gobuilda pwm lights
+    public TerrorLight lights;
 
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
@@ -147,6 +153,8 @@ public class RobotHardware {
         this.turretYawRight = new TerrorServo(
                 hwMap.get(Servo.class, "turretYawRight")
         );
+        this.turretYawLeft.setPwmRange(500, 2500);
+        this.turretYawRight.setPwmRange(500, 2500);
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
 
 
@@ -184,6 +192,10 @@ public class RobotHardware {
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, spindexerRotate);
+
+        this.lights=new TerrorLight(hwMap.get(Servo.class, "lights"));
+        this.publisher.subscribe(11, lights);
+
 
         this.topSensor = new TerrorColorSensor(
                 hwMap.get(RevColorSensorV3.class, "topSensor")
