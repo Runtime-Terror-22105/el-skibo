@@ -69,7 +69,7 @@ public class SpindexerHoming extends CommandBase {
             }
             // if we never saw the switch at all, use current position as zero fallback
             if (!seenSwitchStart) {
-                spindexer.setSpindexerOffset(pos);
+                spindexer.setHomedSpindexerOffset(pos);
                 spindexer.setSpindexerPower(0.0);
             }
             homed = true;
@@ -82,11 +82,15 @@ public class SpindexerHoming extends CommandBase {
     }
 
     private void finalizeHoming() {
+        if (Double.isNaN(switchStart) && !Double.isNaN(switchEnd)) {
+            spindexer.setHomedSpindexerOffset(switchEnd);
+        } else if (!Double.isNaN(switchStart) && Double.isNaN(switchEnd)) {
+            spindexer.setHomedSpindexerOffset(switchStart);
+        } else if (!Double.isNaN(switchStart) && !Double.isNaN(switchEnd)) {
+            double avg = (switchStart + switchEnd) / 2.0;
+            spindexer.setHomedSpindexerOffset(avg);
+        }
         Log.d("homing", String.valueOf(count));
-        double start = Double.isNaN(switchStart) ? spindexer.getPositionTicks() : switchStart;
-        double end = Double.isNaN(switchEnd) ? spindexer.getPositionTicks() : switchEnd;
-        double avg = (start + end) / 2.0;
-        spindexer.setSpindexerOffset(avg - offset);
         homed = true;
     }
 
