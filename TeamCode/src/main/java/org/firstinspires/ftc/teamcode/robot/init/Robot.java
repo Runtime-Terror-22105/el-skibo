@@ -45,10 +45,6 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public HangSubsystem hang;
     public IntakeSubsystem intake;
 
-    // Localizer
-    public PinpointLocalizer pinpoint;
-    public LocalizationSubsystem localizer;
-
     public Pose2d goalPos;
 
 
