@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SpindexerHoming;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
+@TeleOp(name="Light Test", group="Testing")
 public class TerrorLightTest extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
@@ -21,7 +23,6 @@ public class TerrorLightTest extends LinearOpMode {
         robot.init(hardware, telemetry);
         waitForStart();
 
-        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
@@ -30,8 +31,7 @@ public class TerrorLightTest extends LinearOpMode {
             }
 
 
-            robot.hardware.lightLeft.setColor(color);
-            robot.hardware.lightRight.setColor(color);
+            robot.hardware.lights.setColor(color);
             hardware.write();
 
 
@@ -41,7 +41,5 @@ public class TerrorLightTest extends LinearOpMode {
         }
 
     }
-
-
 
 }
