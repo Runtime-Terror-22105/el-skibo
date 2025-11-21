@@ -33,9 +33,11 @@ public class CameraSubsystem extends SubsystemBase {
     private double turretCenterToRobotCenterUnitNeededX = -1;
     private double turretCenterToRobotCenterUnitNeededY = 1;
 
-    private double turretRadiusUnitNeeded = 1;
+    //robot dimemnnsions 16 inches by 15 inches
 
-    private double cameraPhaseChangeAngleRadians = 90;
+    private final double turretRadiusMeters = 0.13335;
+
+    private final double cameraPhaseChangeAngleRadians = Math.toRadians(120);
 
 
     Telemetry telemetry;
@@ -143,11 +145,11 @@ public class CameraSubsystem extends SubsystemBase {
     //to the outputed value
 
     private double getCoordinateComponentX(AprilTagDetection tag) {
-        return (tag.ftcPose.x + Math.cos(robot.shooter.turretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterUnitNeededX);
+        return ((tag.ftcPose.x/39.37) + turretRadiusMeters*Math.cos(robot.shooter.turretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterUnitNeededX);
     }
 
     private double getCoordinateComponentY(AprilTagDetection tag) {
-        return (tag.ftcPose.y + Math.sin(robot.shooter.turretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterUnitNeededY);
+        return (tag.ftcPose.y/39.37 + turretRadiusMeters*Math.sin(robot.shooter.turretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterUnitNeededY);
     }
 
     public Pose2d getRobotCenterCoordinateToAprilTag() {
