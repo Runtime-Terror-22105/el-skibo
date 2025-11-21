@@ -47,9 +47,7 @@ public class RobotHardware {
 
 
     // gobuilda pwm lights
-    public TerrorLight lightLeft;
-
-    public TerrorLight lightRight;
+    public TerrorLight lights;
 
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
@@ -193,8 +191,7 @@ public class RobotHardware {
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, spindexerRotate);
 
-        this.lightLeft=new TerrorLight(hwMap.get(Servo.class, "lightLeft"));
-        this.lightRight=new TerrorLight(hwMap.get(Servo.class, "lightRight"));
+        this.lights=new TerrorLight(hwMap.get(Servo.class, "lights"));
         this.publisher.subscribe(11);
 
 
