@@ -35,10 +35,11 @@ import java.util.List;
 @Config
 public class RobotHardware {
     // Drivetrain motors & servos
-    public TerrorMotorNormal motorFrontLeft;
-    public TerrorMotorNormal motorRearRight;
-    public TerrorMotorNormal motorFrontRight;
-    public TerrorMotorNormal motorRearLeft;
+    // NB: Use pedro pathing's Follower rather than access these directly.
+//    public TerrorMotorNormal motorFrontLeft;
+//    public TerrorMotorNormal motorRearRight;
+//    public TerrorMotorNormal motorFrontRight;
+//    public TerrorMotorNormal motorRearLeft;
 
     // Turret
     public TerrorServo turretYawLeft;  // rotates the turret yaw
@@ -87,7 +88,6 @@ public class RobotHardware {
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
-    public TerrorPinpoint pinpoint;
     public DigitalChannel spindexerLimitSwitch;
 
     // Lynx stuff
@@ -107,43 +107,26 @@ public class RobotHardware {
         this.hwMap = hwMap;
 
         // Initialize the drivetrain motors
-        this.motorFrontLeft = new TerrorMotorNormal(
+        TerrorMotorNormal motorFrontLeft = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorFrontLeft"),
                 0.05,
                 1.0
         );
-        this.motorFrontRight = new TerrorMotorNormal(
+        TerrorMotorNormal motorFrontRight = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorFrontRight"),
                 0.05,
                 1.0
         );
-        this.motorRearRight = new TerrorMotorNormal(
+        TerrorMotorNormal motorRearRight = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorRearRight"),
                 0.05,
                 1.0
         );
-        this.motorRearLeft = new TerrorMotorNormal(
+        TerrorMotorNormal motorRearLeft = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorRearLeft"),
                 0.05,
                 1.0
         );
-
-        this.motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motorRearRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motorRearLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // TODO: figure out drive motor directions
-        this.motorFrontLeft.setDirection(FORWARD);
-        this.motorRearLeft.setDirection(FORWARD);
-        this.motorFrontRight.setDirection(REVERSE);
-        this.motorRearRight.setDirection(REVERSE);
-
-        this.publisher.subscribe(4, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
 
         // Initialize the turret
@@ -223,6 +206,7 @@ public class RobotHardware {
         // and motor has 28 ticks per revolution
         // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
         this.spindexerEncoder = new TerrorEncoder(motorFrontLeft, ((1D+(46D/11D))*28D) * 5.6D);
+        this.spindexerEncoder.stop_and_reset();
         this.spindexerEncoder.setDirection(TerrorEncoder.Direction.FORWARD); // TODO: figure out spindexer encoder direction
 
         // Initialize the intake
@@ -254,7 +238,6 @@ public class RobotHardware {
         this.initLynx(bulkCachingMode);
 
         // Other Sensors
-        this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
     }
 
     private void updateColorSensors() {
