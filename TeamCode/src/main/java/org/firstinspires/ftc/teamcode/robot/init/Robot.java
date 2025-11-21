@@ -1,27 +1,22 @@
 package org.firstinspires.ftc.teamcode.robot.init;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.drive.localizer.PinpointLocalizer;
-import org.firstinspires.ftc.teamcode.robot.drive.mecanum.MecanumDrivetrain;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
+import org.firstinspires.ftc.teamcode.robot.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.LocalizationSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
-import org.opencv.core.Point;
 
 
 /**
@@ -37,6 +32,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
     // Subsystems
     public Follower follower;
+    public DriveSubsystem drive;
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
 
@@ -57,6 +53,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public RobotHardware hardware;
 
     public void init(@NonNull RobotHardware hardware, @NonNull Telemetry tele) {
+        CommandScheduler.getInstance().reset();
+
         // Save local copy of RobotHardware class
         this.hardware = hardware;
 
@@ -68,6 +66,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         // Initialize the drivetrain
         this.follower = Constants.createFollower(hardware.hwMap);
         // NB: SubsystemBase will automatically register the subsystems for us
+        this.drive = new DriveSubsystem(this);
         this.shooter = new ShooterSubsystem(hardware, this);
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(hardware);

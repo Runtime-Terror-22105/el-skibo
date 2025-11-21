@@ -32,7 +32,7 @@ public class DriveCommand extends CommandBase {
         this.y = y;
         this.turn = turn;
 
-//        super.addRequirements(robot.drivetrain);
+        super.addRequirements(robot.drive);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DriveCommand extends CommandBase {
         Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
         double rotation = slr(right_x)*ROTATION_MULTIPLIER;
 
-        // TODO: use pedro follower
+        robot.follower.setTeleOpDrive(left_y, left_x, right_x);
 //        robot.drivetrain.move(
 //                direction,
 //                rotation,
