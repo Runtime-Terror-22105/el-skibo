@@ -25,7 +25,7 @@ public class TerrorLight implements TerrorWritingDevice{
         this.light=light;
     }
 
-    synchronized public void setPosition(double color) { // color is taken from 0 to 1
+    synchronized public void setColor(double color) { // color is taken from 0 to 1
         this.color = color;
         this.command=LightCommand.SET_LIGHT;
     }
