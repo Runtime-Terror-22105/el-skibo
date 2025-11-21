@@ -25,7 +25,7 @@ import org.opencv.core.Point;
 /**
  * A class containing all the robot's subsystems.
  */
-@Config
+//@Config
 public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     // only use for debug cus aadit says static vars are sus
     public static MultipleTelemetry debugTelemetry;

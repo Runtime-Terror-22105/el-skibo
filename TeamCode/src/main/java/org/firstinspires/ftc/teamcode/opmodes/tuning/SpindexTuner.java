@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
-@Config
+//@Config
 @TeleOp(name="Spindexer Tuner", group="Tuning")
 public class SpindexTuner extends LinearOpMode {
 

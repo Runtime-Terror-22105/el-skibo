@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
-@Config
+//@Config
 @TeleOp(name="Shooter Tuner", group="Tuning")
 public class ShooterPIDTuner extends LinearOpMode {
 

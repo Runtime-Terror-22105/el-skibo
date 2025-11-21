@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 
 @TeleOp(name = "Motor Test", group = "Testing")
-@Config
+//@Config
 public class MotorTest extends LinearOpMode {
     // targets
     public static String motorName = "";

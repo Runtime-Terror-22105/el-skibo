@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.drive.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotor;
 
-@Config
+//@Config
 public class MecanumDrivetrain extends SubsystemBase implements Drivetrain {
     private static final double FREEZE_TIME = 500;
 

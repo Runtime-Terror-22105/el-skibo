@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import java.util.function.Supplier;
 
-@Config
+//@Config
 public class DriveCommand extends CommandBase {
 
     public static double ROTATION_MULTIPLIER = 0.8;

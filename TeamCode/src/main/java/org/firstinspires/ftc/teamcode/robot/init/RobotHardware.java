@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * A class containing all the robot's hardware.
  */
-@Config
+//@Config
 public class RobotHardware {
     // Drivetrain motors & servos
     public TerrorMotorNormal motorFrontLeft;

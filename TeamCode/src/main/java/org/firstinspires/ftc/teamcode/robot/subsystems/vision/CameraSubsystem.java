@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.ArrayList;
 
-@Config
+//@Config
 public class CameraSubsystem extends SubsystemBase {
 
     //TODO: turrentCenterDists, turretRadiusvalue, cameraphasechange all values needed, and the pose2d in

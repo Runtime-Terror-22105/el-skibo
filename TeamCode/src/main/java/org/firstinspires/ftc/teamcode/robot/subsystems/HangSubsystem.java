@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-@Config
+//@Config
 public class HangSubsystem extends SubsystemBase {
 
     private final RobotHardware hardware;
