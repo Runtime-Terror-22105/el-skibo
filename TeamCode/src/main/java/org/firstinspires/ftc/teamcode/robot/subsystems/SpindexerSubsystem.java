@@ -19,7 +19,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
-    public double spindexerOffset = 0;
+    private double homedSpindexerOffset = 0;
+
+    public static double SPINDEXER_OFFSET_2 = 0;
 
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * 5.6D;
 
@@ -128,7 +130,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public double getPositionTicks() {
-        return hardware.spindexerEncoder.getCurrentPosition() - this.spindexerOffset;
+        return hardware.spindexerEncoder.getCurrentPosition() - this.homedSpindexerOffset - SPINDEXER_OFFSET_2;
     }
 
     public double getPosition() {
@@ -162,8 +164,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
     }
 
-    public void setSpindexerOffset(double offset) {
-        this.spindexerOffset = offset;
+    public void setHomedSpindexerOffset(double offset) {
+        this.homedSpindexerOffset = offset;
     }
 
     public void sortBalls() {
