@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.SpindexerHoming;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
-@TeleOp(name="Spindex Homing Tuner", group="Tuning")
+@TeleOp(name="Spindex Homing Test", group="Test")
 public class SpindexHomingTest extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
@@ -32,7 +32,6 @@ public class SpindexHomingTest extends LinearOpMode {
             }
 
             CommandScheduler.getInstance().run();
-
 
             hardware.write();
 
