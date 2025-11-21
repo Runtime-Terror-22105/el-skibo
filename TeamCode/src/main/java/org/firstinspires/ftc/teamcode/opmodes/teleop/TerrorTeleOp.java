@@ -62,7 +62,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 
         // driver 1
-        robot.drivetrain
+        robot.follower.startTeleOpDrive();
+        robot.drive
                 .setDefaultCommand(new DriveCommand(
                         () -> (double) gamepad1.left_stick_x,
                         () -> (double) gamepad1.left_stick_y,
@@ -104,19 +105,19 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         shoot3button.whenPressed(new ConditionalCommand(
                 new TransferCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> true //robot.robotState == FULL
+                () -> robot.robotState != SHOOTING //robot.robotState == FULL
         ));
 
         shoot1button.whenPressed(new ConditionalCommand(
                 new TransferCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> true
+                () -> robot.robotState != SHOOTING
         ));
 
         rejectButton.whenPressed(new ConditionalCommand(
                 new StartShooterRejectCommand(robot.shooter),
                 new InstantCommand(() -> {} ),
-                () -> true //robot.robotState == FULL
+                () -> robot.robotState != SHOOTING //robot.robotState == FULL
         ));
 
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
@@ -136,7 +137,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 //        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
         CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
-                new SpindexerHoming(robot.spindexer),
+//                new SpindexerHoming(robot.spindexer),
                 new GoToRestingStateCommand(robot)
         ));
 

@@ -32,7 +32,7 @@ public class DriveCommand extends CommandBase {
         this.y = y;
         this.turn = turn;
 
-        super.addRequirements(robot.drivetrain);
+        super.addRequirements(robot.drive);
     }
 
     @Override
@@ -45,9 +45,9 @@ public class DriveCommand extends CommandBase {
         //add more stuff from before i dont want to do this
 
         double deadzone_amt = 0;
-        double left_x = x.get();
+        double left_x = -x.get();
         double left_y = -y.get();
-        double right_x = turn.get();
+        double right_x = -turn.get();
         left_x = Math.signum(left_x) * Algebra.mapRange(Math.abs(left_x), deadzone_amt, 1.0, 0.0, 1.0);
         left_y = Math.signum(left_y) * Algebra.mapRange(Math.abs(left_y), deadzone_amt, 1.0, 0.0, 1.0);
         right_x = Math.signum(right_x) * Algebra.mapRange(Math.abs(right_x), deadzone_amt, 1.0, 0.0, 1.0);
@@ -55,11 +55,12 @@ public class DriveCommand extends CommandBase {
         Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
         double rotation = slr(right_x)*ROTATION_MULTIPLIER;
 
-        robot.drivetrain.move(
-                direction,
-                rotation,
-                driveSpeed
-        );
+        robot.follower.setTeleOpDrive(left_y, left_x, right_x);
+//        robot.drivetrain.move(
+//                direction,
+//                rotation,
+//                driveSpeed
+//        );
     }
 
     @Override

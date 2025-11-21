@@ -90,15 +90,16 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void doAutoShoot( Pose2d goalPos, ShotType shotType){
-        Pose2d botPos = this.robot.localizer.getCurrentPosition();
-        this.isAutoAimOn = true;
-        this.doMath(botPos, goalPos, shotType, apexHeight);
-        //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-        this.setSpeed(this.velToRPM(this.goalVelocity));
-        //gets a setpos from the angle from our measured angles for max and min
-        this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-        this.goalYaw = this.findYawAngle(botPos, goalPos);
-        this.setHoodPosition(this.goalHoodPos);
+//        Pose2d botPos = this.robot.localizer.getCurrentPosition();
+        throw new UnsupportedOperationException();
+//        this.isAutoAimOn = true;
+//        this.doMath(botPos, goalPos, shotType, apexHeight);
+//        //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
+//        this.setSpeed(this.velToRPM(this.goalVelocity));
+//        //gets a setpos from the angle from our measured angles for max and min
+//        this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+//        this.goalYaw = this.findYawAngle(botPos, goalPos);
+//        this.setHoodPosition(this.goalHoodPos);
 
     }
 
@@ -275,10 +276,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
-                robot.getState() == RobotState.SHOOTING){
-            this.doAutoShoot(robot.goalPos);
-        }
+//        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
+//                robot.getState() == RobotState.SHOOTING){
+//            this.doAutoShoot(robot.goalPos);
+//        }
         // shooter pitch
         hardware.shooterPitch.setPosition(Math.max(hoodPosMin, Math.min(hoodPosMax, this.hoodPosition)));
 
