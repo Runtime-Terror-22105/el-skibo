@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
-//@Config
+@Config
 public class TransferCommand extends SequentialCommandGroup {
     public static double SHOOTER_POWER = 1.0;
     public static double SHOOTER_RPM = 3500;

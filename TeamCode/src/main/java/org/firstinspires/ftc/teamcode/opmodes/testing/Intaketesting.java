@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @TeleOp(name = "Intake Test", group = "Testing")
-//@Config
+@Config
 public class Intaketesting extends LinearOpMode {
     // targets
     private RobotHardware hardware = new RobotHardware();
