@@ -194,7 +194,7 @@ public class RobotHardware {
         this.publisher.subscribe(10, spindexerRotate);
 
         this.lights=new TerrorLight(hwMap.get(Servo.class, "lights"));
-        this.publisher.subscribe(11);
+        this.publisher.subscribe(11, lights);
 
 
         this.topSensor = new TerrorColorSensor(
