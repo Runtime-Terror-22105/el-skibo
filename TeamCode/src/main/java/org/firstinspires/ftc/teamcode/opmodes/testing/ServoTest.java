@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import java.util.Objects;
 
 @TeleOp(name = "Servo Test", group = "Testing")
-//@Config
+@Config
 public class ServoTest extends LinearOpMode {
     // targets
     public static String servoName = "";

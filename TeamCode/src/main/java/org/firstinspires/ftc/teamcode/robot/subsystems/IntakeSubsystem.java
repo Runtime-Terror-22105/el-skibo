@@ -6,7 +6,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
-//@Config
+@Config
 public class IntakeSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 

@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
-//@Config
+@Config
 
 public abstract class TerrorTeleOp extends LinearOpMode {
     public static double TURRET_OVERRIDE_COOLDOWN = 2.0; // If you use a manual override on the turret, it will take this long before it starts autoaiming again

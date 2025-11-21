@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
-//@Config
+@Config
 public class ShooterSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 

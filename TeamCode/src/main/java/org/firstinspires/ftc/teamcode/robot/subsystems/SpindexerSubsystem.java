@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
-//@Config
+@Config
 public class SpindexerSubsystem extends SubsystemBase {
     private enum COLOR {
         GREEN, PURPLE
