@@ -13,6 +13,8 @@ public class TerrorLightTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
+    public static double color=0.5;
+
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
@@ -28,8 +30,8 @@ public class TerrorLightTest extends LinearOpMode {
             }
 
 
-            robot.hardware.lightLeft.setColor(0.5);
-            robot.hardware.lightRight.setColor(0.5);
+            robot.hardware.lightLeft.setColor(color);
+            robot.hardware.lightRight.setColor(color);
             hardware.write();
 
 
