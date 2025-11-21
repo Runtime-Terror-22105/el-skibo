@@ -7,9 +7,11 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.follower.Follower;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.drive.localizer.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.robot.drive.mecanum.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
@@ -34,7 +36,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public RobotState robotState = null /*RobotState.RESTING*/;
 
     // Subsystems
-    public MecanumDrivetrain drivetrain = null;
+    public Follower follower;
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
 
@@ -68,13 +70,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         debugTelemetry = telemetry;
 
         // Initialize the drivetrain
+        this.follower = Constants.createFollower(hardware.hwMap);
         // NB: SubsystemBase will automatically register the subsystems for us
-        this.drivetrain = new MecanumDrivetrain(
-                hardware.motorRearLeft,
-                hardware.motorFrontLeft,
-                hardware.motorRearRight,
-                hardware.motorFrontRight
-        );
         this.shooter = new ShooterSubsystem(hardware, this);
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(hardware);
