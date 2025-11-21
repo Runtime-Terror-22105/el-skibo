@@ -7,9 +7,11 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.follower.Follower;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.drive.localizer.PinpointLocalizer;
 import org.firstinspires.ftc.teamcode.robot.drive.mecanum.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
@@ -34,7 +36,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public RobotState robotState = null /*RobotState.RESTING*/;
 
     // Subsystems
-    public MecanumDrivetrain drivetrain = null;
+    public Follower follower;
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
 
@@ -46,8 +48,6 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     // Localizer
     public PinpointLocalizer pinpoint;
     public LocalizationSubsystem localizer;
-    public static double PINPOINT_X_OFFSET = 102.5;
-    public static double PINPOINT_Y_OFFSET = -170;
 
     public Pose2d goalPos;
 
@@ -69,28 +69,9 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.telemetry = new MultipleTelemetry(tele, dashboard.getTelemetry());
         debugTelemetry = telemetry;
 
-        // Initialize the localizer
-
-        if (hardware.pinpoint != null) {
-            Log.d("localization", "hardware.pinpoint not null, continuing...");
-            this.pinpoint = new PinpointLocalizer(hardware.pinpoint/*, hardware.imu*/);
-            pinpoint.init(new PinpointLocalizer.Parameters(
-                    PINPOINT_X_OFFSET, PINPOINT_Y_OFFSET,
-                    TerrorPinpoint.GoBildaOdometryPods.goBILDA_4_BAR_POD,
-                    TerrorPinpoint.EncoderDirection.FORWARD, TerrorPinpoint.EncoderDirection.REVERSED
-            ));
-
-            localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
-        }
-
         // Initialize the drivetrain
+        this.follower = Constants.createFollower(hardware.hwMap);
         // NB: SubsystemBase will automatically register the subsystems for us
-        this.drivetrain = new MecanumDrivetrain(
-                hardware.motorRearLeft,
-                hardware.motorFrontLeft,
-                hardware.motorRearRight,
-                hardware.motorFrontRight
-        );
         this.shooter = new ShooterSubsystem(hardware, this);
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(hardware);

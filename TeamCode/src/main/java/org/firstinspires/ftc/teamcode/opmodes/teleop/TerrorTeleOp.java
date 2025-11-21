@@ -62,12 +62,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 
         // driver 1
-        robot.drivetrain
-                .setDefaultCommand(new DriveCommand(
-                        () -> (double) gamepad1.left_stick_x,
-                        () -> (double) gamepad1.left_stick_y,
-                        () -> (double) gamepad1.right_stick_x, robot)
-                       );
+//        robot.drivetrain
+//                .setDefaultCommand(new DriveCommand(
+//                        () -> (double) gamepad1.left_stick_x,
+//                        () -> (double) gamepad1.left_stick_y,
+//                        () -> (double) gamepad1.right_stick_x, robot)
+//                       );
 
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
