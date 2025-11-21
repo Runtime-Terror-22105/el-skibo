@@ -9,7 +9,7 @@ public class TerrorLight implements TerrorWritingDevice{
 
     public Servo light;
 
-    public LightCommand command;
+    public LightCommand command=LightCommand.NONE;
 
     private enum LightCommand {
         SET_LIGHT,   // Indicates that a new position needs to be set
