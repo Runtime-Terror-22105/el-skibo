@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.init;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -68,7 +70,9 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         debugTelemetry = telemetry;
 
         // Initialize the localizer
+
         if (hardware.pinpoint != null) {
+            Log.d("localization", "hardware.pinpoint not null, continuing...");
             this.pinpoint = new PinpointLocalizer(hardware.pinpoint/*, hardware.imu*/);
             pinpoint.init(new PinpointLocalizer.Parameters(
                     PINPOINT_X_OFFSET, PINPOINT_Y_OFFSET,
@@ -76,7 +80,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
                     TerrorPinpoint.EncoderDirection.FORWARD, TerrorPinpoint.EncoderDirection.REVERSED
             ));
 
-//            localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
+            localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
         }
 
         // Initialize the drivetrain

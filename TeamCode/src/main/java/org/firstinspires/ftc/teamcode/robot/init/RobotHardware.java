@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.robot.init;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -16,6 +18,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
@@ -40,6 +43,13 @@ public class RobotHardware {
     // Turret
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
+
+
+
+    // gobuilda pwm lights
+    public TerrorLight lightLeft;
+
+    public TerrorLight lightRight;
 
     // Shooter
     public TerrorMotorNormal shooterLeft;  // powers the flywheel
@@ -185,6 +195,11 @@ public class RobotHardware {
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, spindexerRotate);
 
+        this.lightLeft=new TerrorLight(hwMap.get(Servo.class, "lightLeft"));
+        this.lightRight=new TerrorLight(hwMap.get(Servo.class, "lightRight"));
+        this.publisher.subscribe(11);
+
+
         this.topSensor = new TerrorColorSensor(
                 hwMap.get(RevColorSensorV3.class, "topSensor")
         );
@@ -242,9 +257,7 @@ public class RobotHardware {
         this.initLynx(bulkCachingMode);
 
         // Other Sensors
-        if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.PINPOINT)) {
-            this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
-        }
+        this.pinpoint = hwMap.get(TerrorPinpoint.class, "pinpoint");
     }
 
     private void updateColorSensors() {
