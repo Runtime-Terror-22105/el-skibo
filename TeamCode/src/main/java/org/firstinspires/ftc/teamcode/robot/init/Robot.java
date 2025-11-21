@@ -46,8 +46,6 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     // Localizer
     public PinpointLocalizer pinpoint;
     public LocalizationSubsystem localizer;
-    public static double PINPOINT_X_OFFSET = 102.5;
-    public static double PINPOINT_Y_OFFSET = -170;
 
     public Pose2d goalPos;
 
@@ -68,20 +66,6 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.dashboard = FtcDashboard.getInstance();
         this.telemetry = new MultipleTelemetry(tele, dashboard.getTelemetry());
         debugTelemetry = telemetry;
-
-        // Initialize the localizer
-
-        if (hardware.pinpoint != null) {
-            Log.d("localization", "hardware.pinpoint not null, continuing...");
-            this.pinpoint = new PinpointLocalizer(hardware.pinpoint/*, hardware.imu*/);
-            pinpoint.init(new PinpointLocalizer.Parameters(
-                    PINPOINT_X_OFFSET, PINPOINT_Y_OFFSET,
-                    TerrorPinpoint.GoBildaOdometryPods.goBILDA_4_BAR_POD,
-                    TerrorPinpoint.EncoderDirection.FORWARD, TerrorPinpoint.EncoderDirection.REVERSED
-            ));
-
-            localizer = new LocalizationSubsystem(new Pose2d(new Point(0.0,0.0), 0.0), this.hardware, this);
-        }
 
         // Initialize the drivetrain
         // NB: SubsystemBase will automatically register the subsystems for us
