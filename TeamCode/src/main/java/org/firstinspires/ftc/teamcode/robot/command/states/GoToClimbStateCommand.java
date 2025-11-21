@@ -14,8 +14,8 @@ public class GoToClimbStateCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.robotState = RobotState.CLIMBING),
                 new InstantCommand(() -> robot.hang.setPTOState(true)),
                 new InstantCommand(() -> {
-                    robot.hardware.motorRearLeft.setPower(1.0);
-                    robot.hardware.motorRearRight.setPower(1.0);
+//                    robot.hardware.motorRearLeft.setPower(1.0);
+//                    robot.hardware.motorRearRight.setPower(1.0);
                 })
         ));
     }
