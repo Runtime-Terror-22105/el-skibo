@@ -81,7 +81,7 @@ public class ShooterAimingTuner extends LinearOpMode {
             Pose2d goalPos = new Pose2d(0, 0, 0);
 
             robot.shooter.doMath(robotPose, goalPos, ShotType.Arc, 60.0);
-            robot.shooter.manualAim(robot.shooter.goalVelocity, robot.shooter.getGoalPitch(), 0);
+            robot.shooter.manualAim(robot.shooter.getGoalVelocity(), robot.shooter.getGoalPitch(), 0);
 
             if (gamepad1.rightBumperWasPressed()) {
                 CommandScheduler.getInstance().schedule(new TransferCommand(robot));
@@ -96,8 +96,8 @@ public class ShooterAimingTuner extends LinearOpMode {
 
 
             robot.telemetry.addData("Goal Yaw", robot.shooter.goalYaw);
-            robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.goalVelocity);
-            robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.goalVelocity));
+            robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
+            robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
             robot.telemetry.addData("Goal Pitch", robot.shooter.getGoalPitch());
             robot.telemetry.addData("Current velocity rpm",robot.shooter.getVelocityRpm());
             robot.telemetry.update();

@@ -11,4 +11,7 @@ public class FieldConstants {
     public static Pose RED_START_POS_TELEOP = new Pose(124, 123,  Math.toRadians(-225));
     public static Pose BLUE_START_POS_AUTO = new Pose(20, 123, (25D/18D)*Math.PI);
     public static Pose RED_START_POS_AUTO = new Pose(124, 123, (30D/18D)*Math.PI);
+
+    public static String MOTIF_DATA_KEY = "motif";
+    public static String AUTO_ENDING_DATA_KEY = "auto ending pos, tele starting pos";
 }

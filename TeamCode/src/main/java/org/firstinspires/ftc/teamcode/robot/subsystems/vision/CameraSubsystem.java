@@ -127,14 +127,18 @@ public class CameraSubsystem extends SubsystemBase {
                 .build();
     }
 
+    public void setGlyph(GLYPH glyph) {
+        decodedGlyph = true;
+        gameGlyph = glyph;
+    }
+
     @Override
     public void periodic() {
         this.detections = aTagProcessor.getDetections();
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23 && !decodedGlyph) {
-                gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
-                decodedGlyph = true;
+                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             }
         }
         if(!detections.isEmpty())

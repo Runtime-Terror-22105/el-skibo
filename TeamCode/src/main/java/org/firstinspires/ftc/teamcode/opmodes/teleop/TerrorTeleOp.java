@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
@@ -58,11 +60,19 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
 
     public void runOpMode() {
-
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-
         robot.init(hardware, telemetry);
+
         this.setTeam(Team.BLUE);
+
+        Object motif = blackboard.getOrDefault(MOTIF_DATA_KEY, null);
+        Object autoEnd = blackboard.getOrDefault(AUTO_ENDING_DATA_KEY, null);
+        if (motif != null) {
+            robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
+        }
+        if (autoEnd != null) {
+            robot.follower.setStartingPose((Pose) autoEnd);
+        }
 
         waitForStart();
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
