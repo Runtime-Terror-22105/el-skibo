@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
+import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
@@ -24,6 +25,8 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToFullStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -62,71 +65,6 @@ public abstract class BlueAuto extends LinearOpMode {
         new SequentialCommandGroup(
 
         );
-
-        GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
-        Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
-        Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
-        GamepadButton rejectButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
-        GamepadButton restingButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
-
-        GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
-        GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
-
-//        hangButton.whenPressed(new GoToClimbStateCommand(robot));
-        intakeButton.whenActive(new ConditionalCommand(
-                new SequentialCommandGroup(
-                        new GoToIntakeStateCommand(robot, new TransferCommand(robot))
-//                    new WaitForIntakeCommand(robot),
-//                    new GoToFullStateCommand(robot)
-                ),
-                new InstantCommand(() -> {} ),
-                () ->  robot.robotState != SHOOTING //robot.robotState != FULL &&
-        ));
-        intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
-                new GoToRestingStateCommand(robot),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState != FULL &&
-        ));
-
-        reverseIntakeButton.whenActive(new ConditionalCommand(
-                new SetIntakeSpeedCommand(robot.intake, -1.0),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState != FULL
-        ));
-        reverseIntakeButton.whenInactive(new SetIntakeSpeedCommand(robot.intake, 0.0));
-
-        shoot3button.whenPressed(new ConditionalCommand(
-                new TransferCommand(robot),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState == FULL
-        ));
-
-        shoot1button.whenPressed(new ConditionalCommand(
-                new TransferCommand(robot),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING
-        ));
-
-        rejectButton.whenPressed(new ConditionalCommand(
-                new StartShooterRejectCommand(robot.shooter),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState == FULL
-        ));
-
-        restingButton.whenPressed(new GoToRestingStateCommand(robot));
-
-
-        // driver 2
-        GamepadButton motifPGPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);
-        GamepadButton motifGPPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.Y);
-        GamepadButton motifPPGButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
-
-
-        motifPGPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PGP ));
-        motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
-        motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
-
-        //homing command executing here
 
 //        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
         CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
