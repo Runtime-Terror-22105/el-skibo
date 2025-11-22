@@ -86,7 +86,8 @@ public class ShooterSubsystem extends SubsystemBase {
         this.doAutoShoot(goalPos, Arc);
     }
 
-    public void doAutoShoot( Pose2d goalPos, ShotType shotType){
+    public void doAutoShoot(Pose2d goalPos, ShotType shotType){
+        Log.d("shooter","bot pos"+this.robot.follower.getPose());
         Pose botPosTemp = this.robot.follower.getPose();
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
         this.isAutoAimOn = true;
