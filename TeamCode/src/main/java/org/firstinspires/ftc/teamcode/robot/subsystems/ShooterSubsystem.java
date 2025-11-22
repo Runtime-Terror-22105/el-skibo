@@ -20,8 +20,6 @@ import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 public class ShooterSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public static double test_turret_angle=0.0;
-
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
@@ -32,8 +30,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // the current pid + speed
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterSpeed=0.0;
-
-    public static double botheading_input=0.0;
 
     // the current shooting angle
     public double turretAngle = 0.0;
@@ -53,8 +49,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalYaw;
     public double goalYawPos;
     public static double difference = 109.0;
-
-    public static double test_angle=0;
 
     public static double minVelocity = 282.0 + difference; // in/sec, at 1
     public static double maxVelocity = 477.1 + difference; // in/sec, at 0.7
@@ -149,11 +143,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         double h = arcHeight;
-        int failCount = 0;
         double targetV;
         double targetT;
 
-        for(int failcount=1;failcount<9;failcount++){
+        for(int failCount=1;failCount<9;failCount++){
             //my formulas
             double horDist = Math.sqrt(Math.pow((botPos.x-goalPos.x),2) +
                     Math.pow((botPos.y-goalPos.y),2)); //simple pythagrean therom
@@ -183,7 +176,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     if (shotType == Arc) shotType = Straight;
                     else shotType = Arc;
                 }
-                else if (failcount == 8){
+                else if (failCount == 8){
                     if (targetV < minVelocity){
                         targetV = minVelocity;
                     }
@@ -212,9 +205,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
             }
             else {
-//                setSpeed(targetV);
-//                this.goalVelocity = targetV;
-//                this.goalPitch = targetT;
                 return new ShooterValues(targetV, targetT);
             }
         }
