@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
@@ -21,7 +21,6 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
@@ -38,10 +37,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public Team color;
 
     private long lastLoop = System.nanoTime();
-    public enum Team {
-        RED,
-        BLUE
-    }
+
     public void setTeam(Team color) {
         if (color == Team.BLUE){
             robot.goalPos = FieldConstants.BLUE_GOAL_POS;
@@ -91,7 +87,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
-                    new GoToIntakeStateCommand(robot, new TransferCommand(robot))
+                    new GoToIntakeStateCommand(robot)
 //                    new WaitForIntakeCommand(robot),
 //                    new GoToFullStateCommand(robot)
                 ),

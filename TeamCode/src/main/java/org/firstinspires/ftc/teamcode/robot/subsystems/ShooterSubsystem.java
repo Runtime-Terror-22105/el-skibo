@@ -20,8 +20,6 @@ import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 public class ShooterSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
-    public static double test_turret_angle=0.0;
-
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
@@ -101,6 +99,8 @@ public class ShooterSubsystem extends SubsystemBase {
             Log.e("shooter", "failed to do math!");
             return;
         }
+        Robot.debugTelemetry.addData("Calculated Velocity", math.flywheelVelocity);
+        Robot.debugTelemetry.addData("Calculated Pitch", math.hoodPitch);
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
         this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
@@ -307,7 +307,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void updateShooter() {
+        Robot.debugTelemetry.addData("Goal Velocity", goalVelocity);
+        Robot.debugTelemetry.addData("Current Velocity", this.getVelocityRpm());
         this.shooterPID.setTargetPosition(goalVelocity);
+        Robot.debugTelemetry.addData("PID Target Pos", shooterPID.getTargetPosition());
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
 
@@ -331,6 +334,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // flywheel pids
         this.updateShooter();
+        Robot.debugTelemetry.addData("Shooter Power", shooterSpeed);
         hardware.shooterLeft.setPower(shooterSpeed);
         hardware.shooterRight.setPower(shooterSpeed);
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.math.controllers;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.math.Angle;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
 public class PidfController {
     private static final double MAX_INTEGRAL = 1e15; // random constant to prevent integral windup, will adjust later
@@ -43,6 +44,10 @@ public class PidfController {
      * the power to be used.
      */
     public double calculatePower(double currentPosition, double feedforwardReference, boolean angleWrapError) {
+        if (Double.isNaN(this.targetPosition) || Double.isNaN(currentPosition)) {
+            return 0;
+        }
+
         this.currentPosition = currentPosition;
 
         double error = calculateError(currentPosition, angleWrapError);

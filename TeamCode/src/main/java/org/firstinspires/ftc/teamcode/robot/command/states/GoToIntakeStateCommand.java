@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
 public class GoToIntakeStateCommand extends SequentialCommandGroup {
-    public GoToIntakeStateCommand(Robot robot, TransferCommand transfer) {
+    public GoToIntakeStateCommand(Robot robot) {
         super(new ParallelCommandGroup(
                 new InstantCommand(() -> robot.robotState = RobotState.INTAKING),
                 new SetIntakePitchCommand(robot.intake, IntakePitch.DOWN),

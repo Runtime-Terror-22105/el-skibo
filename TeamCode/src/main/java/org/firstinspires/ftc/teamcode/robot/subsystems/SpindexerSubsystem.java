@@ -262,14 +262,5 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
         this.hardware.spindexerDiddyServo.setPosition(diddyPos);
         this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
-
-        Robot.debugTelemetry.addData("position (rad)", getPosition());
-        Robot.debugTelemetry.addData("position (ticks)", getPositionTicks());
-        Robot.debugTelemetry.addData("target (rad)", getTargetYaw());
-        Robot.debugTelemetry.addData("target (ticks)", radiansToTicks(getTargetYaw()));
-        Robot.debugTelemetry.addData("at target", atTargetYaw());
-        Robot.debugTelemetry.addData("power", spindexerPower);
-        Robot.debugTelemetry.addData("pid enabled", pidEnabled);
-
     }
 }
