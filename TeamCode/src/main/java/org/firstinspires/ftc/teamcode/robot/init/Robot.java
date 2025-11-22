@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl;
+import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
@@ -42,7 +43,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public CameraSubsystem camera;
     public HangSubsystem hang;
     public IntakeSubsystem intake;
-    public LightControl lightControl;
+    public LightControl2 lightControl;
 
     public Pose2d goalPos;
 
