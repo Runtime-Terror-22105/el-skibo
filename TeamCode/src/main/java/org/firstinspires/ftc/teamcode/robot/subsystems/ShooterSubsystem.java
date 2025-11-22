@@ -31,10 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterSpeed=0.0;
 
-    public static double botheading_input=0.0;
-
     // the current shooting angle
-    public double hoodPosition = 0.0;
     public double turretAngle = 0.0;
 
     public static double turretPosAt180 = 0.54;
@@ -52,8 +49,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalYaw;
     public double goalYawPos;
     public static double difference = 109.0;
-
-    public static double test_angle=0;
 
     public static double minVelocity = 282.0 + difference; // in/sec, at 1
     public static double maxVelocity = 477.1 + difference; // in/sec, at 0.7
@@ -109,20 +104,16 @@ public class ShooterSubsystem extends SubsystemBase {
             this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
         }
         //gets a setpos from the angle from our measured angles for max and min
-        this.hoodPosition = Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-        this.setHoodPosition(this.hoodPosition);
-
+        this.setGoalPitch(Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
     }
 
     /** lets you set a velocity and angle manually*/
     public void manualAim(double velocity, double pitch, double yaw) {
         this.isAutoAimOn = true;
-        this.goalPitch = pitch;
         this.setSpeed(this.velToRPM(velocity));
-        this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        this.setGoalPitch(Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
         this.goalYawPos = yaw;
 
-        this.setHoodPosition(this.hoodPosition);
         this.setTurretAngle(this.goalYawPos);
     }
 //
@@ -158,11 +149,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         double h = arcHeight;
-        int failCount = 0;
         double targetV;
         double targetT;
 
-        for(int failcount=1;failcount<9;failcount++){
+        for(int failCount=1;failCount<9;failCount++){
             //my formulas
             double horDist = Math.sqrt(Math.pow((botPos.x-goalPos.x),2) +
                     Math.pow((botPos.y-goalPos.y),2)); //simple pythagrean therom
@@ -192,7 +182,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     if (shotType == Arc) shotType = Straight;
                     else shotType = Arc;
                 }
-                else if (failcount == 8){
+                else if (failCount == 8){
                     if (targetV < minVelocity){
                         targetV = minVelocity;
                     }
@@ -221,16 +211,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
             }
             else {
-//                setSpeed(targetV);
-//                this.goalVelocity = targetV;
-//                this.goalPitch = targetT;
                 return new ShooterValues(targetV, targetT);
             }
         }
 
         Log.e("shooter", "goal vel" + goalVelocity);
-        Log.e("shooter", "goal pitch" +
-                goalPitch);
+        Log.e("shooter", "goal pitch" + getGoalPitch());
         return new ShooterValues(null, null);
     }
 
@@ -272,18 +258,9 @@ public class ShooterSubsystem extends SubsystemBase {
          return servopos;
     }
 
-    public double getTargetAngle(){
-        return this.goalPitch;
-    }
     public double getTargetVelocity(){
         return this.goalVelocity;
     }
-    public double getTargetHoodPos(){
-        return this.hoodPosition;
-    }
-    public double getTargetPitch(){return this.goalPitch;}
-
-
 
     public void setSpeed(double goal){
         this.goalVelocity = goal;
@@ -295,6 +272,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double getVelocityRpm() {
         return ticksToRpm(getVelocity());
+    }
+
+    public double getGoalPitch() {
+        return this.goalPitch;
+    }
+
+    public void setGoalPitch(double goalPitch) {
+        this.goalPitch = goalPitch;
     }
 
     public double ticksToRpm(double ticksPerSec) {
@@ -315,11 +300,6 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
 
-    public void setHoodPosition(double position){
-        this.hoodPosition=position;
-    }
-
-
     public void setTurretAngle(double angle) {
         this.turretAngle = Math.max(-Math.PI, Math.min(Math.PI, angle));
     }
@@ -331,7 +311,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         // shooter pitch
-        hardware.shooterPitch.setPosition(this.goalPitch);
+        hardware.shooterPitch.setPosition(this.getGoalPitch());
 
         // flywheel pids
         this.updateShooter();
