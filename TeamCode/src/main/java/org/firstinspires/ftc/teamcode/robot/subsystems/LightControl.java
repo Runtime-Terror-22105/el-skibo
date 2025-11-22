@@ -101,8 +101,10 @@ public class LightControl extends SubsystemBase {
 
             case DONE_CLIMB:
                 break;
+
+
             default:
-                if(time.time() > 100)
+                if(time.time() > 1000)
                 {
                     isBlinkOn = !isBlinkOn;
                     time.reset();
@@ -114,6 +116,7 @@ public class LightControl extends SubsystemBase {
                 else
                 {
                     hardware.lights.setColor(TerrorLight.LightColors.OFF);
+
                 }
                 break;
         }

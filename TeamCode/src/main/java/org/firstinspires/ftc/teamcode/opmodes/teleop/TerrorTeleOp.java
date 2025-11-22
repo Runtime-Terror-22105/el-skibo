@@ -193,6 +193,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
 
+            robot.lightControl.periodic();
             CommandScheduler.getInstance().run();
 
 
