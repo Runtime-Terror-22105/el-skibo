@@ -218,13 +218,18 @@ public class ShooterSubsystem extends SubsystemBase {
          double x = goalPos.x - botPos.x;
          double y = goalPos.y - botPos.x;
          double angle = Math.atan2(y,x);
+         Log.d("shooter", "yaw angle" + angle);
          double absoluteGoalAngle = (angle-(0.5 * Math.PI))+0.5*Math.PI;
+         Log.d("shooter", "absolute goal yaw angle" + absoluteGoalAngle);
          double botHeading = robot.follower.getHeading();
+         Log.d("shooter", "bot heading" + botHeading);
          double angleGoalOffset = Angle.angleWrap(absoluteGoalAngle - botHeading);
 
          this.goalYaw = absoluteGoalAngle;
+
          double pos = Algebra.mapRangeNoClamp(angleGoalOffset, -0.5*Math.PI, 0.5*Math.PI,
                  turretPosAt0-posChange90, turretPosAt0+posChange90, -Math.PI, Math.PI);
+         Log.d("shooter", "calc yaw pos" + pos);
          return pos;
 
 
@@ -286,10 +291,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
-//                robot.getState() == RobotState.SHOOTING){
-//            this.doAutoShoot(robot.goalPos);
-//        }
+        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
+                robot.getState() == RobotState.SHOOTING){
+            this.doAutoShoot(robot.goalPos);
+        }
         // shooter pitch
         hardware.shooterPitch.setPosition(Math.max(hoodPosMin, Math.min(hoodPosMax, this.hoodPosition)));
 
