@@ -20,6 +20,17 @@ public class FtcDashDrawing {
     public FtcDashDrawing() {
     }
 
+    private static double[][] convertPointsToFTC(double[][] pedroPoints) {
+        double[][] result = new double[2][pedroPoints[0].length];
+        for (int i = 0; i < pedroPoints[0].length; i++) {
+            Pose pedroPose = new Pose(pedroPoints[0][i], pedroPoints[1][i], 0);
+            Pose ftcPose = pedroPose.getAsCoordinateSystem(FTCCoordinates.INSTANCE);
+            result[0][i] = ftcPose.getX();
+            result[1][i] = ftcPose.getY();
+        }
+        return result;
+    }
+
     public static void drawDebug(Follower follower) {
         if (follower.getCurrentPath() != null) {
             drawPath(follower.getCurrentPath(), "#3F51B5");
@@ -47,7 +58,7 @@ public class FtcDashDrawing {
         }
 
         packet.fieldOverlay().setStroke(color);
-        drawPath(packet.fieldOverlay(), path.getPanelsDrawingPoints());
+        drawPath(packet.fieldOverlay(), convertPointsToFTC(path.getPanelsDrawingPoints()));
     }
 
     public static void drawPath(PathChain pathChain, String color) {
@@ -62,8 +73,11 @@ public class FtcDashDrawing {
             packet = new TelemetryPacket();
         }
 
+        // Convert pose x and y to FTC coords
+        double[][] ftcPoints = convertPointsToFTC(new double[][]{poseTracker.getXPositionsArray(), poseTracker.getYPositionsArray()});
+
         packet.fieldOverlay().setStroke(color);
-        packet.fieldOverlay().strokePolyline(poseTracker.getXPositionsArray(), poseTracker.getYPositionsArray());
+        packet.fieldOverlay().strokePolyline(ftcPoints[0], ftcPoints[1]);
     }
 
     private static boolean sendPacket() {
