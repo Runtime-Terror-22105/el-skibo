@@ -107,7 +107,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.setSpeed(this.velToRPM(this.goalVelocity));
         this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-        this.goalYaw = yaw;
+        this.goalYawPos = yaw;
 
         this.setHoodPosition(this.hoodPosition);
         this.setTurretAngle(this.goalYawPos);
@@ -288,11 +288,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        this.doAutoShoot(robot.goalPos);
+        //this.doAutoShoot(robot.goalPos);
 
 
         // shooter pitch
-        hardware.shooterPitch.setPosition(Math.max(hoodPosMin, Math.min(hoodPosMax, this.hoodPosition)));
+        hardware.shooterPitch.setPosition(this.goalPitch);
 
         // flywheel pids
         this.updateShooter();
