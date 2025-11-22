@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 public class ShooterSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
+    public static double test_turret_angle=0.0;
+
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
@@ -37,8 +39,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public double hoodPosition = 0.0;
     public double turretAngle = 0.0;
 
-    public static double turretPosAt0 = 0.44;
-    public static double posChange90 = 0.34;
+    public static double turretPosAt180 = 0.54;
+    public static double posChange90 = 0.38;
 
 
     // math stuff TODO calculate this
@@ -215,27 +217,40 @@ public class ShooterSubsystem extends SubsystemBase {
                 goalPitch);
     }
     private double findYawAngle(Pose2d botPos, Pose2d goalPos){
-         double x = goalPos.x - botPos.x;
-         double y = goalPos.y - botPos.y;
+         double x = goalPos.x - robot.follower.getPose().getX();
+         double y = goalPos.y - robot.follower.getPose().getY();
          double angle = Math.atan2(y,x);
-         angle=test_angle;
+
+
+
          double absoluteGoalAngle = angle;
 
          double botHeading = robot.follower.getHeading();
-         botHeading=botheading_input;
 
         robot.telemetry.addData("follower",botHeading*180/Math.PI );
 
 
-         double angleGoalOffset = Angle.angleWrap(absoluteGoalAngle - botHeading);
+         double angleTurret = Angle.angleWrap(absoluteGoalAngle - botHeading);
+
 
          this.goalYaw = absoluteGoalAngle;
 
-        double pos = turretPosAt0 + (angleGoalOffset / (0.5*Math.PI)) * posChange90;
 
-        robot.telemetry.addData("Pos of turret", pos);
 
-         return pos;
+//        double servopos = turretPosAt0 + (Angle.angleWrap(Math.toRadians(test_turret_angle)+Math.toRadians(25)) / (0.5*Math.PI)) * posChange90;
+
+        double servopos = Algebra.mapRangeNoClamp(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
+
+
+        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
+        robot.telemetry.addData("X diff",x);
+        robot.telemetry.addData("Y diff",y);
+        robot.telemetry.addData("follower actual",robot.follower.getHeading());
+        robot.telemetry.addData("Angle of turret", Math.toDegrees(angleTurret));
+        robot.telemetry.addData("Servopos", Math.toDegrees(servopos));
+//        robot.telemetry.addData("Pos of turret", pos);
+
+         return servopos;
     }
 
     public double getTargetAngle(){
