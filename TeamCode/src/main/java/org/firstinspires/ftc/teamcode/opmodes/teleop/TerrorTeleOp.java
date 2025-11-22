@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.FULL;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
-import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
@@ -12,7 +10,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -25,7 +22,6 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
-import org.firstinspires.ftc.teamcode.robot.command.states.GoToFullStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -35,11 +31,10 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 @Config
 
 public abstract class TerrorTeleOp extends LinearOpMode {
-    public static double TURRET_OVERRIDE_COOLDOWN = 2.0; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
-
-    private RobotHardware hardware = new RobotHardware();
+    private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
-    public team color;
+
+    public Team color;
     public static Pose2d blueGoalPos = new Pose2d(6, 138, 0.0);
     public static Pose2d redGoalPos = new Pose2d(138, 138, 0.0);
     public static Pose blueStartPos= new Pose(20, 123, (25D/18D)*Math.PI);
@@ -47,21 +42,21 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
     private Pose2d goalPos;
     private long lastLoop = System.nanoTime();
-    public enum team{
+    public enum Team {
         RED,
         BLUE
     }
-    public void setTeam(team color) {
-        if (color == team.BLUE){
-            robot.goalPos = blueGoalPos;
+    public void setTeam(Team color) {
+        if (color == Team.BLUE){
+            goalPos = blueGoalPos;
             robot.follower.setStartingPose(blueStartPos);
         }
-        else{
-            robot.goalPos = redGoalPos;
+        else {
+            goalPos = redGoalPos;
             robot.follower.setStartingPose(redStartPos);
         }
     }
-    public TerrorTeleOp(team color){
+    public TerrorTeleOp(Team color){
         this.color = color;
 
     }
