@@ -57,12 +57,7 @@ public class TransferCommand extends SequentialCommandGroup {
 
                 // reset spindexer, intake, shooter, and pole
                 new ParallelCommandGroup(
-                    new InstantCommand(() -> robot.spindexer.setYaw(robot.spindexer.getPosition())),
                     new SetIntakeSpeedCommand(robot.intake, 0),
-                    new InstantCommand(() -> {
-                        robot.hardware.shooterLeft.setPower(0);
-                        robot.hardware.shooterRight.setPower(0);
-                    }),
                     new SetSpindexerPoleActive(robot.spindexer, false),
                     new SetSpindexerRampActive(robot.spindexer, false),
                     new SetSpindexerYawCommand(robot.spindexer,0.0)

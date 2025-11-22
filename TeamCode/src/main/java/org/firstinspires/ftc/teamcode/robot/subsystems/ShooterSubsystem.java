@@ -105,6 +105,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
         //gets a setpos from the angle from our measured angles for max and min
         this.setGoalPitch(Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
+        Robot.debugTelemetry.addData("Goal Pitch Servo Pos", this.getGoalPitch());
     }
 
     /** lets you set a velocity and angle manually*/
@@ -247,12 +248,12 @@ public class ShooterSubsystem extends SubsystemBase {
         double servopos = Algebra.mapRange(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
 
-        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
-        robot.telemetry.addData("X diff",x);
-        robot.telemetry.addData("Y diff",y);
-        robot.telemetry.addData("follower actual",robot.follower.getHeading());
-        robot.telemetry.addData("Angle of turret", Math.toDegrees(angleTurret));
-        robot.telemetry.addData("Servopos", Math.toDegrees(servopos));
+//        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
+//        robot.telemetry.addData("X diff",x);
+//        robot.telemetry.addData("Y diff",y);
+//        robot.telemetry.addData("follower actual",robot.follower.getHeading());
+//        robot.telemetry.addData("Angle of turret", Math.toDegrees(angleTurret));
+//        robot.telemetry.addData("Servopos", Math.toDegrees(servopos));
 //        robot.telemetry.addData("Pos of turret", pos);
 
          return servopos;
