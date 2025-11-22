@@ -37,8 +37,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public Team color;
     public static Pose2d blueGoalPos = new Pose2d(6, 138, 0.0);
     public static Pose2d redGoalPos = new Pose2d(138, 138, 0.0);
-    public static Pose blueStartPos= new Pose(20, 123, (25D/18D)*Math.PI);
-    public static Pose redStartPos= new Pose(124, 123, (30D/18D)*Math.PI);
+    public static Pose blueStartPos= new Pose(20, 123, Math.toRadians(-45));
+    public static Pose redStartPos= new Pose(124, 123,  Math.toRadians(-225));
 
     private Pose2d goalPos;
     private long lastLoop = System.nanoTime();
