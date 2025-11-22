@@ -250,7 +250,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
     public void setSpeed(double goal){
-        this.shooterPID.setTargetPosition(goal);
+        this.goalVelocity = goal;
     }
 
     public double getVelocity() {
@@ -266,6 +266,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void updateShooter() {
+        this.shooterPID.setTargetPosition(goalVelocity);
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
 
@@ -299,8 +300,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // flywheel pids
         this.updateShooter();
-//        hardware.shooterLeft.setPower(shooterSpeed);
-//        hardware.shooterRight.setPower(shooterSpeed);
+        hardware.shooterLeft.setPower(shooterSpeed);
+        hardware.shooterRight.setPower(shooterSpeed);
 
         // shooter rotation for turret
 //        double servoYaw = this.turretAngle / YAW_GEAR_RATIO;
