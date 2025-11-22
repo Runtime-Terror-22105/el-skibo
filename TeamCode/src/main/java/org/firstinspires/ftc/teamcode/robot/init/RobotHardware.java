@@ -148,7 +148,8 @@ public class RobotHardware {
                 0.05,
                 1.0
         );
-        this.shooterEncoder = new TerrorEncoder(motorRearLeft);  // TODO: figure out which motor has the encoder
+        this.shooterEncoder = new TerrorEncoder(motorRearLeft);
+        this.shooterEncoder.setDirection(TerrorEncoder.Direction.REVERSE);// TODO: figure out which motor has the encoder
         this.publisher.subscribe(5, shooterLeft, shooterRight);
 
         // TODO: figure out shooter motor directions
