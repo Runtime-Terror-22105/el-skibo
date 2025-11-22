@@ -63,6 +63,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double hoodPosMin = 0.55; //min position the servo can go to
     public static double hoodAngleMax = 1.2217; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.8726; //radian measure of hood at min pos
+
     public boolean isAutoAimOn;
     private final Robot robot;
     public static double velCoeff = 2.0;
@@ -107,11 +108,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /** lets you set a velocity and angle manually*/
-    public void manualAim(double velocity, double pitch, double yaw){
+    public void manualAim(double velocity, double pitch, double yaw) {
         this.isAutoAimOn = true;
-        this.goalVelocity = velocity;
         this.goalPitch = pitch;
-        this.setSpeed(this.velToRPM(this.goalVelocity));
+        this.setSpeed(this.velToRPM(velocity));
         this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.goalYaw = yaw;
 
@@ -282,6 +282,15 @@ public class ShooterSubsystem extends SubsystemBase {
         return ticksPerSec * 60.0 / TICKS_PER_REV;
     }
 
+    /**
+     * Convert inches/sec to rpm
+     * @param velocity Velocity in in/sec
+     * @return Velocity in RPM
+     */
+    public double velToRPM(double velocity){
+        return velocity * 6.469;
+    }
+
     public void updateShooter() {
         this.shooterPID.setTargetPosition(goalVelocity);
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
@@ -295,17 +304,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setTurretAngle(double angle) {
         this.turretAngle = Math.max(-Math.PI, Math.min(Math.PI, angle));
     }
-
-    public double velToRPM(double velocity){
-        return velocity * 6.469;
-    }
-
-
-
-
-
-
-
 
     @Override
     public void periodic() {

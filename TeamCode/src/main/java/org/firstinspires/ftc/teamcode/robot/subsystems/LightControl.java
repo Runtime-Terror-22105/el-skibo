@@ -22,12 +22,13 @@ public class LightControl extends SubsystemBase {
 
     private final RobotHardware hardware;
     private final Robot robot;
+    private final ElapsedTime time = new ElapsedTime();
+
     public LightControl(RobotHardware hardware, Robot robot) {
         this.hardware = hardware;
         this.robot = robot;
         time.reset();
     }
-    private final ElapsedTime time = new ElapsedTime();
 
 //    public void setColor(TerrorLight.LightColors color)
 //    {
