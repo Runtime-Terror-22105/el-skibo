@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.command.shooter;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
@@ -28,7 +29,6 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
     public ShootThreeBallsCommand(Robot robot) {
         super(
-                new ChangeSpindexerYawCommand(robot.spindexer, SPINDEX_ROTATIONS*2*Math.PI),
                 new ParallelRaceGroup( // keep going for either 2 rotations or until all balls are gone
                         new WaitForSpindexerYawCommand(robot.spindexer)
 //                        new WaitUntilCommand(() -> {
@@ -39,14 +39,10 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
                 // reset spindexer, intake, shooter, and pole
                 new ParallelCommandGroup(
-                        new InstantCommand(() -> robot.spindexer.setYaw(robot.spindexer.getPosition())),
                         new SetIntakeSpeedCommand(robot.intake, 0),
-                        new InstantCommand(() -> {
-                            robot.hardware.shooterLeft.setPower(0);
-                            robot.hardware.shooterRight.setPower(0);
-                        }),
                         new SetSpindexerPoleActive(robot.spindexer, false),
-                        new SetSpindexerRampActive(robot.spindexer, false)
+                        new SetSpindexerRampActive(robot.spindexer, false),
+                        new SetSpindexerYawCommand(robot.spindexer,0.0)
                 )
         );
 
