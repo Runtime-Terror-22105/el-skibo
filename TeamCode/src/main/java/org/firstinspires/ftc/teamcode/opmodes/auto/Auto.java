@@ -18,6 +18,7 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
@@ -28,8 +29,9 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public abstract class Auto extends LinearOpMode {
     public static double MAX_POWER = 0.5;
     public static Pose SHOOT_PRELOAD_POSE = new Pose(50.0, 104.644, Math.toRadians(315));
+    public static double SHOOT_PRELOAD_RPM = 3500;
     public static Pose PREPARE_INTAKE_1_POSE = new Pose(52.598, 85.149, Math.toRadians(180));
-    public static Pose INTAKE_1_POSE = new Pose(20.2, 85.149, Math.toRadians(180));
+    public static Pose INTAKE_1_POSE = new Pose(30.2, 85.149, Math.toRadians(180));
     public static Pose PUSH_GATE_POSE = new Pose(44.873, 72.827, Math.toRadians(180));
 
     private final RobotHardware hardware = new RobotHardware();
@@ -90,10 +92,11 @@ public abstract class Auto extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new GoToRestingStateCommand(robot),
+                new SetShooterRPMCommand(robot.shooter, SHOOT_PRELOAD_RPM),
                 new WaitCommand(500),
                 new FollowPathCommand(robot.follower, shootPreloadPath, true),
                 new WaitCommand(500),
-                new TransferCommand(robot),
+                new TransferCommand(robot, SHOOT_PRELOAD_RPM),
                 new WaitCommand(500)
         );
 
@@ -123,8 +126,8 @@ public abstract class Auto extends LinearOpMode {
         waitForStart();
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-                shootPreloadCommand
-//                intake1Command
+                shootPreloadCommand,
+                intake1Command
         ));
 
         lastLoop = System.nanoTime();

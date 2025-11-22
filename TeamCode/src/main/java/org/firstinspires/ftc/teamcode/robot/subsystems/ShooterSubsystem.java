@@ -63,6 +63,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double hoodAngleMin = 0.8726; //radian measure of hood at min pos
 
     public boolean isAutoAimOn;
+    public boolean isAutoVelOn;
     private final Robot robot;
     public static double velCoeff = 2.0;
 
@@ -78,6 +79,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPID.setTargetPosition(0.0);
         //currently doesnt control anything in this class, just for keeping track
         this.isAutoAimOn = true;
+        this.isAutoVelOn = true;
 
 
     }
@@ -103,7 +105,9 @@ public class ShooterSubsystem extends SubsystemBase {
         Robot.debugTelemetry.addData("Calculated Pitch", math.hoodPitch);
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-        this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
+        if (this.isAutoVelOn) {
+            this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
+        }
         //gets a setpos from the angle from our measured angles for max and min
         this.hoodPosition = Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.setHoodPosition(this.hoodPosition);
@@ -307,10 +311,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void updateShooter() {
-        Robot.debugTelemetry.addData("Goal Velocity", goalVelocity);
-        Robot.debugTelemetry.addData("Current Velocity", this.getVelocityRpm());
         this.shooterPID.setTargetPosition(goalVelocity);
-        Robot.debugTelemetry.addData("PID Target Pos", shooterPID.getTargetPosition());
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
 
