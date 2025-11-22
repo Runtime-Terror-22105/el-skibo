@@ -42,8 +42,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public team color;
     public static Pose2d blueGoalPos = new Pose2d(6, 138, 0.0);
     public static Pose2d redGoalPos = new Pose2d(138, 138, 0.0);
-    public static Pose blueStartPos= new Pose(20, 123, (25/18)*Math.PI);
-    public static Pose redStartPos= new Pose(124, 123, (30/18)*Math.PI);
+    public static Pose blueStartPos= new Pose(20, 123, (25D/18D)*Math.PI);
+    public static Pose redStartPos= new Pose(124, 123, (30D/18D)*Math.PI);
 
     private Pose2d goalPos;
     private long lastLoop = System.nanoTime();
@@ -53,11 +53,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
     public void setTeam(team color) {
         if (color == team.BLUE){
-            goalPos = blueGoalPos;
+            robot.goalPos = blueGoalPos;
             robot.follower.setStartingPose(blueStartPos);
         }
         else{
-            goalPos = redGoalPos;
+            robot.goalPos = redGoalPos;
             robot.follower.setStartingPose(redStartPos);
         }
     }

@@ -91,7 +91,6 @@ public class ShooterSubsystem extends SubsystemBase {
         Pose botPosTemp = this.robot.follower.getPose();
         Log.d("shooter","bot pos 1"+ botPosTemp);
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
-        Log.d("shooter","bot pos 2"+ botPos);
         this.isAutoAimOn = true;
         this.doMath(botPos, goalPos, shotType, apexHeight);
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
@@ -137,6 +136,7 @@ public class ShooterSubsystem extends SubsystemBase {
          * the second tends to be more of a backboard shot, this one the velocity usually is crazy high
          * so if u go for backboard its likley it wont find valid values unless ur careful with h */
 
+
         double h = arcHeight;
         int failCount = 0;
         double targetV;
@@ -162,14 +162,11 @@ public class ShooterSubsystem extends SubsystemBase {
                 targetT = theta2;
                 targetV = v2 * velCoeff + difference;
             }
-            Log.e("shooter", "tv" + targetV);
-            Log.e("shooter", "tt" + targetT);
             //detects if something about our target values are out of range.
             //tries 4 more times, trying to adjust h to get valid numbers
             //if it doesnt find any, it starts over with the other pair of values
             //if, after 8 times, it doesnt get anything, it throws an error
             if (targetV < minVelocity || targetV > maxVelocity || targetT < hoodAngleMin || targetT > hoodAngleMax){
-                Log.e("shooter", "erm... we have a value out of range!");
                 if (failCount == 4){
                     h = apexHeight;
                     if (shotType == Arc) shotType = Straight;
@@ -294,17 +291,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
-                robot.getState() == RobotState.SHOOTING){
-            this.doAutoShoot(robot.goalPos);
-        }
+        this.doAutoShoot(robot.goalPos);
+
+
         // shooter pitch
         hardware.shooterPitch.setPosition(Math.max(hoodPosMin, Math.min(hoodPosMax, this.hoodPosition)));
 
         // flywheel pids
         this.updateShooter();
-        hardware.shooterLeft.setPower(shooterSpeed);
-        hardware.shooterRight.setPower(shooterSpeed);
+//        hardware.shooterLeft.setPower(shooterSpeed);
+//        hardware.shooterRight.setPower(shooterSpeed);
 
         // shooter rotation for turret
 //        double servoYaw = this.turretAngle / YAW_GEAR_RATIO;
