@@ -15,7 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(13.6);
+            .mass(13.6)
+            .forwardZeroPowerAcceleration(-27.418)
+            .lateralZeroPowerAcceleration(-67.489);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1.0)
@@ -26,7 +28,9 @@ public class Constants {
             .leftFrontMotorDirection(DcMotor.Direction.FORWARD)
             .leftRearMotorDirection(DcMotor.Direction.FORWARD)
             .rightFrontMotorDirection(DcMotor.Direction.REVERSE)
-            .rightRearMotorDirection(DcMotor.Direction.REVERSE);
+            .rightRearMotorDirection(DcMotor.Direction.REVERSE)
+            .xVelocity(67.1829)
+            .yVelocity(52.714);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(4.606)
