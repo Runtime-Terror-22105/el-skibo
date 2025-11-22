@@ -74,6 +74,7 @@ public class LightControl extends SubsystemBase {
                 break;
 
             case INTAKING:
+                hardware.lights.setColor(TerrorLight.LightColors.BLUE);
                 break;
 
             //i might be misunderstanding
