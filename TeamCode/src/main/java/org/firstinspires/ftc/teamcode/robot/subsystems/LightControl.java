@@ -1,15 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.CLIMB;
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.FLYWHEEL_OFF;
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.FLYWHEEL_ON;
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.FUNNEL_READY;
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.INTAKE_DOWN;
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.INTAKE_FORWARD;
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.INTAKE_OFF;
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.INTAKE_REVERSE;
-import static org.firstinspires.ftc.teamcode.robot.init.StateTag.INTAKE_UP;
-
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -59,6 +49,8 @@ public class LightControl extends SubsystemBase {
     @Override
     public void periodic()
     {
+        //eventually most of these states wont have anything special so a hashmap would make iteasy
+        //just do 3 ifstatmeents at most: if(insert special case) if(another special) else(mapcolor)
         switch(robot.getState())
         {
             case RESTING:
@@ -69,7 +61,12 @@ public class LightControl extends SubsystemBase {
             case INTAKING:
                 break;
 
+            //i might be misunderstanding
             case FULL:
+                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+                break;
+            case TRANSFER:
+                hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
                 break;
 
             case SHOOTING:
@@ -86,6 +83,9 @@ public class LightControl extends SubsystemBase {
                 break;
 
             case DONE_CLIMB:
+                break;
+            default:
+                hardware.lights.setColor(TerrorLight.LightColors.PINK);
                 break;
         }
 
