@@ -97,7 +97,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = true;
         this.doMath(botPos, goalPos, shotType, apexHeight);
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-        this.setSpeed(this.velToRPM(this.goalVelocity));
+//        this.setSpeed(this.velToRPM(this.goalVelocity)); todo: add back
         //gets a setpos from the angle from our measured angles for max and min
         this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.goalYawPos = this.findYawAngle(botPos, goalPos);
@@ -118,6 +118,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setHoodPosition(this.hoodPosition);
         this.setTurretAngle(this.goalYawPos);
     }
+
     public void setVelocity(double velocity){
         manualAim(velocity, this.goalPitch, this.goalYaw);
     }
@@ -187,7 +188,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     if (targetT > hoodAngleMax){
                         targetT = hoodAngleMax;
                     }
-                    this.goalVelocity = targetV;
+//                    this.goalVelocity = targetV;
+//                    setSpeed(targetV); TODO: add back
                     this.goalPitch = targetT;
 
                     break;
@@ -204,7 +206,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
             }
             else {
-                this.goalVelocity = targetV;
+//                setSpeed(targetV);
+//                this.goalVelocity = targetV; // todo: add back
                 this.goalPitch = targetT;
                 break;
 

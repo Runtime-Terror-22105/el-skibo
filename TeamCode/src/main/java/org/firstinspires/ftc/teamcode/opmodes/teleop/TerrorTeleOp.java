@@ -147,8 +147,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
         CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
 //                new SpindexerHoming(robot.spindexer),
-                new GoToRestingStateCommand(robot)
-        ));
+                new GoToRestingStateCommand(robot),
+                new InstantCommand(() -> robot.shooter.setSpeed(3500D)))
+        );
 
         lastLoop = System.nanoTime();
 
