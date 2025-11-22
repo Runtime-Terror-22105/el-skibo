@@ -46,7 +46,7 @@ public class ServoTest extends LinearOpMode {
                 servo.setPosition(servoPosition);
             }
 
-            else if (!servoName2.isEmpty()) {
+            if (!servoName2.isEmpty()) {
                 Servo servo2 = hardwareMap.get(Servo.class, servoName2);
                 if (useExtendedPwmRange) {
                     int portNumber = servo2.getPortNumber();

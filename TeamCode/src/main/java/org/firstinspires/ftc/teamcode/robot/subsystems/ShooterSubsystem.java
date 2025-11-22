@@ -290,16 +290,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // shooter rotation for turret
 //        double servoYaw = this.turretAngle / YAW_GEAR_RATIO;
-//        servoYaw = Math.max(-Math.PI, Math.min(Math.PI, servoYaw));
-//        hardware.turretYawLeft.setPosition(Algebra.mapRange(
-//                servoYaw,
-//                -Math.PI, Math.PI,
-//                YAW_LEFT_MIN_POS, YAW_LEFT_MAX_POS
-//        ));
-//        hardware.turretYawRight.setPosition(Algebra.mapRange(
-//                servoYaw,
-//                -Math.PI, Math.PI,
-//                YAW_RIGHT_MIN_POS, YAW_RIGHT_MAX_POS
-//        ));
+        double servoYaw = Algebra.mapRange(this.turretAngle, -90, 90, 0, 1);
+        servoYaw = Math.max(-Math.PI, Math.min(Math.PI, servoYaw));
+        hardware.turretYawLeft.setPosition(Algebra.mapRange(
+                servoYaw,
+                -Math.PI, Math.PI,
+                YAW_LEFT_MIN_POS, YAW_LEFT_MAX_POS
+        ));
+        hardware.turretYawRight.setPosition(Algebra.mapRange(
+                servoYaw,
+                -Math.PI, Math.PI,
+                YAW_RIGHT_MIN_POS, YAW_RIGHT_MAX_POS
+        ));
     }
 }
