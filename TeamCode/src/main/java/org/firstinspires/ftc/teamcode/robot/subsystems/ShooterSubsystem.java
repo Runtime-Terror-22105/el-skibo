@@ -8,16 +8,13 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
-import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
@@ -35,7 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public double shooterSpeed=0.0;
 
     // the current shooting angle
-    public double hoodPosition= 0.0;
+    public double hoodPosition = 0.0;
     public double turretAngle = 0.0;
 
     public static double turretPosAt0 = 0.44;
@@ -51,7 +48,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalPitch;
     public double goalVelocity;
     public double goalYaw;
-    public double goalHoodPos;
     public double goalYawPos;
     public static double difference = 109.0;
 
@@ -96,11 +92,11 @@ public class ShooterSubsystem extends SubsystemBase {
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
         this.setSpeed(this.velToRPM(this.goalVelocity));
         //gets a setpos from the angle from our measured angles for max and min
-        this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.goalYawPos = this.findYawAngle(botPos, goalPos);
 
 
-        this.setHoodPosition(this.goalHoodPos);
+        this.setHoodPosition(this.hoodPosition);
 
     }
 
@@ -110,10 +106,10 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalVelocity = velocity;
         this.goalPitch = pitch;
         this.setSpeed(this.velToRPM(this.goalVelocity));
-        this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.goalYaw = yaw;
 
-        this.setHoodPosition(this.goalHoodPos);
+        this.setHoodPosition(this.hoodPosition);
         this.setTurretAngle(this.goalYawPos);
     }
     public void setVelocity(double velocity){
@@ -243,7 +239,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return this.goalVelocity;
     }
     public double getTargetHoodPos(){
-        return this.goalHoodPos;
+        return this.hoodPosition;
     }
     public double getTargetPitch(){return this.goalPitch;}
 
@@ -278,9 +274,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setTurretAngle(double angle) {
         this.turretAngle = Math.max(-Math.PI, Math.min(Math.PI, angle));
     }
+
     public double velToRPM(double velocity){
         return velocity * 6.469;
-
     }
 
 
