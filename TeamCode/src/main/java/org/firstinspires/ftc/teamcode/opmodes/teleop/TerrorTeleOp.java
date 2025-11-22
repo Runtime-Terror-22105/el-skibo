@@ -66,7 +66,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         robot.init(hardware, telemetry);
-        this.setTeam(this.color);
+        this.setTeam(Team.BLUE);
 
         waitForStart();
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
