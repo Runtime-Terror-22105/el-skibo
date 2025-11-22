@@ -79,7 +79,7 @@ dependencies {
     implementation "org.solverslib:core:${solversLibVersion}"
     implementation "org.solverslib:pedroPathing:${solversLibVersion}"
 
-    implementation ('com.pedropathing:ftc:2.0.1'){
+    implementation ('com.pedropathing:ftc:2.0.3'){
         exclude group: "com.acmerobotics.dashboard"
     }
     implementation 'com.pedropathing:telemetry:0.0.6'
