@@ -87,9 +87,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void doAutoShoot(Pose2d goalPos, ShotType shotType){
-        Log.d("shooter","bot pos"+this.robot.follower.getPose());
+
         Pose botPosTemp = this.robot.follower.getPose();
+        Log.d("shooter","bot pos 1"+ botPosTemp);
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
+        Log.d("shooter","bot pos 2"+ botPos);
         this.isAutoAimOn = true;
         this.doMath(botPos, goalPos, shotType, apexHeight);
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
