@@ -25,10 +25,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * 5.6D;
 
-    public static double INTAKE_WALL_1_DOWN = 0.3;
-    public static double INTAKE_WALL_1_UP = 0.7;
-    public static double INTAKE_WALL_2_DOWN = 0.6;
-    public static double INTAKE_WALL_2_UP = 0.2;
+    public static double INTAKE_WALL_1_DOWN = 0.345;
+    public static double INTAKE_WALL_1_UP = 0.6;
+    public static double INTAKE_WALL_2_DOWN = 0.555;
+    public static double INTAKE_WALL_2_UP = 0.33;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
