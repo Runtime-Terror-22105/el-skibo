@@ -8,7 +8,7 @@ Make sure you're using Android Studio Ladybug (2022.3.1) or newer.
 In this project, the following units are always expected to be used:
 - Time -> Milliseconds
 - Angles -> Radians
-- Distances -> Inches, except for pinpoint which is mm
+- Distances -> Inches
 
 # Recent Update - Version 11.0
 ## Enhancements
