@@ -12,6 +12,8 @@ public class FieldConstants {
     public static Pose BLUE_START_POS_AUTO = new Pose(20, 123, (25D/18D)*Math.PI);
     public static Pose RED_START_POS_AUTO = new Pose(124, 123, (30D/18D)*Math.PI);
 
+    public static double TILE_WIDTH = 23.6;
+
     public static String MOTIF_DATA_KEY = "motif";
     public static String AUTO_ENDING_DATA_KEY = "auto ending pos, tele starting pos";
 }
