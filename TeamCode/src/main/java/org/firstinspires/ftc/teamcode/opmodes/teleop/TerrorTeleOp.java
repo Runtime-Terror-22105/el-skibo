@@ -48,11 +48,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
     public void setTeam(Team color) {
         if (color == Team.BLUE){
-            goalPos = blueGoalPos;
+            robot.goalPos = blueGoalPos;
             robot.follower.setStartingPose(blueStartPos);
         }
         else {
-            goalPos = redGoalPos;
+            robot.goalPos = redGoalPos;
             robot.follower.setStartingPose(redStartPos);
         }
     }
