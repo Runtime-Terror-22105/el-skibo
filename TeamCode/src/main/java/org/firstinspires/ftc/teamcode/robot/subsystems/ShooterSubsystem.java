@@ -44,8 +44,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double goalHeight = 40.0; //doesnt change no matter alliance color
     public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
 
-    public double goalPitch;
-    public double goalVelocity;
+    private double goalPitch;
+    private double goalVelocity;
     public double goalYaw;
     public double goalYawPos;
     public static double difference = 109.0;
@@ -99,6 +99,9 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
         //gets a setpos from the angle from our measured angles for max and min
         this.setGoalPitch(Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
+
+        Log.i("shooter", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
+        Log.i("shooter", "Calculated hood pitch " + this.getGoalPitch());
     }
 
     /** lets you set a velocity and angle manually*/
@@ -209,7 +212,7 @@ public class ShooterSubsystem extends SubsystemBase {
             }
         }
 
-        Log.e("shooter", "goal vel" + goalVelocity);
+        Log.e("shooter", "goal vel" + getGoalVelocity());
         Log.e("shooter", "goal pitch" + getGoalPitch());
         return new ShooterValues(null, null);
     }
@@ -252,7 +255,7 @@ public class ShooterSubsystem extends SubsystemBase {
          return servopos;
     }
 
-    public double getTargetVelocity(){
+    public double getGoalVelocity() {
         return this.goalVelocity;
     }
 
@@ -290,7 +293,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void updateShooter() {
-        this.shooterPID.setTargetPosition(goalVelocity);
+        this.shooterPID.setTargetPosition(getGoalVelocity());
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
 
