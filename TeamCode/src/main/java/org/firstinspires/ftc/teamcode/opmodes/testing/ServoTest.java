@@ -20,6 +20,9 @@ public class ServoTest extends LinearOpMode {
     public static String servoName = "";
     public static double servoPosition = 0D;
 
+    public static String servoName2 = "";
+    public static double servoPosition2 = 0D;
+
     public static boolean useExtendedPwmRange = false;
 
 
@@ -41,6 +44,11 @@ public class ServoTest extends LinearOpMode {
                 }
 
                 servo.setPosition(servoPosition);
+            }
+
+            else if (!servoName2.isEmpty()) {
+                Servo servo2 = hardwareMap.get(Servo.class, servoName2);
+                servo2.setPosition(servoPosition2);
             }
         }
     }
