@@ -6,7 +6,9 @@ import static org.firstinspires.ftc.teamcode.robot.subsystems.ShotType.Straight;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.math.Algebra;
@@ -35,8 +37,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public double hoodPosition= 0.0;
     public double turretAngle = 0.0;
 
-    public static double turretPosAtZero = 0.0;
-    public static double turretPosAt360 = 0.0;
+    //back of the bot is 0 to aviod wrapping
+    public static double turretAngleMax = 1.5 *Math.PI;
+    public static double turretAnglemin = 0.5 *Math.PI;
+    public static double turretPosMin = 0.0;
+    public static double turretPosMax = 0.0;
+
 
     // math stuff TODO calculate this
     public static double robotHeight = 14.0; //in, acctually shoudl be where the shooter is
@@ -90,16 +96,20 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void doAutoShoot( Pose2d goalPos, ShotType shotType){
-//        Pose2d botPos = this.robot.localizer.getCurrentPosition();
-        throw new UnsupportedOperationException();
-//        this.isAutoAimOn = true;
-//        this.doMath(botPos, goalPos, shotType, apexHeight);
-//        //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-//        this.setSpeed(this.velToRPM(this.goalVelocity));
-//        //gets a setpos from the angle from our measured angles for max and min
-//        this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-//        this.goalYaw = this.findYawAngle(botPos, goalPos);
-//        this.setHoodPosition(this.goalHoodPos);
+        Pose botPosTemp = this.robot.follower.getPose();
+        Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
+        this.isAutoAimOn = true;
+        this.doMath(botPos, goalPos, shotType, apexHeight);
+        //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
+        this.setSpeed(this.velToRPM(this.goalVelocity));
+        //gets a setpos from the angle from our measured angles for max and min
+        this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        this.goalYaw = this.findYawAngle(botPos, goalPos);
+        if (this.goalYaw > turretPosMin && this.goalYaw < turretPosMax){
+            this.goalYawPos = Algebra.mapRange(this.goalYaw, turretAnglemin, turretAngleMax, turretPosMin, turretPosMax);
+        }
+
+        this.setHoodPosition(this.goalHoodPos);
 
     }
 
@@ -111,7 +121,9 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setSpeed(this.velToRPM(this.goalVelocity));
         this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.goalYaw = yaw;
-        this.goalYawPos = (turretPosAtZero-turretPosAt360)/(-2* Math.PI)*this.goalYaw;
+        if (this.goalYaw > turretPosMin && this.goalYaw < turretPosMax){
+            this.goalYawPos = Algebra.mapRange(this.goalYaw, turretAnglemin, turretAngleMax, turretPosMin, turretPosMax);
+        }
         this.setHoodPosition(this.goalHoodPos);
         this.setTurretAngle(this.goalYawPos);
     }
@@ -216,10 +228,15 @@ public class ShooterSubsystem extends SubsystemBase {
                 goalPitch);
     }
     private double findYawAngle(Pose2d botPos, Pose2d goalPos){
-         double x = Math.abs(botPos.x-goalPos.x);
-         double y = Math.abs(botPos.y- goalPos.y);
+         double x = goalPos.x - botPos.x;
+         double y = goalPos.y - botPos.x;
          double angle = Math.tan(y/x);
-         return angle;
+
+         //with 0 as point away goal side of the field
+         double goalAngle = (turretPosMax-turretAnglemin) + Math.signum(angle)*(0.5*Math.PI - angle);
+         double botHeading = MathUtils.normalizeRadians(this.robot.follower.getHeading() + 1.5*Math.PI, true);
+
+         return (turretPosMax-turretAnglemin) - (goalAngle-botHeading);
     }
     public double getTargetAngle(){
         return this.goalPitch;
