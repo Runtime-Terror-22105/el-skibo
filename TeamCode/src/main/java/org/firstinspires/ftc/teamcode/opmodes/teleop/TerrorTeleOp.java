@@ -62,7 +62,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
     public TerrorTeleOp(team color){
         this.setTeam(color);
-        robot.goalPos = goalPos;
 
     }
 
