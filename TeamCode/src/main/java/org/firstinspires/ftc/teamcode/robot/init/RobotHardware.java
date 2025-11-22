@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.robot.init;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -24,7 +22,6 @@ import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
 
 import java.util.Arrays;
 import java.util.List;
@@ -99,8 +96,7 @@ public class RobotHardware {
     private final TerrorPublisher publisher = new TerrorPublisher();
 
     public enum HardwareOptions {
-        CAMERA,
-        PINPOINT
+        CAMERA
     }
 
     public void init(@NonNull HardwareMap hwMap, @NonNull LynxModule.BulkCachingMode bulkCachingMode, HardwareOptions... options) {

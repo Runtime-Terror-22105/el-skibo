@@ -8,9 +8,7 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -28,7 +26,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
             new PidfController.PidfCoefficients(0.0001, 0.000115, 0.00, 0, 0);
-    public static double shooterVelocityTolerance = 0.0;
+    public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
     // the current pid + speed
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
@@ -73,7 +71,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
 
-        this.shooterPID.setTolerance(this.shooterVelocityTolerance);
+        this.shooterPID.setTolerance(SHOOTER_VELOCITY_TOLERANCE);
         this.shooterPID.setTargetPosition(0.0);
         //currently doesnt control anything in this class, just for keeping track
         this.isAutoAimOn = true;
@@ -105,8 +103,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
+    /** lets you set a velocity and angle manually*/
     public void manualAim(double velocity, double pitch, double yaw){
-        /** lets you set a velocity and angle manually*/
         this.isAutoAimOn = false;
         this.goalVelocity = velocity;
         this.goalPitch = pitch;
@@ -127,18 +125,17 @@ public class ShooterSubsystem extends SubsystemBase {
         manualAim(this.goalVelocity, this.goalPitch, yaw);
     }
 
+    /**
+     * attempts to calculate a velocity and angle from the robot position and our apex height
+     * i let you pass in a different value other than apexHeight above bc we might want to change that later
+     * see discord for the way i got my formulas
+     * the formulas return 2 sets of values, the first one tends to be a regular, arc shot
+     * the second tends to be more of a backboard shot, this one the velocity usually is crazy high
+     * so if u go for backboard its likley it wont find valid values unless ur careful with h */
     public void doMath(Pose2d botPos, Pose2d goalPos, ShotType shotType, double arcHeight){
         Log.e("shooter", "running math...");
-        /**
-         * attempts to calculate a velocity and angle from the robot position and our apex height
-         * i let you pass in a different value other than apexHeight above bc we might want to change that later
-         * see discord for the way i got my formulas
-         * the formulas return 2 sets of values, the first one tends to be a regular, arc shot
-         * the second tends to be more of a backboard shot, this one the velocity usually is crazy high
-         * so if u go for backboard its likley it wont find valid values unless ur careful with h */
 
         double h = arcHeight;
-        int failCount = 0;
         double targetV;
         double targetT;
 
@@ -170,7 +167,7 @@ public class ShooterSubsystem extends SubsystemBase {
             //if, after 8 times, it doesnt get anything, it throws an error
             if (targetV < minVelocity || targetV > maxVelocity || targetT < hoodAngleMin || targetT > hoodAngleMax){
                 Log.e("shooter", "erm... we have a value out of range!");
-                if (failCount == 4){
+                if (failcount == 4){
                     h = apexHeight;
                     if (shotType == Arc) shotType = Straight;
                     else shotType = Arc;
