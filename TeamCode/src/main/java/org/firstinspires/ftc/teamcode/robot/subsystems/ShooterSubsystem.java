@@ -58,6 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double hoodAngleMin = 0.8726; //radian measure of hood at min pos
 
     public boolean isAutoAimOn;
+    public boolean isAutoVelOn;
     private final Robot robot;
     public static double velCoeff = 2.0;
 
@@ -73,6 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPID.setTargetPosition(0.0);
         //currently doesnt control anything in this class, just for keeping track
         this.isAutoAimOn = true;
+        this.isAutoVelOn = true;
 
 
     }
@@ -94,9 +96,13 @@ public class ShooterSubsystem extends SubsystemBase {
             Log.e("shooter", "failed to do math!");
             return;
         }
+        Robot.debugTelemetry.addData("Calculated Velocity", math.flywheelVelocity);
+        Robot.debugTelemetry.addData("Calculated Pitch", math.hoodPitch);
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-        this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
+        if (this.isAutoVelOn) {
+            this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
+        }
         //gets a setpos from the angle from our measured angles for max and min
         this.setGoalPitch(Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
 
@@ -244,12 +250,12 @@ public class ShooterSubsystem extends SubsystemBase {
         double servopos = Algebra.mapRange(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
 
-        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
-        robot.telemetry.addData("X diff",x);
-        robot.telemetry.addData("Y diff",y);
-        robot.telemetry.addData("follower actual",robot.follower.getHeading());
-        robot.telemetry.addData("Angle of turret", Math.toDegrees(angleTurret));
-        robot.telemetry.addData("Servopos", Math.toDegrees(servopos));
+//        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
+//        robot.telemetry.addData("X diff",x);
+//        robot.telemetry.addData("Y diff",y);
+//        robot.telemetry.addData("follower actual",robot.follower.getHeading());
+//        robot.telemetry.addData("Angle of turret", Math.toDegrees(angleTurret));
+//        robot.telemetry.addData("Servopos", Math.toDegrees(servopos));
 //        robot.telemetry.addData("Pos of turret", pos);
 
          return servopos;
@@ -312,6 +318,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // flywheel pids
         this.updateShooter();
+        Robot.debugTelemetry.addData("Shooter Power", shooterSpeed);
         hardware.shooterLeft.setPower(shooterSpeed);
         hardware.shooterRight.setPower(shooterSpeed);
 
