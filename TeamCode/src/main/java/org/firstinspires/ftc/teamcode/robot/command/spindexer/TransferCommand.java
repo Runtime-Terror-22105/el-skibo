@@ -69,7 +69,8 @@ public class TransferCommand extends SequentialCommandGroup {
                         robot.hardware.shooterRight.setPower(0);
                     }),
                     new SetSpindexerPoleActive(robot.spindexer, false),
-                    new SetSpindexerRampActive(robot.spindexer, false)
+                    new SetSpindexerRampActive(robot.spindexer, false),
+                    new SetSpindexerYawCommand(robot.spindexer,0.0)
                 )
         );
         this.robot = robot;
