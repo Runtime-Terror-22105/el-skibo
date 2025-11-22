@@ -25,6 +25,7 @@ public class LightControl extends SubsystemBase {
     public LightControl(RobotHardware hardware, Robot robot) {
         this.hardware = hardware;
         this.robot = robot;
+        time.reset();
     }
     private final ElapsedTime time = new ElapsedTime();
 
@@ -105,7 +106,19 @@ public class LightControl extends SubsystemBase {
             case DONE_CLIMB:
                 break;
             default:
-                hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                if(time.time() > 100)
+                {
+                    isBlinkOn = !isBlinkOn;
+                    time.reset();
+                }
+                if(isBlinkOn)
+                {
+                    hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                }
+                else
+                {
+                    hardware.lights.setColor(TerrorLight.LightColors.OFF);
+                }
                 break;
         }
 
