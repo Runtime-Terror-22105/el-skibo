@@ -38,6 +38,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretPosAtZero = 0.0;
     public static double turretPosAt360 = 0.0;
 
+    public static double YAW_LEFT_MIN_POS = 0.1;
+    public static double YAW_LEFT_MAX_POS = 0.78;
+    public static double YAW_RIGHT_MIN_POS = 0.1;
+    public static double YAW_RIGHT_MAX_POS = 0.78;
+
     // math stuff TODO calculate this
     public static double robotHeight = 14.0; //in, acctually shoudl be where the shooter is
     public static double g = 386.08858267717; //in per sec^2
@@ -290,17 +295,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // shooter rotation for turret
 //        double servoYaw = this.turretAngle / YAW_GEAR_RATIO;
-        double servoYaw = Algebra.mapRange(this.turretAngle, -90, 90, 0, 1);
-        servoYaw = Math.max(-Math.PI, Math.min(Math.PI, servoYaw));
-        hardware.turretYawLeft.setPosition(Algebra.mapRange(
-                servoYaw,
-                -Math.PI, Math.PI,
-                YAW_LEFT_MIN_POS, YAW_LEFT_MAX_POS
-        ));
-        hardware.turretYawRight.setPosition(Algebra.mapRange(
-                servoYaw,
-                -Math.PI, Math.PI,
-                YAW_RIGHT_MIN_POS, YAW_RIGHT_MAX_POS
-        ));
+        double servoYaw = Math.max(-Math.PI, Math.min(Math.PI, servoYaw));
+        hardware.turretYawLeft.setPosition(Algebra.mapRange(servoYaw, -Math.PI, Math.PI, YAW_LEFT_MIN_POS, YAW_LEFT_MAX_POS));
+        hardware.turretYawRight.setPosition(Algebra.mapRange(servoYaw, -Math.PI, Math.PI, YAW_RIGHT_MIN_POS, YAW_RIGHT_MAX_POS));
     }
 }
