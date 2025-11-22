@@ -12,6 +12,7 @@ import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.math.Algebra;
+import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -216,10 +217,10 @@ public class ShooterSubsystem extends SubsystemBase {
     private double findYawAngle(Pose2d botPos, Pose2d goalPos){
          double x = goalPos.x - botPos.x;
          double y = goalPos.y - botPos.x;
-         double angle = Math.atan(y/x);
-         double absoluteGoalAngle = (angle-(0.5 * Math.PI))+90;
+         double angle = Math.atan2(y,x);
+         double absoluteGoalAngle = (angle-(0.5 * Math.PI))+0.5*Math.PI;
          double botHeading = robot.follower.getHeading();
-         double angleGoalOffset = absoluteGoalAngle - botHeading;
+         double angleGoalOffset = Angle.angleWrap(absoluteGoalAngle - botHeading);
 
          this.goalYaw = absoluteGoalAngle;
          double pos = Algebra.mapRangeNoClamp(angleGoalOffset, -0.5*Math.PI, 0.5*Math.PI,

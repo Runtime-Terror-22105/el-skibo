@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.seattlesolvers.solverslib.command.Command;
@@ -38,13 +39,29 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
     private RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
+    public static Pose2d blueGoalPos = new Pose2d(6, 138, 0.0);
+    public static Pose2d redGoalPos = new Pose2d(138, 138, 0.0);
+    public static Pose blueStartPos= new Pose(20, 123, (25/18)*Math.PI);
+    public static Pose redStartPos= new Pose(124, 123, (30/18)*Math.PI);
 
     private Pose2d goalPos;
     private long lastLoop = System.nanoTime();
-
-    public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
-    public TerrorTeleOp(Pose2d goalPos){
-        this.setGoalPos(goalPos);
+    public enum team{
+        RED,
+        BLUE
+    }
+    public void setTeam(team color) {
+        if (color == team.BLUE){
+            goalPos = blueGoalPos;
+            robot.follower.setStartingPose(blueStartPos);
+        }
+        else{
+            goalPos = redGoalPos;
+            robot.follower.setStartingPose(redStartPos);
+        }
+    }
+    public TerrorTeleOp(team color){
+        this.setTeam(color);
         robot.goalPos = goalPos;
 
     }
