@@ -54,7 +54,13 @@ public class LightControl extends SubsystemBase {
         switch(robot.getState())
         {
             case RESTING:
-                hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                hardware.lights.setColor(TerrorLight.LightColors.PINK   );
+                try {
+                    wait(100); //note there's a 20 ms loop time from what i rmemeber (idk how diff frc is to ftc)
+                    hardware.lights.setColor(TerrorLight.LightColors.OFF);
+                } catch (InterruptedException e) {
+                    //oh well prob some telemetry work
+                }
                 //todo: RTT morse code shouldnt be too hard
                 break;
 
