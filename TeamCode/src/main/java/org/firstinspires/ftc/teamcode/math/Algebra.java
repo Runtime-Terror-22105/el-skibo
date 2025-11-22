@@ -84,14 +84,32 @@ public class Algebra {
      * @return the value mapped to the new range [newMin, newMax].
      */
     public static double mapRange(double value, double sourceMin, double sourceMax, double targetMin, double targetMax) {
-        return mapRange(value, sourceMin, sourceMax, targetMin, targetMax, sourceMin, sourceMax);
-//        value = Math.max(Math.min(value, sourceMax), sourceMin);
-//        return targetMin + ((value - sourceMin) / (sourceMax - sourceMin)) * (targetMax - targetMin);
+//        return mapRange(value, sourceMin, sourceMax, targetMin, targetMax, sourceMin, sourceMax);
+        value = Math.max(Math.min(value, sourceMax), sourceMin);
+        return targetMin + ((value - sourceMin) / (sourceMax - sourceMin)) * (targetMax - targetMin);
     }
+//
+//    /**
+//     * Maps a value from an old range to a new range using linear interpolation.
+//     * Clamps the source value to clampMin and clampMax.
+//     *
+//     * @param value  the value to map, assumed to be within the source range [sourceMin, sourceMax].
+//     * @param sourceMin the lower bound of the source range.
+//     * @param sourceMax the upper bound of the source range.
+//     * @param targetMin the lower bound of the target range.
+//     * @param targetMax the upper bound of the target range.
+//     * @param clampMin the minimum value that can be passed for `value`.
+//     * @param clampMax the maximum value that can be passed for `value`.
+//     * @return the value mapped to the new range [newMin, newMax].
+//     */
+//    public static double mapRange(double value, double sourceMin, double sourceMax, double targetMin, double targetMax, double clampMin, double clampMax) {
+//        value = Math.max(Math.min(value, clampMax), clampMin);
+//        return targetMin + ((value - sourceMin) / (sourceMax - sourceMin)) * (targetMax - targetMin);
+//    }
 
     /**
      * Maps a value from an old range to a new range using linear interpolation.
-     * Clamps the source value to clampMin and clampMax.
+     * Does not clamp the inputs.
      *
      * @param value  the value to map, assumed to be within the source range [sourceMin, sourceMax].
      * @param sourceMin the lower bound of the source range.
@@ -102,8 +120,7 @@ public class Algebra {
      * @param clampMax the maximum value that can be passed for `value`.
      * @return the value mapped to the new range [newMin, newMax].
      */
-    public static double mapRange(double value, double sourceMin, double sourceMax, double targetMin, double targetMax, double clampMin, double clampMax) {
-        value = Math.max(Math.min(value, clampMax), clampMin);
+    public static double mapRangeNoClamp(double value, double sourceMin, double sourceMax, double targetMin, double targetMax, double clampMin, double clampMax) {
         return targetMin + ((value - sourceMin) / (sourceMax - sourceMin)) * (targetMax - targetMin);
     }
 }
