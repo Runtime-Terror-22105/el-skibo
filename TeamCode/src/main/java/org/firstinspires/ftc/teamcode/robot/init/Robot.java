@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -67,6 +68,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
         // Initialize the drivetrain
         this.follower = Constants.createFollower(hardware.hwMap);
+
+
         // NB: SubsystemBase will automatically register the subsystems for us
         this.drive = new DriveSubsystem(this);
         this.shooter = new ShooterSubsystem(hardware, this);

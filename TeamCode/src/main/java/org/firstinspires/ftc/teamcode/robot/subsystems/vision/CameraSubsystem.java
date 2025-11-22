@@ -41,7 +41,11 @@ public class CameraSubsystem extends SubsystemBase {
 
     public static double tempTurretAngle = 0;
 
-    public static double blueGlobalBankingRads = 0.959931;
+    public static Pose2d blueGlobalPose = new Pose2d(3000,3000,0.959931);
+
+    public static Pose2d redGlobalPose = new Pose2d(3000,3000,-0.959931);
+
+    public static Pose2d motifGlobalPose = new Pose2d(3000,3000,0);
 
 
     Telemetry telemetry;
@@ -172,7 +176,26 @@ public class CameraSubsystem extends SubsystemBase {
         -55-35+270=(-90)+270=180
         this should hopefully work (can't wait for it to not)
         */
-        return blueGlobalBankingRads+tag.ftcPose.range+tempTurretAngle;
+        double heading;
+        switch(VisionConstants.APRILTAG.tagMap.get(tag.id))
+        {
+            case "BLUESCORE":
+                heading = blueGlobalPose.heading;
+                break;
+//            case "GPP":
+//                break;
+//            case "PGP":
+//                break;
+//            case "PPG":
+//                break;
+            case "REDSCORE":
+                heading = redGlobalPose.heading;
+                break;
+            default:
+                heading = motifGlobalPose.heading;
+                break;
+        }
+        return heading+tag.ftcPose.range+tempTurretAngle;
 
     }
 

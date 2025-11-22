@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 public class ShooterSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
+    public static double test_turret_angle=0.0;
+
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
@@ -31,12 +33,14 @@ public class ShooterSubsystem extends SubsystemBase {
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterSpeed=0.0;
 
+    public static double botheading_input=0.0;
+
     // the current shooting angle
     public double hoodPosition = 0.0;
     public double turretAngle = 0.0;
 
-    public static double turretPosAt0 = 0.44;
-    public static double posChange90 = 0.34;
+    public static double turretPosAt180 = 0.54;
+    public static double posChange90 = 0.38;
 
 
     // math stuff TODO calculate this
@@ -51,12 +55,15 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalYawPos;
     public static double difference = 109.0;
 
+    public static double test_angle=0;
+
     public static double minVelocity = 282.0 + difference; // in/sec, at 1
     public static double maxVelocity = 477.1 + difference; // in/sec, at 0.7
     public static double hoodPosMax = 0.35; //maximum position the servo can go to
     public static double hoodPosMin = 0.55; //min position the servo can go to
     public static double hoodAngleMax = 1.2217; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.8726; //radian measure of hood at min pos
+
     public boolean isAutoAimOn;
     private final Robot robot;
     public static double velCoeff = 2.0;
@@ -101,11 +108,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /** lets you set a velocity and angle manually*/
-    public void manualAim(double velocity, double pitch, double yaw){
-        this.isAutoAimOn = false;
-        this.goalVelocity = velocity;
+    public void manualAim(double velocity, double pitch, double yaw) {
+        this.isAutoAimOn = true;
         this.goalPitch = pitch;
-        this.setSpeed(this.velToRPM(this.goalVelocity));
+        this.setSpeed(this.velToRPM(velocity));
         this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.goalYawPos = yaw;
 
@@ -211,27 +217,43 @@ public class ShooterSubsystem extends SubsystemBase {
                 goalPitch);
     }
     private double findYawAngle(Pose2d botPos, Pose2d goalPos){
-         double x = goalPos.x - botPos.x;
-         double y = goalPos.y - botPos.x;
+         double x = goalPos.x - robot.follower.getPose().getX();
+         double y = goalPos.y - robot.follower.getPose().getY();
          double angle = Math.atan2(y,x);
-         Log.d("shooter", "yaw angle" + angle);
-         double absoluteGoalAngle = (angle-(0.5 * Math.PI))+0.5*Math.PI;
-         Log.d("shooter", "absolute goal yaw angle" + absoluteGoalAngle);
+
+
+
+         double absoluteGoalAngle = angle;
+
          double botHeading = robot.follower.getHeading();
-         Log.d("shooter", "bot heading" + botHeading);
-         double angleGoalOffset = Angle.angleWrap(absoluteGoalAngle - botHeading);
+
+        robot.telemetry.addData("follower",botHeading*180/Math.PI );
+
+
+         double angleTurret = Angle.angleWrap(absoluteGoalAngle - botHeading);
+
 
          this.goalYaw = absoluteGoalAngle;
 
-         double pos = Algebra.mapRangeNoClamp(angleGoalOffset, -0.5*Math.PI, 0.5*Math.PI,
-                 turretPosAt0-posChange90, turretPosAt0+posChange90, -Math.PI, Math.PI);
-         Log.d("shooter", "calc yaw pos" + pos);
-         return pos;
 
 
+//        double servopos = turretPosAt0 + (Angle.angleWrap(Math.toRadians(test_turret_angle)+Math.toRadians(25)) / (0.5*Math.PI)) * posChange90;
+
+        // todo: this is currently limited to -90 to 90 degrees
+        double servopos = Algebra.mapRange(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
 
+        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
+        robot.telemetry.addData("X diff",x);
+        robot.telemetry.addData("Y diff",y);
+        robot.telemetry.addData("follower actual",robot.follower.getHeading());
+        robot.telemetry.addData("Angle of turret", Math.toDegrees(angleTurret));
+        robot.telemetry.addData("Servopos", Math.toDegrees(servopos));
+//        robot.telemetry.addData("Pos of turret", pos);
+
+         return servopos;
     }
+
     public double getTargetAngle(){
         return this.goalPitch;
     }
@@ -261,6 +283,15 @@ public class ShooterSubsystem extends SubsystemBase {
         return ticksPerSec * 60.0 / TICKS_PER_REV;
     }
 
+    /**
+     * Convert inches/sec to rpm
+     * @param velocity Velocity in in/sec
+     * @return Velocity in RPM
+     */
+    public double velToRPM(double velocity){
+        return velocity * 6.469;
+    }
+
     public void updateShooter() {
         this.shooterPID.setTargetPosition(goalVelocity);
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
@@ -275,20 +306,10 @@ public class ShooterSubsystem extends SubsystemBase {
         this.turretAngle = Math.max(-Math.PI, Math.min(Math.PI, angle));
     }
 
-    public double velToRPM(double velocity){
-        return velocity * 6.469;
-    }
-
-
-
-
-
-
-
-
     @Override
     public void periodic() {
-        //this.doAutoShoot(robot.goalPos);
+        if (robot.goalPos != null) this.doAutoShoot(robot.goalPos);
+        else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
 
         // shooter pitch

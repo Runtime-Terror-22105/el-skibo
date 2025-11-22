@@ -77,13 +77,18 @@ public class ShooterAimingTuner extends LinearOpMode {
 //            }
 
 
-            robot.shooter.manualAim(this.velocity, this.hoodPos, turretPos);
+            Pose2d robotPose = new Pose2d(DIST_TO_GOAL_X, DIST_TO_GOAL_Y, Math.atan2(DIST_TO_GOAL_Y, DIST_TO_GOAL_X));
+            Pose2d goalPos = new Pose2d(0, 0, 0);
+
+            robot.shooter.doMath(robotPose, goalPos, ShotType.Arc, 60.0);
+            robot.shooter.manualAim(robot.shooter.goalVelocity, robot.shooter.goalPitch, 0);
 
             if (gamepad1.rightBumperWasPressed()) {
                 CommandScheduler.getInstance().schedule(new TransferCommand(robot));
             }
 
-            //robot.shooter.setSpeed(GOAL_RPM);
+
+            robot.shooter.setSpeed(GOAL_RPM);
 
             CommandScheduler.getInstance().run();
 
