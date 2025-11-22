@@ -9,10 +9,10 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 @Config
 public class BlueRCTele extends TerrorTeleOp {
 
-    public static Pose2d goalPos = new Pose2d(6, 138, 0.0);
+
 
     public BlueRCTele(){
-        super(goalPos);
+        super(team.BLUE);
     }
 
     @Override
