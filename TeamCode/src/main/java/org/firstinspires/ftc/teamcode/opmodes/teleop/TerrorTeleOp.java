@@ -39,6 +39,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
     private RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
+    public team color;
     public static Pose2d blueGoalPos = new Pose2d(6, 138, 0.0);
     public static Pose2d redGoalPos = new Pose2d(138, 138, 0.0);
     public static Pose blueStartPos= new Pose(20, 123, (25/18)*Math.PI);
@@ -61,8 +62,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         }
     }
     public TerrorTeleOp(team color){
-        this.setTeam(color);
-        robot.goalPos = goalPos;
+        this.color = color;
 
     }
 
@@ -71,6 +71,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         robot.init(hardware, telemetry);
+        this.setTeam(this.color);
 
         waitForStart();
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);

@@ -86,9 +86,12 @@ public class ShooterSubsystem extends SubsystemBase {
         this.doAutoShoot(goalPos, Arc);
     }
 
-    public void doAutoShoot( Pose2d goalPos, ShotType shotType){
+    public void doAutoShoot(Pose2d goalPos, ShotType shotType){
+
         Pose botPosTemp = this.robot.follower.getPose();
+        Log.d("shooter","bot pos 1"+ botPosTemp);
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
+        Log.d("shooter","bot pos 2"+ botPos);
         this.isAutoAimOn = true;
         this.doMath(botPos, goalPos, shotType, apexHeight);
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
@@ -218,13 +221,18 @@ public class ShooterSubsystem extends SubsystemBase {
          double x = goalPos.x - botPos.x;
          double y = goalPos.y - botPos.x;
          double angle = Math.atan2(y,x);
+         Log.d("shooter", "yaw angle" + angle);
          double absoluteGoalAngle = (angle-(0.5 * Math.PI))+0.5*Math.PI;
+         Log.d("shooter", "absolute goal yaw angle" + absoluteGoalAngle);
          double botHeading = robot.follower.getHeading();
+         Log.d("shooter", "bot heading" + botHeading);
          double angleGoalOffset = Angle.angleWrap(absoluteGoalAngle - botHeading);
 
          this.goalYaw = absoluteGoalAngle;
+
          double pos = Algebra.mapRangeNoClamp(angleGoalOffset, -0.5*Math.PI, 0.5*Math.PI,
                  turretPosAt0-posChange90, turretPosAt0+posChange90, -Math.PI, Math.PI);
+         Log.d("shooter", "calc yaw pos" + pos);
          return pos;
 
 
@@ -286,10 +294,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
-//                robot.getState() == RobotState.SHOOTING){
-//            this.doAutoShoot(robot.goalPos);
-//        }
+        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
+                robot.getState() == RobotState.SHOOTING){
+            this.doAutoShoot(robot.goalPos);
+        }
         // shooter pitch
         hardware.shooterPitch.setPosition(Math.max(hoodPosMin, Math.min(hoodPosMax, this.hoodPosition)));
 

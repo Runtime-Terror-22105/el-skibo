@@ -9,8 +9,6 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 @Config
 public class BlueRCTele extends TerrorTeleOp {
 
-
-
     public BlueRCTele(){
         super(team.BLUE);
     }
