@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
@@ -30,44 +31,23 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
-
-public abstract class TerrorTeleOp extends LinearOpMode {
+@Autonomous(name="Blue Side Auto", group="Auto", preselectTeleOp="Blue RC TeleOp")
+public abstract class BlueAuto extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    public Team color;
-
     private long lastLoop = System.nanoTime();
-    public enum Team {
-        RED,
-        BLUE
-    }
-    public void setTeam(Team color) {
-        if (color == Team.BLUE){
-            robot.goalPos = FieldConstants.BLUE_GOAL_POS;
-            robot.follower.setStartingPose(FieldConstants.BLUE_START_POS_TELEOP);
-        }
-        else {
-            robot.goalPos = FieldConstants.RED_GOAL_POS;
-            robot.follower.setStartingPose(FieldConstants.RED_START_POS_TELEOP);
-        }
-    }
-    public TerrorTeleOp(Team color){
-        this.color = color;
-
-    }
 
     public void runOpMode() {
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         robot.init(hardware, telemetry);
-        this.setTeam(Team.BLUE);
+
+        robot.goalPos = FieldConstants.BLUE_GOAL_POS;
+        robot.follower.setStartingPose(FieldConstants.BLUE_START_POS_AUTO);
 
         waitForStart();
-        GamepadEx gamepad1ex = new GamepadEx(gamepad1);
-        GamepadEx gamepad2ex = new GamepadEx(gamepad2);
-
 
 
         // driver 1
@@ -77,7 +57,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                         () -> (double) gamepad1.left_stick_x,
                         () -> (double) gamepad1.left_stick_y,
                         () -> (double) gamepad1.right_stick_x, robot)
-                       );
+                );
+
+        new SequentialCommandGroup(
+
+        );
 
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
@@ -91,7 +75,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
-                    new GoToIntakeStateCommand(robot, new TransferCommand(robot))
+                        new GoToIntakeStateCommand(robot, new TransferCommand(robot))
 //                    new WaitForIntakeCommand(robot),
 //                    new GoToFullStateCommand(robot)
                 ),
