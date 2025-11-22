@@ -239,7 +239,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
 //        double servopos = turretPosAt0 + (Angle.angleWrap(Math.toRadians(test_turret_angle)+Math.toRadians(25)) / (0.5*Math.PI)) * posChange90;
 
-        double servopos = Algebra.mapRangeNoClamp(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
+        // todo: this is currently limited to -90 to 90 degrees
+        double servopos = Algebra.mapRange(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
 
         robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
