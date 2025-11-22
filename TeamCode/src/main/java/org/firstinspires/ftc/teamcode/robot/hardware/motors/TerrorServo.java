@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot.hardware.motors;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorWritingDevice;
 
@@ -15,7 +19,7 @@ public class TerrorServo implements TerrorWritingDevice {
     private final Servo servo;  // The underlying PhotonServo instance
     private double servoPosition;     // Current position of the servo
     private double lastPosition;      // Last set position to prevent unnecessary updates
-    private final double tolerance = 0.0001; // Small tolerance to avoid float comparison issues
+    private final double tolerance = 0.0; // Small tolerance to avoid float comparison issues
     private ServoCommand command = ServoCommand.NONE;
 
     /**
@@ -35,6 +39,19 @@ public class TerrorServo implements TerrorWritingDevice {
         this.servo = servo;
         this.servoPosition = servo.getPosition();
         this.lastPosition = -100; // prevent caching at start from being goofy
+    }
+
+    /**
+     *
+     * @param usPulseLower Microsecond pulse lower
+     * @param usPulseHigher Microsecond pulse higher
+     */
+    synchronized public void setPwmRange(double usPulseLower, double usPulseHigher) {
+        int portNumber = servo.getPortNumber();
+        PwmControl.PwmRange customRange = new PwmControl.PwmRange(500, 2500);  // Adjust based on servo specs
+
+        ServoControllerEx servoController = (ServoControllerEx) servo.getController();
+        servoController.setServoPwmRange(portNumber, customRange);
     }
 
     /**
@@ -67,7 +84,7 @@ public class TerrorServo implements TerrorWritingDevice {
      * The position will only be updated if:
      * <ol>
      *   <li>A {@link #setPosition(double)} command was issued.</li>
-     *   <li>The difference between the current position and the last set position exceeds the defined tolerance of {@value #tolerance}.</li>
+     *   <li>The difference between the current position and the last set position exceeds the defined tolerance of {@value}.</li>
      * </ol>
      * This tolerance helps avoid unnecessary servo updates.
      * <p>

@@ -4,13 +4,21 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.hardware.broadcom.BatchColorSensor;
+import com.qualcomm.hardware.broadcom.BroadcomColorSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.util.TypeConversion;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.nio.ByteOrder;
+import java.util.Arrays;
+
 public class TerrorColorSensor implements NormalizedColorSensor {
+
+    public static double MAX_DIST = 50;
 
     private final RevColorSensorV3 sensor;
     public enum side {
@@ -19,6 +27,8 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         RIGHT
     }
     public side position;
+
+    private BatchColorSensor reading = new BatchColorSensor();
 
     public TerrorColorSensor(@NonNull RevColorSensorV3 sensor)
     {
@@ -35,32 +45,34 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         }
     }
 
+    public void update() {
+        reading.read(sensor);
+    }
 
     /**
     * returns if the color sensor sees this as G,P,orN(none)
      */
-    public double getGreen(){
-        return ((double)sensor.green());
+    public double getRed(){
+        return reading.red;
     }
 
-    public double getRed(){
-        return ((double)sensor.red());
+    public double getGreen(){
+        return reading.green;
     }
 
     public double getBlue(){
-        return ((double)sensor.blue());
+        return reading.blue;
     }
 
-
-
     public double getDist(DistanceUnit unit){
-        return sensor.getDistance(unit);
+//        return sensor.getDistance(unit);
+        return unit.fromUnit(DistanceUnit.INCH, reading.distance);
     }
 
     public char getGreenOrPurple() {
 
         double[]rgb= {getRed(),getGreen(),getBlue()};
-        if(getDist(DistanceUnit.MM)>=30.0){
+        if(getDist(DistanceUnit.MM) >= MAX_DIST){
             return 'N';
         }
         else if(rgb[2]>rgb[1] && rgb[2]>rgb[0]){

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 @Config
 @TeleOp(name="Shooter Tuner", group="Tuning")
-public class ShooterTuner extends LinearOpMode {
+public class ShooterPIDTuner extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -32,14 +32,14 @@ public class ShooterTuner extends LinearOpMode {
 
             robot.shooter.setSpeed(goalSpeed);
 
-            robot.spindexer.periodic();
-
+//            CommandScheduler.getInstance().run();
+            robot.shooter.periodic();
 
             hardware.write();
 
 
-            robot.telemetry.addData("Goal Velocity",goalSpeed);
-            robot.telemetry.addData("Current velocity",robot.shooter.getShooterVelocity());
+            robot.telemetry.addData("Goal Velocity", goalSpeed);
+            robot.telemetry.addData("Current velocity",robot.shooter.getVelocityRpm());
             robot.telemetry.update();
 
         }

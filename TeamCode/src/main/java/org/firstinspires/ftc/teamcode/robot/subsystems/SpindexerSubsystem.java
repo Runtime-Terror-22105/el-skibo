@@ -12,87 +12,90 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
 public class SpindexerSubsystem extends SubsystemBase {
-
     private enum COLOR {
         GREEN, PURPLE
     }
 
-
-
     private final RobotHardware hardware;
     private final Robot robot;
 
-    public double spindexerOffset = 0;
+    private double homedSpindexerOffset = 0;
 
-    public static double INTAKE_WALL_1_ACTIVE = 1.0;
-    public static double INTAKE_WALL_1_DEACTIVE = 0.0;
-    public static double INTAKE_WALL_2_ACTIVE = 1.0;
-    public static double INTAKE_WALL_2_DEACTIVE = 0.0;
-    public static double SHOOTER_RAMP_ACTIVE = 1.0;
+    public static double SPINDEXER_OFFSET_2 = 0;
+
+    public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * 5.6D;
+
+    public static double INTAKE_WALL_1_DOWN = 0.345;
+    public static double INTAKE_WALL_1_UP = 0.6;
+    public static double INTAKE_WALL_2_DOWN = 0.555;
+    public static double INTAKE_WALL_2_UP = 0.33;
+
+    public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
     public static double RESTING_SPINDEX_POS = 0.0;
 
-    public static double spindexTransferPower=0.0;
+    public static double TRANSFER_POWER = -1.0;
 
     public double SHOOTER_INTAKE_SPEED = 0.0; // this is the speed where the shooter melonbotic servo intakes the balls
 
     public static double SHOOTER_INTAKING_SPEED = 1.0;
-    public static double SHOOT_ONE_ROTATION = -(2/3)* Math.PI;
+    public static double SHOOT_ONE_ROTATION = -(2 / 3) * Math.PI;
 
-    public double intakeWallPosition1 = INTAKE_WALL_1_DEACTIVE;
-    public double intakeWallPosition2 = INTAKE_WALL_2_DEACTIVE;
+    public double intakeWallPosition1 = INTAKE_WALL_1_UP;
+    public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double diddypole_Active=1.0;
+    public static double DIDDY_POLE_ACTIVE = 0.6;
 
-    public static double diddyPole_Deactive=0.0;
+    public static double DIDDY_POLE_DEACITVE = 0.98;
 
-    public static double shooter_ramp_active=1.0;
-    public static double shooter_ramp_deactive=0.0;
-
-    public double diddyPos=diddyPole_Deactive;
-
-    public boolean usespindexPID=true;
+    public double diddyPos = DIDDY_POLE_DEACITVE;
 
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
 
     public boolean transferActive = false;
 
-    public static double leftPosition =(4D/3D)* Math.PI;
-    public static double rightPosition =(2D/3D)* Math.PI;
+    public static double leftPosition = (4D / 3D) * Math.PI;
+    public static double rightPosition = (2D / 3D) * Math.PI;
     public static double backPosition = 0.0;
-    public static double readyPosition = (1D/6D)* Math.PI; //position for the first ball as the ramp goes down
+    public static double readyPosition = (1D / 6D) * Math.PI; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)}; // todo: this is currently duplicate, make it so it just uses the above 3 variables
 
-
-    public enum position {
-        LEFT,
-        RIGHT,
-        BACK
-    }
     public static PidfController.PidfCoefficients turningPidCoefficients =
             new PidfController.PidfCoefficients(0.011, 0, 0.00001, 0, 0);
-    public static double yawPidTolerance = 0.1;
+    public static double yawPidTolerance = Math.toRadians(10); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
         this.hardware = hardware;
-        this.sensors  = new TerrorColorSensor[] {hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
+        this.sensors = new TerrorColorSensor[]{hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
 
-        this.yawPid.setTolerance(yawPidTolerance);
+        this.yawPid.setTolerance(radiansToTicks(yawPidTolerance));
         this.yawPid.setTargetPosition(0.0);
     }
 
+    private static double ticksToRadians(double ticks) {
+        return (ticks / TICKS_PER_REVOLUTION) * 2.0 * Math.PI;
+    }
+
+    private static double radiansToTicks(double radians) {
+        return (radians / (2.0 * Math.PI)) * TICKS_PER_REVOLUTION;
+    }
+
     public double getTargetYaw() {
-        return this.yawPid.getTargetPosition();
+        return ticksToRadians(this.yawPid.getTargetPosition());
+    }
+
+    public boolean atTargetYaw() {
+        // TODO: potentially beware of angle wrapping here
+        return this.yawPid.atTargetPosition(getPositionTicks());
     }
 
     public void setYaw(double angle) { //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
-        this.yawPid.setTargetPosition(angle);
-        this.usespindexPID=true;
+        this.yawPid.setTargetPosition(radiansToTicks(angle));
     }
 
     public boolean getLimitSwitchState() {
@@ -104,136 +107,134 @@ public class SpindexerSubsystem extends SubsystemBase {
         pidEnabled = enabled;
     }
 
-    public void updateSpindexer(){
+    public void updateSpindexer() {
 //        if(hardware.spindexerEncoder.getCurrentPosition())
         if (pidEnabled) {
-            this.spindexerPower = yawPid.calculatePower(getPosition(), 0);
+            this.spindexerPower = yawPid.calculatePower(getPositionTicks(), 0);
         }
 
         // setting pid power into the spindexer
     }
 
-    public char[] getBallPositions()
-    {
+    public char[] getBallPositions() {
         return new char[]{hardware.topSensor.getGreenOrPurple(), hardware.rightSensor.getGreenOrPurple(), hardware.leftSensor.getGreenOrPurple()};
     }
 
-    public void selectColor(char color)
-    {
+    public void selectColor(char color) {
         int nearestIndex = new String(getBallPositions()).indexOf(color);
-        if(nearestIndex == -1)
-        {
+        if (nearestIndex == -1) {
             //TODO: add error handling here some telemetry message abt not having balls or smth
             return;
         }
         setYaw(this.yawPid.getTargetPosition() + yawOffsets[nearestIndex]);
     }
 
+    public double getPositionTicks() {
+        return hardware.spindexerEncoder.getCurrentPosition() - this.homedSpindexerOffset - SPINDEXER_OFFSET_2;
+    }
+
     public double getPosition() {
-        return hardware.spindexerEncoder.getCurrentPosition() - this.spindexerOffset;
+        return ticksToRadians(getPositionTicks());
+    }
+
+    public void setWallDown() {
+        this.intakeWallPosition1 = INTAKE_WALL_1_DOWN;
+        this.intakeWallPosition2 = INTAKE_WALL_2_DOWN;
+    }
+
+    public void setWallUp() {
+        this.intakeWallPosition1 = INTAKE_WALL_1_UP;
+        this.intakeWallPosition2 = INTAKE_WALL_2_UP;
+    }
+
+    public void Oilup() {
+        this.diddyPos = DIDDY_POLE_ACTIVE;
+    }
+
+    public void Oildown() {
+        this.diddyPos = DIDDY_POLE_DEACITVE;
     }
 
 
-    public void setWallActive(){
-        this.intakeWallPosition1 = INTAKE_WALL_1_ACTIVE;
-        this.intakeWallPosition2 = INTAKE_WALL_2_ACTIVE;
-    }
-    public void setWallDeactive(){
-        this.intakeWallPosition1 = INTAKE_WALL_1_DEACTIVE;
-        this.intakeWallPosition2 = INTAKE_WALL_2_DEACTIVE;
+    public void enableRamp() {
+        shooterRampPosition = SHOOTER_RAMP_ACTIVE;
     }
 
-    public void Oilup(){
-        this.diddyPos=diddypole_Active;
+    public void disableRamp() {
+        shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
     }
 
-
-
-    public void enableRamp(){
-        shooterRampPosition=shooter_ramp_active;
+    public void setHomedSpindexerOffset(double offset) {
+        this.homedSpindexerOffset = offset;
     }
 
-    public void disableRamp(){
-        shooterRampPosition=shooter_ramp_deactive;
-    }
-
-    public void setSpindexerOffset(double offset) {
-        this.spindexerOffset = offset;
-    }
-
-    public void sortBalls(){
-        double startPos = this.getPosition();
+    public void sortBalls() {
+        double startPos = this.getPositionTicks();
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
         int purpleCount = 0;
-        for (TerrorColorSensor sensor : this.sensors){
-            if (sensor.getGreenOrPurple() != 'N'){
+        for (TerrorColorSensor sensor : this.sensors) {
+            if (sensor.getGreenOrPurple() != 'N') {
                 fullCount += 1;
-                if (sensor.getGreenOrPurple() == 'G'){
-                    greenCount +=1;
-                    if (sensor.position.equals(position.LEFT)){
+                if (sensor.getGreenOrPurple() == 'G') {
+                    greenCount += 1;
+                    if (sensor.position.equals(TerrorColorSensor.side.LEFT)) {
                         greenPos = this.leftPosition;
-                    }
-                    else if (sensor.position.equals(position.RIGHT)){
+                    } else if (sensor.position.equals(TerrorColorSensor.side.RIGHT)) {
                         greenPos = this.rightPosition;
-                    }
-                    else {
+                    } else {
                         greenPos = this.backPosition;
                     }
 
-                }
-                else {
+                } else {
                     purpleCount += 1;
                 }
 
             }
         }
-        if (purpleCount == 2 && greenCount == 1){
+        if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
-                double normalizedError = MathUtils.normalizeRadians((this.readyPosition-greenPos), true);
-                if (normalizedError >= 0.1){
-                    normalizedError = -((2* Math.PI) - normalizedError);
+                double normalizedError = MathUtils.normalizeRadians((this.readyPosition - greenPos), true);
+                if (normalizedError >= 0.1) {
+                    normalizedError = -((2 * Math.PI) - normalizedError);
                 }
                 this.setYaw(startPos + normalizedError);
 
-            }
-            else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
-                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((2/3)*Math.PI))-greenPos), true);
-                if (normalizedError >= 0.1){
-                    normalizedError = -((2* Math.PI) - normalizedError);
+            } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
+                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition - ((2 / 3) * Math.PI)) - greenPos), true);
+                if (normalizedError >= 0.1) {
+                    normalizedError = -((2 * Math.PI) - normalizedError);
                 }
                 this.setYaw(startPos + normalizedError);
 
-            }
-            else {
-                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition-((4/3)*Math.PI))-greenPos), true);
-                if (normalizedError >= 0.1){
-                    normalizedError = -((2* Math.PI) - normalizedError);
+            } else {
+                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition - ((4 / 3) * Math.PI)) - greenPos), true);
+                if (normalizedError >= 0.1) {
+                    normalizedError = -((2 * Math.PI) - normalizedError);
                 }
                 this.setYaw(startPos + normalizedError);
             }
-        }
-        else {
+        } else {
             this.setYaw(readyPosition);
         }
 
     }
 
 
-    public void shootBall(){
-        if (transferActive){
-            this.setYaw(this.getPosition() + SHOOT_ONE_ROTATION);
-        }
-        else {
+    public void shootBall() {
+        if (transferActive) {
+            this.setYaw(this.getPositionTicks() + SHOOT_ONE_ROTATION);
+        } else {
             this.shootBall();
 
         }
 
 
     }
-    public void shootThree(){
-        for (int i = 0; i < 3; i++){
+
+    public void shootThree() {
+        for (int i = 0; i < 3; i++) {
             this.shootBall();
         }
 
@@ -241,7 +242,6 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setSpindexerPower(double power) {
         this.spindexerPower = power;
-        this.usespindexPID=false;
     }
 
     @Override
@@ -261,6 +261,15 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
         this.hardware.spindexerDiddyServo.setPosition(diddyPos);
+        this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
+
+        Robot.debugTelemetry.addData("position (rad)", getPosition());
+        Robot.debugTelemetry.addData("position (ticks)", getPositionTicks());
+        Robot.debugTelemetry.addData("target (rad)", getTargetYaw());
+        Robot.debugTelemetry.addData("target (ticks)", radiansToTicks(getTargetYaw()));
+        Robot.debugTelemetry.addData("at target", atTargetYaw());
+        Robot.debugTelemetry.addData("power", spindexerPower);
+        Robot.debugTelemetry.addData("pid enabled", pidEnabled);
 
     }
 }

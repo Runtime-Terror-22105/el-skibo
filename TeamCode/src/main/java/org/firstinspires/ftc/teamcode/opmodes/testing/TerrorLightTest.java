@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,20 +10,20 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.SpindexerHoming;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
-@TeleOp(name="Spindex Homing Test", group="Test")
-public class SpindexHomingTest extends LinearOpMode {
+@Config
+@TeleOp(name="Light Test", group="Testing")
+public class TerrorLightTest extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
+
+    public static double color=0.5;
 
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         robot.init(hardware, telemetry);
         waitForStart();
-
-        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
-        CommandScheduler.getInstance().schedule(homing);
 
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
@@ -31,17 +32,12 @@ public class SpindexHomingTest extends LinearOpMode {
                 hub.clearBulkCache();
             }
 
-            CommandScheduler.getInstance().run();
 
+            robot.hardware.lights.setColor(color);
             hardware.write();
 
 
             robot.telemetry.addData("Current Position", robot.spindexer.getPositionTicks());
-            robot.telemetry.addData("Switch Pos", homing.limit);
-            robot.telemetry.addData("Raw Switch Pos", hardware.spindexerLimitSwitch.getState());
-            robot.telemetry.addData("Seen Switch Start", homing.seenSwitchStart);
-            robot.telemetry.addData("Switch Start", homing.switchStart);
-            robot.telemetry.addData("Switch End", homing.switchEnd);
             robot.telemetry.update();
 
         }
