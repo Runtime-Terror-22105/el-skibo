@@ -78,7 +78,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
-            this.camera = new CameraSubsystem(hardware, CameraSubsystem.LiveViewSettings.FIELD);
+
+            this.camera = new CameraSubsystem(tele,this,hardware, CameraSubsystem.LiveViewSettings.FIELD);
 //            this.camera = new TerrorCameraVisionPortal.Builder()
 //                    .setCamera(hardware.fieldCamera)
 //                    .setCameraResolution(new Size(320, 240))
