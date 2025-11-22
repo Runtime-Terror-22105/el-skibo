@@ -37,11 +37,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public double hoodPosition= 0.0;
     public double turretAngle = 0.0;
 
-    //back of the bot is 0 to aviod wrapping
-    public static double turretAngleMax = 1.5 *Math.PI;
-    public static double turretAnglemin = 0.5 *Math.PI;
-    public static double turretPosMin = 0.1;
-    public static double turretPosMax = 0.78;
+    public static double turretPosAt0 = 0.44;
+    public static double posChange90 = 0.34;
+
 
     // math stuff TODO calculate this
     public static double robotHeight = 14.0; //in, acctually shoudl be where the shooter is
@@ -96,10 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setSpeed(this.velToRPM(this.goalVelocity));
         //gets a setpos from the angle from our measured angles for max and min
         this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-        this.goalYaw = this.findYawAngle(botPos, goalPos);
-        if (this.goalYaw > turretPosMin && this.goalYaw < turretPosMax){
-            this.goalYawPos = Algebra.mapRange(this.goalYaw, turretAnglemin, turretAngleMax, turretPosMin, turretPosMax);
-        }
+        this.goalYawPos = this.findYawAngle(botPos, goalPos);
+
 
         this.setHoodPosition(this.goalHoodPos);
 
@@ -113,9 +109,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setSpeed(this.velToRPM(this.goalVelocity));
         this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.goalYaw = yaw;
-        if (this.goalYaw > turretPosMin && this.goalYaw < turretPosMax){
-            this.goalYawPos = Algebra.mapRange(this.goalYaw, turretAnglemin, turretAngleMax, turretPosMin, turretPosMax);
-        }
+
         this.setHoodPosition(this.goalHoodPos);
         this.setTurretAngle(this.goalYawPos);
     }
@@ -222,13 +216,19 @@ public class ShooterSubsystem extends SubsystemBase {
     private double findYawAngle(Pose2d botPos, Pose2d goalPos){
          double x = goalPos.x - botPos.x;
          double y = goalPos.y - botPos.x;
-         double angle = Math.tan(y/x);
+         double angle = Math.atan(y/x);
+         double absoluteGoalAngle = (angle-(0.5 * Math.PI))+90;
+         double botHeading = robot.follower.getHeading();
+         double angleGoalOffset = absoluteGoalAngle - botHeading;
 
-         //with 0 as point away goal side of the field
-         double goalAngle = (turretPosMax-turretAnglemin) + Math.signum(angle)*(0.5*Math.PI - angle);
-         double botHeading = MathUtils.normalizeRadians(this.robot.follower.getHeading() + 1.5*Math.PI, true);
+         this.goalYaw = absoluteGoalAngle;
+         double pos = Algebra.mapRangeNoClamp(angleGoalOffset, -0.5*Math.PI, 0.5*Math.PI,
+                 turretPosAt0-posChange90, turretPosAt0+posChange90, -Math.PI, Math.PI);
+         return pos;
 
-         return (turretPosMax-turretAnglemin) - (goalAngle-botHeading);
+
+
+
     }
     public double getTargetAngle(){
         return this.goalPitch;
