@@ -1,43 +1,35 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import static org.firstinspires.ftc.teamcode.robot.hardware.TerrorGamepad.State.RISING;
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.CLIMBING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.FULL;
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
+import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.PerpetualCommand;
-import com.seattlesolvers.solverslib.command.RunCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
+import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
-import com.seattlesolvers.solverslib.gamepad.ToggleButtonReader;
-import com.seattlesolvers.solverslib.gamepad.TriggerReader;
 
-import org.firstinspires.ftc.teamcode.math.Algebra;
-import org.firstinspires.ftc.teamcode.math.Angle;
-import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
-import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToFullStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
-import org.firstinspires.ftc.teamcode.robot.hardware.TerrorGamepad;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.init.StateTag;
-import org.firstinspires.ftc.teamcode.robot.subsystems.*;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
@@ -47,13 +39,34 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
     private RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
+    public static Pose2d blueGoalPos = new Pose2d(6, 138, 0.0);
+    public static Pose2d redGoalPos = new Pose2d(138, 138, 0.0);
+    public static Pose blueStartPos= new Pose(20, 123, (25/18)*Math.PI);
+    public static Pose redStartPos= new Pose(124, 123, (30/18)*Math.PI);
 
     private Pose2d goalPos;
+    private long lastLoop = System.nanoTime();
+    public enum team{
+        RED,
+        BLUE
+    }
+    public void setTeam(team color) {
+        if (color == team.BLUE){
+            goalPos = blueGoalPos;
+            robot.follower.setStartingPose(blueStartPos);
+        }
+        else{
+            goalPos = redGoalPos;
+            robot.follower.setStartingPose(redStartPos);
+        }
+    }
+    public TerrorTeleOp(team color){
+        this.setTeam(color);
+        robot.goalPos = goalPos;
 
-    public void setGoalPos(Pose2d goalPos) {this.goalPos = goalPos;}
+    }
 
-
-    public void runOpMode(){
+    public void runOpMode() {
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
@@ -64,8 +77,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadEx gamepad2ex = new GamepadEx(gamepad2);
 
 
+
         // driver 1
-        robot.drivetrain
+        robot.follower.startTeleOpDrive();
+        robot.drive
                 .setDefaultCommand(new DriveCommand(
                         () -> (double) gamepad1.left_stick_x,
                         () -> (double) gamepad1.left_stick_y,
@@ -73,18 +88,55 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                        );
 
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
-        GamepadButton intakeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
+        Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
+        Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
         GamepadButton rejectButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
         GamepadButton restingButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
 
-        GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
-        GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
+        GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
+        GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
 
-        hangButton.whenPressed(new GoToClimbStateCommand(robot));
-        intakeButton.whenPressed(new GoToIntakeStateCommand(robot, new TransferCommand(robot.spindexer)));
-        shoot3button.whenPressed(new ShootThreeBallsCommand(robot.shooter,robot.spindexer));
-        shoot1button.whenPressed(new ShootOneBallCommand(robot.shooter));
-        rejectButton.whenPressed(new StartShooterRejectCommand(robot.shooter));
+//        hangButton.whenPressed(new GoToClimbStateCommand(robot));
+        intakeButton.whenActive(new ConditionalCommand(
+                new SequentialCommandGroup(
+                    new GoToIntakeStateCommand(robot, new TransferCommand(robot))
+//                    new WaitForIntakeCommand(robot),
+//                    new GoToFullStateCommand(robot)
+                ),
+                new InstantCommand(() -> {} ),
+                () ->  robot.robotState != SHOOTING //robot.robotState != FULL &&
+        ));
+        intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
+                new GoToRestingStateCommand(robot),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING //robot.robotState != FULL &&
+        ));
+
+        reverseIntakeButton.whenActive(new ConditionalCommand(
+                new SetIntakeSpeedCommand(robot.intake, -1.0),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING //robot.robotState != FULL
+        ));
+        reverseIntakeButton.whenInactive(new SetIntakeSpeedCommand(robot.intake, 0.0));
+
+        shoot3button.whenPressed(new ConditionalCommand(
+                new TransferCommand(robot),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING //robot.robotState == FULL
+        ));
+
+        shoot1button.whenPressed(new ConditionalCommand(
+                new TransferCommand(robot),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING
+        ));
+
+        rejectButton.whenPressed(new ConditionalCommand(
+                new StartShooterRejectCommand(robot.shooter),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING //robot.robotState == FULL
+        ));
+
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
 
@@ -98,29 +150,38 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
         motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
 
-        // homing command executing here
-        SpindexerHoming homingCommand = new SpindexerHoming(robot.spindexer);
-        CommandScheduler.getInstance().schedule(homingCommand);
+        //homing command executing here
 
-        while (opModeIsActive()){
+//        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
+        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
+//                new SpindexerHoming(robot.spindexer),
+                new GoToRestingStateCommand(robot)
+        ));
+
+        lastLoop = System.nanoTime();
+
+        while (opModeIsActive()) {
+            // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
+            // vals would be used.
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
 
-//            if(robot.robotState == INTAKING || robot.robotState == SHOOTING || robot.robotState == FULL){
-//                robot.shooter.doAutoShoot(this.goalPos);
+//            char[] balls = robot.spindexer.getBallPositions();
+//            if (balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N') {
+//                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
-//            else {
-//                robot.shooter.isAutoAimOn = false;
-//            }
-
-
 
             CommandScheduler.getInstance().run();
 
-            robot.telemetry.addData("Ball Positions", robot.spindexer.getBallPositions());
-            robot.telemetry.addData("Yaw Goal", robot.shooter.goalYaw);
+
             hardware.write();
+
+            long time = System.nanoTime();
+            long dt = time - lastLoop;
+            lastLoop = time;
+            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
+            robot.telemetry.update();
         }
 
     }

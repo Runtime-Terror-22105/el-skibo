@@ -12,8 +12,8 @@ public class GoToClimbDoneStateCommand extends SequentialCommandGroup {
         super(new ParallelCommandGroup(
                 new InstantCommand(() -> robot.robotState = RobotState.DONE_CLIMB),
                 new InstantCommand(() -> {
-                    robot.hardware.motorRearLeft.setPower(0.7);
-                    robot.hardware.motorRearRight.setPower(0.7);
+//                    robot.hardware.motorRearLeft.setPower(0.7);
+//                    robot.hardware.motorRearRight.setPower(0.7);
                 })
         ));
     }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.command.shooter;
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
+import android.util.Log;
 
 @Config
 public class SpindexerHoming extends CommandBase {
@@ -14,6 +15,8 @@ public class SpindexerHoming extends CommandBase {
     public double switchStart = Double.NaN;
     public double switchEnd = Double.NaN;
     private double initialPosition = 0.0;
+    private int count;
+    public static double offset = 0.0;
 
     public static double MAX_ROTATION_TICKS = 1200.0;
     public static double POWER = 0.2;
@@ -30,7 +33,7 @@ public class SpindexerHoming extends CommandBase {
         seenSwitchStart = false;
         switchStart = Double.NaN;
         switchEnd = Double.NaN;
-        initialPosition = spindexer.getPosition();
+        initialPosition = spindexer.getPositionTicks();
         // start moving toward the limit switch
         spindexer.setPidEnabled(false);
         spindexer.setSpindexerPower(POWER);
@@ -40,7 +43,8 @@ public class SpindexerHoming extends CommandBase {
     public void execute() {
         if (homed) return;
 
-        double pos = spindexer.getPosition();
+        // todo: check if this wraps around, bc if so then that will cause the rotatedenough condition to not work
+        double pos = spindexer.getPositionTicks();
         limit = spindexer.getLimitSwitchState();
 
         // detect start of the true-range
@@ -65,29 +69,36 @@ public class SpindexerHoming extends CommandBase {
             }
             // if we never saw the switch at all, use current position as zero fallback
             if (!seenSwitchStart) {
-                spindexer.setSpindexerOffset(pos);
+                spindexer.setHomedSpindexerOffset(pos);
                 spindexer.setSpindexerPower(0.0);
-                homed = true;
-                return;
             }
+            homed = true;
             finalizeHoming();
+            return;
         }
+        this.count++;
+
         // otherwise keep spinning until we actually find it
     }
 
     private void finalizeHoming() {
-        double start = Double.isNaN(switchStart) ? spindexer.getPosition() : switchStart;
-        double end = Double.isNaN(switchEnd) ? spindexer.getPosition() : switchEnd;
-        double avg = (start + end) / 2.0;
-        spindexer.setSpindexerOffset(avg);
-        spindexer.setSpindexerPower(0.0);
+        if (Double.isNaN(switchStart) && !Double.isNaN(switchEnd)) {
+            spindexer.setHomedSpindexerOffset(switchEnd);
+        } else if (!Double.isNaN(switchStart) && Double.isNaN(switchEnd)) {
+            spindexer.setHomedSpindexerOffset(switchStart);
+        } else if (!Double.isNaN(switchStart) && !Double.isNaN(switchEnd)) {
+            double avg = (switchStart + switchEnd) / 2.0;
+            spindexer.setHomedSpindexerOffset(avg);
+        }
+        Log.d("homing", String.valueOf(count));
         homed = true;
     }
 
     @Override
     public void end(boolean interrupted) {
-        spindexer.setSpindexerPower(0.0);
+        spindexer.setYaw(0.0);
         spindexer.setPidEnabled(true);
+        Log.d("homing","reached the end portion where we set the pid to enable and we set the yaw to 0");
     }
 
     @Override
