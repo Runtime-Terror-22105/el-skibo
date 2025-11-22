@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -15,9 +16,9 @@ import java.util.Map;
 //im aware i can just call this lightsubsystem but calling it a whole subsystem is kinda doin too much
 public class LightControl extends SubsystemBase {
 
-//    private double color = TerrorLight.LightColors.OFF.ordinal();
+    private double blinkColor = TerrorLight.LightColors.OFF.ordinal();
 //
-//    private boolean isBlinking = false;
+    private boolean isBlinkOn = false;
 
     private final RobotHardware hardware;
     private final Robot robot;
@@ -25,6 +26,7 @@ public class LightControl extends SubsystemBase {
         this.hardware = hardware;
         this.robot = robot;
     }
+    private final ElapsedTime time = new ElapsedTime();
 
 //    public void setColor(TerrorLight.LightColors color)
 //    {
@@ -54,12 +56,18 @@ public class LightControl extends SubsystemBase {
         switch(robot.getState())
         {
             case RESTING:
-                hardware.lights.setColor(TerrorLight.LightColors.PINK   );
-                try {
-                    wait(100); //note there's a 20 ms loop time from what i rmemeber (idk how diff frc is to ftc)
+                if(time.time() > 100)
+                {
+                    isBlinkOn = !isBlinkOn;
+                    time.reset();
+                }
+                if(isBlinkOn)
+                {
+                    hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                }
+                else
+                {
                     hardware.lights.setColor(TerrorLight.LightColors.OFF);
-                } catch (InterruptedException e) {
-                    //oh well prob some telemetry work
                 }
                 //todo: RTT morse code shouldnt be too hard
                 break;
@@ -76,12 +84,18 @@ public class LightControl extends SubsystemBase {
                 break;
 
             case SHOOTING:
-                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
-                try {
-                    wait(100); //note there's a 20 ms loop time from what i rmemeber (idk how diff frc is to ftc)
+                if(time.time() > 100)
+                {
+                    isBlinkOn = !isBlinkOn;
+                    time.reset();
+                }
+                if(isBlinkOn)
+                {
+                    hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+                }
+                else
+                {
                     hardware.lights.setColor(TerrorLight.LightColors.OFF);
-                } catch (InterruptedException e) {
-                    //oh well prob some telemetry work
                 }
                 break;
 
