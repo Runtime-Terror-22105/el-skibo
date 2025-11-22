@@ -55,14 +55,8 @@ public class LightControl2 extends SubsystemBase {
                 break;
 
             case SHOOTING:
-                if(isBlinkOn)
-                {
-                    hardware.lights.setColor(TerrorLight.LightColors.GREEN);
-                }
-                else
-                {
-                    hardware.lights.setColor(TerrorLight.LightColors.OFF);
-                }
+                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+
                 break;
 
             case CLIMBING:
