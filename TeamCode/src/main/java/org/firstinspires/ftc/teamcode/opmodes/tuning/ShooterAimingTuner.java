@@ -34,6 +34,11 @@ public class ShooterAimingTuner extends LinearOpMode {
     public static double DIST_TO_GOAL = -1; // in mm
     public static double ROBOT_ANGLE_TO_GOAL = -1; // in degrees
 
+    public static double velocity;
+    public static double hoodPos;
+    public static double turretPos;
+
+
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
@@ -70,6 +75,8 @@ public class ShooterAimingTuner extends LinearOpMode {
 //            } else {
 //                robotPose = new Pose2d(0, 0, 0);
 //            }
+
+
             Pose2d robotPose = new Pose2d(DIST_TO_GOAL_X, DIST_TO_GOAL_Y, Math.atan2(DIST_TO_GOAL_Y, DIST_TO_GOAL_X));
             Pose2d goalPos = new Pose2d(0, 0, 0);
 
@@ -80,7 +87,8 @@ public class ShooterAimingTuner extends LinearOpMode {
                 CommandScheduler.getInstance().schedule(new TransferCommand(robot));
             }
 
-            //robot.shooter.setSpeed(GOAL_RPM);
+
+            robot.shooter.setSpeed(GOAL_RPM);
 
             CommandScheduler.getInstance().run();
 

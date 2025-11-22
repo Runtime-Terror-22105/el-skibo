@@ -31,6 +31,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterSpeed=0.0;
 
+    public static double botheading_input=0.0;
+
     // the current shooting angle
     public double hoodPosition = 0.0;
     public double turretAngle = 0.0;
@@ -50,6 +52,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalYaw;
     public double goalYawPos;
     public static double difference = 109.0;
+
+    public static double test_angle=0;
 
     public static double minVelocity = 282.0 + difference; // in/sec, at 1
     public static double maxVelocity = 477.1 + difference; // in/sec, at 0.7
@@ -103,7 +107,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** lets you set a velocity and angle manually*/
     public void manualAim(double velocity, double pitch, double yaw) {
-        this.isAutoAimOn = false;
+        this.isAutoAimOn = true;
         this.goalPitch = pitch;
         this.setSpeed(this.velToRPM(velocity));
         this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
@@ -212,26 +216,28 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     private double findYawAngle(Pose2d botPos, Pose2d goalPos){
          double x = goalPos.x - botPos.x;
-         double y = goalPos.y - botPos.x;
+         double y = goalPos.y - botPos.y;
          double angle = Math.atan2(y,x);
-         Log.d("shooter", "yaw angle" + angle);
-         double absoluteGoalAngle = (angle-(0.5 * Math.PI))+0.5*Math.PI;
-         Log.d("shooter", "absolute goal yaw angle" + absoluteGoalAngle);
+         angle=test_angle;
+         double absoluteGoalAngle = angle;
+
          double botHeading = robot.follower.getHeading();
-         Log.d("shooter", "bot heading" + botHeading);
+         botHeading=botheading_input;
+
+        robot.telemetry.addData("follower",botHeading*180/Math.PI );
+
+
          double angleGoalOffset = Angle.angleWrap(absoluteGoalAngle - botHeading);
 
          this.goalYaw = absoluteGoalAngle;
 
-         double pos = Algebra.mapRangeNoClamp(angleGoalOffset, -0.5*Math.PI, 0.5*Math.PI,
-                 turretPosAt0-posChange90, turretPosAt0+posChange90, -Math.PI, Math.PI);
-         Log.d("shooter", "calc yaw pos" + pos);
+        double pos = turretPosAt0 + (angleGoalOffset / (0.5*Math.PI)) * posChange90;
+
+        robot.telemetry.addData("Pos of turret", pos);
+
          return pos;
-
-
-
-
     }
+
     public double getTargetAngle(){
         return this.goalPitch;
     }
