@@ -33,7 +33,7 @@ import java.util.List;
 public class RobotHardware {
     // Drivetrain motors & servos
     // NB: Use pedro pathing's Follower rather than access these directly.
-//    public TerrorMotorNormal motorFrontLeft;
+//    public TerrorMotorNormal motorFroTntLeft;
 //    public TerrorMotorNormal motorRearRight;
 //    public TerrorMotorNormal motorFrontRight;
 //    public TerrorMotorNormal motorRearLeft;

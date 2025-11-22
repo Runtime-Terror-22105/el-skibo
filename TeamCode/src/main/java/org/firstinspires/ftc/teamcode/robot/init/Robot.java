@@ -67,6 +67,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
         // Initialize the drivetrain
         this.follower = Constants.createFollower(hardware.hwMap);
+
+
         // NB: SubsystemBase will automatically register the subsystems for us
         this.drive = new DriveSubsystem(this);
         this.shooter = new ShooterSubsystem(hardware, this);
