@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
@@ -171,6 +172,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
 
+            robot.lightControl.periodic();
             CommandScheduler.getInstance().run();
 
 

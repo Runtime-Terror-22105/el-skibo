@@ -14,41 +14,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 //im aware i can just call this lightsubsystem but calling it a whole subsystem is kinda doin too much
-public class LightControl extends SubsystemBase {
+public class LightControl2 extends SubsystemBase {
 
     private double blinkColor = TerrorLight.LightColors.OFF.ordinal();
-//
+    //
     private boolean isBlinkOn = false;
 
     private final RobotHardware hardware;
     private final Robot robot;
     private final ElapsedTime time = new ElapsedTime();
 
-    public LightControl(RobotHardware hardware, Robot robot) {
+    public LightControl2(RobotHardware hardware, Robot robot) {
         this.hardware = hardware;
         this.robot = robot;
         time.reset();
     }
 
-//    public void setColor(TerrorLight.LightColors color)
-//    {
-//        this.color = color.ordinal();
-//    }
-//
-//    public void setColor(double color)
-//    {
-//        this.color = color;
-//    }
-//
-//    public void startBlinking()
-//    {
-//        this.isBlinking = true;
-//    }
-//
-//    public void stopBlinking()
-//    {
-//        this.isBlinking = false;
-//    }
 
     @Override
     public void periodic()
@@ -58,20 +39,7 @@ public class LightControl extends SubsystemBase {
         switch(robot.getState())
         {
             case RESTING:
-                if(time.time() > 100)
-                {
-                    isBlinkOn = !isBlinkOn;
-                    time.reset();
-                }
-                if(isBlinkOn)
-                {
-                    hardware.lights.setColor(TerrorLight.LightColors.PINK);
-                }
-                else
-                {
-                    hardware.lights.setColor(TerrorLight.LightColors.OFF);
-                }
-                //todo: RTT morse code shouldnt be too hard
+                hardware.lights.setColor(TerrorLight.LightColors.PINK);
                 break;
 
             case INTAKING:
@@ -87,11 +55,6 @@ public class LightControl extends SubsystemBase {
                 break;
 
             case SHOOTING:
-                if(time.time() > 100)
-                {
-                    isBlinkOn = !isBlinkOn;
-                    time.reset();
-                }
                 if(isBlinkOn)
                 {
                     hardware.lights.setColor(TerrorLight.LightColors.GREEN);
@@ -110,20 +73,8 @@ public class LightControl extends SubsystemBase {
 
 
             default:
-                if(time.time() > 1000)
-                {
-                    isBlinkOn = !isBlinkOn;
-                    time.reset();
-                }
-                if(isBlinkOn)
-                {
-                    hardware.lights.setColor(TerrorLight.LightColors.PINK);
-                }
-                else
-                {
-                    hardware.lights.setColor(TerrorLight.LightColors.OFF);
+                hardware.lights.setColor(TerrorLight.LightColors.PINK);
 
-                }
                 break;
         }
 
