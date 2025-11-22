@@ -40,14 +40,8 @@ public class ShooterSubsystem extends SubsystemBase {
     //back of the bot is 0 to aviod wrapping
     public static double turretAngleMax = 1.5 *Math.PI;
     public static double turretAnglemin = 0.5 *Math.PI;
-    public static double turretPosMin = 0.0;
-    public static double turretPosMax = 0.0;
-
-
-    public static double YAW_LEFT_MIN_POS = 0.1;
-    public static double YAW_LEFT_MAX_POS = 0.78;
-    public static double YAW_RIGHT_MIN_POS = 0.1;
-    public static double YAW_RIGHT_MAX_POS = 0.78;
+    public static double turretPosMin = 0.1;
+    public static double turretPosMax = 0.78;
 
     // math stuff TODO calculate this
     public static double robotHeight = 14.0; //in, acctually shoudl be where the shooter is
@@ -305,8 +299,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // shooter rotation for turret
 //        double servoYaw = this.turretAngle / YAW_GEAR_RATIO;
-        double servoYaw = Math.max(-Math.PI, Math.min(Math.PI, this.turretAngle));
-        hardware.turretYawLeft.setPosition(Algebra.mapRange(servoYaw, -Math.PI, Math.PI, YAW_LEFT_MIN_POS, YAW_LEFT_MAX_POS));
-        hardware.turretYawRight.setPosition(Algebra.mapRange(servoYaw, -Math.PI, Math.PI, YAW_RIGHT_MIN_POS, YAW_RIGHT_MAX_POS));
+
+        hardware.turretYawLeft.setPosition(this.goalYawPos);
+        hardware.turretYawRight.setPosition(this.goalYawPos);
     }
 }
