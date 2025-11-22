@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
+import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
@@ -35,12 +36,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     private final Robot robot = new Robot();
 
     public Team color;
-    public static Pose2d blueGoalPos = new Pose2d(6, 138, 0.0);
-    public static Pose2d redGoalPos = new Pose2d(138, 138, 0.0);
-    public static Pose blueStartPos= new Pose(20, 123, (25D/18D)*Math.PI);
-    public static Pose redStartPos= new Pose(124, 123, (30D/18D)*Math.PI);
 
-    private Pose2d goalPos;
     private long lastLoop = System.nanoTime();
     public enum Team {
         RED,
@@ -48,12 +44,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
     public void setTeam(Team color) {
         if (color == Team.BLUE){
-            robot.goalPos = blueGoalPos;
-            robot.follower.setStartingPose(blueStartPos);
+            robot.goalPos = FieldConstants.BLUE_GOAL_POS;
+            robot.follower.setStartingPose(FieldConstants.BLUE_START_POS_TELEOP);
         }
         else {
-            robot.goalPos = redGoalPos;
-            robot.follower.setStartingPose(redStartPos);
+            robot.goalPos = FieldConstants.RED_GOAL_POS;
+            robot.follower.setStartingPose(FieldConstants.RED_START_POS_TELEOP);
         }
     }
     public TerrorTeleOp(Team color){
@@ -66,7 +62,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         robot.init(hardware, telemetry);
-        this.setTeam(this.color);
+        this.setTeam(Team.BLUE);
 
         waitForStart();
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);

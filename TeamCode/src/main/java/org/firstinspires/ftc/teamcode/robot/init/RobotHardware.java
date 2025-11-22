@@ -33,7 +33,7 @@ import java.util.List;
 public class RobotHardware {
     // Drivetrain motors & servos
     // NB: Use pedro pathing's Follower rather than access these directly.
-//    public TerrorMotorNormal motorFrontLeft;
+//    public TerrorMotorNormal motorFroTntLeft;
 //    public TerrorMotorNormal motorRearRight;
 //    public TerrorMotorNormal motorFrontRight;
 //    public TerrorMotorNormal motorRearLeft;
@@ -148,7 +148,8 @@ public class RobotHardware {
                 0.05,
                 1.0
         );
-        this.shooterEncoder = new TerrorEncoder(shooterLeft);  // TODO: figure out which motor has the encoder
+        this.shooterEncoder = new TerrorEncoder(motorRearLeft);
+        this.shooterEncoder.setDirection(TerrorEncoder.Direction.REVERSE);// TODO: figure out which motor has the encoder
         this.publisher.subscribe(5, shooterLeft, shooterRight);
 
         // TODO: figure out shooter motor directions
