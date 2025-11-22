@@ -85,24 +85,27 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void doAutoShoot(Pose2d goalPos){
-
         this.doAutoShoot(goalPos, Arc);
     }
 
     public void doAutoShoot(Pose2d goalPos, ShotType shotType){
-
+        Log.i("shooter", "Doing autoshoot!");
         Pose botPosTemp = this.robot.follower.getPose();
-        Log.d("shooter","bot pos 1"+ botPosTemp);
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
         this.isAutoAimOn = true;
-        this.doMath(botPos, goalPos, shotType, apexHeight);
-        //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-//        this.setSpeed(this.velToRPM(this.goalVelocity)); todo: add back
-        //gets a setpos from the angle from our measured angles for max and min
-        this.hoodPosition = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+
         this.goalYawPos = this.findYawAngle(botPos, goalPos);
 
+        ShooterValues math = this.doMath(botPos, goalPos, shotType, apexHeight);
+        if (math.flywheelVelocity == null || math.hoodPitch == null) {
+            Log.e("shooter", "failed to do math!");
+            return;
+        }
 
+        //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
+        this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
+        //gets a setpos from the angle from our measured angles for max and min
+        this.hoodPosition = Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         this.setHoodPosition(this.hoodPosition);
 
     }
@@ -118,15 +121,25 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setHoodPosition(this.hoodPosition);
         this.setTurretAngle(this.goalYawPos);
     }
+//
+//    public void setVelocity(double velocity){
+//        manualAim(velocity, this.goalPitch, this.goalYaw);
+//    }
+//    public void setPitch(double pitch){
+//        manualAim(this.goalVelocity, pitch, this.goalYaw);
+//    }
+//    public void setYaw(double yaw){
+//        manualAim(this.goalVelocity, this.goalPitch, yaw);
+//    }
 
-    public void setVelocity(double velocity){
-        manualAim(velocity, this.goalPitch, this.goalYaw);
-    }
-    public void setPitch(double pitch){
-        manualAim(this.goalVelocity, pitch, this.goalYaw);
-    }
-    public void setYaw(double yaw){
-        manualAim(this.goalVelocity, this.goalPitch, yaw);
+    public static class ShooterValues {
+        public Double flywheelVelocity;
+        public Double hoodPitch;
+
+        public ShooterValues(Double flywheelVelocity, Double hoodPitch) {
+            this.flywheelVelocity = flywheelVelocity;
+            this.hoodPitch = hoodPitch;
+        }
     }
 
     /**
@@ -136,7 +149,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * the formulas return 2 sets of values, the first one tends to be a regular, arc shot
      * the second tends to be more of a backboard shot, this one the velocity usually is crazy high
      * so if u go for backboard its likley it wont find valid values unless ur careful with h */
-    public void doMath(Pose2d botPos, Pose2d goalPos, ShotType shotType, double arcHeight){
+    public ShooterValues doMath(Pose2d botPos, Pose2d goalPos, ShotType shotType, double arcHeight){
         Log.e("shooter", "running math...");
 
 
@@ -190,10 +203,8 @@ public class ShooterSubsystem extends SubsystemBase {
                     }
 //                    this.goalVelocity = targetV;
 //                    setSpeed(targetV); TODO: add back
-                    this.goalPitch = targetT;
-
-                    break;
-
+//                    this.goalPitch = targetT;
+                    return new ShooterValues(targetV, targetT);
                 }
 
                 if (targetV < minVelocity || targetT < hoodAngleMin){
@@ -207,18 +218,18 @@ public class ShooterSubsystem extends SubsystemBase {
             }
             else {
 //                setSpeed(targetV);
-//                this.goalVelocity = targetV; // todo: add back
-                this.goalPitch = targetT;
-                break;
-
+//                this.goalVelocity = targetV;
+//                this.goalPitch = targetT;
+                return new ShooterValues(targetV, targetT);
             }
-
         }
 
         Log.e("shooter", "goal vel" + goalVelocity);
         Log.e("shooter", "goal pitch" +
                 goalPitch);
+        return new ShooterValues(null, null);
     }
+
     private double findYawAngle(Pose2d botPos, Pose2d goalPos){
          double x = goalPos.x - robot.follower.getPose().getX();
          double y = goalPos.y - robot.follower.getPose().getY();
@@ -311,7 +322,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (robot.goalPos != null) this.doAutoShoot(robot.goalPos);
+        if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot(robot.goalPos);
         else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
 
