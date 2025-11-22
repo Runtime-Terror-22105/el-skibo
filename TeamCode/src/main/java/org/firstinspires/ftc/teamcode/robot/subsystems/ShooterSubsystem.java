@@ -308,7 +308,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        this.doAutoShoot(robot.goalPos);
+        if (robot.goalPos != null) this.doAutoShoot(robot.goalPos);
+        else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
 
         // shooter pitch
