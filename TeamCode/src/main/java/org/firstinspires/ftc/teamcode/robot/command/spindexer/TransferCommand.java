@@ -28,7 +28,7 @@ public class TransferCommand extends SequentialCommandGroup {
                 // Phase 1 and 2: ???
                 new SetSpindexerWallDown(robot.spindexer, false),
                 new SetSpindexerPoleActive(robot.spindexer, true),
-                new InstantCommand(() -> robot.shooter.setVelocity(SHOOTER_RPM)),
+                new InstantCommand(() -> robot.shooter.setSpeed(SHOOTER_RPM)),
                 new WaitCommand(500), // todo: adjust this delay based on how long it takes for these two servos
 
                 // Phase 3: rotate to pre-transfer yaw
