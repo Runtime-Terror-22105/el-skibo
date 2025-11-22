@@ -20,7 +20,9 @@ public enum RobotState {
     FULL(new StateTag[] {INTAKE_DOWN, INTAKE_REVERSE, FLYWHEEL_ON, FUNNEL_READY}), //when we have 3 balls
     SHOOTING(new StateTag[] {INTAKE_DOWN, INTAKE_REVERSE, FLYWHEEL_ON}),
     CLIMBING(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
-    DONE_CLIMB(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB});
+    DONE_CLIMB(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
+
+    TRANSFER(new StateTag[] {});
 
     private final StateTag[] tags;
     RobotState(StateTag[] tags){ this.tags = tags;}
