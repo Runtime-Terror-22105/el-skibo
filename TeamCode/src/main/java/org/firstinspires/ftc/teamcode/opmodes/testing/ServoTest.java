@@ -48,6 +48,13 @@ public class ServoTest extends LinearOpMode {
 
             else if (!servoName2.isEmpty()) {
                 Servo servo2 = hardwareMap.get(Servo.class, servoName2);
+                if (useExtendedPwmRange) {
+                    int portNumber = servo2.getPortNumber();
+                    PwmControl.PwmRange customRange = new PwmControl.PwmRange(500, 2500);  // Adjust based on servo specs
+
+                    ServoControllerEx servoController2 = (ServoControllerEx) servo2.getController();
+                    servoController2.setServoPwmRange(portNumber, customRange);
+                }
                 servo2.setPosition(servoPosition2);
             }
         }
