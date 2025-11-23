@@ -27,7 +27,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
                 // Phase 5: transfer balls
                 new ChangeSpindexerYawCommand(robot.spindexer, SPINDEX_ROTATIONS*2*Math.PI),
-                new WaitForSpindexerYawCommand(robot.spindexer),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
 
                 // reset spindexer, intake, shooter, and pole
                 new ParallelCommandGroup(
