@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -29,6 +32,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
 @Configurable
@@ -257,6 +261,9 @@ public abstract class Auto extends LinearOpMode {
             }
 
             CommandScheduler.getInstance().run();
+
+            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
+            blackboard.put(AUTO_ENDING_DATA_KEY, robot.follower.getPose());
 
             hardware.write();
 
