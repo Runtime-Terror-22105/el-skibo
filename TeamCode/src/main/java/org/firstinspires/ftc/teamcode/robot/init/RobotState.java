@@ -9,15 +9,13 @@ import static org.firstinspires.ftc.teamcode.robot.init.StateTag.INTAKE_OFF;
 import static org.firstinspires.ftc.teamcode.robot.init.StateTag.INTAKE_REVERSE;
 import static org.firstinspires.ftc.teamcode.robot.init.StateTag.INTAKE_UP;
 
-import org.firstinspires.ftc.teamcode.robot.init.StateTag;
-
 import java.util.Arrays;
 import java.util.List;
 
 public enum RobotState {
     RESTING(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, FUNNEL_READY}),
     INTAKING(new StateTag[] {INTAKE_DOWN, INTAKE_FORWARD, FLYWHEEL_ON, FUNNEL_READY}),
-    FULL(new StateTag[] {INTAKE_DOWN, INTAKE_REVERSE, FLYWHEEL_ON, FUNNEL_READY}), //when we have 3 balls
+    READY_TO_SHOOT(new StateTag[] {INTAKE_DOWN, FLYWHEEL_ON, FUNNEL_READY}), //when we have 3 balls
     SHOOTING(new StateTag[] {INTAKE_DOWN, INTAKE_REVERSE, FLYWHEEL_ON}),
     CLIMBING(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
     DONE_CLIMB(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),

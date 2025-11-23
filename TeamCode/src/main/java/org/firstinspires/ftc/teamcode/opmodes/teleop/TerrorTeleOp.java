@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
@@ -95,6 +98,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
 
+        Trigger threeBallsAreInside = new Trigger(() -> {
+            final char[] balls = robot.spindexer.getBallPositions();
+            return balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N';
+        });
+
 //        hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
@@ -118,8 +126,21 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         ));
         reverseIntakeButton.whenInactive(new SetIntakeSpeedCommand(robot.intake, 0.0));
 
-        shoot3button.whenPressed(new ConditionalCommand(
+        threeBallsAreInside.whenActive(new ConditionalCommand(
                 new TransferCommand(robot),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState == RESTING || robot.robotState == INTAKING
+        ));
+
+        shoot3button.whenPressed(new ConditionalCommand(
+                new ConditionalCommand( // if we already did the transfer, just shoot immediately
+                        new ShootThreeBallsCommand(robot),
+                        new SequentialCommandGroup(
+                                new TransferCommand(robot),
+                                new ShootThreeBallsCommand(robot)
+                        ),
+                        () -> robot.robotState == READY_TO_SHOOT
+                ),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING //robot.robotState == FULL
         ));

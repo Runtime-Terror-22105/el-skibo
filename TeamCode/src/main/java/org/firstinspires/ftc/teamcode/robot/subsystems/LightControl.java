@@ -3,15 +3,9 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.init.RobotState;
-import org.firstinspires.ftc.teamcode.robot.init.StateTag;
-
-import java.util.HashMap;
-import java.util.Map;
 
 //im aware i can just call this lightsubsystem but calling it a whole subsystem is kinda doin too much
 public class LightControl extends SubsystemBase {
@@ -79,7 +73,7 @@ public class LightControl extends SubsystemBase {
                 break;
 
             //i might be misunderstanding
-            case FULL:
+            case READY_TO_SHOOT:
                 hardware.lights.setColor(TerrorLight.LightColors.GREEN);
                 break;
             case TRANSFER:

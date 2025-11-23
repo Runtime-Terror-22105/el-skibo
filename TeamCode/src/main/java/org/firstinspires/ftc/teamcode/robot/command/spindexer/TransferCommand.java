@@ -2,14 +2,13 @@ package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
-import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
 @Config
@@ -47,21 +46,9 @@ public class TransferCommand extends SequentialCommandGroup {
 
                 // Phase 5: transfer balls
                 new ChangeSpindexerYawCommand(robot.spindexer, SPINDEX_ROTATIONS*2*Math.PI),
-                new ParallelRaceGroup( // keep going for either 2 rotations or until all balls are gone
-                    new WaitForSpindexerYawCommand(robot.spindexer)
-//                    new WaitUntilCommand(() -> {
-//                        char[] balls = robot.spindexer.getBallPositions();
-//                        return balls[0] == 'N' && balls[1] == 'N' && balls[2] == 'N';
-//                    })
-                ),
 
-                // reset spindexer, intake, shooter, and pole
-                new ParallelCommandGroup(
-                    new SetIntakeSpeedCommand(robot.intake, 0),
-                    new SetSpindexerPoleActive(robot.spindexer, false),
-                    new SetSpindexerRampActive(robot.spindexer, false),
-                    new SetSpindexerYawCommand(robot.spindexer,0.0)
-                )
+                // set to full state
+                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT)
         );
         this.robot = robot;
     }
@@ -74,43 +61,4 @@ public class TransferCommand extends SequentialCommandGroup {
         robot.hardware.shooterLeft.setPower(0);
         robot.hardware.shooterRight.setPower(0);
     }
-
-    //    public void phase1() {
-//        spindexer.setWallActive();
-//        spindexer.Oilup();
-//    }
-
-//    public void phase2(){
-//        spindexer.sortBalls();
-//    }
-//
-//    public void phase3(){
-//        spindexer.enableRamp();
-//    }
-//
-//    public void phase4(){
-//        spindexer.setYaw(0.20);
-//    }
-//
-//    public void phase5(){
-//        spindexer.setSpindexerPower(spindexer.spindexTransferPower);
-//        spindexer.sortBalls();
-//    }
-//
-//    public void execute(){
-//        Log.d("transfer", "command running");
-//        SequentialCommandGroup group = new SequentialCommandGroup(
-//                new InstantCommand(() -> phase1() ),
-//                new InstantCommand(() -> phase2() ),
-//                new InstantCommand(() -> phase3() ),
-//                new InstantCommand(() -> phase4() ),
-//                new InstantCommand(() -> phase5())
-//        );
-//        CommandScheduler.getInstance().schedule(group);
-//
-//
-//
-//    }
-
-
 }
