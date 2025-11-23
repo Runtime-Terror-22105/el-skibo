@@ -13,7 +13,10 @@ public class GoToClimbStateCommand extends SequentialCommandGroup {
     public GoToClimbStateCommand(Robot robot) {
         super(new ParallelCommandGroup(
                 new InstantCommand(() -> robot.robotState = RobotState.CLIMBING),
-                new InstantCommand(() -> robot.hang.setPTOState(true))
+                new InstantCommand(() -> robot.hang.setPTOState(true)),
+                new InstantCommand(() -> {
+                    robot.hang.hangIsHeld = true;
+                })
         ));
     }
 }
