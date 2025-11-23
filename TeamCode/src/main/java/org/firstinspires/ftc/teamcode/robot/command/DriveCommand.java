@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 public class DriveCommand extends CommandBase {
 
     public static double ROTATION_MULTIPLIER = 0.3;
-    public static double driveSpeed = 0.9;
 
     private final Robot robot;
     private final Supplier<Double> x, y, turn;
@@ -52,10 +51,7 @@ public class DriveCommand extends CommandBase {
         left_y = Math.signum(left_y) * Algebra.mapRange(Math.abs(left_y), deadzone_amt, 1.0, 0.0, 1.0);
         right_x = Math.signum(right_x) * Algebra.mapRange(Math.abs(right_x), deadzone_amt, 1.0, 0.0, 1.0);
 
-        Coordinate direction = new Coordinate(slr(left_x), slr(left_y));
-        double rotation = slr(right_x)*ROTATION_MULTIPLIER;
-
-        robot.follower.setTeleOpDrive(left_y, left_x, right_x);
+        robot.follower.setTeleOpDrive(left_y, left_x, right_x*ROTATION_MULTIPLIER);
 //        robot.drivetrain.move(
 //                direction,
 //                rotation,
