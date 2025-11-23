@@ -7,6 +7,7 @@ import com.seattlesolvers.solverslib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,30 +21,46 @@ public class HardCodedLookup {
     private static final double SHORT_HOOD = 0.9; // rad
     private static final double FAR_HOOD = 1.0; // rad
 
-    private static final InterpLUT SHORT_VELOCITY_LUT = new InterpLUT(); // in/s
+//    private static final InterpLUT SHORT_VELOCITY_LUT = new InterpLUT(); // in/s
 //    private static final InterpLUT FAR_VELOCITY_LUT = new InterpLUT(); // in/s
 
-    public static Map<Double,Double> mapping = new HashMap<>();
 
-    static {
+    public static class LookupValue {
+        public double distance;
+        public double speed;
 
-        mapping.put(35.0, 370.0);
-        mapping.put(45.0, 400.0);
-        mapping.put(55.0, 420.0);
-        mapping.put(60.0, 450.0);
-        mapping.put(70.0, 500.0);
-
+        public LookupValue(double d, double s) {
+            this.distance = d;
+            this.speed = s;
+        }
     }
 
+    public static LookupValue[] DATA_POINTS = new LookupValue[]
+            {
+
+                    new LookupValue(35.0, 370.0),
+                    new LookupValue(45.0, 400.0),
+                    new LookupValue(55.0, 420.0),
+                    new LookupValue(60.0, 450.0),
+                    new LookupValue(70.0, 500.0),
+            };
+
     public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
+        // todo: temporarily putting this here so we can dashboard
+        Map<Double,Double> mapping = new HashMap<>();
+        for (LookupValue dataPoint : DATA_POINTS) {
+            mapping.put(dataPoint.distance, dataPoint.speed);
+        }
+
+
         distanceToGoalIn = Math.max(MIN_DIST, Math.min(MAX_DIST, distanceToGoalIn));
         double velocity, hood;
 //        if (distanceToGoalIn < CUTOFF) {
 //            velocity = SHORT_VELOCITY_LUT.get(distanceToGoalIn);
 //            hood = SHORT_HOOD;
 //        } else {
-            velocity = mapping.get(distanceToGoalIn);
-            hood = FAR_HOOD;
+        velocity = mapping.get(distanceToGoalIn);
+        hood = FAR_HOOD;
 //        }
         return new ShooterSubsystem.ShooterValues(velocity, hood);
     }
