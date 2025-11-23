@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
@@ -249,6 +250,9 @@ public class ShooterSubsystem extends SubsystemBase {
         // todo: this is currently limited to -90 to 90 degrees
         double servopos = Algebra.mapRange(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
+        if(servopos>1 || servopos<0){
+            robot.robotState= RobotState.NOT_READY;
+        }
 
 //        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
 //        robot.telemetry.addData("X diff",x);
