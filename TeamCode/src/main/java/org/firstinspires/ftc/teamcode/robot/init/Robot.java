@@ -30,7 +30,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public static MultipleTelemetry debugTelemetry;
 
     // States
-    public RobotState robotState = null /*RobotState.RESTING*/;
+    public RobotState robotState = RobotState.RESTING;
 
     // Subsystems
     public Follower follower;
