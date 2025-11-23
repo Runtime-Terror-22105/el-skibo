@@ -114,7 +114,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** lets you set a velocity and angle manually*/
     public void manualAim(double velocity, double pitch, double yaw) {
-        this.isAutoAimOn = true;
+        this.isAutoAimOn = false;
         this.setSpeed(this.velToRPM(velocity));
         this.setGoalPitch(Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
         this.goalYawPos = yaw;
@@ -272,6 +272,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setSpeed(Double goal) {
+        Log.d("shooter", "setSpeed: "+goal);
         if (goal != null)
             this.goalVelocity = goal;
     }
