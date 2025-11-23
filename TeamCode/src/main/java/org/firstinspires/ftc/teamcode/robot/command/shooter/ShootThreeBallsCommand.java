@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.command.shooter;
 
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampAc
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
 public class ShootThreeBallsCommand extends SequentialCommandGroup {
@@ -19,6 +21,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
     public ShootThreeBallsCommand(Robot robot) {
         super(
+                new InstantCommand(() -> robot.robotState = RobotState.SHOOTING),
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                 new WaitCommand(200),
 
@@ -32,7 +35,8 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                         new SetSpindexerPoleActive(robot.spindexer, false),
                         new SetSpindexerRampActive(robot.spindexer, false),
                         new SetSpindexerYawCommand(robot.spindexer, 0.0)
-                )
+                ),
+                new InstantCommand(() -> robot.robotState = RobotState.RESTING)
         );
     }
 }
