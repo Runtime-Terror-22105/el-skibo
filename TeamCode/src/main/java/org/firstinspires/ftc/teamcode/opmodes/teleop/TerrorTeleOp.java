@@ -217,6 +217,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             robot.telemetry.update();
         }
 
+        blackboard.put(AUTO_ENDING_DATA_KEY, null);
     }
 
 
