@@ -169,8 +169,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
-        adjustSpindexZeroLeft.whenPressed(new AdjustSpindexZeroCommand(robot, false));
-        adjustSpindexZeroRight.whenPressed(new AdjustSpindexZeroCommand(robot, true));
+        adjustSpindexZeroLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
+        adjustSpindexZeroRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
 
         // driver 2
         GamepadButton motifPGPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);

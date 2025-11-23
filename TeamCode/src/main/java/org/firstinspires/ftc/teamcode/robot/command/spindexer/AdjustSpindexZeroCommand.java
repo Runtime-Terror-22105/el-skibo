@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class AdjustSpindexZeroCommand extends InstantCommand {
-    public static double INCREASE_AMOUNT_DEGREES = 2;
+    public static double INCREASE_AMOUNT_DEGREES = 1;
 
     public AdjustSpindexZeroCommand(Robot robot, boolean increase) {
         super(() -> {
