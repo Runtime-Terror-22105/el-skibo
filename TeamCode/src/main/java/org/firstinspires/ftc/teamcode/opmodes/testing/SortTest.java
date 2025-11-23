@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @TeleOp(name="Spindex Sort Test", group="Test")
+@Config
 public class SortTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -35,14 +37,13 @@ public class SortTest extends LinearOpMode {
 //        robot.camera.setGlyph(glyph);
 
 
+        CommandScheduler.getInstance().schedule(new SortCommand(robot.spindexer));
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
-
-            new Trigger(()->true).whileActiveOnce(new SortCommand(robot.spindexer));
 
             CommandScheduler.getInstance().run();
 
