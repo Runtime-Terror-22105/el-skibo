@@ -61,7 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoAimOn;
     public boolean isAutoVelOn;
     private final Robot robot;
-    public static double velCoeff = 2.0;
+    public static double velCoeff = 1.8;
 
     // turret stuff
     // 320 deg of servo rotation = 408 deg of turret rotation
