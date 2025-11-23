@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 @Config
 public class DriveCommand extends CommandBase {
 
-    public static double ROTATION_MULTIPLIER = 0.5;
+    public static double ROTATION_MULTIPLIER = 0.3;
     public static double driveSpeed = 0.9;
 
     private final Robot robot;
