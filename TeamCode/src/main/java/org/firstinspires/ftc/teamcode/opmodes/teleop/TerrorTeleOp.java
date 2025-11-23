@@ -7,6 +7,8 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOO
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
@@ -69,6 +71,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         Object motif = blackboard.getOrDefault(MOTIF_DATA_KEY, null);
         Object autoEnd = blackboard.getOrDefault(AUTO_ENDING_DATA_KEY, null);
+        Log.i("Auto", "Ending position after auto " + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
         if (motif != null) {
             robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
         }
