@@ -116,11 +116,9 @@ public class Algebra {
      * @param sourceMax the upper bound of the source range.
      * @param targetMin the lower bound of the target range.
      * @param targetMax the upper bound of the target range.
-     * @param clampMin the minimum value that can be passed for `value`.
-     * @param clampMax the maximum value that can be passed for `value`.
      * @return the value mapped to the new range [newMin, newMax].
      */
-    public static double mapRangeNoClamp(double value, double sourceMin, double sourceMax, double targetMin, double targetMax, double clampMin, double clampMax) {
+    public static double mapRangeNoClamp(double value, double sourceMin, double sourceMax, double targetMin, double targetMax) {
         return targetMin + ((value - sourceMin) / (sourceMax - sourceMin)) * (targetMax - targetMin);
     }
 }

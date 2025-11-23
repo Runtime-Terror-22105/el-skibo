@@ -19,6 +19,10 @@ public class Pose2d {
         this(0, 0, 0);
     }
 
+    public Pose2d(Pose pose) {
+        this(pose.getX(), pose.getY(), pose.getHeading());
+    }
+
     public Pose2d(double x, double y, double heading) {
         this.x = x;
         this.y = y;
@@ -51,7 +55,7 @@ public class Pose2d {
         return new SparkFunOTOS.Pose2D(this.x, this.y, this.heading);
     }
 
-    public Pose toPedroPose() {
+    public Pose toPedro() {
         return new Pose(this.x, this.y, this.heading);
     }
 

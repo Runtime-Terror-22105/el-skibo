@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.robot.init;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -24,7 +22,6 @@ import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorPinpoint;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +33,7 @@ import java.util.List;
 public class RobotHardware {
     // Drivetrain motors & servos
     // NB: Use pedro pathing's Follower rather than access these directly.
-//    public TerrorMotorNormal motorFrontLeft;
+//    public TerrorMotorNormal motorFroTntLeft;
 //    public TerrorMotorNormal motorRearRight;
 //    public TerrorMotorNormal motorFrontRight;
 //    public TerrorMotorNormal motorRearLeft;
@@ -99,8 +96,7 @@ public class RobotHardware {
     private final TerrorPublisher publisher = new TerrorPublisher();
 
     public enum HardwareOptions {
-        CAMERA,
-        PINPOINT
+        CAMERA
     }
 
     public void init(@NonNull HardwareMap hwMap, @NonNull LynxModule.BulkCachingMode bulkCachingMode, HardwareOptions... options) {
@@ -152,7 +148,8 @@ public class RobotHardware {
                 0.05,
                 1.0
         );
-        this.shooterEncoder = new TerrorEncoder(shooterLeft);  // TODO: figure out which motor has the encoder
+        this.shooterEncoder = new TerrorEncoder(motorRearLeft);
+        this.shooterEncoder.setDirection(TerrorEncoder.Direction.REVERSE);// TODO: figure out which motor has the encoder
         this.publisher.subscribe(5, shooterLeft, shooterRight);
 
         // TODO: figure out shooter motor directions
