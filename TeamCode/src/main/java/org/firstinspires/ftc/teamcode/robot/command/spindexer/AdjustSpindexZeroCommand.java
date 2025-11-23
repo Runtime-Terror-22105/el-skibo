@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
+@Config
 public class AdjustSpindexZeroCommand extends InstantCommand {
-    public static double INCREASE_AMOUNT_DEGREES = 5;
+    public static double INCREASE_AMOUNT_DEGREES = 2;
 
     public AdjustSpindexZeroCommand(Robot robot, boolean increase) {
         super(() -> {
