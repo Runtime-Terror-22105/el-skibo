@@ -85,7 +85,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         return (ticks / TICKS_PER_REVOLUTION) * 2.0 * Math.PI;
     }
 
-    private static double radiansToTicks(double radians) {
+    public static double radiansToTicks(double radians) {
         return (radians / (2.0 * Math.PI)) * TICKS_PER_REVOLUTION;
     }
 
@@ -217,6 +217,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void disableRamp() {
         shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
+    }
+
+    public double getHomedSpindexerOffset() {
+        return this.homedSpindexerOffset;
     }
 
     public void setHomedSpindexerOffset(double offset) {
