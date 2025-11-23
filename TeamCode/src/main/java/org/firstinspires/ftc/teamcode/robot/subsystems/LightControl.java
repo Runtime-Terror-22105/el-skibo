@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 //im aware i can just call this lightsubsystem but calling it a whole subsystem is kinda doin too much
 public class LightControl extends SubsystemBase {
 
-    private double blinkColor = TerrorLight.LightColors.OFF.ordinal();
+//    private double blinkColor = TerrorLight.LightColors.OFF.ordinal();
 //
     private boolean isBlinkOn = false;
 
