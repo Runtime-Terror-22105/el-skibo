@@ -24,14 +24,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
                 // Phase 5: transfer balls
                 new ChangeSpindexerYawCommand(robot.spindexer, SPINDEX_ROTATIONS*2*Math.PI),
-
-                new ParallelRaceGroup( // keep going for either 2 rotations or until all balls are gone
-                        new WaitForSpindexerYawCommand(robot.spindexer)
-//                        new WaitUntilCommand(() -> {
-//                            char[] balls = robot.spindexer.getBallPositions();
-//                            return balls[0] == 'N' && balls[1] == 'N' && balls[2] == 'N';
-//                        })
-                ),
+                new WaitForSpindexerYawCommand(robot.spindexer),
 
                 // reset spindexer, intake, shooter, and pole
                 new ParallelCommandGroup(

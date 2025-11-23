@@ -184,7 +184,7 @@ public abstract class Auto extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
+//                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
@@ -268,6 +268,24 @@ public abstract class Auto extends LinearOpMode {
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
         robot.shooter.isAutoVelOn = false;
+
+        CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
+        while (opModeInInit()) {
+            for (LynxModule hub : hardware.allHubs) {
+                hub.clearBulkCache();
+            }
+
+            CommandScheduler.getInstance().run();
+
+            hardware.write();
+
+            long time = System.nanoTime();
+            long dt = time - lastLoop;
+            lastLoop = time;
+            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
+            robot.telemetry.update();
+        }
+
 
         waitForStart();
 
