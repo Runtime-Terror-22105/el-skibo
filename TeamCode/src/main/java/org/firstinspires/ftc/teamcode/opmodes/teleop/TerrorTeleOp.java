@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.FULL;
+import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 
+import org.firstinspires.ftc.teamcode.FieldConstants;
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
-import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
 
@@ -12,7 +17,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -23,9 +27,7 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
-import org.firstinspires.ftc.teamcode.robot.command.states.GoToFullStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -35,43 +37,42 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 @Config
 
 public abstract class TerrorTeleOp extends LinearOpMode {
-    public static double TURRET_OVERRIDE_COOLDOWN = 2.0; // If you use a manual override on the turret, it will take this long before it starts autoaiming again
-
-    private RobotHardware hardware = new RobotHardware();
+    private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
-    public team color;
-    public static Pose2d blueGoalPos = new Pose2d(6, 138, 0.0);
-    public static Pose2d redGoalPos = new Pose2d(138, 138, 0.0);
-    public static Pose blueStartPos= new Pose(20, 123, (25/18)*Math.PI);
-    public static Pose redStartPos= new Pose(124, 123, (30/18)*Math.PI);
 
-    private Pose2d goalPos;
+    public Team color;
+
     private long lastLoop = System.nanoTime();
-    public enum team{
-        RED,
-        BLUE
-    }
-    public void setTeam(team color) {
-        if (color == team.BLUE){
-            goalPos = blueGoalPos;
-            robot.follower.setStartingPose(blueStartPos);
+
+    public void setTeam(Team color) {
+        if (color == Team.BLUE){
+            robot.goalPos = FieldConstants.BLUE_GOAL_POS;
+            robot.follower.setStartingPose(FieldConstants.BLUE_START_POS_TELEOP.toPedro());
         }
-        else{
-            goalPos = redGoalPos;
-            robot.follower.setStartingPose(redStartPos);
+        else {
+            robot.goalPos = FieldConstants.RED_GOAL_POS;
+            robot.follower.setStartingPose(FieldConstants.RED_START_POS_TELEOP.toPedro());
         }
     }
-    public TerrorTeleOp(team color){
+    public TerrorTeleOp(Team color){
         this.color = color;
 
     }
 
     public void runOpMode() {
-
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-
         robot.init(hardware, telemetry);
-        this.setTeam(this.color);
+
+        this.setTeam(Team.BLUE);
+
+        Object motif = blackboard.getOrDefault(MOTIF_DATA_KEY, null);
+        Object autoEnd = blackboard.getOrDefault(AUTO_ENDING_DATA_KEY, null);
+        if (motif != null) {
+            robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
+        }
+        if (autoEnd != null) {
+            robot.follower.setStartingPose((Pose) autoEnd);
+        }
 
         waitForStart();
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
@@ -97,10 +98,15 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
 
+        Trigger threeBallsAreInside = new Trigger(() -> {
+            final char[] balls = robot.spindexer.getBallPositions();
+            return balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N';
+        });
+
 //        hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
-                    new GoToIntakeStateCommand(robot, new TransferCommand(robot))
+                    new GoToIntakeStateCommand(robot)
 //                    new WaitForIntakeCommand(robot),
 //                    new GoToFullStateCommand(robot)
                 ),
@@ -120,8 +126,21 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         ));
         reverseIntakeButton.whenInactive(new SetIntakeSpeedCommand(robot.intake, 0.0));
 
-        shoot3button.whenPressed(new ConditionalCommand(
+        threeBallsAreInside.whenActive(new ConditionalCommand(
                 new TransferCommand(robot),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState == RESTING || robot.robotState == INTAKING
+        ));
+
+        shoot3button.whenPressed(new ConditionalCommand(
+                new ConditionalCommand( // if we already did the transfer, just shoot immediately
+                        new ShootThreeBallsCommand(robot),
+                        new SequentialCommandGroup(
+                                new TransferCommand(robot),
+                                new ShootThreeBallsCommand(robot)
+                        ),
+                        () -> robot.robotState == READY_TO_SHOOT
+                ),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING //robot.robotState == FULL
         ));
@@ -156,8 +175,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);
         CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
 //                new SpindexerHoming(robot.spindexer),
-                new GoToRestingStateCommand(robot)
-        ));
+                new GoToRestingStateCommand(robot),
+                new InstantCommand(() -> robot.shooter.setSpeed(3500D)))
+        );
 
         lastLoop = System.nanoTime();
 
@@ -173,6 +193,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
 
+            robot.lightControl.periodic();
             CommandScheduler.getInstance().run();
 
 

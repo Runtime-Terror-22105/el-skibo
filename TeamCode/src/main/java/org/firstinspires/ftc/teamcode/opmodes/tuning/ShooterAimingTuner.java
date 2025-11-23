@@ -34,6 +34,11 @@ public class ShooterAimingTuner extends LinearOpMode {
     public static double DIST_TO_GOAL = -1; // in mm
     public static double ROBOT_ANGLE_TO_GOAL = -1; // in degrees
 
+    public static double velocity;
+    public static double hoodPos;
+    public static double turretPos;
+
+
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
@@ -70,17 +75,20 @@ public class ShooterAimingTuner extends LinearOpMode {
 //            } else {
 //                robotPose = new Pose2d(0, 0, 0);
 //            }
+
+
             Pose2d robotPose = new Pose2d(DIST_TO_GOAL_X, DIST_TO_GOAL_Y, Math.atan2(DIST_TO_GOAL_Y, DIST_TO_GOAL_X));
             Pose2d goalPos = new Pose2d(0, 0, 0);
 
             robot.shooter.doMath(robotPose, goalPos, ShotType.Arc, 60.0);
-            robot.shooter.manualAim(robot.shooter.goalVelocity, robot.shooter.goalPitch, 0);
+            robot.shooter.manualAim(robot.shooter.getGoalVelocity(), robot.shooter.getGoalPitch(), 0);
 
             if (gamepad1.rightBumperWasPressed()) {
                 CommandScheduler.getInstance().schedule(new TransferCommand(robot));
             }
 
-            //robot.shooter.setSpeed(GOAL_RPM);
+
+            robot.shooter.setSpeed(GOAL_RPM);
 
             CommandScheduler.getInstance().run();
 
@@ -88,9 +96,9 @@ public class ShooterAimingTuner extends LinearOpMode {
 
 
             robot.telemetry.addData("Goal Yaw", robot.shooter.goalYaw);
-            robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.goalVelocity);
-            robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.goalVelocity));
-            robot.telemetry.addData("Goal Pitch", robot.shooter.goalPitch);
+            robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
+            robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
+            robot.telemetry.addData("Goal Pitch", robot.shooter.getGoalPitch());
             robot.telemetry.addData("Current velocity rpm",robot.shooter.getVelocityRpm());
             robot.telemetry.update();
 

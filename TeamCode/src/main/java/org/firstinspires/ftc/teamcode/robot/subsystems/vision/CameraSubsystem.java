@@ -30,14 +30,22 @@ public class CameraSubsystem extends SubsystemBase {
     private OpenCvCamera aprilTagCamera;
     private OpenCvCamera spindexerCamera;
 
-    private double turretCenterToRobotCenterUnitNeededX = -1;
-    private double turretCenterToRobotCenterUnitNeededY = 1;
+//    private double turretCenterToRobotCenterUnitNeededX = 0; //this is perfectly centered
+    public static double turretCenterToRobotCenterMeters = 0.2311;
 
     //robot dimemnnsions 16 inches by 15 inches
 
-    private final double turretRadiusMeters = 0.13335;
+    public static double turretRadiusMeters = 0.13335;
 
-    private final double cameraPhaseChangeAngleRadians = Math.toRadians(120);
+    public static double cameraPhaseChangeAngleRadians = Math.toRadians(120);
+
+    public static double tempTurretAngle = 0;
+
+    public static Pose2d blueGlobalPose = new Pose2d(3000,3000,0.959931);
+
+    public static Pose2d redGlobalPose = new Pose2d(3000,3000,-0.959931);
+
+    public static Pose2d motifGlobalPose = new Pose2d(3000,3000,0);
 
 
     Telemetry telemetry;
@@ -49,15 +57,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     public enum LiveViewSettings {OFF, FIELD}
 
-    public Robot robot = new Robot();
+    public Robot robot;
+    public RobotHardware hardware;
 
 
     public GLYPH gameGlyph;
     private boolean decodedGlyph = false; //when the movie uses the title of the movie
-
-    public GLYPH getGlyph() {
-        return gameGlyph;
-    }
 
     /**
      * @return order of the balls in the spindexer with top:0 right:1 left:2
@@ -73,7 +78,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     private ArrayList<AprilTagDetection> detections;
 
-    public CameraSubsystem(RobotHardware hardware, LiveViewSettings liveViewSettings) {
+    private Telemetry tele;
+
+    public CameraSubsystem(Telemetry tele,Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
+        this.robot = robot;
+        this.tele = tele;
+        this.hardware = hardware;
         this.detections = new ArrayList<>();
         this.aTagProcessor = createAprilTagProcessor();
 
@@ -113,20 +123,87 @@ public class CameraSubsystem extends SubsystemBase {
                 .build();
     }
 
+    public GLYPH getGlyph() {
+        if (decodedGlyph) {
+            return gameGlyph;
+        }
+        return null;
+    }
+
+    public void setGlyph(GLYPH glyph) {
+        decodedGlyph = true;
+        gameGlyph = glyph;
+    }
+
     @Override
     public void periodic() {
         this.detections = aTagProcessor.getDetections();
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23 && !decodedGlyph) {
-                gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
-                decodedGlyph = true;
+                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             }
+        }
+        if(!detections.isEmpty())
+        {
+            tele.addData("seentagpos",getRobotCenterCoordinateToAprilTag());
+            tele.addData("turretAngle",robot.shooter.turretAngle);
+            tele.addData("yaw",detections.get(0).ftcPose.yaw);
+            tele.addData("pitch",detections.get(0).ftcPose.pitch);
+            tele.addData("roll",detections.get(0).ftcPose.roll);
         }
     }
 
     public boolean hasDetections() {
         return !detections.isEmpty();
+    }
+
+    public double getOrientationFromCameraRad(AprilTagDetection tag)
+    {
+        /*"global banking" is a value that is given per tag, as in if the robot were looking forward like this
+       (-55deg)     (55deg)
+        *  /     \
+              ^
+              |
+              |
+              |
+
+
+        given this situation
+
+      (global banked at -55)
+        /(camera returns the tag being banked at -35)
+            ^
+            | (turret angle is facing 270 in code (hopefully)
+   180 <----  (robot's global angle)
+
+        clockkwise positiev
+
+        globalBanking+seenAngle+turret=robots global
+        -55-35+270=(-90)+270=180
+        this should hopefully work (can't wait for it to not)
+        */
+        double heading;
+        switch(VisionConstants.APRILTAG.tagMap.get(tag.id))
+        {
+            case "BLUESCORE":
+                heading = blueGlobalPose.heading;
+                break;
+//            case "GPP":
+//                break;
+//            case "PGP":
+//                break;
+//            case "PPG":
+//                break;
+            case "REDSCORE":
+                heading = redGlobalPose.heading;
+                break;
+            default:
+                heading = motifGlobalPose.heading;
+                break;
+        }
+        return heading+tag.ftcPose.range+tempTurretAngle;
+
     }
 
     public Pose2d getPositionCamera()
@@ -145,15 +222,15 @@ public class CameraSubsystem extends SubsystemBase {
     //to the outputed value
 
     private double getCoordinateComponentX(AprilTagDetection tag) {
-        return ((tag.ftcPose.x/39.37) + turretRadiusMeters*Math.cos(robot.shooter.turretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterUnitNeededX);
+        return ((tag.ftcPose.x/39.37) + turretRadiusMeters*Math.cos(tempTurretAngle + cameraPhaseChangeAngleRadians));
     }
 
     private double getCoordinateComponentY(AprilTagDetection tag) {
-        return (tag.ftcPose.y/39.37 + turretRadiusMeters*Math.sin(robot.shooter.turretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterUnitNeededY);
+        return (tag.ftcPose.y/39.37 + turretRadiusMeters*Math.sin(tempTurretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterMeters);
     }
 
     public Pose2d getRobotCenterCoordinateToAprilTag() {
         AprilTagDetection tag = detections.get(0);
-        return new Pose2d(getCoordinateComponentX(tag), getCoordinateComponentY(tag), 0.0);
+        return new Pose2d(getCoordinateComponentX(tag), getCoordinateComponentY(tag),getOrientationFromCameraRad(tag));
     }
 }

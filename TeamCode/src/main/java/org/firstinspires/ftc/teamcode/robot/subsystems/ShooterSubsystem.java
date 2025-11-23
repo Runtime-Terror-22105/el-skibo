@@ -8,16 +8,13 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
-import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
@@ -28,18 +25,17 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
             new PidfController.PidfCoefficients(0.0001, 0.000115, 0.00, 0, 0);
-    public static double shooterVelocityTolerance = 0.0;
+    public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
     // the current pid + speed
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterSpeed=0.0;
 
     // the current shooting angle
-    public double hoodPosition= 0.0;
     public double turretAngle = 0.0;
 
-    public static double turretPosAt0 = 0.44;
-    public static double posChange90 = 0.34;
+    public static double turretPosAt180 = 0.54;
+    public static double posChange90 = 0.38;
 
 
     // math stuff TODO calculate this
@@ -48,10 +44,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double goalHeight = 40.0; //doesnt change no matter alliance color
     public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
 
-    public double goalPitch;
-    public double goalVelocity;
+    private double goalPitch;
+    private double goalVelocity;
     public double goalYaw;
-    public double goalHoodPos;
     public double goalYawPos;
     public static double difference = 109.0;
 
@@ -61,7 +56,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double hoodPosMin = 0.55; //min position the servo can go to
     public static double hoodAngleMax = 1.2217; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.8726; //radian measure of hood at min pos
+
     public boolean isAutoAimOn;
+    public boolean isAutoVelOn;
     private final Robot robot;
     public static double velCoeff = 2.0;
 
@@ -73,76 +70,92 @@ public class ShooterSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
 
-        this.shooterPID.setTolerance(this.shooterVelocityTolerance);
+        this.shooterPID.setTolerance(SHOOTER_VELOCITY_TOLERANCE);
         this.shooterPID.setTargetPosition(0.0);
         //currently doesnt control anything in this class, just for keeping track
         this.isAutoAimOn = true;
+        this.isAutoVelOn = true;
 
 
     }
 
     public void doAutoShoot(Pose2d goalPos){
-
         this.doAutoShoot(goalPos, Arc);
     }
 
     public void doAutoShoot(Pose2d goalPos, ShotType shotType){
-
+        Log.i("shooter", "Doing autoshoot!");
         Pose botPosTemp = this.robot.follower.getPose();
-        Log.d("shooter","bot pos 1"+ botPosTemp);
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
-        Log.d("shooter","bot pos 2"+ botPos);
         this.isAutoAimOn = true;
-        this.doMath(botPos, goalPos, shotType, apexHeight);
-        //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-        this.setSpeed(this.velToRPM(this.goalVelocity));
-        //gets a setpos from the angle from our measured angles for max and min
-        this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+
         this.goalYawPos = this.findYawAngle(botPos, goalPos);
 
+        ShooterValues math = this.doMath(botPos, goalPos, shotType, apexHeight);
+        if (math.flywheelVelocity == null || math.hoodPitch == null) {
+            Log.e("shooter", "failed to do math!");
+            return;
+        }
+        Robot.debugTelemetry.addData("Calculated Velocity", math.flywheelVelocity);
+        Robot.debugTelemetry.addData("Calculated Pitch", math.hoodPitch);
 
-        this.setHoodPosition(this.goalHoodPos);
+        //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
+        if (this.isAutoVelOn) {
+            this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
+        }
+        //gets a setpos from the angle from our measured angles for max and min
+        this.setGoalPitch(Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
 
+        Log.i("shooter", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
+        Log.i("shooter", "Calculated hood pitch " + this.getGoalPitch());
     }
 
-    public void manualAim(double velocity, double pitch, double yaw){
-        /** lets you set a velocity and angle manually*/
-        this.isAutoAimOn = false;
-        this.goalVelocity = velocity;
-        this.goalPitch = pitch;
-        this.setSpeed(this.velToRPM(this.goalVelocity));
-        this.goalHoodPos = Algebra.mapRange(goalPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-        this.goalYaw = yaw;
+    /** lets you set a velocity and angle manually*/
+    public void manualAim(double velocity, double pitch, double yaw) {
+        this.isAutoAimOn = true;
+        this.setSpeed(this.velToRPM(velocity));
+        this.setGoalPitch(Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
+        this.goalYawPos = yaw;
 
-        this.setHoodPosition(this.goalHoodPos);
         this.setTurretAngle(this.goalYawPos);
     }
-    public void setVelocity(double velocity){
-        manualAim(velocity, this.goalPitch, this.goalYaw);
-    }
-    public void setPitch(double pitch){
-        manualAim(this.goalVelocity, pitch, this.goalYaw);
-    }
-    public void setYaw(double yaw){
-        manualAim(this.goalVelocity, this.goalPitch, yaw);
+//
+//    public void setVelocity(double velocity){
+//        manualAim(velocity, this.goalPitch, this.goalYaw);
+//    }
+//    public void setPitch(double pitch){
+//        manualAim(this.goalVelocity, pitch, this.goalYaw);
+//    }
+//    public void setYaw(double yaw){
+//        manualAim(this.goalVelocity, this.goalPitch, yaw);
+//    }
+
+    public static class ShooterValues {
+        public Double flywheelVelocity;
+        public Double hoodPitch;
+
+        public ShooterValues(Double flywheelVelocity, Double hoodPitch) {
+            this.flywheelVelocity = flywheelVelocity;
+            this.hoodPitch = hoodPitch;
+        }
     }
 
-    public void doMath(Pose2d botPos, Pose2d goalPos, ShotType shotType, double arcHeight){
+    /**
+     * attempts to calculate a velocity and angle from the robot position and our apex height
+     * i let you pass in a different value other than apexHeight above bc we might want to change that later
+     * see discord for the way i got my formulas
+     * the formulas return 2 sets of values, the first one tends to be a regular, arc shot
+     * the second tends to be more of a backboard shot, this one the velocity usually is crazy high
+     * so if u go for backboard its likley it wont find valid values unless ur careful with h */
+    public ShooterValues doMath(Pose2d botPos, Pose2d goalPos, ShotType shotType, double arcHeight){
         Log.e("shooter", "running math...");
-        /**
-         * attempts to calculate a velocity and angle from the robot position and our apex height
-         * i let you pass in a different value other than apexHeight above bc we might want to change that later
-         * see discord for the way i got my formulas
-         * the formulas return 2 sets of values, the first one tends to be a regular, arc shot
-         * the second tends to be more of a backboard shot, this one the velocity usually is crazy high
-         * so if u go for backboard its likley it wont find valid values unless ur careful with h */
+
 
         double h = arcHeight;
-        int failCount = 0;
         double targetV;
         double targetT;
 
-        for(int failcount=1;failcount<9;failcount++){
+        for(int failCount=1;failCount<9;failCount++){
             //my formulas
             double horDist = Math.sqrt(Math.pow((botPos.x-goalPos.x),2) +
                     Math.pow((botPos.y-goalPos.y),2)); //simple pythagrean therom
@@ -162,20 +175,17 @@ public class ShooterSubsystem extends SubsystemBase {
                 targetT = theta2;
                 targetV = v2 * velCoeff + difference;
             }
-            Log.e("shooter", "tv" + targetV);
-            Log.e("shooter", "tt" + targetT);
             //detects if something about our target values are out of range.
             //tries 4 more times, trying to adjust h to get valid numbers
             //if it doesnt find any, it starts over with the other pair of values
             //if, after 8 times, it doesnt get anything, it throws an error
             if (targetV < minVelocity || targetV > maxVelocity || targetT < hoodAngleMin || targetT > hoodAngleMax){
-                Log.e("shooter", "erm... we have a value out of range!");
                 if (failCount == 4){
                     h = apexHeight;
                     if (shotType == Arc) shotType = Straight;
                     else shotType = Arc;
                 }
-                else if (failcount == 8){
+                else if (failCount == 8){
                     if (targetV < minVelocity){
                         targetV = minVelocity;
                     }
@@ -188,11 +198,10 @@ public class ShooterSubsystem extends SubsystemBase {
                     if (targetT > hoodAngleMax){
                         targetT = hoodAngleMax;
                     }
-                    this.goalVelocity = targetV;
-                    this.goalPitch = targetT;
-
-                    break;
-
+//                    this.goalVelocity = targetV;
+//                    setSpeed(targetV); TODO: add back
+//                    this.goalPitch = targetT;
+                    return new ShooterValues(targetV, targetT);
                 }
 
                 if (targetV < minVelocity || targetT < hoodAngleMin){
@@ -205,55 +214,59 @@ public class ShooterSubsystem extends SubsystemBase {
 
             }
             else {
-                this.goalVelocity = targetV;
-                this.goalPitch = targetT;
-                break;
-
+                return new ShooterValues(targetV, targetT);
             }
-
         }
 
-        Log.e("shooter", "goal vel" + goalVelocity);
-        Log.e("shooter", "goal pitch" +
-                goalPitch);
+        Log.e("shooter", "goal vel" + getGoalVelocity());
+        Log.e("shooter", "goal pitch" + getGoalPitch());
+        return new ShooterValues(null, null);
     }
+
     private double findYawAngle(Pose2d botPos, Pose2d goalPos){
-         double x = goalPos.x - botPos.x;
-         double y = goalPos.y - botPos.x;
+         double x = goalPos.x - robot.follower.getPose().getX();
+         double y = goalPos.y - robot.follower.getPose().getY();
          double angle = Math.atan2(y,x);
-         Log.d("shooter", "yaw angle" + angle);
-         double absoluteGoalAngle = (angle-(0.5 * Math.PI))+0.5*Math.PI;
-         Log.d("shooter", "absolute goal yaw angle" + absoluteGoalAngle);
+
+
+
+         double absoluteGoalAngle = angle;
+
          double botHeading = robot.follower.getHeading();
-         Log.d("shooter", "bot heading" + botHeading);
-         double angleGoalOffset = Angle.angleWrap(absoluteGoalAngle - botHeading);
+
+        robot.telemetry.addData("follower",botHeading*180/Math.PI );
+
+
+         double angleTurret = Angle.angleWrap(absoluteGoalAngle - botHeading);
+
 
          this.goalYaw = absoluteGoalAngle;
 
-         double pos = Algebra.mapRangeNoClamp(angleGoalOffset, -0.5*Math.PI, 0.5*Math.PI,
-                 turretPosAt0-posChange90, turretPosAt0+posChange90, -Math.PI, Math.PI);
-         Log.d("shooter", "calc yaw pos" + pos);
-         return pos;
 
 
+//        double servopos = turretPosAt0 + (Angle.angleWrap(Math.toRadians(test_turret_angle)+Math.toRadians(25)) / (0.5*Math.PI)) * posChange90;
+
+        // todo: this is currently limited to -90 to 90 degrees
+        double servopos = Algebra.mapRange(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
 
+//        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
+//        robot.telemetry.addData("X diff",x);
+//        robot.telemetry.addData("Y diff",y);
+//        robot.telemetry.addData("follower actual",robot.follower.getHeading());
+//        robot.telemetry.addData("Angle of turret", Math.toDegrees(angleTurret));
+//        robot.telemetry.addData("Servopos", Math.toDegrees(servopos));
+//        robot.telemetry.addData("Pos of turret", pos);
+
+         return servopos;
     }
-    public double getTargetAngle(){
-        return this.goalPitch;
-    }
-    public double getTargetVelocity(){
+
+    public double getGoalVelocity() {
         return this.goalVelocity;
     }
-    public double getTargetHoodPos(){
-        return this.goalHoodPos;
-    }
-    public double getTargetPitch(){return this.goalPitch;}
-
-
 
     public void setSpeed(double goal){
-        this.shooterPID.setTargetPosition(goal);
+        this.goalVelocity = goal;
     }
 
     public double getVelocity() {
@@ -264,45 +277,48 @@ public class ShooterSubsystem extends SubsystemBase {
         return ticksToRpm(getVelocity());
     }
 
+    public double getGoalPitch() {
+        return this.goalPitch;
+    }
+
+    public void setGoalPitch(double goalPitch) {
+        this.goalPitch = goalPitch;
+    }
+
     public double ticksToRpm(double ticksPerSec) {
         return ticksPerSec * 60.0 / TICKS_PER_REV;
     }
 
+    /**
+     * Convert inches/sec to rpm
+     * @param velocity Velocity in in/sec
+     * @return Velocity in RPM
+     */
+    public double velToRPM(double velocity){
+        return velocity * 6.469;
+    }
+
     public void updateShooter() {
+        this.shooterPID.setTargetPosition(getGoalVelocity());
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
-
-    public void setHoodPosition(double position){
-        this.hoodPosition=position;
-    }
-
 
     public void setTurretAngle(double angle) {
         this.turretAngle = Math.max(-Math.PI, Math.min(Math.PI, angle));
     }
-    public double velToRPM(double velocity){
-        return velocity * 6.469;
-
-    }
-
-
-
-
-
-
-
 
     @Override
     public void periodic() {
-        if (robot.getState() == RobotState.FULL || robot.getState() == RobotState.INTAKING ||
-                robot.getState() == RobotState.SHOOTING){
-            this.doAutoShoot(robot.goalPos);
-        }
+        if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot(robot.goalPos);
+        else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
+
+
         // shooter pitch
-        hardware.shooterPitch.setPosition(Math.max(hoodPosMin, Math.min(hoodPosMax, this.hoodPosition)));
+        hardware.shooterPitch.setPosition(this.getGoalPitch());
 
         // flywheel pids
         this.updateShooter();
+        Robot.debugTelemetry.addData("Shooter Power", shooterSpeed);
         hardware.shooterLeft.setPower(shooterSpeed);
         hardware.shooterRight.setPower(shooterSpeed);
 

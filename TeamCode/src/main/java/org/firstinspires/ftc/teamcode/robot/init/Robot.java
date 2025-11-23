@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl;
+import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
@@ -41,7 +43,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public CameraSubsystem camera;
     public HangSubsystem hang;
     public IntakeSubsystem intake;
-    public LightControl lightControl;
+    public LightControl2 lightControl;
 
     public Pose2d goalPos;
 
@@ -67,18 +69,21 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
         // Initialize the drivetrain
         this.follower = Constants.createFollower(hardware.hwMap);
+
+
         // NB: SubsystemBase will automatically register the subsystems for us
         this.drive = new DriveSubsystem(this);
         this.shooter = new ShooterSubsystem(hardware, this);
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(hardware);
         this.hang = new HangSubsystem(hardware);
-        this.lightControl = new LightControl(hardware,this);
+        this.lightControl = new LightControl2(hardware,this);
 
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
-            this.camera = new CameraSubsystem(hardware, CameraSubsystem.LiveViewSettings.FIELD);
+
+            this.camera = new CameraSubsystem(tele,this,hardware, CameraSubsystem.LiveViewSettings.FIELD);
 //            this.camera = new TerrorCameraVisionPortal.Builder()
 //                    .setCamera(hardware.fieldCamera)
 //                    .setCameraResolution(new Size(320, 240))

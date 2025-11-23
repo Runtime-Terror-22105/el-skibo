@@ -26,9 +26,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * 5.6D;
 
     public static double INTAKE_WALL_1_DOWN = 0.345;
-    public static double INTAKE_WALL_1_UP = 0.6;
+    public static double INTAKE_WALL_1_UP = 0.7;
     public static double INTAKE_WALL_2_DOWN = 0.555;
-    public static double INTAKE_WALL_2_UP = 0.33;
+    public static double INTAKE_WALL_2_UP = 0.23;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
@@ -39,7 +39,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double SHOOTER_INTAKE_SPEED = 0.0; // this is the speed where the shooter melonbotic servo intakes the balls
 
     public static double SHOOTER_INTAKING_SPEED = 1.0;
-    public static double SHOOT_ONE_ROTATION = -(2 / 3) * Math.PI;
+    public static double SHOOT_ONE_ROTATION = -(2D / 3D) * Math.PI;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -56,10 +56,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public boolean transferActive = false;
 
-    public static double leftPosition = (4D / 3D) * Math.PI;
-    public static double rightPosition = (2D / 3D) * Math.PI;
-    public static double backPosition = 0.0;
-    public static double readyPosition = (1D / 6D) * Math.PI; //position for the first ball as the ramp goes down
+    public static double LEFT_POSITION = (4D / 3D) * Math.PI;
+    public static double RIGHT_POSITION = (2D / 3D) * Math.PI;
+    public static double BACK_POSITION = 0.0;
+    public static double READY_POSITION = (1D / 6D) * Math.PI; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)}; // todo: this is currently duplicate, make it so it just uses the above 3 variables
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
@@ -180,11 +180,11 @@ public class SpindexerSubsystem extends SubsystemBase {
                 if (sensor.getGreenOrPurple() == 'G') {
                     greenCount += 1;
                     if (sensor.position.equals(TerrorColorSensor.side.LEFT)) {
-                        greenPos = this.leftPosition;
+                        greenPos = LEFT_POSITION;
                     } else if (sensor.position.equals(TerrorColorSensor.side.RIGHT)) {
-                        greenPos = this.rightPosition;
+                        greenPos = RIGHT_POSITION;
                     } else {
-                        greenPos = this.backPosition;
+                        greenPos = BACK_POSITION;
                     }
 
                 } else {
@@ -195,28 +195,28 @@ public class SpindexerSubsystem extends SubsystemBase {
         }
         if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
-                double normalizedError = MathUtils.normalizeRadians((this.readyPosition - greenPos), true);
+                double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), true);
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
                 this.setYaw(startPos + normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
-                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition - ((2 / 3) * Math.PI)) - greenPos), true);
+                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION - ((2D / 3D) * Math.PI)) - greenPos), true);
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
                 this.setYaw(startPos + normalizedError);
 
             } else {
-                double normalizedError = MathUtils.normalizeRadians(((this.readyPosition - ((4 / 3) * Math.PI)) - greenPos), true);
+                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION - ((4D / 3D) * Math.PI)) - greenPos), true);
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
                 this.setYaw(startPos + normalizedError);
             }
         } else {
-            this.setYaw(readyPosition);
+            this.setYaw(READY_POSITION);
         }
 
     }
@@ -262,14 +262,5 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
         this.hardware.spindexerDiddyServo.setPosition(diddyPos);
         this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
-
-        Robot.debugTelemetry.addData("position (rad)", getPosition());
-        Robot.debugTelemetry.addData("position (ticks)", getPositionTicks());
-        Robot.debugTelemetry.addData("target (rad)", getTargetYaw());
-        Robot.debugTelemetry.addData("target (ticks)", radiansToTicks(getTargetYaw()));
-        Robot.debugTelemetry.addData("at target", atTargetYaw());
-        Robot.debugTelemetry.addData("power", spindexerPower);
-        Robot.debugTelemetry.addData("pid enabled", pidEnabled);
-
     }
 }
