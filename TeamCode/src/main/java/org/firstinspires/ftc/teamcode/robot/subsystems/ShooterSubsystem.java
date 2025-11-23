@@ -16,12 +16,14 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.HardCodedLookup;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
+    public static boolean usingHardCodedShooterTable = false;
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
@@ -93,8 +95,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
         this.goalYawPos = this.findYawAngle(goalPos);
 
-//        ShooterValues math = this.doMath(botPos, goalPos, shotType, apexHeight);
         ShooterValues math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
+        if(usingHardCodedShooterTable)
+        {
+            math = HardCodedLookup.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
+        }
+
+//        ShooterValues math = this.doMath(botPos, goalPos, shotType, apexHeight);
+//        ShooterValues math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
         if (math.flywheelVelocity == null || math.hoodPitch == null) {
             Log.e("shooter", "failed to do math!");
             return;
