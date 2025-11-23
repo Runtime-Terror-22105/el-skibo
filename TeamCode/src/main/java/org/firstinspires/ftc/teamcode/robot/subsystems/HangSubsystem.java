@@ -18,8 +18,11 @@ public class HangSubsystem extends SubsystemBase {
 
     private boolean ptoEngaged = false;
 
+    public boolean hangIsHeld = false;
+
     public HangSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
+        this.hangIsHeld = false;
     }
 
     public boolean isPtoEngaged() {
@@ -35,10 +38,14 @@ public class HangSubsystem extends SubsystemBase {
     public void periodic() {
         if(!ptoEngaged) return;
 
-        double roll = hardware.imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
-        Log.i("HangSubsystem", "Robot Roll: " + roll + " deg");
+//        double roll = hardware.imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
+//        Log.i("HangSubsystem", "Robot Roll: " + roll + " deg");
 
-        if (roll < HANG_ANGLE_STOP_DEGREES) hardware.spindexerRotate.setPower(HANG_SPINDEXER_POWER);
-        else hardware.spindexerRotate.setPower(0);
+//        if (roll < HANG_ANGLE_STOP_DEGREES) hardware.spindexerRotate.setPower(HANG_SPINDEXER_POWER);
+//        else hardware.spindexerRotate.setPower(0);
+
+        if (hangIsHeld) {
+            hardware.spindexerRotate.setPower(HANG_SPINDEXER_POWER);
+        }
     }
 }
