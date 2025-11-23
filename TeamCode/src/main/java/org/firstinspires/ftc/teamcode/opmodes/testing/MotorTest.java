@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 
@@ -48,6 +49,7 @@ public class MotorTest extends LinearOpMode {
                 telemetry.addData("Current velocity (rpm)", shooterEncoder.getVelocity() * 60 / TICKS_PER_REV); // 145.1 ticks per revolution
                 maxvel=Math.max(maxvel,shooterEncoder.getVelocity() * 60 / TICKS_PER_REV);
                 telemetry.addData("Max Velocity(rpm)", maxvel); // 145.1 ticks per revolution
+                telemetry.addData("Current (amps)", ((DcMotorEx) hardwareMap.get(DcMotor.class, motorName)).getCurrent(CurrentUnit.AMPS));
                 telemetry.update();
             }
         }
