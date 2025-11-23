@@ -60,6 +60,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public boolean isAutoAimOn;
     public boolean isAutoVelOn;
+    public boolean isAutoHoodOn;
     private final Robot robot;
     public static double velCoeff = 1.8;
 
@@ -76,7 +77,7 @@ public class ShooterSubsystem extends SubsystemBase {
         //currently doesnt control anything in this class, just for keeping track
         this.isAutoAimOn = true;
         this.isAutoVelOn = true;
-
+        this.isAutoHoodOn = true;
 
     }
 
@@ -105,8 +106,10 @@ public class ShooterSubsystem extends SubsystemBase {
         if (this.isAutoVelOn) {
             this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
         }
-        //gets a setpos from the angle from our measured angles for max and min
-        this.setGoalPitch(Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
+        if (this.isAutoHoodOn) {
+            //gets a setpos from the angle from our measured angles for max and min
+            this.setGoalPitch(Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax));
+        }
 
         Log.i("shooter", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
         Log.i("shooter", "Calculated hood pitch " + this.getGoalPitch());
@@ -302,7 +305,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocity Velocity in in/sec
      * @return Velocity in RPM
      */
-    public double velToRPM(double velocity){
+    public static double velToRPM(double velocity){
         return velocity * 6.469;
     }
 
