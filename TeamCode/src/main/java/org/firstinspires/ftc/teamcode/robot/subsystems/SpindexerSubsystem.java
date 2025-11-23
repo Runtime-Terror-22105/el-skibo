@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
@@ -85,7 +87,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         return (ticks / TICKS_PER_REVOLUTION) * 2.0 * Math.PI;
     }
 
-    private static double radiansToTicks(double radians) {
+    public static double radiansToTicks(double radians) {
         return (radians / (2.0 * Math.PI)) * TICKS_PER_REVOLUTION;
     }
 
@@ -131,6 +133,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void goToAngle360(double angle) {
         double error = Angle.angleWrap(angle - this.desiredAngle);
         this.desiredAngle += error;
+        Log.d("spindexer", "desired angle gotTo360" + this.desiredAngle);
     }
 
     /**
@@ -219,6 +222,10 @@ public class SpindexerSubsystem extends SubsystemBase {
         shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
     }
 
+    public double getHomedSpindexerOffset() {
+        return this.homedSpindexerOffset;
+    }
+
     public void setHomedSpindexerOffset(double offset) {
         this.homedSpindexerOffset = offset;
     }
@@ -248,9 +255,15 @@ public class SpindexerSubsystem extends SubsystemBase {
 
             }
         }
+        Log.d("spindexer", "purple count" + purpleCount);
+        Log.d("spindexer", "green count" + greenCount);
+        Log.d("spindexer", "full count" + fullCount);
+        Log.d("spindexer", "greenPos" + greenPos);
+
         if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
                 double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), true);
+                Log.d("spindexer", "glyph gpp normalized error" + normalizedError);
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
@@ -258,6 +271,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION - ((2D / 3D) * Math.PI)) - greenPos), true);
+                Log.d("spindexer", "glyph pgp normalized error" + normalizedError);
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
@@ -265,12 +279,14 @@ public class SpindexerSubsystem extends SubsystemBase {
 
             } else {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION - ((4D / 3D) * Math.PI)) - greenPos), true);
+                Log.d("spindexer", "glyph ppg normalized error" + normalizedError);
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
                 this.goToAngle360(startPos + normalizedError);
             }
         } else {
+            Log.d("spindexer", "not enough balls to run logic ready pos:" + READY_POSITION);
             this.goToAngle360(READY_POSITION);
         }
 
@@ -291,6 +307,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 //        this.hardware.spindexerIntakeRampServo2.setPosition(this.intakeRampPosition2);
 //        this.hardware.spindexerTransferRampServo.setPosition(this.shooterRampPosition);
 //        this.hardware.spindexerDiddyServo.setPosition(this.wallPosition);
+
+        if (robot.hang.isPtoEngaged()) {
+            return;
+        }
 
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);

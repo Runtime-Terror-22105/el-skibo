@@ -29,7 +29,7 @@ public class LightControl2 extends SubsystemBase {
     public void periodic()
     {
         robot.telemetry.addData("State for the lights",robot.getState());
-        switch(robot.robotState.RESTING)
+        switch(robot.robotState)
         {
             case RESTING:
                 hardware.lights.setColor(TerrorLight.LightColors.PINK);
