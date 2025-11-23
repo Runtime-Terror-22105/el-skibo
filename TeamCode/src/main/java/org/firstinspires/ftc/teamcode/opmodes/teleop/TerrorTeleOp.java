@@ -11,6 +11,7 @@ import android.util.Log;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
@@ -51,11 +52,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public void setTeam(Team color) {
         if (color == Team.BLUE){
             robot.goalPos = FieldConstants.BLUE_GOAL_POS;
-            robot.follower.setStartingPose(FieldConstants.BLUE_START_POS_TELEOP.toPedro());
         }
         else {
             robot.goalPos = FieldConstants.RED_GOAL_POS;
-            robot.follower.setStartingPose(FieldConstants.RED_START_POS_TELEOP.toPedro());
         }
     }
     public TerrorTeleOp(Team color){
@@ -68,7 +67,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         robot.init(hardware, telemetry);
 
         this.setTeam(Team.BLUE);
-
         Object motif = blackboard.getOrDefault(MOTIF_DATA_KEY, null);
         Object autoEnd = blackboard.getOrDefault(AUTO_ENDING_DATA_KEY, null);
         Log.i("Auto", "Ending position after auto " + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
@@ -77,12 +75,13 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         }
         if (autoEnd != null) {
             robot.follower.setStartingPose((Pose) autoEnd);
+        } else {
+            robot.follower.setStartingPose(color.getStartPosAuto().toPedro());
         }
 
         waitForStart();
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
         GamepadEx gamepad2ex = new GamepadEx(gamepad2);
-
 
 
         // driver 1
@@ -210,6 +209,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
             hardware.write();
 
+            FtcDashDrawing.drawDebug(robot.follower);
             long time = System.nanoTime();
             long dt = time - lastLoop;
             lastLoop = time;
