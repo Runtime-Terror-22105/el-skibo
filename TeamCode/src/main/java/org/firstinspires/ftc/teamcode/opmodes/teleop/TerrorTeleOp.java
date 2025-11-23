@@ -112,8 +112,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         });
 
 //        hangButton.whenPressed(new GoToClimbStateCommand(robot));
-        hangButton.whenPressed(new GoToClimbStateCommand(robot));
-        hangButton.whenReleased(new InstantCommand(() -> robot.hang.hangIsHeld = false));
+//        hangButton.whenPressed(new GoToClimbStateCommand(robot));
+//        hangButton.whenReleased(new InstantCommand(() -> robot.hang.hangIsHeld = false));
         intakeButton.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
                     new GoToIntakeStateCommand(robot)
