@@ -4,8 +4,12 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.button.Trigger;
 
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SortCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
@@ -28,10 +32,8 @@ public class SortTest extends LinearOpMode {
 
         waitForStart();
 
-        robot.camera.setGlyph(glyph);
+//        robot.camera.setGlyph(glyph);
 
-        SortCommand sort = new SortCommand(robot.spindexer);
-        CommandScheduler.getInstance().schedule(sort);
 
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
@@ -39,6 +41,8 @@ public class SortTest extends LinearOpMode {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
+
+            new Trigger(()->true).whileActiveOnce(new SortCommand(robot.spindexer));
 
             CommandScheduler.getInstance().run();
 
