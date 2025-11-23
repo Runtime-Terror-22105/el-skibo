@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -321,6 +323,7 @@ public abstract class Auto extends LinearOpMode {
 
 //            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
             blackboard.put(AUTO_ENDING_DATA_KEY, robot.follower.getPose());
+            Log.i("Auto", "Auto position at the moment" + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
 
             hardware.write();
 
