@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
-import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
@@ -22,38 +21,34 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
 @Configurable
 public abstract class Auto extends LinearOpMode {
-    public static double MAX_POWER = 0.5;
+    public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
-    public static double SHOOT_PRELOAD_RPM = 0;
+    public static double SHOOT_PRELOAD_RPM = 3500;
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
-    public static Pose2d INTAKE_1_POSE = new Pose2d(30.2, 85.149, Math.toRadians(180));
-    public static Pose2d PUSH_GATE_POSE = new Pose2d(20.873, 72.827, Math.toRadians(180));
-    public static Pose2d SHOOT_POSE = new Pose2d(51.893, 87.449, Math.toRadians(315));
+    public static Pose2d INTAKE_1_POSE = new Pose2d(26, 85.149, Math.toRadians(180));
+    public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
+    public static Pose2d SHOOT_POSE = new Pose2d(60, 87.449, Math.toRadians(315));
 
-    public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(37.901, 60.243, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE = new Pose2d(14.387, 60.243, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 65, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(INTAKE_1_POSE.x, 65, Math.toRadians(180));
 
-    public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(36.735, 35.757, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE = new Pose2d(13.221, 35.757, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 40, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(INTAKE_1_POSE.x, 40, Math.toRadians(180));
 
-    public static Pose2d PARK_POSE = new Pose2d(52.282, 110.575, Math.toRadians(315));
+    public static Pose2d PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -181,13 +176,13 @@ public abstract class Auto extends LinearOpMode {
 
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
-                new GoToRestingStateCommand(robot),
-                new SetShooterRPMCommand(robot.shooter, SHOOT_PRELOAD_RPM),
+                new ParallelCommandGroup(
+                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
+                        new FollowPathCommand(robot.follower, shootPreloadPath, true)
+                ),
                 new WaitCommand(500),
-                new FollowPathCommand(robot.follower, shootPreloadPath, true),
-                new WaitCommand(500),
-                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                 new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(500)
         );
 
@@ -200,33 +195,57 @@ public abstract class Auto extends LinearOpMode {
                 new FollowPathCommand(robot.follower, intake1Path, true),
                 new WaitCommand(500),
                 new ParallelCommandGroup(
-                    new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
-                    new FollowPathCommand(robot.follower, pushGate1Path, true)
+                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
+                        new FollowPathCommand(robot.follower, pushGate1Path, true, 0.5)
                 )
         );
         shoot1Command = new SequentialCommandGroup(
-                new FollowPathCommand(robot.follower, shoot1Path, true)
+                new FollowPathCommand(robot.follower, shoot1Path, true),
+                new WaitCommand(500),
+                new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitCommand(500)
         );
 
         intake2Command = new SequentialCommandGroup(
-            new FollowPathCommand(robot.follower, prepareIntake2Path, true),
-            new FollowPathCommand(robot.follower, intake2Path, true)
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, prepareIntake2Path, true),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitCommand(500),
+                new FollowPathCommand(robot.follower, intake2Path, true),
+                new WaitCommand(500),
+                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM)
         );
         shoot2Command = new SequentialCommandGroup(
-            new FollowPathCommand(robot.follower, shoot2Path, true)
+                new FollowPathCommand(robot.follower, shoot2Path, true),
+                new WaitCommand(500),
+                new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitCommand(500)
         );
 
         intake3Command = new SequentialCommandGroup(
-            new FollowPathCommand(robot.follower, prepareIntake3Path, true),
-            new FollowPathCommand(robot.follower, intake3Path, true)
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, prepareIntake3Path, true),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitCommand(500),
+                new FollowPathCommand(robot.follower, intake3Path, true),
+                new WaitCommand(500),
+                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM)
         );
         shoot3Command = new SequentialCommandGroup(
-            new FollowPathCommand(robot.follower, shoot3Path, true)
+                new FollowPathCommand(robot.follower, shoot3Path, true),
+                new WaitCommand(500),
+                new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitCommand(500)
         );
 
         parkCommand = new SequentialCommandGroup(
-            new GoToRestingStateCommand(robot),
-            new FollowPathCommand(robot.follower, parkPath, true)
+                new GoToRestingStateCommand(robot),
+                new FollowPathCommand(robot.follower, parkPath, true)
         );
     }
 
@@ -240,6 +259,7 @@ public abstract class Auto extends LinearOpMode {
         buildPaths(team.getStartPosAuto());
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
+        robot.shooter.isAutoVelOn = false;
 
         waitForStart();
 
@@ -262,7 +282,7 @@ public abstract class Auto extends LinearOpMode {
 
             CommandScheduler.getInstance().run();
 
-            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
+//            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
             blackboard.put(AUTO_ENDING_DATA_KEY, robot.follower.getPose());
 
             hardware.write();
@@ -274,8 +294,5 @@ public abstract class Auto extends LinearOpMode {
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
             robot.telemetry.update();
         }
-
     }
-
-
 }
