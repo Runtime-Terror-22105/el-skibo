@@ -40,15 +40,15 @@ public abstract class Auto extends LinearOpMode {
     public static double SHOOT_PRELOAD_RPM = 3500;
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
-    public static Pose2d INTAKE_1_POSE = new Pose2d(26, 85.149, Math.toRadians(180));
+    public static Pose2d INTAKE_1_POSE = new Pose2d(26, 85.149, Math.toRadians(210));
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
     public static Pose2d SHOOT_POSE = new Pose2d(60, 87.449, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 63, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE = new Pose2d(INTAKE_1_POSE.x, 63, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(INTAKE_1_POSE.x, 63, Math.toRadians(210));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 40, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE = new Pose2d(INTAKE_1_POSE.x, 40, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(24, 40, Math.toRadians(210));
 
     public static Pose2d PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
 
@@ -202,7 +202,7 @@ public abstract class Auto extends LinearOpMode {
                 new FollowPathCommand(robot.follower, intake1Path, true),
                 new WaitCommand(INTAKE_DELAY),
                 new ParallelCommandGroup(
-                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM, IntakePitch.DOWN),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM, IntakePitch.DOWN)),
                         new FollowPathCommand(robot.follower, pushGate1Path, true, 0.5)
                 )
         );
@@ -222,11 +222,13 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake2Path, true),
-                new WaitCommand(INTAKE_DELAY),
-                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM)
+                new WaitCommand(INTAKE_DELAY)
         );
         shoot2Command = new SequentialCommandGroup(
-                new FollowPathCommand(robot.follower, shoot2Path, true),
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, shoot2Path, true),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
+                ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
@@ -244,7 +246,10 @@ public abstract class Auto extends LinearOpMode {
                 new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM)
         );
         shoot3Command = new SequentialCommandGroup(
-                new FollowPathCommand(robot.follower, shoot3Path, true),
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, shoot3Path, true),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
+                ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
