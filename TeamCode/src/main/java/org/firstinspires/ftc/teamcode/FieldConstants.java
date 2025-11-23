@@ -7,12 +7,12 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 
 @Config
 public class FieldConstants {
-    public static Pose2d BLUE_GOAL_POS = new Pose2d(6, 138, 0.0);
-    public static Pose2d RED_GOAL_POS = new Pose2d(138, 138, 0.0);
-    public static Pose2d BLUE_START_POS_TELEOP = new Pose2d(20, 123, Math.toRadians(52.3-90));
-    public static Pose2d RED_START_POS_TELEOP = new Pose2d(124, 123,  Math.toRadians(-225));
-    public static Pose2d BLUE_START_POS_AUTO = new Pose2d(20, 123, Math.toRadians(52.3-90));
-    public static Pose2d RED_START_POS_AUTO = new Pose2d(124, 123, (30D/18D)*Math.PI);
+    public static Pose2d BLUE_GOAL_POS = new Pose2d(6, 140, 0.0);
+    public static Pose2d RED_GOAL_POS = new Pose2d(138, 140, 0.0);
+    public static Pose2d BLUE_START_POS_TELEOP = new Pose2d(20, 123, Math.toRadians(-37.7));
+    public static Pose2d RED_START_POS_TELEOP = new Pose2d(124, 123, Math.toRadians(217.7));
+    public static Pose2d BLUE_START_POS_AUTO = new Pose2d(20, 123, Math.toRadians(-37.7));
+    public static Pose2d RED_START_POS_AUTO = new Pose2d(124, 123, Math.toRadians(217.7));
 
     public static double TILE_WIDTH = 23.6;
 
