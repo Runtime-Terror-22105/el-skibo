@@ -98,6 +98,8 @@ public class RobotHardware {
     public HardwareMap hwMap;
     private final TerrorPublisher publisher = new TerrorPublisher();
 
+    public boolean disableColorSensor = false;
+
     public enum HardwareOptions {
         CAMERA
     }
@@ -249,7 +251,9 @@ public class RobotHardware {
 
     public void write() {
         this.publisher.write();
-        this.updateColorSensors();
+        if (!this.disableColorSensor) {
+            this.updateColorSensors();
+        }
     }
 
     private void initLynx(LynxModule.BulkCachingMode bulkCachingMode) {
