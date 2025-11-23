@@ -64,7 +64,7 @@ public abstract class Auto extends LinearOpMode {
     private final Team team;
 
     private PathChain shootPreloadPath;
-    private PathChain prepareIntake1Path, intake1Path, pushGate1Path, shoot1Path;
+    private PathChain prepareIntake1Path, intake1Path, shoot1Path;
     private PathChain prepareIntake2Path, intake2Path, shoot2Path;
     private PathChain prepareIntake3Path, intake3Path, shoot3Path;
     private PathChain parkPath;
@@ -135,21 +135,10 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setLinearHeadingInterpolation(prepareIntake1Pose.getHeading(), intake1Pose.getHeading())
                 .build();
-        pushGate1Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                intake1Pose,
-                                pushGateControl,
-                                pushGatePose
-                        )
-                )
-                .setLinearHeadingInterpolation(intake1Pose.getHeading(), pushGatePose.getHeading())
-                .build();
         shoot1Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(pushGatePose, shootPose)
+                        new BezierLine(intake1Pose, shootPose)
                 )
                 .setConstantHeadingInterpolation(shootPose.getHeading())
                 .build();
@@ -234,14 +223,13 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake1Path, true),
-                new WaitCommand(INTAKE_DELAY),
-                new ParallelCommandGroup(
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, null, SHOOT_PRELOAD_RPM, IntakePitch.DOWN)),
-                        new FollowPathCommand(robot.follower, pushGate1Path, true, 0.5)
-                )
+                new WaitCommand(INTAKE_DELAY)
         );
         shoot1Command = new SequentialCommandGroup(
-                new FollowPathCommand(robot.follower, shoot1Path, true),
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, shoot1Path, true),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
+                ),
                 new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
