@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl;
 import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
