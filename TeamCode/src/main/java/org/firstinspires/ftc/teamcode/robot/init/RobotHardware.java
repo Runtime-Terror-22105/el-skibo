@@ -8,10 +8,12 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
@@ -86,6 +88,7 @@ public class RobotHardware {
 
     // Sensors
     public DigitalChannel spindexerLimitSwitch;
+    public IMU imu;
 
     // Lynx stuff
     public List<LynxModule> allHubs;
@@ -233,6 +236,7 @@ public class RobotHardware {
             this.initCamera();
         }
         this.initLynx(bulkCachingMode);
+        this.initImu();
 
         // Other Sensors
     }
@@ -281,5 +285,15 @@ public class RobotHardware {
 //        }
 ////        this.camera.tagProcessor.setDecimation(???); // TODO: tune decimation value
 //        this.camera.tagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.APRILTAG_BUILTIN);
+    }
+
+    private void initImu() {
+        this.imu = hwMap.get(IMU.class,  "imu");
+        this.imu.initialize(new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                )
+        ));
     }
 }
