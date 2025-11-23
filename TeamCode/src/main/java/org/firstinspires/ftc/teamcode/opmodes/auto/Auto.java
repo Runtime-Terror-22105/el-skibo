@@ -11,6 +11,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
@@ -54,7 +55,7 @@ public abstract class Auto extends LinearOpMode {
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 0;
-    public static int PRELOAD_PRE_SHOOT_DELAY = 300;
+    public static int PRELOAD_PRE_SHOOT_DELAY = 5000;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
 
@@ -296,6 +297,8 @@ public abstract class Auto extends LinearOpMode {
     }
 
     public void runOpMode() {
+        hardwareMap.dcMotor.get("motorRearLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         robot.init(hardware, telemetry);
