@@ -238,20 +238,22 @@ public class ShooterSubsystem extends SubsystemBase {
         robot.telemetry.addData("follower",botHeading*180/Math.PI );
 
 
-         double angleTurret = Angle.angleWrap(absoluteGoalAngle - botHeading);
-
+        // note: this is 0 to 360 instead of -180 to 180 for convenience below
+         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
 
          this.goalYaw = absoluteGoalAngle;
 
+        // todo: this is currently limited to 90 to 270 degrees
+        double servopos = Algebra.mapRange(angleTurret, Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
+        if ((angleTurret < turretPosAt180-posChange90 || angleTurret > turretPosAt180+posChange90) &&
+                robot.robotState == RobotState.READY_TO_SHOOT) {
+            robot.robotState = RobotState.NOT_READY;
+        }
 
-//        double servopos = turretPosAt0 + (Angle.angleWrap(Math.toRadians(test_turret_angle)+Math.toRadians(25)) / (0.5*Math.PI)) * posChange90;
-
-        // todo: this is currently limited to -90 to 90 degrees
-        double servopos = Algebra.mapRange(Angle.normalize(angleTurret), Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
-
-        if(servopos>1 || servopos<0){
-            robot.robotState= RobotState.NOT_READY;
+        if ((angleTurret > turretPosAt180-posChange90 && angleTurret < turretPosAt180+posChange90)
+                && robot.robotState == RobotState.NOT_READY) { // if we're in NOT_READY but are in range, we can set it back to ready
+            robot.robotState = RobotState.READY_TO_SHOOT;
         }
 
 //        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
