@@ -19,8 +19,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 public class ShootThreeBallsCommand extends SequentialCommandGroup {
     public static double spindexLoadingPower=0.5; // speed we set the SPINDEXER to spin and load into the shooter
 
-    public SpindexerSubsystem spindexer;
-
     public ShooterSubsystem shooter;
 
     private final Robot robot;
@@ -50,6 +48,6 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
     }
 
     public void execute(){
-        spindexer.setSpindexerPower(spindexLoadingPower);
+        robot.spindexer.setSpindexerPower(spindexLoadingPower);
     }
 }
