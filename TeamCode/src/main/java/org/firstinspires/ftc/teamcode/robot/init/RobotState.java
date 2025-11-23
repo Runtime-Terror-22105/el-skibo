@@ -20,7 +20,8 @@ public enum RobotState {
     CLIMBING(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
     DONE_CLIMB(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
 
-    TRANSFER(new StateTag[] {});
+    TRANSFER(new StateTag[] {}),
+    NOT_READY(new StateTag[]{});
 
     private final StateTag[] tags;
     RobotState(StateTag[] tags){ this.tags = tags;}
