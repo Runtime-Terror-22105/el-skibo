@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
@@ -100,7 +101,8 @@ public abstract class Auto extends LinearOpMode {
                 new WaitCommand(500),
                 new FollowPathCommand(robot.follower, shootPreloadPath, true),
                 new WaitCommand(500),
-//                new TransferCommand(robot, SHOOT_PRELOAD_RPM),
+                new TransferCommand(robot, SHOOT_PRELOAD_RPM),
+                new ShootThreeBallsCommand(robot),
                 new WaitCommand(500)
         );
 
@@ -121,7 +123,7 @@ public abstract class Auto extends LinearOpMode {
 
         robot.init(hardware, telemetry);
         robot.goalPos = team.getGoalPos();
-        robot.follower.setStartingPose(team.getStartPosAuto());
+        robot.follower.setStartingPose(team.getStartPosAuto().toPedro());
 
         buildPaths(team.getStartPosAuto());
         buildCommands();
