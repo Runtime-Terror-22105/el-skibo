@@ -34,6 +34,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 @Config
 @Configurable
 public abstract class Auto extends LinearOpMode {
+    public static double REACHED_TIME_SPINDEXER = 150;
+
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
@@ -210,7 +212,7 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer, REACHED_TIME_SPINDEXER).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -231,7 +233,7 @@ public abstract class Auto extends LinearOpMode {
                 new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer, REACHED_TIME_SPINDEXER).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -251,7 +253,7 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer, REACHED_TIME_SPINDEXER).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -272,7 +274,7 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer, REACHED_TIME_SPINDEXER).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
