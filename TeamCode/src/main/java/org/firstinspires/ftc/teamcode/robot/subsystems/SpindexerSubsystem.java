@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
+import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -68,11 +69,14 @@ public class SpindexerSubsystem extends SubsystemBase {
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
+    public double desiredAngle;
+
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
         this.hardware = hardware;
         this.sensors = new TerrorColorSensor[]{hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
 
+        this.desiredAngle = 0;
         this.yawPid.setTolerance(radiansToTicks(yawPidTolerance));
         this.yawPid.setTargetPosition(0.0);
     }
@@ -94,8 +98,58 @@ public class SpindexerSubsystem extends SubsystemBase {
         return this.yawPid.atTargetPosition(getPositionTicks());
     }
 
+    /**
+     * <p>Snaps the spindexer to a desired angle, while doing modulus to avoid unnecessary rotation.</p>
+     * <p>Use this when moving to an angle less than 120 degrees away.</p>
+     * @param angle The angle to go to, in radians.
+     */
+    public void goToAngle120(double angle) {
+        double bestAngle = this.desiredAngle;
+        double bestError = Double.POSITIVE_INFINITY;
+
+        double sector = 2 * Math.PI / 3.0; // 120 deg
+
+        // basically just loop through the three sides to see which is optimal
+        for (int i = 0; i < 3; i++) {
+            double equiv = angle + i * sector; // the equivalent angle in our current area
+            double error = Angle.angleWrap(equiv - this.desiredAngle);
+            if (Math.abs(error) < bestError) {
+                bestError = Math.abs(error);
+                bestAngle = this.desiredAngle + error;
+            }
+        }
+
+        this.desiredAngle = bestAngle;
+    }
+
+
+    /**
+     * <p>Snaps the spindexer to a desired angle, while doing modulus to avoid unnecessary rotation.</p>
+     * <p>Use this when moving to an angle that can be up to 360 degrees away.</p>
+     * @param angle The angle to go to, in radians.
+     */
+    public void goToAngle360(double angle) {
+        double error = Angle.angleWrap(angle - this.desiredAngle);
+        this.desiredAngle += error;
+    }
+
+    /**
+     * Increases the desired angle by a certain amount.
+     * @param angle The angle to add, in radians.
+     */
+    public void rotate(double angle) {
+        this.desiredAngle += angle;
+    }
+
+    /**
+     * <p>Directly sets the angle of the spindexer.</p>
+     * <p>This is deprecated, and only exists for the tuning files.
+     * See {@link #goToAngle120(double)}, {@link #goToAngle360(double)}, and {@link #rotate(double)} for better alternatives.</p>
+     * @param angle The angle to set the spindexer to.
+     */
+    @Deprecated
     public void setYaw(double angle) { //angle is in radians cuz i said so oh yeah and also have todo: optimization like the swerve pod thingy where u do the shortest distance
-        this.yawPid.setTargetPosition(radiansToTicks(angle));
+        this.desiredAngle = angle;
     }
 
     public boolean getLimitSwitchState() {
@@ -108,6 +162,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void updateSpindexer() {
+        this.yawPid.setTargetPosition(radiansToTicks(desiredAngle));
 //        if(hardware.spindexerEncoder.getCurrentPosition())
         if (pidEnabled) {
             this.spindexerPower = yawPid.calculatePower(getPositionTicks(), 0);
@@ -126,7 +181,7 @@ public class SpindexerSubsystem extends SubsystemBase {
             //TODO: add error handling here some telemetry message abt not having balls or smth
             return;
         }
-        setYaw(this.yawPid.getTargetPosition() + yawOffsets[nearestIndex]);
+        goToAngle360(this.yawPid.getTargetPosition() + yawOffsets[nearestIndex]);
     }
 
     public double getPositionTicks() {
@@ -199,43 +254,24 @@ public class SpindexerSubsystem extends SubsystemBase {
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
-                this.setYaw(startPos + normalizedError);
+                this.goToAngle360(startPos + normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION - ((2D / 3D) * Math.PI)) - greenPos), true);
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
-                this.setYaw(startPos + normalizedError);
+                this.goToAngle360(startPos + normalizedError);
 
             } else {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION - ((4D / 3D) * Math.PI)) - greenPos), true);
                 if (normalizedError >= 0.1) {
                     normalizedError = -((2 * Math.PI) - normalizedError);
                 }
-                this.setYaw(startPos + normalizedError);
+                this.goToAngle360(startPos + normalizedError);
             }
         } else {
-            this.setYaw(READY_POSITION);
-        }
-
-    }
-
-
-    public void shootBall() {
-        if (transferActive) {
-            this.setYaw(this.getPositionTicks() + SHOOT_ONE_ROTATION);
-        } else {
-            this.shootBall();
-
-        }
-
-
-    }
-
-    public void shootThree() {
-        for (int i = 0; i < 3; i++) {
-            this.shootBall();
+            this.goToAngle360(READY_POSITION);
         }
 
     }
