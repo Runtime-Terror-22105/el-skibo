@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
-import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
 
 @Config
@@ -49,7 +48,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double goalPitch;
     private double goalVelocity;
-    public double goalYaw;
     public double goalYawPos;
     public static double difference = 109.0;
 
@@ -92,7 +90,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
         this.isAutoAimOn = true;
 
-        this.goalYawPos = this.findYawAngle(botPos, goalPos);
+        this.goalYawPos = this.findYawAngle(goalPos);
 
 //        ShooterValues math = this.doMath(botPos, goalPos, shotType, apexHeight);
         ShooterValues math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
@@ -227,7 +225,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return new ShooterValues(null, null);
     }
 
-    private double findYawAngle(Pose2d botPos, Pose2d goalPos){
+    private double findYawAngle(Pose2d goalPos){
          double x = goalPos.x - robot.follower.getPose().getX();
          double y = goalPos.y - robot.follower.getPose().getY();
          double angle = Math.atan2(y,x);
@@ -243,12 +241,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // note: this is 0 to 360 instead of -180 to 180 for convenience below
          double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
+         return angleTurret;
 
-         this.goalYaw = absoluteGoalAngle;
-
-        // todo: this is currently limited to 90 to 270 degrees
-        double servopos = Algebra.mapRange(angleTurret, Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
-
+//         // todo: this is currently limited to 90 to 270 degrees
+//         double servopos = Algebra.mapRange(angleTurret, Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
+//
 //        if ((angleTurret < turretPosAt180-posChange90 || angleTurret > turretPosAt180+posChange90) &&
 //                robot.robotState == RobotState.READY_TO_SHOOT) {
 //            robot.robotState = RobotState.NOT_READY;
@@ -266,8 +263,8 @@ public class ShooterSubsystem extends SubsystemBase {
 //        robot.telemetry.addData("Angle of turret", Math.toDegrees(angleTurret));
 //        robot.telemetry.addData("Servopos", Math.toDegrees(servopos));
 //        robot.telemetry.addData("Pos of turret", pos);
-
-         return servopos;
+//
+//         return servopos;
     }
 
     public double getGoalVelocity() {
@@ -339,7 +336,9 @@ public class ShooterSubsystem extends SubsystemBase {
         // shooter rotation for turret
 //        double servoYaw = this.turretAngle / YAW_GEAR_RATIO;
 
-        hardware.turretYawLeft.setPosition(this.goalYawPos);
-        hardware.turretYawRight.setPosition(this.goalYawPos);
+        // todo: this is currently limited to 90 to 270 degrees
+        double servoPosTurret = Algebra.mapRange(this.goalYawPos, Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
+        hardware.turretYawLeft.setPosition(servoPosTurret);
+        hardware.turretYawRight.setPosition(servoPosTurret);
     }
 }

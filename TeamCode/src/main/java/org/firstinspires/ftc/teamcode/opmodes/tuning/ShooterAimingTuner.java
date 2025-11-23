@@ -31,9 +31,9 @@ public class ShooterAimingTuner extends LinearOpMode {
     public static double DIST_TO_GOAL = -1; // in mm
     public static double ROBOT_ANGLE_TO_GOAL = -1; // in degrees
 
-    public static double velocity;
-    public static double hoodPos;
-    public static double turretPos;
+    public static double velocity = 0;
+    public static double hoodPos = ShooterSubsystem.hoodPosMin;
+    public static double turretPos = 180;
 
 
     @Override
@@ -90,7 +90,7 @@ public class ShooterAimingTuner extends LinearOpMode {
             hardware.write();
 
 
-            robot.telemetry.addData("Goal Yaw", robot.shooter.goalYaw);
+            robot.telemetry.addData("Goal Yaw", robot.shooter.goalYawPos);
             robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
             robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
             robot.telemetry.addData("Goal Pitch", robot.shooter.getGoalPitch());
