@@ -265,8 +265,9 @@ public class ShooterSubsystem extends SubsystemBase {
         return this.goalVelocity;
     }
 
-    public void setSpeed(double goal){
-        this.goalVelocity = goal;
+    public void setSpeed(Double goal) {
+        if (goal != null)
+            this.goalVelocity = goal;
     }
 
     public double getVelocity() {
