@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
+import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
@@ -92,7 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         this.goalYawPos = this.findYawAngle(botPos, goalPos);
 
-        ShooterValues math = this.doMath(botPos, goalPos, shotType, apexHeight);
+//        ShooterValues math = this.doMath(botPos, goalPos, shotType, apexHeight);
+        ShooterValues math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
         if (math.flywheelVelocity == null || math.hoodPitch == null) {
             Log.e("shooter", "failed to do math!");
             return;
@@ -306,6 +309,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void updateShooter() {
+        Robot.debugTelemetry.addData("Shooter RPM", this.getVelocityRpm());
+        Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
+        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
+        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
         this.shooterPID.setTargetPosition(getGoalVelocity());
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
