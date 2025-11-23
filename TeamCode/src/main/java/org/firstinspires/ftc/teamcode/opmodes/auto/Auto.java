@@ -307,21 +307,21 @@ public abstract class Auto extends LinearOpMode {
         robot.follower.setMaxPower(MAX_POWER);
 
 //        CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
-        while (opModeInInit()) {
-            for (LynxModule hub : hardware.allHubs) {
-                hub.clearBulkCache();
-            }
-
-            CommandScheduler.getInstance().run();
-
-            hardware.write();
-
-            long time = System.nanoTime();
-            long dt = time - lastLoop;
-            lastLoop = time;
-            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
-            robot.telemetry.update();
-        }
+//        while (opModeInInit()) {
+//            for (LynxModule hub : hardware.allHubs) {
+//                hub.clearBulkCache();
+//            }
+//
+//            CommandScheduler.getInstance().run();
+//
+//            hardware.write();
+//
+//            long time = System.nanoTime();
+//            long dt = time - lastLoop;
+//            lastLoop = time;
+//            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
+//            robot.telemetry.update();
+//        }
 
 
         waitForStart();
