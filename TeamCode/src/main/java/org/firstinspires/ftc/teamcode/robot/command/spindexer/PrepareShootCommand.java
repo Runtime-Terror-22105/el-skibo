@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -22,14 +23,15 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 750;
 
     public PrepareShootCommand(Robot robot) {
-        this(robot, SHOOTER_RPM);
+        this(robot, null);
     }
 
-    public PrepareShootCommand(Robot robot, double rpm) {
+    public PrepareShootCommand(Robot robot, Double rpm) {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT),
 
                 // Phase 1 and 2: ???
+                new InstantCommand(() -> robot.shooter.isAutoVelOn = rpm == null),
                 new ParallelCommandGroup(
                     new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                     new SetIntakeSpeedCommand(robot.intake, 0),
