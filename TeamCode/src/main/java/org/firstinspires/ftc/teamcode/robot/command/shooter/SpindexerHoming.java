@@ -96,7 +96,7 @@ public class SpindexerHoming extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        spindexer.setYaw(0.0);
+        spindexer.goToAngle120(0.0);
         spindexer.setPidEnabled(true);
         Log.d("homing","reached the end portion where we set the pid to enable and we set the yaw to 0");
     }
