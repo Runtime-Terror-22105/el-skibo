@@ -36,7 +36,7 @@ public class ShooterLookupTable {
 
     public static LookupValue[] DATA_POINTS = new LookupValue[]
             {
-                    new LookupValue(35, 453),
+                    new LookupValue(35, 451),
                     new LookupValue(45, 470),
                     new LookupValue(55, 490),
                     new LookupValue(60, 500),

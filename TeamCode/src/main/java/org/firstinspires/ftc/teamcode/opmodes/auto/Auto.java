@@ -151,7 +151,7 @@ public abstract class Auto extends LinearOpMode {
                 .addPath(
                         new BezierLine(pushGatePose, shootPose)
                 )
-                .setLinearHeadingInterpolation(pushGatePose.getHeading(), shootPose.getHeading())
+                .setConstantHeadingInterpolation(shootPose.getHeading())
                 .build();
 
         prepareIntake2Path = follower
@@ -177,7 +177,7 @@ public abstract class Auto extends LinearOpMode {
                 .addPath(
                         new BezierLine(intake2Pose, shootPose)
                 )
-                .setLinearHeadingInterpolation(intake2Pose.getHeading(), shootPose.getHeading())
+                .setConstantHeadingInterpolation(shootPose.getHeading())
                 .build();
 
         prepareIntake3Path = follower
@@ -203,7 +203,7 @@ public abstract class Auto extends LinearOpMode {
                 .addPath(
                         new BezierLine(intake3Pose, shootPose)
                 )
-                .setLinearHeadingInterpolation(intake3Pose.getHeading(), shootPose.getHeading())
+                .setConstantHeadingInterpolation(shootPose.getHeading())
                 .build();
 
         parkPath = follower
