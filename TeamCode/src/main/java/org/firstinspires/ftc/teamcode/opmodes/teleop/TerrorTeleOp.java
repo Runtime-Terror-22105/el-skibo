@@ -116,7 +116,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState != FULL &&
+                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT //robot.robotState != FULL &&
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(
