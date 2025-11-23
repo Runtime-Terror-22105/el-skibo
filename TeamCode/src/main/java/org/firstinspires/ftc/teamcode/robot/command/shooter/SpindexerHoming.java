@@ -26,6 +26,7 @@ public class SpindexerHoming extends CommandBase {
         addRequirements(spindexer);
     }
 
+
     @Override
     public void initialize() {
         homed = false;
