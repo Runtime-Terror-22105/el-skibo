@@ -55,7 +55,7 @@ public abstract class Auto extends LinearOpMode {
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 0;
-    public static int PRELOAD_PRE_SHOOT_DELAY = 5000;
+    public static int PRELOAD_PRE_SHOOT_DELAY = 3000;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
 

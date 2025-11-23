@@ -78,7 +78,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware = hardware;
         this.sensors = new TerrorColorSensor[]{hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
 
-        this.desiredAngle = 0;
+        this.desiredAngle = getPosition();
+        goToAngle120(0);
         this.yawPid.setTolerance(radiansToTicks(yawPidTolerance));
         this.yawPid.setTargetPosition(0.0);
     }
