@@ -246,15 +246,15 @@ public class ShooterSubsystem extends SubsystemBase {
         // todo: this is currently limited to 90 to 270 degrees
         double servopos = Algebra.mapRange(angleTurret, Math.PI/2, 3*Math.PI/2, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
-        if ((angleTurret < turretPosAt180-posChange90 || angleTurret > turretPosAt180+posChange90) &&
-                robot.robotState == RobotState.READY_TO_SHOOT) {
-            robot.robotState = RobotState.NOT_READY;
-        }
-
-        if ((angleTurret > turretPosAt180-posChange90 && angleTurret < turretPosAt180+posChange90)
-                && robot.robotState == RobotState.NOT_READY) { // if we're in NOT_READY but are in range, we can set it back to ready
-            robot.robotState = RobotState.READY_TO_SHOOT;
-        }
+//        if ((angleTurret < turretPosAt180-posChange90 || angleTurret > turretPosAt180+posChange90) &&
+//                robot.robotState == RobotState.READY_TO_SHOOT) {
+//            robot.robotState = RobotState.NOT_READY;
+//        }
+//
+//        if ((angleTurret > turretPosAt180-posChange90 && angleTurret < turretPosAt180+posChange90)
+//                && robot.robotState == RobotState.NOT_READY) { // if we're in NOT_READY but are in range, we can set it back to ready
+//            robot.robotState = RobotState.READY_TO_SHOOT;
+//        }
 
 //        robot.telemetry.addData("Goal Angle",Math.toDegrees(absoluteGoalAngle));
 //        robot.telemetry.addData("X diff",x);
