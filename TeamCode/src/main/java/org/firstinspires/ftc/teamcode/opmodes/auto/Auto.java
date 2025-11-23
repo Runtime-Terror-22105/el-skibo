@@ -133,23 +133,12 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setLinearHeadingInterpolation(prepareIntake1Pose.getHeading(), intake1Pose.getHeading())
                 .build();
-        pushGate1Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                intake1Pose,
-                                pushGateControl,
-                                pushGatePose
-                        )
-                )
-                .setLinearHeadingInterpolation(intake1Pose.getHeading(), pushGatePose.getHeading())
-                .build();
         shoot1Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(pushGatePose, shootPose)
+                        new BezierLine(intake1Pose, shootPose)
                 )
-                .setLinearHeadingInterpolation(pushGatePose.getHeading(), shootPose.getHeading())
+                .setLinearHeadingInterpolation(intake1Pose.getHeading(), shootPose.getHeading())
                 .build();
 
         prepareIntake2Path = follower
@@ -216,7 +205,7 @@ public abstract class Auto extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-//                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
+                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
@@ -232,14 +221,13 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake1Path, true),
-                new WaitCommand(INTAKE_DELAY),
-                new ParallelCommandGroup(
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM, IntakePitch.DOWN)),
-                        new FollowPathCommand(robot.follower, pushGate1Path, true, 0.5)
-                )
+                new WaitCommand(INTAKE_DELAY)
         );
         shoot1Command = new SequentialCommandGroup(
-                new FollowPathCommand(robot.follower, shoot1Path, true),
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, shoot1Path, true),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
+                ),
                 new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
@@ -304,24 +292,6 @@ public abstract class Auto extends LinearOpMode {
         buildPaths(team.getStartPosAuto(), Team.RED.equals(team));
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
-
-        CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
-        while (opModeInInit()) {
-            for (LynxModule hub : hardware.allHubs) {
-                hub.clearBulkCache();
-            }
-
-            CommandScheduler.getInstance().run();
-
-            hardware.write();
-
-            long time = System.nanoTime();
-            long dt = time - lastLoop;
-            lastLoop = time;
-            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
-            robot.telemetry.update();
-        }
-
 
         waitForStart();
 
