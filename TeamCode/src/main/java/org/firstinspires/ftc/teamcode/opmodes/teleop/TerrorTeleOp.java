@@ -27,7 +27,7 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -111,12 +111,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //                    new GoToFullStateCommand(robot)
                 ),
                 new InstantCommand(() -> {} ),
-                () ->  robot.robotState != SHOOTING //robot.robotState != FULL &&
+                () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
         ));
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState != FULL &&
+                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(
@@ -127,7 +127,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         reverseIntakeButton.whenInactive(new SetIntakeSpeedCommand(robot.intake, 0.0));
 
         threeBallsAreInside.whenActive(new ConditionalCommand(
-                new TransferCommand(robot),
+                new PrepareShootCommand(robot),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState == RESTING || robot.robotState == INTAKING
         ));
@@ -136,17 +136,17 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 new ConditionalCommand( // if we already did the transfer, just shoot immediately
                         new ShootThreeBallsCommand(robot),
                         new SequentialCommandGroup(
-                                new TransferCommand(robot),
+                                new PrepareShootCommand(robot),
                                 new ShootThreeBallsCommand(robot)
                         ),
                         () -> robot.robotState == READY_TO_SHOOT
                 ),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState == FULL
+                () -> robot.robotState != SHOOTING
         ));
 
         shoot1button.whenPressed(new ConditionalCommand(
-                new TransferCommand(robot),
+                new PrepareShootCommand(robot),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING
         ));

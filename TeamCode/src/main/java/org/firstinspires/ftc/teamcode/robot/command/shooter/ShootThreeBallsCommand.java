@@ -3,17 +3,28 @@ package org.firstinspires.ftc.teamcode.robot.command.shooter;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.ChangeSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerPoleActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
 public class ShootThreeBallsCommand extends SequentialCommandGroup {
+    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
+
     public ShootThreeBallsCommand(Robot robot) {
         super(
+                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
+                new WaitCommand(200),
+
+                // Phase 5: transfer balls
+                new ChangeSpindexerYawCommand(robot.spindexer, SPINDEX_ROTATIONS*2*Math.PI),
+
                 new ParallelRaceGroup( // keep going for either 2 rotations or until all balls are gone
                         new WaitForSpindexerYawCommand(robot.spindexer)
 //                        new WaitUntilCommand(() -> {

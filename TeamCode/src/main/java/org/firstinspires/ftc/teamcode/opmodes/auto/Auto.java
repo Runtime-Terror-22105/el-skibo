@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -22,38 +21,55 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.pedroPathing.Drawing;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
 @Configurable
 public abstract class Auto extends LinearOpMode {
     public static double MAX_POWER = 0.5;
+
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
     public static double SHOOT_PRELOAD_RPM = 0;
+
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(30.2, 85.149, Math.toRadians(180));
-    public static Pose2d PUSH_GATE_POSE = new Pose2d(44.873, 72.827, Math.toRadians(180));
+    public static Pose2d PUSH_GATE_POSE = new Pose2d(20.873, 72.827, Math.toRadians(180));
+    public static Pose2d SHOOT_POSE = new Pose2d(51.893, 87.449, Math.toRadians(315));
+
+    public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(37.901, 60.243, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(14.387, 60.243, Math.toRadians(180));
+
+    public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(36.735, 35.757, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(13.221, 35.757, Math.toRadians(180));
+
+    public static Pose2d PARK_POSE = new Pose2d(52.282, 110.575, Math.toRadians(315));
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
     private final Team team;
 
     private PathChain shootPreloadPath;
-    private PathChain prepareIntake1Path;
-    private PathChain intake1Path;
-    private PathChain pushGate1Path;
+    private PathChain prepareIntake1Path, intake1Path, pushGate1Path, shoot1Path;
+    private PathChain prepareIntake2Path, intake2Path, shoot2Path;
+    private PathChain prepareIntake3Path, intake3Path, shoot3Path;
+    private PathChain parkPath;
 
     private Command shootPreloadCommand;
-    private Command intake1Command;
+    private Command intake1Command, shoot1Command;
+    private Command intake2Command, shoot2Command;
+    private Command intake3Command, shoot3Command;
+    private Command parkCommand;
 
     private long lastLoop = System.nanoTime();
 
@@ -78,7 +94,6 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setLinearHeadingInterpolation(SHOOT_PRELOAD_POSE.heading, PREPARE_INTAKE_1_POSE.heading)
                 .build();
-
         intake1Path = follower
                 .pathBuilder()
                 .addPath(
@@ -86,7 +101,6 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setLinearHeadingInterpolation(PREPARE_INTAKE_1_POSE.heading, INTAKE_1_POSE.heading)
                 .build();
-
         pushGate1Path = follower
                 .pathBuilder()
                 .addPath(
@@ -95,6 +109,73 @@ public abstract class Auto extends LinearOpMode {
                                 PUSH_GATE_POSE.toPedro())
                 )
                 .setLinearHeadingInterpolation(INTAKE_1_POSE.heading, PUSH_GATE_POSE.heading)
+                .build();
+        shoot1Path = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(PUSH_GATE_POSE.toPedro(), SHOOT_POSE.toPedro())
+                )
+                .setLinearHeadingInterpolation(PUSH_GATE_POSE.heading, SHOOT_POSE.heading)
+                .build();
+
+        prepareIntake2Path = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                SHOOT_POSE.toPedro(),
+                                new Pose(55.780, 69.765),
+                                PREPARE_INTAKE_2_POSE.toPedro()
+                        )
+                )
+                .setLinearHeadingInterpolation(SHOOT_POSE.heading, PREPARE_INTAKE_2_POSE.heading)
+                .build();
+        intake2Path = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(PREPARE_INTAKE_2_POSE.toPedro(), INTAKE_2_POSE.toPedro())
+                )
+                .setLinearHeadingInterpolation(PREPARE_INTAKE_2_POSE.heading, INTAKE_2_POSE.heading)
+                .build();
+        shoot2Path = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(INTAKE_2_POSE.toPedro(), SHOOT_POSE.toPedro())
+                )
+                .setLinearHeadingInterpolation(INTAKE_2_POSE.heading, SHOOT_POSE.heading)
+                .build();
+
+        prepareIntake3Path = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                SHOOT_POSE.toPedro(),
+                                new Pose(56.751, 45.668),
+                                PREPARE_INTAKE_3_POSE.toPedro()
+                        )
+                )
+                .setLinearHeadingInterpolation(SHOOT_POSE.heading, PREPARE_INTAKE_3_POSE.heading)
+                .build();
+        intake3Path = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(PREPARE_INTAKE_3_POSE.toPedro(), INTAKE_3_POSE.toPedro())
+                )
+                .setLinearHeadingInterpolation(PREPARE_INTAKE_3_POSE.heading, INTAKE_3_POSE.heading)
+                .build();
+        shoot3Path = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(INTAKE_3_POSE.toPedro(), SHOOT_POSE.toPedro())
+                )
+                .setLinearHeadingInterpolation(INTAKE_3_POSE.heading, SHOOT_POSE.heading)
+                .build();
+
+        parkPath = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(SHOOT_POSE.toPedro(), PARK_POSE.toPedro())
+                )
+                .setLinearHeadingInterpolation(SHOOT_POSE.heading, PARK_POSE.heading)
                 .build();
     }
 
@@ -105,7 +186,7 @@ public abstract class Auto extends LinearOpMode {
                 new WaitCommand(500),
                 new FollowPathCommand(robot.follower, shootPreloadPath, true),
                 new WaitCommand(500),
-                new TransferCommand(robot, SHOOT_PRELOAD_RPM),
+                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                 new ShootThreeBallsCommand(robot),
                 new WaitCommand(500)
         );
@@ -118,7 +199,34 @@ public abstract class Auto extends LinearOpMode {
                 new WaitCommand(500),
                 new FollowPathCommand(robot.follower, intake1Path, true),
                 new WaitCommand(500),
-                new FollowPathCommand(robot.follower, pushGate1Path, true)
+                new ParallelCommandGroup(
+                    new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
+                    new FollowPathCommand(robot.follower, pushGate1Path, true)
+                )
+        );
+        shoot1Command = new SequentialCommandGroup(
+                new FollowPathCommand(robot.follower, shoot1Path, true)
+        );
+
+        intake2Command = new SequentialCommandGroup(
+            new FollowPathCommand(robot.follower, prepareIntake2Path, true),
+            new FollowPathCommand(robot.follower, intake2Path, true)
+        );
+        shoot2Command = new SequentialCommandGroup(
+            new FollowPathCommand(robot.follower, shoot2Path, true)
+        );
+
+        intake3Command = new SequentialCommandGroup(
+            new FollowPathCommand(robot.follower, prepareIntake3Path, true),
+            new FollowPathCommand(robot.follower, intake3Path, true)
+        );
+        shoot3Command = new SequentialCommandGroup(
+            new FollowPathCommand(robot.follower, shoot3Path, true)
+        );
+
+        parkCommand = new SequentialCommandGroup(
+            new GoToRestingStateCommand(robot),
+            new FollowPathCommand(robot.follower, parkPath, true)
         );
     }
 
@@ -137,7 +245,10 @@ public abstract class Auto extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 shootPreloadCommand,
-                intake1Command
+                intake1Command, shoot1Command,
+                intake2Command, shoot2Command,
+                intake3Command, shoot3Command,
+                parkCommand
         ));
 
         lastLoop = System.nanoTime();
