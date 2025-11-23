@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -13,7 +11,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
@@ -32,25 +29,20 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @Config
 @Configurable
 public abstract class Auto extends LinearOpMode {
-    public static double REACHED_TIME_SPINDEXER = 150;
-
     public static double MAX_POWER = 1.0;
 
-    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 112.644, Math.toRadians(315));
-    // 1.05, 480
-    public static Double HOOD_PITCH = 1.05;
-    public static Double SHOOT_PRELOAD_RPM = ShooterSubsystem.velToRPM(480);
+    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
+    public static Double SHOOT_PRELOAD_RPM = null;
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(26, 85.149, Math.toRadians(210));
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
-    public static Pose2d SHOOT_POSE = new Pose2d(50, 112.644, Math.toRadians(315));
+    public static Pose2d SHOOT_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 63, Math.toRadians(180));
     public static Pose2d INTAKE_2_POSE = new Pose2d(INTAKE_1_POSE.x, 63, Math.toRadians(210));
@@ -62,6 +54,7 @@ public abstract class Auto extends LinearOpMode {
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 0;
+    public static int PRELOAD_PRE_SHOOT_DELAY = 300;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
 
@@ -141,12 +134,23 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setLinearHeadingInterpolation(prepareIntake1Pose.getHeading(), intake1Pose.getHeading())
                 .build();
+//        pushGate1Path = follower
+//                .pathBuilder()
+//                .addPath(
+//                        new BezierCurve(
+//                                intake1Pose,
+//                                pushGateControl,
+//                                pushGatePose
+//                        )
+//                )
+//                .setLinearHeadingInterpolation(intake1Pose.getHeading(), pushGatePose.getHeading())
+//                .build();
         shoot1Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(intake1Pose, shootPose)
+                        new BezierLine(pushGatePose, shootPose)
                 )
-                .setLinearHeadingInterpolation(intake1Pose.getHeading(), shootPose.getHeading())
+                .setLinearHeadingInterpolation(pushGatePose.getHeading(), shootPose.getHeading())
                 .build();
 
         prepareIntake2Path = follower
@@ -213,12 +217,12 @@ public abstract class Auto extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new PrepareShootCommand(robot, HOOD_PITCH, SHOOT_PRELOAD_RPM, IntakePitch.UP),
+//                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
-                new WaitCommand(PRE_SHOOT_DELAY),
+                new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer, REACHED_TIME_SPINDEXER).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -229,17 +233,18 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake1Path, true),
-                new WaitCommand(INTAKE_DELAY)
+                new WaitCommand(INTAKE_DELAY),
+                new ParallelCommandGroup(
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, null, SHOOT_PRELOAD_RPM, IntakePitch.DOWN)),
+                        new FollowPathCommand(robot.follower, pushGate1Path, true, 0.5)
+                )
         );
         shoot1Command = new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, shoot1Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, HOOD_PITCH, SHOOT_PRELOAD_RPM, IntakePitch.UP))
-                ),
+                new FollowPathCommand(robot.follower, shoot1Path, true),
                 new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer, REACHED_TIME_SPINDEXER).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -255,11 +260,11 @@ public abstract class Auto extends LinearOpMode {
         shoot2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot2Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, HOOD_PITCH, SHOOT_PRELOAD_RPM, IntakePitch.UP))
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer, REACHED_TIME_SPINDEXER).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -271,16 +276,16 @@ public abstract class Auto extends LinearOpMode {
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake3Path, true),
                 new WaitCommand(INTAKE_DELAY),
-                new PrepareShootCommand(robot, HOOD_PITCH, SHOOT_PRELOAD_RPM, IntakePitch.UP)
+                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM)
         );
         shoot3Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot3Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, HOOD_PITCH, SHOOT_PRELOAD_RPM, IntakePitch.UP))
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer, REACHED_TIME_SPINDEXER).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -291,10 +296,7 @@ public abstract class Auto extends LinearOpMode {
     }
 
     public void runOpMode() {
-        hardwareMap.dcMotor.get("motorRearLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        hardware.disableColorSensor = true;
 
         robot.init(hardware, telemetry);
         robot.goalPos = team.getGoalPos();
@@ -303,6 +305,24 @@ public abstract class Auto extends LinearOpMode {
         buildPaths(team.getStartPosAuto(), Team.RED.equals(team));
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
+
+        CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
+        while (opModeInInit()) {
+            for (LynxModule hub : hardware.allHubs) {
+                hub.clearBulkCache();
+            }
+
+            CommandScheduler.getInstance().run();
+
+            hardware.write();
+
+            long time = System.nanoTime();
+            long dt = time - lastLoop;
+            lastLoop = time;
+            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
+            robot.telemetry.update();
+        }
+
 
         waitForStart();
 
@@ -327,7 +347,6 @@ public abstract class Auto extends LinearOpMode {
 
 //            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
             blackboard.put(AUTO_ENDING_DATA_KEY, robot.follower.getPose());
-            Log.i("Auto", "Auto position at the moment" + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
 
             hardware.write();
 
