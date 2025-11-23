@@ -312,8 +312,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void updateShooter() {
         Robot.debugTelemetry.addData("Shooter RPM", this.getVelocityRpm());
         Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
-        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
-        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
+//        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
+//        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
         this.shooterPID.setTargetPosition(getGoalVelocity());
         this.shooterSpeed = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
