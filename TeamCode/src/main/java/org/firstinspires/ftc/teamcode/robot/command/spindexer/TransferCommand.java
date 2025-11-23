@@ -52,13 +52,4 @@ public class TransferCommand extends SequentialCommandGroup {
         );
         this.robot = robot;
     }
-
-    @Override
-    public void end(boolean interrupted) {
-        super.end(interrupted);
-        robot.spindexer.setPidEnabled(true);
-        robot.intake.setSpeed(0);
-        robot.hardware.shooterLeft.setPower(0);
-        robot.hardware.shooterRight.setPower(0);
-    }
 }
