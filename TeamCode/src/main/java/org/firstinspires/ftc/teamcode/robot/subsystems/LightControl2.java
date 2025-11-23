@@ -40,17 +40,27 @@ public class LightControl2 extends SubsystemBase {
                 break;
 
             //i might be misunderstanding
-//            case FULL:
+//           case FULL:
 //                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
 //                break;
+
+            case NOT_READY:
+                hardware.lights.setColor(TerrorLight.LightColors.RED);
+                break;
+
             case TRANSFER:
                 hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
                 break;
 
-            case SHOOTING:
+            case READY_TO_SHOOT:
                 hardware.lights.setColor(TerrorLight.LightColors.GREEN);
 
                 break;
+
+            case SHOOTING:
+                hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
+                break;
+
 
             case CLIMBING:
                 break;
