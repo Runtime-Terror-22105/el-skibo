@@ -292,6 +292,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 //        this.hardware.spindexerTransferRampServo.setPosition(this.shooterRampPosition);
 //        this.hardware.spindexerDiddyServo.setPosition(this.wallPosition);
 
+        if (robot.hang.isPtoEngaged()) {
+            return;
+        }
+
         this.updateSpindexer();
         this.hardware.spindexerRotate.setPower(this.spindexerPower);
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
