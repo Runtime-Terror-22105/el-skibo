@@ -11,6 +11,7 @@ import android.util.Log;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
@@ -210,6 +211,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
             hardware.write();
 
+            FtcDashDrawing.drawDebug(robot.follower);
             long time = System.nanoTime();
             long dt = time - lastLoop;
             lastLoop = time;
