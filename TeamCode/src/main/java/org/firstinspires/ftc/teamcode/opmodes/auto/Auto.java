@@ -134,17 +134,17 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setLinearHeadingInterpolation(prepareIntake1Pose.getHeading(), intake1Pose.getHeading())
                 .build();
-//        pushGate1Path = follower
-//                .pathBuilder()
-//                .addPath(
-//                        new BezierCurve(
-//                                intake1Pose,
-//                                pushGateControl,
-//                                pushGatePose
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(intake1Pose.getHeading(), pushGatePose.getHeading())
-//                .build();
+        pushGate1Path = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                intake1Pose,
+                                pushGateControl,
+                                pushGatePose
+                        )
+                )
+                .setLinearHeadingInterpolation(intake1Pose.getHeading(), pushGatePose.getHeading())
+                .build();
         shoot1Path = follower
                 .pathBuilder()
                 .addPath(
@@ -217,7 +217,7 @@ public abstract class Auto extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-//                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
+                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
@@ -306,7 +306,7 @@ public abstract class Auto extends LinearOpMode {
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
 
-        CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
+//        CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
