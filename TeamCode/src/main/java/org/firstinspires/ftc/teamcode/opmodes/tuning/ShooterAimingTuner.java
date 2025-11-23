@@ -85,8 +85,6 @@ public class ShooterAimingTuner extends LinearOpMode {
             }
 
 
-            robot.shooter.setSpeed(GOAL_RPM);
-
             CommandScheduler.getInstance().run();
 
             hardware.write();
