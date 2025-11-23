@@ -66,7 +66,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         robot.init(hardware, telemetry);
 
-        this.setTeam(Team.BLUE);
+        this.setTeam(color);
         Object motif = blackboard.getOrDefault(MOTIF_DATA_KEY, null);
         Object autoEnd = blackboard.getOrDefault(AUTO_ENDING_DATA_KEY, null);
         Log.i("Auto", "Ending position after auto " + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
