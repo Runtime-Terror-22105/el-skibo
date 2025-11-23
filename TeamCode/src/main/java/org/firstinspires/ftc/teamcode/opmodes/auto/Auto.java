@@ -297,7 +297,7 @@ public abstract class Auto extends LinearOpMode {
     }
 
     public void runOpMode() {
-        hardwareMap.dcMotor.get("motorRearLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
