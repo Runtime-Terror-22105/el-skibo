@@ -15,14 +15,20 @@ public class SortTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
+    public static CameraSubsystem.GLYPH glyph = CameraSubsystem.GLYPH.GPP;
+
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         robot.init(hardware, telemetry);
 
-        robot.camera.setGlyph(CameraSubsystem.GLYPH.GPP);
+        robot.telemetry.addLine("Please select the glyph in FTC Dash!");
+        robot.telemetry.addLine("Make sure to load up the balls.");
+        robot.telemetry.update();
 
         waitForStart();
+
+        robot.camera.setGlyph(glyph);
 
         SortCommand sort = new SortCommand(robot.spindexer);
         CommandScheduler.getInstance().schedule(sort);
@@ -38,6 +44,7 @@ public class SortTest extends LinearOpMode {
 
             hardware.write();
 
+            robot.telemetry.update();
         }
 
     }
