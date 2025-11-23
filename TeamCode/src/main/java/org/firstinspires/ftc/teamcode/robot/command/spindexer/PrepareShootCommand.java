@@ -22,16 +22,20 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 750;
 
     public PrepareShootCommand(Robot robot) {
-        this(robot, SHOOTER_RPM);
+        this(robot, SHOOTER_RPM, IntakePitch.UP);
     }
 
     public PrepareShootCommand(Robot robot, double rpm) {
+        this(robot, rpm, IntakePitch.UP);
+    }
+
+    public PrepareShootCommand(Robot robot, double rpm, IntakePitch pitch) {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT),
 
                 // Phase 1 and 2: ???
                 new ParallelCommandGroup(
-                    new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
+                    new SetIntakePitchCommand(robot.intake, pitch),
                     new SetIntakeSpeedCommand(robot.intake, 0),
                     new SetSpindexerWallDown(robot.spindexer, false),
                     new SetSpindexerPoleActive(robot.spindexer, true),
