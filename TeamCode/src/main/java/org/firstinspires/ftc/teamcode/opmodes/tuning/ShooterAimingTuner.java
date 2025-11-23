@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShotType;
 
 @Config
@@ -76,8 +77,8 @@ public class ShooterAimingTuner extends LinearOpMode {
             Pose2d robotPose = new Pose2d(DIST_TO_GOAL_X, DIST_TO_GOAL_Y, Math.atan2(DIST_TO_GOAL_Y, DIST_TO_GOAL_X));
             Pose2d goalPos = new Pose2d(0, 0, 0);
 
-            robot.shooter.doMath(robotPose, goalPos, ShotType.Arc, 60.0);
-            robot.shooter.manualAim(robot.shooter.getGoalVelocity(), robot.shooter.getGoalPitch(), 0);
+            ShooterSubsystem.ShooterValues math = robot.shooter.doMath(robotPose, goalPos, ShotType.Arc, 60.0);
+            robot.shooter.manualAim(math.flywheelVelocity, math.hoodPitch, 0);
 
             if (gamepad1.rightBumperWasPressed()) {
                 CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot));

@@ -8,6 +8,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 // WaitForSpindexerYawCommand for that.
 public class ChangeSpindexerYawCommand extends InstantCommand {
     public ChangeSpindexerYawCommand(SpindexerSubsystem spindexer, double yaw) {
-        super(() -> spindexer.setYaw(spindexer.getTargetYaw() + yaw));
+        super(() -> spindexer.rotate(spindexer.getTargetYaw()));
     }
 }
