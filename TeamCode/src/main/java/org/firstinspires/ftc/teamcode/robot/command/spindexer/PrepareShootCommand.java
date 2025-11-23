@@ -27,6 +27,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
 
     public PrepareShootCommand(Robot robot, double rpm) {
         super(
+                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT),
+
                 // Phase 1 and 2: ???
                 new SetIntakePitchCommand(robot.intake, IntakePitch.DOWN),
                 new SetIntakeSpeedCommand(robot.intake, 0),
@@ -43,10 +45,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
 
                 // Phase 4: drop down ramp and start intake
                 new SetSpindexerRampActive(robot.spindexer, true),
-                new WaitCommand(RAMP_DELAY), // todo: adjust this delay based on how long it takes for ramp to drop
-
-                // set to full state
-                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT)
+                new WaitCommand(RAMP_DELAY) // todo: adjust this delay based on how long it takes for ramp to drop
         );
         this.robot = robot;
     }
