@@ -64,10 +64,6 @@ public class CameraSubsystem extends SubsystemBase {
     public GLYPH gameGlyph;
     private boolean decodedGlyph = false; //when the movie uses the title of the movie
 
-    public GLYPH getGlyph() {
-        return gameGlyph;
-    }
-
     /**
      * @return order of the balls in the spindexer with top:0 right:1 left:2
      * G/P:colors, N:no ball detected
@@ -125,6 +121,13 @@ public class CameraSubsystem extends SubsystemBase {
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .build();
+    }
+
+    public GLYPH getGlyph() {
+        if (decodedGlyph) {
+            return gameGlyph;
+        }
+        return null;
     }
 
     public void setGlyph(GLYPH glyph) {
