@@ -27,6 +27,7 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.AdjustSpindexZeroCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -99,6 +100,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
 
+        GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
+        GamepadButton adjustSpindexZeroLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
+        GamepadButton adjustSpindexZeroRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
+
         Trigger threeBallsAreInside = new Trigger(() -> {
             final char[] balls = robot.spindexer.getBallPositions();
             return balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N';
@@ -160,6 +165,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
+        resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
+        adjustSpindexZeroLeft.whenPressed(new AdjustSpindexZeroCommand(robot, false));
+        adjustSpindexZeroRight.whenPressed(new AdjustSpindexZeroCommand(robot, true));
 
         // driver 2
         GamepadButton motifPGPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);
