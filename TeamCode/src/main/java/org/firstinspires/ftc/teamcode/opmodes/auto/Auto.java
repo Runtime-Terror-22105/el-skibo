@@ -37,12 +37,12 @@ public abstract class Auto extends LinearOpMode {
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
-    public static double SHOOT_PRELOAD_RPM = 3500;
+    public static Double SHOOT_PRELOAD_RPM = null;
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(26, 85.149, Math.toRadians(210));
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
-    public static Pose2d SHOOT_POSE = new Pose2d(60, 87.449, Math.toRadians(315));
+    public static Pose2d SHOOT_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 63, Math.toRadians(180));
     public static Pose2d INTAKE_2_POSE = new Pose2d(INTAKE_1_POSE.x, 63, Math.toRadians(210));
@@ -79,105 +79,137 @@ public abstract class Auto extends LinearOpMode {
         this.team = team;
     }
 
-    private void buildPaths(Pose2d startPose) {
+    private void buildPaths(Pose2d startPose, boolean mirror) {
+        Pose shootPreloadPose = SHOOT_PRELOAD_POSE.toPedro();
+        Pose prepareIntake1Pose = PREPARE_INTAKE_1_POSE.toPedro();
+        Pose intake1Pose = INTAKE_1_POSE.toPedro();
+        Pose pushGateControl = new Pose(44.87356321839081, 72.82758620689656);
+        Pose pushGatePose = PUSH_GATE_POSE.toPedro();
+        Pose shootPose = SHOOT_POSE.toPedro();
+        Pose prepareIntake2Pose = PREPARE_INTAKE_2_POSE.toPedro();
+        Pose intake2Control = new Pose(56.751, 69.765);
+        Pose intake2Pose = INTAKE_2_POSE.toPedro();
+        Pose prepareIntake3Pose = PREPARE_INTAKE_3_POSE.toPedro();
+        Pose intake3Control = new Pose(56.751, 45.668);
+        Pose intake3Pose = INTAKE_3_POSE.toPedro();
+        Pose parkPose = PARK_POSE.toPedro();
+
+        if (mirror) {
+            shootPreloadPose = shootPreloadPose.mirror();
+            prepareIntake1Pose = prepareIntake1Pose.mirror();
+            intake1Pose = intake1Pose.mirror();
+            pushGateControl = pushGateControl.mirror();
+            pushGatePose = pushGatePose.mirror();
+            shootPose = shootPose.mirror();
+            prepareIntake2Pose = prepareIntake2Pose.mirror();
+            intake2Control = intake2Control.mirror();
+            intake2Pose = intake2Pose.mirror();
+            prepareIntake3Pose = prepareIntake3Pose.mirror();
+            intake3Control = intake3Control.mirror();
+            intake3Pose = intake3Pose.mirror();
+            parkPose = parkPose.mirror();
+        }
+
         Follower follower = robot.follower;
         shootPreloadPath = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(startPose.toPedro(), SHOOT_PRELOAD_POSE.toPedro())
+                        new BezierLine(startPose.toPedro(), shootPreloadPose)
                 )
-                .setLinearHeadingInterpolation(startPose.heading, SHOOT_PRELOAD_POSE.heading)
+                .setLinearHeadingInterpolation(startPose.heading, shootPreloadPose.getHeading())
                 .build();
 
         prepareIntake1Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(SHOOT_PRELOAD_POSE.toPedro(), PREPARE_INTAKE_1_POSE.toPedro())
+                        new BezierLine(shootPreloadPose, prepareIntake1Pose)
                 )
-                .setLinearHeadingInterpolation(SHOOT_PRELOAD_POSE.heading, PREPARE_INTAKE_1_POSE.heading)
+                .setLinearHeadingInterpolation(shootPreloadPose.getHeading(), prepareIntake1Pose.getHeading())
                 .build();
         intake1Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(PREPARE_INTAKE_1_POSE.toPedro(), INTAKE_1_POSE.toPedro())
+                        new BezierLine(prepareIntake1Pose, intake1Pose)
                 )
-                .setLinearHeadingInterpolation(PREPARE_INTAKE_1_POSE.heading, INTAKE_1_POSE.heading)
+                .setLinearHeadingInterpolation(prepareIntake1Pose.getHeading(), intake1Pose.getHeading())
                 .build();
         pushGate1Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierCurve(INTAKE_1_POSE.toPedro(),
-                                new Pose(44.87356321839081, 72.82758620689656),
-                                PUSH_GATE_POSE.toPedro())
+                        new BezierCurve(
+                                intake1Pose,
+                                pushGateControl,
+                                pushGatePose
+                        )
                 )
-                .setLinearHeadingInterpolation(INTAKE_1_POSE.heading, PUSH_GATE_POSE.heading)
+                .setLinearHeadingInterpolation(intake1Pose.getHeading(), pushGatePose.getHeading())
                 .build();
         shoot1Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(PUSH_GATE_POSE.toPedro(), SHOOT_POSE.toPedro())
+                        new BezierLine(pushGatePose, shootPose)
                 )
-                .setLinearHeadingInterpolation(PUSH_GATE_POSE.heading, SHOOT_POSE.heading)
+                .setLinearHeadingInterpolation(pushGatePose.getHeading(), shootPose.getHeading())
                 .build();
 
         prepareIntake2Path = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                SHOOT_POSE.toPedro(),
-                                new Pose(55.780, 69.765),
-                                PREPARE_INTAKE_2_POSE.toPedro()
+                                shootPose,
+                                intake2Control,
+                                prepareIntake2Pose
                         )
                 )
-                .setLinearHeadingInterpolation(SHOOT_POSE.heading, PREPARE_INTAKE_2_POSE.heading)
+                .setLinearHeadingInterpolation(shootPose.getHeading(), prepareIntake2Pose.getHeading())
                 .build();
         intake2Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(PREPARE_INTAKE_2_POSE.toPedro(), INTAKE_2_POSE.toPedro())
+                        new BezierLine(prepareIntake2Pose, intake2Pose)
                 )
-                .setLinearHeadingInterpolation(PREPARE_INTAKE_2_POSE.heading, INTAKE_2_POSE.heading)
+                .setLinearHeadingInterpolation(prepareIntake2Pose.getHeading(), intake2Pose.getHeading())
                 .build();
         shoot2Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(INTAKE_2_POSE.toPedro(), SHOOT_POSE.toPedro())
+                        new BezierLine(intake2Pose, shootPose)
                 )
-                .setLinearHeadingInterpolation(INTAKE_2_POSE.heading, SHOOT_POSE.heading)
+                .setLinearHeadingInterpolation(intake2Pose.getHeading(), shootPose.getHeading())
                 .build();
 
         prepareIntake3Path = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                SHOOT_POSE.toPedro(),
-                                new Pose(56.751, 45.668),
-                                PREPARE_INTAKE_3_POSE.toPedro()
+                                shootPose,
+                                intake3Control,
+                                prepareIntake3Pose
                         )
                 )
-                .setLinearHeadingInterpolation(SHOOT_POSE.heading, PREPARE_INTAKE_3_POSE.heading)
+                .setLinearHeadingInterpolation(shootPose.getHeading(), prepareIntake3Pose.getHeading())
                 .build();
         intake3Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(PREPARE_INTAKE_3_POSE.toPedro(), INTAKE_3_POSE.toPedro())
+                        new BezierLine(prepareIntake3Pose, intake3Pose)
                 )
-                .setLinearHeadingInterpolation(PREPARE_INTAKE_3_POSE.heading, INTAKE_3_POSE.heading)
+                .setLinearHeadingInterpolation(prepareIntake3Pose.getHeading(), intake3Pose.getHeading())
                 .build();
         shoot3Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(INTAKE_3_POSE.toPedro(), SHOOT_POSE.toPedro())
+                        new BezierLine(intake3Pose, shootPose)
                 )
-                .setLinearHeadingInterpolation(INTAKE_3_POSE.heading, SHOOT_POSE.heading)
+                .setLinearHeadingInterpolation(intake3Pose.getHeading(), shootPose.getHeading())
                 .build();
 
         parkPath = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(SHOOT_POSE.toPedro(), PARK_POSE.toPedro())
+                        new BezierLine(shootPose, parkPose)
                 )
-                .setLinearHeadingInterpolation(SHOOT_POSE.heading, PARK_POSE.heading)
+                .setLinearHeadingInterpolation(shootPose.getHeading(), parkPose.getHeading())
                 .build();
     }
 
@@ -269,10 +301,9 @@ public abstract class Auto extends LinearOpMode {
         robot.goalPos = team.getGoalPos();
         robot.follower.setStartingPose(team.getStartPosAuto().toPedro());
 
-        buildPaths(team.getStartPosAuto());
+        buildPaths(team.getStartPosAuto(), Team.RED.equals(team));
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
-        robot.shooter.isAutoVelOn = false;
 
         CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
         while (opModeInInit()) {
