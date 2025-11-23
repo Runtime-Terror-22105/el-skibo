@@ -16,26 +16,19 @@ import java.util.Map;
 //im aware i can just call this lightsubsystem but calling it a whole subsystem is kinda doin too much
 public class LightControl2 extends SubsystemBase {
 
-    private double blinkColor = TerrorLight.LightColors.OFF.ordinal();
-    //
-    private boolean isBlinkOn = false;
-
     private final RobotHardware hardware;
     private final Robot robot;
-    private final ElapsedTime time = new ElapsedTime();
 
     public LightControl2(RobotHardware hardware, Robot robot) {
         this.hardware = hardware;
         this.robot = robot;
-        time.reset();
     }
 
 
     @Override
     public void periodic()
     {
-        //eventually most of these states wont have anything special so a hashmap would make iteasy
-        //just do 3 ifstatmeents at most: if(insert special case) if(another special) else(mapcolor)
+        robot.telemetry.addData("State for the lights",robot.getState());
         switch(robot.getState())
         {
             case RESTING:
