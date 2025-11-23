@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmodes.tuning;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SpindexerHoming;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.TransferCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -84,7 +80,7 @@ public class ShooterAimingTuner extends LinearOpMode {
             robot.shooter.manualAim(robot.shooter.getGoalVelocity(), robot.shooter.getGoalPitch(), 0);
 
             if (gamepad1.rightBumperWasPressed()) {
-                CommandScheduler.getInstance().schedule(new TransferCommand(robot));
+                CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot));
             }
 
 
