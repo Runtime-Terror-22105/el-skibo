@@ -34,14 +34,13 @@ public class ShooterLookupTable {
         }
     }
 
-    public static LookupValue[] DATA_POINTS = new LookupValue[]
-            {
-                    new LookupValue(35, 451),
-                    new LookupValue(45, 470),
-                    new LookupValue(55, 490),
-                    new LookupValue(60, 500),
-                    new LookupValue(70, 530)
-            };
+    public static LookupValue[] DATA_POINTS = new LookupValue[]{
+            new LookupValue(35, 451),
+            new LookupValue(45, 470),
+            new LookupValue(55, 490),
+            new LookupValue(60, 500),
+            new LookupValue(70, 530)
+    };
 
     static {
 //        for (int i = 0; i < DATA_POINTS.size(); i++) {
