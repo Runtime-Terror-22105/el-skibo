@@ -41,6 +41,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalTurretPos; //turret - servo pos
     private double goalPitchPos; //hood - servo pos
 
+    public double turretOffset = 0.0; //turret manual offset- servo pos
+
     public static double turretLowerBound = Math.PI/2; //currently 90 deg, var in rad
     public static double turretUpperBound = 3*Math.PI/2; //currently 270 deg, var in rad
 
@@ -199,6 +201,10 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
     }
 
+    public void addTurretOffset(double change){
+        this.turretOffset += change;
+    }
+
 
     @Override
     public void periodic() {
@@ -215,7 +221,7 @@ public class ShooterSubsystem extends SubsystemBase {
         hardware.shooterRight.setPower(shooterPower);
 
         //turret
-        hardware.turretYawLeft.setPosition(this.goalTurretPos);
-        hardware.turretYawRight.setPosition(this.goalTurretPos);
+        hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
+        hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
     }
 }
