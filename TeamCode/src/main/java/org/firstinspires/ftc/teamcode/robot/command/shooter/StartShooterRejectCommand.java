@@ -11,8 +11,7 @@ public class StartShooterRejectCommand extends InstantCommand {
 
     }
     public void reject(){
-        shooter.setGoalPitch(0.95);
-        shooter.shooterPower =1.0;
+        shooter.goalPitch = 0.95;
         shooter.setSpeed(1.0);
     }
 }
