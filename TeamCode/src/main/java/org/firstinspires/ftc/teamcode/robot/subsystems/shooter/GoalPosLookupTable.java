@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 
+import android.util.Log;
+
 import com.pedropathing.VectorCalculator;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
@@ -31,8 +33,8 @@ public class GoalPosLookupTable {
             //POSITIVE VALUE MEANS CHANGE IN Y
 
             //Currently these are just guesses
-            new GoalLookupValue((1D/4D * Math.PI), 0),
             new GoalLookupValue(0, -2),
+            new GoalLookupValue((1D/4D * Math.PI), 0),
             new GoalLookupValue((1D/2D * Math.PI), 2)
     };
 
@@ -40,27 +42,31 @@ public class GoalPosLookupTable {
 
     public GoalPosLookupTable(Robot robot){
         this.robot = robot;
-        this.ogGoalPoint = robot.goalPos;
+        this.ogGoalPoint = this.robot.goalPos;
     }
     private double calcAngleWithWall(){
-        Vector wall;
+
         Vector goalToRobot;
         Pose robotPose = robot.follower.getPose();
         if (this.robot.color == Team.RED){
-            wall = new Vector(144, Math.PI);
-            goalToRobot = new Vector(new Pose(robotPose.getX()-144.0, robotPose.getY()));
+            goalToRobot = new Vector(new Pose(robotPose.getX()-144D, robotPose.getY()-144D));
 
         }
         else {
-            wall = new Vector(144, 0);
-            goalToRobot = new Vector(new Pose(robotPose.getX()-144.0, robotPose.getY()-144.0));
+
+            goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
         }
 
-        double angle = Math.acos(wall.dot(goalToRobot)/(wall.getMagnitude()*goalToRobot.getMagnitude()));
+        double angle = Math.abs(goalToRobot.getTheta());
+
+        Log.d("goalPos","robot vector" + goalToRobot);
+        Log.d("goalPos","angle" + angle);
+
         return angle;
     }
 
     public Pose2d get(){
+
         GOAL_CHANGE_LUT = new InterpLUT();
         for (GoalLookupValue dataPoint : DATA_POINTS) {
             GOAL_CHANGE_LUT.add(dataPoint.angle, dataPoint.pointChange);
@@ -68,7 +74,7 @@ public class GoalPosLookupTable {
         GOAL_CHANGE_LUT.createLUT();
 
         double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
-        Pose2d newGoalPos = robot.goalPos;
+        Pose2d newGoalPos = robot.goalPos.copy();
         if (change < 0){
             newGoalPos.x -= Math.abs(change);
 
@@ -78,6 +84,8 @@ public class GoalPosLookupTable {
             else newGoalPos.y -= Math.abs(change);
 
         }
+        Log.d("goalPos", "old goal pos" + robot.goalPos);
+        Log.d("goalPos", "new goal pos " + newGoalPos);
         return newGoalPos;
 
     }
