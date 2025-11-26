@@ -35,16 +35,16 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretPosAt180 = 0.54; //pos pointed directly towards the back
     public static double posChange90 = 0.38; //servo pos change that rotates turret 90 deg
 
-    private double goalPitch; //hood - rad
-    private double goalVelocity; //flywheel - rpm
+    public double goalPitch; //hood - rad
+    public double goalVelocity; //flywheel - rpm
     public double goalTurretAngle; //turret - rad
 
     public double goalTurretPos; //turret - servo pos
-    private double goalPitchPos; //hood - servo pos
+    public double goalPitchPos; //hood - servo pos
 
     public double turretOffset = 0.0; //turret manual offset- servo pos
 
-    private GoalPosLookupTable goalPosLookupTable;
+    public GoalPosLookupTable goalPosLookupTable;
 
     public static double turretLowerBound = Math.PI/2; //currently 90 deg, var in rad
     public static double turretUpperBound = 3*Math.PI/2; //currently 270 deg, var in rad
