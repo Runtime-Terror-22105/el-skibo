@@ -58,6 +58,9 @@ public class GoalPosLookupTable {
         }
 
         double angle = Math.abs(goalToRobot.getTheta());
+        if (angle > ((1D/2D)*Math.PI)){
+            angle = (1D/4D)*Math.PI;
+        }
 
         Log.d("goalPos","robot vector" + goalToRobot);
         Log.d("goalPos","angle" + angle);
@@ -84,6 +87,7 @@ public class GoalPosLookupTable {
             else newGoalPos.y -= Math.abs(change);
 
         }
+
         Log.d("goalPos", "old goal pos" + robot.goalPos);
         Log.d("goalPos", "new goal pos " + newGoalPos);
         return newGoalPos;
