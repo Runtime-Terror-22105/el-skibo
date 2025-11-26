@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.HardCodedLookup;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
 
@@ -43,6 +44,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double turretOffset = 0.0; //turret manual offset- servo pos
 
+    private GoalPosLookupTable goalPosLookupTable;
+
     public static double turretLowerBound = Math.PI/2; //currently 90 deg, var in rad
     public static double turretUpperBound = 3*Math.PI/2; //currently 270 deg, var in rad
 
@@ -63,6 +66,8 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPID.setTolerance(SHOOTER_VELOCITY_TOLERANCE);
         this.shooterPID.setTargetPosition(0.0);
 
+        this.goalPosLookupTable = new GoalPosLookupTable(this.robot);
+
         //currently doesnt control anything in this class, just for keeping track
         this.isAutoAimOn = true;
         this.isAutoVelOn = true;
@@ -70,12 +75,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
-    public void doAutoShoot(Pose2d goalPos){
+    public void doAutoShoot(){
         Log.i("shooter", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
         Pose botPosTemp = this.robot.follower.getPose();
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
+        Pose2d goalPos = this.goalPosLookupTable.get();
 
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         this.goalTurretAngle = this.findYawAngle(goalPos);
@@ -208,7 +214,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot(robot.goalPos);
+        if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
         else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
         // shooter pitch

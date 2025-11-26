@@ -19,6 +19,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
+import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
@@ -78,7 +79,14 @@ public abstract class Auto extends LinearOpMode {
     private long lastLoop = System.nanoTime();
 
     protected Auto(Team team) {
+
         this.team = team;
+        if (team == Team.BLUE){
+            robot.goalPos = FieldConstants.BLUE_GOAL_POS;
+        }
+        else {
+            robot.goalPos = FieldConstants.RED_GOAL_POS;
+        }
     }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
