@@ -19,6 +19,7 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.teleop.TerrorTeleOp;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
@@ -52,6 +53,9 @@ public class BetterShooterAimTuner extends LinearOpMode {
 
         waitForStart();
         robot.shooter.isAutoAimOn = false;
+        robot.goalPos = FieldConstants.BLUE_GOAL_POS;
+        robot.color = Team.BLUE;
+        robot.follower.setStartingPose(robot.color.getStartPosAuto().toPedro());
 
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
