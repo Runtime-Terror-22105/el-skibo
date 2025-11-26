@@ -147,7 +147,7 @@ public class CameraSubsystem extends SubsystemBase {
         if(!detections.isEmpty())
         {
             tele.addData("seentagpos",getRobotCenterCoordinateToAprilTag());
-            tele.addData("turretAngle",robot.shooter.turretAngle);
+            tele.addData("turretAngle",robot.shooter.goalTurretAngle);
             tele.addData("yaw",detections.get(0).ftcPose.yaw);
             tele.addData("pitch",detections.get(0).ftcPose.pitch);
             tele.addData("roll",detections.get(0).ftcPose.roll);
