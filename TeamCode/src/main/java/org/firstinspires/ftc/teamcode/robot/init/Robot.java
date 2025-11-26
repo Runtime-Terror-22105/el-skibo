@@ -10,6 +10,7 @@ import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.DriveSubsystem;
@@ -32,6 +33,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     // States
     public RobotState robotState = RobotState.RESTING;
 
+    //Team
+    public Team color;
     // Subsystems
     public Follower follower;
     public DriveSubsystem drive;

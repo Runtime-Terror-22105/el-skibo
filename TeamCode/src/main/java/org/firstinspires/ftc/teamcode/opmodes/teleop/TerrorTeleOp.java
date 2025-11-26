@@ -56,6 +56,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         else {
             robot.goalPos = FieldConstants.RED_GOAL_POS;
         }
+        robot.color = color;
     }
     public TerrorTeleOp(Team color){
         this.color = color;
@@ -105,6 +106,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
         GamepadButton adjustSpindexZeroLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
         GamepadButton adjustSpindexZeroRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
+
+        GamepadButton adjustTurretLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
+        GamepadButton adjustTurretRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
 
         Trigger threeBallsAreInside = new Trigger(() -> {
             final char[] balls = robot.spindexer.getBallPositions();
@@ -172,6 +176,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
         adjustSpindexZeroLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
         adjustSpindexZeroRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
+
+        adjustTurretLeft.whileHeld(new AdjustTurretOffsetCommand(robot, false));
+        adjustTurretRight.whileHeld(new AdjustTurretOffsetCommand(robot, true));
 
         // driver 2
         GamepadButton motifPGPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);

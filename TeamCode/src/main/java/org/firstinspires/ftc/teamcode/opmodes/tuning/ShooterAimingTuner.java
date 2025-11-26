@@ -7,14 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 
-import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SpindexerHoming;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShotType;
 
 @Config
 @TeleOp(name="Shooter Aim Tuner", group="Tuning")
@@ -90,10 +88,10 @@ public class ShooterAimingTuner extends LinearOpMode {
             hardware.write();
 
 
-            robot.telemetry.addData("Goal Yaw", robot.shooter.goalYawPos);
+            robot.telemetry.addData("Goal Yaw", robot.shooter.goalTurretAngle);
             robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
             robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
-            robot.telemetry.addData("Goal Pitch", robot.shooter.getGoalPitch());
+            robot.telemetry.addData("Goal Pitch", robot.shooter.goalPitch);
             robot.telemetry.addData("Current velocity rpm",robot.shooter.getVelocityRpm());
             robot.telemetry.update();
 

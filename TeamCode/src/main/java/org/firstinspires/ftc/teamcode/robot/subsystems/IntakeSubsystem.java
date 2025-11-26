@@ -15,15 +15,13 @@ public class IntakeSubsystem extends SubsystemBase {
     public static double DOWN_RIGHT = 0.0;
     public static double UP_RIGHT = 0.5;
 
-    public static double MIN_LEFT = 0.41;
-    public static double MAX_LEFT = 0.91; //servo pos
-    public static double MIN_RIGHT = 0.0;
-    public static double MAX_RIGHT = 0.5;
-
     public static double DEFAULT_SPEED = 0.9;
 
     private double targetSpeed;
 
+    //Down is intaking, up is resting
+
+    //Two states: up and down, with keys 'left' and 'right' which have the respective positions for the servos
     private IntakePitch pitch = IntakePitch.DOWN;
 
     public IntakeSubsystem(RobotHardware hardware) {
@@ -39,14 +37,6 @@ public class IntakeSubsystem extends SubsystemBase {
         return pitch;
     }
 
-    public void turnOn(){
-        this.targetSpeed = DEFAULT_SPEED;
-    }
-
-    public void turnOff() {
-        this.targetSpeed = 0.0;
-    }
-
     public void setSpeed(double speed){
         this.targetSpeed = speed;
     }
@@ -58,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         hardware.intake.setPower(this.targetSpeed);
-        hardware.intakePitchLeft.setPosition(Math.max(MIN_LEFT, Math.min(MAX_LEFT, pitch.left.get())));
-        hardware.intakePitchRight.setPosition(Math.max(MIN_RIGHT, Math.min(MAX_RIGHT, pitch.right.get())));
+        hardware.intakePitchLeft.setPosition(pitch.left.get());
+        hardware.intakePitchRight.setPosition(pitch.right.get());
     }
 }
