@@ -40,7 +40,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         robot.shooter.isAutoHoodOn = true;
                     } else {
                         robot.shooter.isAutoHoodOn = false;
-                        robot.shooter.setGoalPitch(hoodAngle);
+                        robot.shooter.goalPitch = hoodAngle;
                     }
                 }),
                 new ParallelCommandGroup(
