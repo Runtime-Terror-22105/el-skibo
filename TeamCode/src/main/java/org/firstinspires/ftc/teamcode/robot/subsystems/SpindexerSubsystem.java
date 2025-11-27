@@ -209,17 +209,17 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
-                double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), true);
+                double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
                 Log.d("spindexer", "glyph gpp normalized error" + normalizedError);
                 this.rotate(startPos + normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
-                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), true);
+                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
                 Log.d("spindexer", "glyph pgp normalized error" + normalizedError);
                 this.rotate(startPos + normalizedError);
 
             } else {
-                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), true);
+                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
                 Log.d("spindexer", "glyph ppg normalized error" + normalizedError);
                 this.rotate(startPos + normalizedError);
             }
