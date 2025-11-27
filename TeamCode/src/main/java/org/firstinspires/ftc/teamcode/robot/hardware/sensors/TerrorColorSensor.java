@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.hardware.sensors;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -72,6 +73,7 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     public char getGreenOrPurple() {
 
         double[]rgb= {getRed(),getGreen(),getBlue()};
+        Log.d("Color-sensor",String.valueOf(getDist(DistanceUnit.MM))+" "+String.valueOf(getGreen()));
         if(getDist(DistanceUnit.MM) >= MAX_DIST){
             return 'N';
         }
