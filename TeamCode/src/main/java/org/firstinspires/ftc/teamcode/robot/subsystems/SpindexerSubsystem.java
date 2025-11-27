@@ -133,7 +133,7 @@ public class SpindexerSubsystem extends SubsystemBase {
      * @param angle The angle to add, in radians.
      */
     public void rotate(double angle) {
-        this.desiredAngle += angle;
+//        this.desiredAngle += angle;
     }
 
 
@@ -190,7 +190,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         int greenCount = 0;
         int purpleCount = 0;
         for (char ball : this.getBallPositions()) {
-            if (ball != 'N') {
+            Log.d("ball-thing", String.valueOf(ball));
+            if (ball!= 'N') {
                 fullCount += 1;
                 if (ball == 'G') {
                     greenCount += 1;

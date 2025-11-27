@@ -9,6 +9,8 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.button.Trigger;
 
+import org.firstinspires.ftc.teamcode.FieldConstants;
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SortCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -21,21 +23,15 @@ public class SortTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    public static CameraSubsystem.GLYPH glyph = CameraSubsystem.GLYPH.GPP;
+    public static CameraSubsystem.GLYPH glyph=CameraSubsystem.GLYPH.GPP;
 
-    @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         robot.init(hardware, telemetry);
 
-        robot.telemetry.addLine("Please select the glyph in FTC Dash!");
-        robot.telemetry.addLine("Make sure to load up the balls.");
-        robot.telemetry.update();
-
         waitForStart();
 
-//        robot.camera.setGlyph(glyph);
-
+        robot.camera.setGlyph(glyph);
 
         CommandScheduler.getInstance().schedule(new SortCommand(robot.spindexer));
         while (opModeIsActive()) {
@@ -44,7 +40,7 @@ public class SortTest extends LinearOpMode {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
-
+            CommandScheduler.getInstance().schedule(new SortCommand(robot.spindexer));
             CommandScheduler.getInstance().run();
 
             hardware.write();
