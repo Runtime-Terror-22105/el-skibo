@@ -94,6 +94,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 //                    .detectColorBlobs(matchColors)
 //                    .flip()
 //                    .build();
+        } else {
+            this.camera = new CameraSubsystem();
         }
     }
 

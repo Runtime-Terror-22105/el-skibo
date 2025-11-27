@@ -80,6 +80,10 @@ public class CameraSubsystem extends SubsystemBase {
 
     private Telemetry tele;
 
+    public CameraSubsystem() {
+        this.vPortalField = null;
+    }
+
     public CameraSubsystem(Telemetry tele,Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
         this.robot = robot;
         this.tele = tele;
@@ -137,6 +141,8 @@ public class CameraSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if (vPortalField == null) return;
+
         this.detections = aTagProcessor.getDetections();
 
         for (AprilTagDetection tag : detections) {
