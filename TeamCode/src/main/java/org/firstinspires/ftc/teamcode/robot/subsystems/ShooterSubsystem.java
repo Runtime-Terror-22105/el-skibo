@@ -148,17 +148,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
     }
-
-
-    public static class ShooterValues {
-        public Double flywheelVelocity;
-        public Double hoodPitch;
-
-        public ShooterValues(Double flywheelVelocity, Double hoodPitch) {
-            this.flywheelVelocity = flywheelVelocity;
-            this.hoodPitch = hoodPitch;
-        }
-    }
+    
 
     private double findYawAngle(Pose2d goalPos){
          /** all in rad **/
