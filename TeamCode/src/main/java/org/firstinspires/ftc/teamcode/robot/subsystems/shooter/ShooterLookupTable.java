@@ -18,9 +18,6 @@ public class ShooterLookupTable {
 
     private static final double CUTOFF = 50;
 
-    private static final double SHORT_HOOD = 0.9; // rad
-    private static final double FAR_HOOD = 1.0; // rad
-
     private static final InterpLUT SHORT_VELOCITY_LUT = new InterpLUT(); // in/s
     private static InterpLUT FAR_VELOCITY_LUT = new InterpLUT(); // in/s
 
@@ -49,7 +46,7 @@ public class ShooterLookupTable {
 //        FAR_VELOCITY_LUT.createLUT();
     }
 
-    public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
+    public static double get(double distanceToGoalIn) {
         // todo: temporarily putting this here so we can dashboard
         FAR_VELOCITY_LUT = new InterpLUT();
         for (LookupValue dataPoint : DATA_POINTS) {
@@ -59,14 +56,10 @@ public class ShooterLookupTable {
 
 
         distanceToGoalIn = Math.max(MIN_DIST, Math.min(MAX_DIST, distanceToGoalIn));
-        double velocity, hood;
-//        if (distanceToGoalIn < CUTOFF) {
-//            velocity = SHORT_VELOCITY_LUT.get(distanceToGoalIn);
-//            hood = SHORT_HOOD;
-//        } else {
+        double velocity;
+
         velocity = FAR_VELOCITY_LUT.get(distanceToGoalIn);
-        hood = FAR_HOOD;
-//        }
-        return new ShooterSubsystem.ShooterValues(velocity, hood);
+
+        return velocity;
     }
 }
