@@ -9,8 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 @Config
 public class HangSubsystem extends SubsystemBase {
-    public static double HANG_SPINDEXER_POWER = 1;
-    public static double HANG_ANGLE_STOP_DEGREES = 80;
+    public static double HANG_SPINDEXER_POWER = 0.5; // todo: increase this if it would be good
+    public static double HANG_ANGLE_STOP_DEGREES = 80; // todo: adjust this value
     public static double PTO_ENGAGED_POSITION = 0.8;
     public static double PTO_DISENGAGED_POSITION = 0.5;
 
@@ -18,11 +18,8 @@ public class HangSubsystem extends SubsystemBase {
 
     private boolean ptoEngaged = false;
 
-    public boolean hangIsHeld;
-
     public HangSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
-        this.hangIsHeld = false;
     }
 
     public boolean isPtoEngaged() {
@@ -30,24 +27,19 @@ public class HangSubsystem extends SubsystemBase {
     }
 
     public void setPTOState(boolean state) {
-//        ptoEngaged = state;
-//        hardware.spindexerPTO.setPosition(ptoEngaged ? PTO_ENGAGED_POSITION : PTO_DISENGAGED_POSITION);
+        ptoEngaged = state;
     }
 
     @Override
     public void periodic() {
-//        if(!ptoEngaged) return;
-//
-//        double roll = hardware.imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
-//        Log.i("HangSubsystem", "Robot Roll: " + roll + " deg");
+        hardware.spindexerPTO.setPosition(ptoEngaged ? PTO_ENGAGED_POSITION : PTO_DISENGAGED_POSITION);
 
-//        if (roll < HANG_ANGLE_STOP_DEGREES) hardware.spindexerRotate.setPower(HANG_SPINDEXER_POWER);
-//        else hardware.spindexerRotate.setPower(0);
+        if(!ptoEngaged) return;
 
-//        if (hangIsHeld) {
-//            hardware.spindexerRotate.setPower(HANG_SPINDEXER_POWER);
-//        } else {
-//            hardware.spindexerRotate.setPower(0);
-//        }
+        double roll = hardware.imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
+        Log.i("HangSubsystem", "Robot Roll: " + roll + " deg");
+
+        if (roll < HANG_ANGLE_STOP_DEGREES) hardware.spindexerRotate.setPower(HANG_SPINDEXER_POWER);
+        else hardware.spindexerRotate.setPower(0);
     }
 }
