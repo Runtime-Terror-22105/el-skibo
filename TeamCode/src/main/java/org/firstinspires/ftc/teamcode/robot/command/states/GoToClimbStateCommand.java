@@ -12,11 +12,9 @@ public class GoToClimbStateCommand extends SequentialCommandGroup {
     public Robot robot;
     public GoToClimbStateCommand(Robot robot) {
         super(new ParallelCommandGroup(
+                // note: setting climb state disables spindexer pto in SpindexerSubsystem
                 new InstantCommand(() -> robot.robotState = RobotState.CLIMBING),
-                new InstantCommand(() -> robot.hang.setPTOState(true)),
-                new InstantCommand(() -> {
-                    robot.hang.hangIsHeld = true;
-                })
+                new InstantCommand(() -> robot.hang.setPTOState(true))
         ));
     }
 }
