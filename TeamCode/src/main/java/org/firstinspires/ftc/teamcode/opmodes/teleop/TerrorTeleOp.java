@@ -115,9 +115,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             return balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N';
         });
 
-//        hangButton.whenPressed(new GoToClimbStateCommand(robot));
-//        hangButton.whenPressed(new GoToClimbStateCommand(robot));
-//        hangButton.whenReleased(new InstantCommand(() -> robot.hang.hangIsHeld = false));
+        hangButton.whenPressed(new GoToClimbStateCommand(robot));
         intakeButton.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
                     new GoToIntakeStateCommand(robot)
