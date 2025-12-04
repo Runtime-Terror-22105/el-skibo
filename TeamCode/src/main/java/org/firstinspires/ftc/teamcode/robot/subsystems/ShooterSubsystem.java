@@ -54,6 +54,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double hoodAngleMax = 1.2217; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.8726; //radian measure of hood at min pos
 
+    public static double robotHeight = 14.0; //in
+    public static double g = 386.08858267717; //in per sec^2
+    public static double goalHeight = 40.0; //doesnt change no matter alliance color
+    public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
+
     public boolean isAutoAimOn;
     public boolean isAutoVelOn;
     public boolean isAutoHoodOn;
@@ -87,35 +92,47 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalTurretAngle = this.findYawAngle(goalPos);
         this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
-
-        ShooterValues math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
+        double calcVelocity;
         if(usingHardCodedShooterTable)
         {
-            math = HardCodedLookup.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
+            calcVelocity = HardCodedLookup.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
         }
-
-        if (math.flywheelVelocity == null || math.hoodPitch == null) {
-            Log.e("shooter", "failed to do math!");
-            return;
+        else{
+            calcVelocity = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
         }
-        //math.flywheelVelocity - in/sec
-        //math.hoodPitch - rad
+        //calcVelcoity - in/sec
 
-        Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", math.flywheelVelocity);
-        Robot.debugTelemetry.addData("Calculated Pitch (rad)", math.hoodPitch);
+        Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", calcVelocity);
+
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
         if (this.isAutoVelOn) {
-            this.setSpeed(this.velToRPM(math.flywheelVelocity)); // todo: add back
+            this.setSpeed(this.velToRPM(calcVelocity)); // todo: add back
         }
         if (this.isAutoHoodOn) {
-            //gets a setpos from the angle from our measured angles for max and min
-            this.goalPitch = math.hoodPitch;
-            this.goalPitchPos = Algebra.mapRange(math.hoodPitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+            calcHoodPod(botPos, goalPos, apexHeight);
         }
+        Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
 
         Log.i("shooter", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
         Log.i("shooter", "Calculated hood pitch (rad)" + this.goalPitch);
+    }
+
+    public void calcHoodPod(Pose2d botPos, Pose2d goalPos, double arcHeight){
+        Log.d("shooter", "running hood math");
+
+        double h = arcHeight;
+
+        //my formulas
+        double horDist = Math.sqrt(Math.pow((botPos.x-goalPos.x),2) +
+                Math.pow((botPos.y-goalPos.y),2)); //simple pythagrean therom
+        double verDist = goalHeight - robotHeight;
+        double theta = Math.atan(((2*h)/horDist) *
+                (1 + Math.sqrt(1 - (verDist/h)))); //in radians, from math
+        Log.d("shooter", "goal hood angle" + theta);
+        this.goalPitch = theta;
+        this.goalPitchPos = Algebra.mapRange(theta, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        Log.d("shooter", "goal hood pos" + this.goalPitchPos);
     }
 
     /** lets you set a velocity and angle manually*/
