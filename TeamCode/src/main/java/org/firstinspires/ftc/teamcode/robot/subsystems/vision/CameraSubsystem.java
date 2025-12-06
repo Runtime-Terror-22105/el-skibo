@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.ftc.InvertedFTCCoordinates;
+import com.pedropathing.ftc.PoseConverter;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
@@ -152,7 +156,8 @@ public class CameraSubsystem extends SubsystemBase {
         }
         if(!detections.isEmpty())
         {
-            tele.addData("seentagpos",getRobotCenterCoordinateToAprilTag());
+            tele.addData("seentagpos",getPedroPosition(detections.get(0)));
+
             tele.addData("turretAngle",robot.shooter.goalTurretAngle);
             tele.addData("yaw",detections.get(0).ftcPose.yaw);
             tele.addData("pitch",detections.get(0).ftcPose.pitch);
@@ -162,6 +167,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     public boolean hasDetections() {
         return !detections.isEmpty();
+    }
+
+    //this should be ok?
+    public Pose getPedroPosition(AprilTagDetection tag)
+    {
+     return PoseConverter.pose2DToPose(new Pose2D(DistanceUnit.INCH,(double)tag.metadata.fieldPosition.get(0),(double)tag.metadata.fieldPosition.get(1),AngleUnit.RADIANS,tag.metadata.fieldOrientation.y), InvertedFTCCoordinates.INSTANCE);
     }
 
     public double getOrientationFromCameraRad(AprilTagDetection tag)
