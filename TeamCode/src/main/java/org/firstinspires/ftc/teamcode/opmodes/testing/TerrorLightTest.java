@@ -35,7 +35,7 @@ public class TerrorLightTest extends LinearOpMode {
             hardware.write();
 
 
-            robot.telemetry.addData("Current Position", robot.spindexer.getPositionTicks());
+            robot.telemetry.addData("Current Position", robot.spindexer.getPosition());
             robot.telemetry.update();
 
         }
