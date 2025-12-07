@@ -12,7 +12,7 @@ public class TerrorAnalogEncoder {
     private final boolean reversed;
     private double lastPos;
     private final ElapsedTime timer;
-    private final CircularBuffer<Double> lastReads;
+//    private final CircularBuffer<Double> lastReads;
 
 //    private static double multilpier_offset=90/84;
     private static double multilpier_offset=1;
@@ -21,7 +21,6 @@ public class TerrorAnalogEncoder {
         this.encoder = encoder;
         this.reversed = reversed;
         this.timer = new ElapsedTime();
-        this.lastReads = new CircularBuffer<>(5);
     }
 
     /**
@@ -34,8 +33,7 @@ public class TerrorAnalogEncoder {
             pos = 2*Math.PI - pos;
         }
         pos = Angle.normalize(pos + offset);
-        lastReads.add(pos);
-        return lastReads.getMedian();
+        return pos;
     }
 
     public double getCurrentVelocity() {
