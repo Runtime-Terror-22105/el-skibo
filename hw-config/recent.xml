@@ -15,9 +15,8 @@
             <goBILDA5202SeriesMotor name="motorFrontRight" port="2" />
             <goBILDA5202SeriesMotor name="motorRearRight" port="3" />
             <Servo name="lights" port="3" />
-            <Servo name="spindexerIntakeWall2" port="4" />
+            <Servo name="spindexerIntakeWall2" port="0" />
             <Servo name="spindexerPTO" port="2" />
-            <DigitalDevice name="spindexerLimitSwitch" port="6" />
             <RevColorSensorV3 name="rightSensor" port="0" bus="1" />
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpoint name="pinpoint" port="1" bus="0" />
@@ -30,7 +29,7 @@
             <goBILDA5202SeriesMotor name="intake" port="2" />
             <goBILDA5202SeriesMotor name="spindexerRotate" port="3" />
             <Servo name="diddyServo" port="1" />
-            <Servo name="spindexerIntakeWall1" port="4" />
+            <Servo name="spindexerIntakeWall1" port="5" />
             <RevColorSensorV3 name="topSensor" port="0" bus="0" />
             <RevColorSensorV3 name="leftSensor" port="0" bus="1" />
         </LynxModule>

@@ -26,8 +26,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double INTAKE_WALL_1_DOWN = 0.345;
     public static double INTAKE_WALL_1_UP = 0.7;
-    public static double INTAKE_WALL_2_DOWN = 0.555;
-    public static double INTAKE_WALL_2_UP = 0.23;
+    public static double INTAKE_WALL_2_DOWN = 0.56;
+    public static double INTAKE_WALL_2_UP = 0.85;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.33;
     public static double SHOOTER_RAMP_DEACTIVE = 0.0;
@@ -36,9 +36,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double DIDDY_POLE_ACTIVE = 0.6;
-
-    public static double DIDDY_POLE_DEACITVE = 0.98;
+    public static double DIDDY_POLE_ACTIVE = 0.71;
+    public static double DIDDY_POLE_DEACITVE = 0.91;
 
     public double diddyPos = DIDDY_POLE_DEACITVE;
 
@@ -235,10 +234,6 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setSpindexerPower(double power) {
         this.spindexerPower = power;
-    }
-
-    public boolean getLimitSwitchState() {
-        return !this.hardware.spindexerLimitSwitch.getState();
     }
 
     public void setPidEnabled(boolean enabled) {
