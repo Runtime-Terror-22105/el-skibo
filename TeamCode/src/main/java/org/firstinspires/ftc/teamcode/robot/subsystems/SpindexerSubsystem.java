@@ -19,7 +19,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
-    private double homedSpindexerOffset = 0;
 
     public static double SPINDEXER_OFFSET = 0;
 
@@ -76,7 +75,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public double getPositionTicks() {
-        return hardware.spindexerEncoder.getCurrentPosition() - this.homedSpindexerOffset - SPINDEXER_OFFSET;
+        return hardware.spindexerEncoder.getCurrentPosition() - SPINDEXER_OFFSET;
     }
 
     public double getPosition() {
