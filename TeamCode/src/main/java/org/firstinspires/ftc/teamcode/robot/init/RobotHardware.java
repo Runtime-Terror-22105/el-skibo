@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 
@@ -62,7 +64,7 @@ public class RobotHardware {
     public TerrorServo spindexerIntakeWallServo2;
     public TerrorServo spindexerDiddyServo;
     public TerrorServo spindexerTransferRampServo; // todo -- in position: 0, out position: 0.3
-    public TerrorEncoder spindexerEncoder;
+    public TerrorAnalogEncoder spindexerEncoder;
 
     /*
              top (the one that shoots)
@@ -206,9 +208,9 @@ public class RobotHardware {
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
         // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
-        this.spindexerEncoder = new TerrorEncoder(motorFrontLeft, ((1D+(46D/11D))*28D) * 5.6D);
+        this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class,"spindexEncoder"), true);
 //        this.spindexerEncoder.stop_and_reset();
-        this.spindexerEncoder.setDirection(TerrorEncoder.Direction.FORWARD); // TODO: figure out spindexer encoder direction
+      // TODO: figure out spindexer encoder direction
 
         // Initialize the intake
         this.intake = new TerrorMotorNormal(
