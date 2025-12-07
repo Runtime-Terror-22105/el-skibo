@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.shooter.AdjustTurretOffsetCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.StartShooterRejectCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.AdjustSpindexZeroCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
@@ -158,8 +157,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
             restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
             resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
-            adjustSpindexZeroLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
-            adjustSpindexZeroRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
+
 
             adjustTurretLeft.whileHeld(new AdjustTurretOffsetCommand(robot, false));
             adjustTurretRight.whileHeld(new AdjustTurretOffsetCommand(robot, true));

@@ -30,7 +30,6 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.AdjustSpindexZeroCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -172,8 +171,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
-        adjustSpindexZeroLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
-        adjustSpindexZeroRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
 
         adjustTurretLeft.whileHeld(new AdjustTurretOffsetCommand(robot, false));
         adjustTurretRight.whileHeld(new AdjustTurretOffsetCommand(robot, true));

@@ -164,13 +164,6 @@ public class SpindexerSubsystem extends SubsystemBase {
         shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
     }
 
-    public double getHomedSpindexerOffset() {
-        return this.homedSpindexerOffset;
-    }
-
-    public void setHomedSpindexerOffset(double offset) {
-        this.homedSpindexerOffset = offset;
-    }
 
     public char[] getBallPositions() {
         return new char[]{hardware.topSensor.getGreenOrPurple(), hardware.rightSensor.getGreenOrPurple(), hardware.leftSensor.getGreenOrPurple()};

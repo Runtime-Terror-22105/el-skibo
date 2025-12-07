@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 
-import org.firstinspires.ftc.teamcode.robot.command.shooter.SpindexerHoming;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -42,7 +41,6 @@ public class ShooterAimingTuner extends LinearOpMode {
         waitForStart();
 
         CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
-                new SpindexerHoming(robot.spindexer),
                 new GoToRestingStateCommand(robot)
         ));
 
