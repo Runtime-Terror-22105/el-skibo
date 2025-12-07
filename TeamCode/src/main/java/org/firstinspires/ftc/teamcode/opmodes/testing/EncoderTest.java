@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -22,6 +23,7 @@ public class EncoderTest extends LinearOpMode {
         while(opModeIsActive())
         {
             telemetry.addData("spindexerencoderpos",String.valueOf(hardware.spindexerEncoder.getCurrentPosition()));
+            telemetry.addData("spindexerencoderpos",String.valueOf(hardware.hwMap.get(AnalogInput.class,"spindexEncoder").getVoltage()));
             telemetry.update();
         }
     }
