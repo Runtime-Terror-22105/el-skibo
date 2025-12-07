@@ -19,8 +19,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
-    public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * 5.6D;
-
     public static double INTAKE_WALL_1_DOWN = 0.345;
     public static double INTAKE_WALL_1_UP = 0.7;
     public static double INTAKE_WALL_2_DOWN = 0.56;
@@ -58,33 +56,21 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.sensors = new TerrorColorSensor[]{hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
         this.desiredAngle = getPosition();
         goToAngle120(0);
-        this.yawPid.setTolerance(radiansToTicks(yawPidTolerance));
+        this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(0.0);
     }
 
-    private static double ticksToRadians(double ticks) {
-        return (ticks / TICKS_PER_REVOLUTION) * 2.0 * Math.PI;
-    }
-
-    public static double radiansToTicks(double radians) {
-        return (radians / (2.0 * Math.PI)) * TICKS_PER_REVOLUTION;
-    }
-
-    public double getPositionTicks() {
+    public double getPosition() {
         return hardware.spindexerEncoder.getCurrentPosition();
     }
 
-    public double getPosition() {
-        return ticksToRadians(getPositionTicks());
-    }
-
     public double getTargetYaw() {
-        return ticksToRadians(this.yawPid.getTargetPosition());
+        return this.yawPid.getTargetPosition();
     }
 
     public boolean atTargetYaw() {
         // TODO: potentially beware of angle wrapping here
-        return this.yawPid.atTargetPosition(getPositionTicks());
+        return this.yawPid.atTargetPosition(getPosition());
     }
 
     /**
@@ -172,7 +158,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void sortBalls() {
         this.goToAngle120(0);
-        double startPos = this.getPositionTicks();
+        double startPos = this.getPosition();
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
@@ -239,9 +225,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void updateSpindexer() {
-        this.yawPid.setTargetPosition(radiansToTicks(desiredAngle));
+        this.yawPid.setTargetPosition(desiredAngle);
         if (pidEnabled) {
-            this.spindexerPower = yawPid.calculatePower(getPositionTicks(), 0);
+            this.spindexerPower = yawPid.calculatePower(getPosition(), 0);
         }
 
     }
