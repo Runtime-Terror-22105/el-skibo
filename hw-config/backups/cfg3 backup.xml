@@ -20,7 +20,6 @@
             <goBILDA5202SeriesMotor name="motorRearRight" port="3" />
             <Servo name="spindexerIntakeWall2" port="4" />
             <Servo name="spindexerPTO" port="5" />
-            <DigitalDevice name="spindexerLimitSwitch" port="6" />
             <RevColorSensorV3 name="rightSensor" port="0" bus="1" />
             <TerrorgoBILDAPinpoint name="pinpoint" port="0" bus="0" />
         </LynxModule>

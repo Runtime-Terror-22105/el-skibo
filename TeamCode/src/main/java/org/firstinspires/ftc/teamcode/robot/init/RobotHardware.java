@@ -87,7 +87,6 @@ public class RobotHardware {
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
-    public DigitalChannel spindexerLimitSwitch;
     public IMU imu;
 
     // Lynx stuff
@@ -228,10 +227,6 @@ public class RobotHardware {
         this.publisher.subscribe(10,intakePitchRight);
         this.publisher.subscribe(10, intakePitchLeft);
         this.publisher.subscribe(10, spindexerPTO);
-
-        // Limit switch
-        this.spindexerLimitSwitch = hwMap.get(DigitalChannel.class, "spindexerLimitSwitch");
-        this.spindexerLimitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
