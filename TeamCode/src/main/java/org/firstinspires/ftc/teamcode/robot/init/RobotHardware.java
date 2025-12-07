@@ -58,7 +58,7 @@ public class RobotHardware {
     public TerrorEncoder shooterEncoder;   // i forgot to write the comment
 
     // Spindexer
-    public static double SPINDEXER_ENCODER_OFFSET=0.0;
+    public static double SPINDEXER_ENCODER_OFFSET = 2.20;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerIntakeWallServo1;
     public TerrorServo spindexerIntakeWallServo2;
@@ -209,6 +209,7 @@ public class RobotHardware {
         // and motor has 28 ticks per revolution
         // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
         this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class,"spindexEncoder"), true);
+        this.spindexerEncoder.setOffset(SPINDEXER_ENCODER_OFFSET);
 //        this.spindexerEncoder.stop_and_reset();
       // TODO: figure out spindexer encoder direction
 
