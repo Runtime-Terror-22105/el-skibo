@@ -19,9 +19,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
-
-    public static double SPINDEXER_OFFSET = 0;
-
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * 5.6D;
 
     public static double INTAKE_WALL_1_DOWN = 0.345;
@@ -30,7 +27,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double INTAKE_WALL_2_UP = 0.85;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
-    public static double SHOOTER_RAMP_DEACTIVE = 0.15;
+    public static double SHOOTER_RAMP_DEACTIVE = 0.03;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -74,7 +71,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public double getPositionTicks() {
-        return hardware.spindexerEncoder.getCurrentPosition() - SPINDEXER_OFFSET;
+        return hardware.spindexerEncoder.getCurrentPosition();
     }
 
     public double getPosition() {
