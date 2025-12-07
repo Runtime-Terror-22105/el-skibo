@@ -4,6 +4,7 @@ import android.util.Size;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.ftc.PoseConverter;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -97,7 +98,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
-                .setCameraResolution(new Size(320, 240))
+//                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .addProcessor(this.aTagProcessor);
@@ -128,6 +129,7 @@ public class CameraSubsystem extends SubsystemBase {
 //                    .setLensIntrinsics() // TODO: placeholder to remind us to calibrate the camera
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
+                .setLensIntrinsics(910.121,910.121,648.374,394.354)
                 .build();
     }
 
@@ -156,12 +158,14 @@ public class CameraSubsystem extends SubsystemBase {
         }
         if(!detections.isEmpty())
         {
-            tele.addData("seentagpos",getPedroPosition(detections.get(0)));
+            AprilTagDetection tag = detections.get(0);
+            Pose2D rawPose = new Pose2D(DistanceUnit.INCH,tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,AngleUnit.RADIANS,tag.ftcPose.yaw);
 
-            tele.addData("turretAngle",robot.shooter.goalTurretAngle);
-            tele.addData("yaw",detections.get(0).ftcPose.yaw);
-            tele.addData("pitch",detections.get(0).ftcPose.pitch);
-            tele.addData("roll",detections.get(0).ftcPose.roll);
+            tele.addData("atag raw pose distance", tag.robotPose.getPosition());
+//            tele.addData("atag field pos", tag.metadata.fieldPosition);
+//            tele.addData("atag distance", rawPose);
+            tele.addData("seentagpos",getPedroPosition(detections.get(0)));
+//            tele.addData("turretAngle",robot.shooter.goalTurretAngle);
         }
     }
 
@@ -172,7 +176,22 @@ public class CameraSubsystem extends SubsystemBase {
     //this should be ok?
     public Pose getPedroPosition(AprilTagDetection tag)
     {
-     return PoseConverter.pose2DToPose(new Pose2D(DistanceUnit.INCH,(double)tag.metadata.fieldPosition.get(0),(double)tag.metadata.fieldPosition.get(1),AngleUnit.RADIANS,tag.metadata.fieldOrientation.y), InvertedFTCCoordinates.INSTANCE);
+//        Pose2D rawPose = new Pose2D(
+//                DistanceUnit.INCH,
+//                tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,
+//                tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,
+//                AngleUnit.RADIANS,
+//                tag.robotPose.getOrientation().getYaw()-tag.ftcPose.yaw);
+//        return rawPose;
+        Pose2D rawPose = new Pose2D(
+                                    DistanceUnit.INCH,
+                                    tag.robotPose.getPosition().x,
+                                    tag.robotPose.getPosition().y,
+                                    AngleUnit.RADIANS,
+                                    tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)
+                                    );
+        tele.addData("global position",rawPose);
+             return PoseConverter.pose2DToPose(rawPose,InvertedFTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
     }
 
     public double getOrientationFromCameraRad(AprilTagDetection tag)
