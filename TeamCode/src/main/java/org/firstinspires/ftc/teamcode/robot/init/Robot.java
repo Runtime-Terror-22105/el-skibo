@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Team;
@@ -20,6 +21,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+
+import java.util.Set;
 
 
 /**
@@ -48,6 +51,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public LightControl2 lightControl;
 
     public Pose2d goalPos;
+    private boolean autoSort;
 
 
     // Camera stuff TODO
@@ -72,7 +76,6 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         // Initialize the drivetrain
         this.follower = Constants.createFollower(hardware.hwMap);
 
-
         // NB: SubsystemBase will automatically register the subsystems for us
         this.drive = new DriveSubsystem(this);
         this.shooter = new ShooterSubsystem(hardware, this);
@@ -81,6 +84,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.hang = new HangSubsystem(hardware);
         this.lightControl = new LightControl2(hardware,this);
 
+        // Other
+        this.setAutoSort(false);
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
@@ -112,5 +117,17 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
      */
     public RobotState getState() {
         return robotState;
+    }
+
+    public void setAutoSort(boolean autoSort) {
+        this.autoSort = autoSort;
+    }
+
+    public void toggleAutoSort() {
+        this.autoSort = !this.autoSort;
+    }
+
+    public boolean doAutoSort() {
+        return this.autoSort;
     }
 }
