@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.button.Trigger;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
@@ -33,14 +34,13 @@ public class SortTest extends LinearOpMode {
 
         robot.camera.setGlyph(glyph);
 
-        CommandScheduler.getInstance().schedule(new SortCommand(robot.spindexer));
+        CommandScheduler.getInstance().schedule(new WaitCommand(500).andThen(new SortCommand(robot.spindexer)));
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
-            CommandScheduler.getInstance().schedule(new SortCommand(robot.spindexer));
             CommandScheduler.getInstance().run();
 
             hardware.write();
