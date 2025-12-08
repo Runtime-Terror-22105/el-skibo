@@ -66,7 +66,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public double getTargetYaw() {
-        return this.yawPid.getTargetPosition();
+        return desiredAngle;
     }
 
     public boolean atTargetYaw() {
