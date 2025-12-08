@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.hardware.sensors;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.datastructures.CircularBuffer;
 
@@ -28,11 +29,11 @@ public class TerrorAnalogEncoder {
      * @return The absolute position.
      */
     public double getCurrentPosition() {
-        double pos = (this.encoder.getVoltage() / 1.0) * Math.PI*2*multilpier_offset;
+        double pos = Angle.angleWrap((encoder.getVoltage()-0.043)/3.1*360);
         if (reversed) {
             pos = 2*Math.PI - pos;
         }
-        pos = Angle.normalize(pos + offset);
+        pos = Angle.angleWrap(pos + offset);
         return pos;
     }
 
