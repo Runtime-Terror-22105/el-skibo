@@ -19,10 +19,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
-    public static double INTAKE_WALL_1_DOWN = 0.345;
-    public static double INTAKE_WALL_1_UP = 0.7;
-    public static double INTAKE_WALL_2_DOWN = 0.56;
-    public static double INTAKE_WALL_2_UP = 0.85;
+    public static double INTAKE_WALL_1_DOWN = 0.45;
+    public static double INTAKE_WALL_1_UP = 0.1;
+    public static double INTAKE_WALL_2_DOWN = 0.48;
+    public static double INTAKE_WALL_2_UP = 0.8;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.03;
