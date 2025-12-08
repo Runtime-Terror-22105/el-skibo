@@ -114,7 +114,7 @@ public class SpindexerSubsystem extends SubsystemBase {
      * @param angle The angle to add, in radians.
      */
     public void rotate(double angle) {
-//        this.desiredAngle += angle;
+        this.desiredAngle += angle;
     }
 
 
