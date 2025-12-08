@@ -159,7 +159,6 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void sortBalls() {
         this.goToAngle120(0);
-        double startPos = this.getPosition();
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
@@ -186,17 +185,17 @@ public class SpindexerSubsystem extends SubsystemBase {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
                 double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
                 Log.d("spindexer", "glyph gpp normalized error" + normalizedError);
-                this.rotate(startPos + normalizedError);
+                this.rotate(normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
                 Log.d("spindexer", "glyph pgp normalized error" + normalizedError);
-                this.rotate(startPos + normalizedError);
+                this.rotate(normalizedError);
 
             } else {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
                 Log.d("spindexer", "glyph ppg normalized error" + normalizedError);
-                this.rotate(startPos + normalizedError);
+                this.rotate(normalizedError);
             }
         } else {
             Log.d("spindexer", "not enough balls to run logic ready pos:" + READY_POSITION);
