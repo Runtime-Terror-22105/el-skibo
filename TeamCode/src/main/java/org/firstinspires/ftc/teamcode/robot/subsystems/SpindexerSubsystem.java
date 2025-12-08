@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
@@ -19,10 +20,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
-    public static double INTAKE_WALL_1_DOWN = 0.345;
-    public static double INTAKE_WALL_1_UP = 0.7;
-    public static double INTAKE_WALL_2_DOWN = 0.56;
-    public static double INTAKE_WALL_2_UP = 0.85;
+    public static double INTAKE_WALL_1_DOWN = 0.45;
+    public static double INTAKE_WALL_1_UP = 0.1;
+    public static double INTAKE_WALL_2_DOWN = 0.48;
+    public static double INTAKE_WALL_2_UP = 0.8;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.03;
@@ -43,7 +44,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.011, 0, 0.00001, 0, 0);
+            new PidfController.PidfCoefficients(0.3, 0, 0, 0, 0);
     public static double yawPidTolerance = Math.toRadians(10); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
@@ -65,7 +66,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public double getTargetYaw() {
-        return this.yawPid.getTargetPosition();
+        return desiredAngle;
     }
 
     public boolean atTargetYaw() {
@@ -114,7 +115,7 @@ public class SpindexerSubsystem extends SubsystemBase {
      * @param angle The angle to add, in radians.
      */
     public void rotate(double angle) {
-//        this.desiredAngle += angle;
+        this.desiredAngle += angle;
     }
 
 
@@ -157,8 +158,9 @@ public class SpindexerSubsystem extends SubsystemBase {
 
 
     public void sortBalls() {
+        Log.d("spindexer", "des ang before sort "+this.desiredAngle);
         this.goToAngle120(0);
-        double startPos = this.getPosition();
+        Log.d("spindexer", "des ang aft 0 "+this.desiredAngle);
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
@@ -185,22 +187,23 @@ public class SpindexerSubsystem extends SubsystemBase {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
                 double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
                 Log.d("spindexer", "glyph gpp normalized error" + normalizedError);
-                this.rotate(startPos + normalizedError);
+                this.rotate(normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
                 Log.d("spindexer", "glyph pgp normalized error" + normalizedError);
-                this.rotate(startPos + normalizedError);
+                this.rotate(normalizedError);
 
             } else {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
                 Log.d("spindexer", "glyph ppg normalized error" + normalizedError);
-                this.rotate(startPos + normalizedError);
+                this.rotate(normalizedError);
             }
         } else {
             Log.d("spindexer", "not enough balls to run logic ready pos:" + READY_POSITION);
             this.rotate(READY_POSITION);
         }
+        Log.d("spindexer", "des ang after sort"+this.desiredAngle);
 
     }
 
@@ -225,9 +228,12 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void updateSpindexer() {
-        this.yawPid.setTargetPosition(desiredAngle);
+        // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
+        // we calculate error ourselves and feed into PID.
+        this.yawPid.setTargetPosition(0.0);
         if (pidEnabled) {
-            this.spindexerPower = yawPid.calculatePower(getPosition(), 0);
+            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
+            this.spindexerPower = yawPid.calculatePower(error, 0);
         }
 
     }
