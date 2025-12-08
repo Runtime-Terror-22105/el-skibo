@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
@@ -225,9 +226,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void updateSpindexer() {
-        this.yawPid.setTargetPosition(desiredAngle);
+        this.yawPid.setTargetPosition(0.0);
         if (pidEnabled) {
-            this.spindexerPower = yawPid.calculatePower(getPosition(), 0);
+            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
+            this.spindexerPower = yawPid.calculatePower(error, 0);
         }
 
     }
