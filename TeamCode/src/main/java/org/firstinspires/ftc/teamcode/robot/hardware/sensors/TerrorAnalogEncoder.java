@@ -28,7 +28,7 @@ public class TerrorAnalogEncoder {
      * @return The absolute position.
      */
     public double getCurrentPosition() {
-        double pos = (this.encoder.getVoltage() / this.encoder.getMaxVoltage()) * Math.PI*2*multilpier_offset;
+        double pos = ((encoder.getVoltage() - 0.043) / 3.1) * Math.PI*2*multilpier_offset;
         if (reversed) {
             pos = 2*Math.PI - pos;
         }
