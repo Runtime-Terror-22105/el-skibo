@@ -40,7 +40,6 @@ public class SortTest extends LinearOpMode {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
-            CommandScheduler.getInstance().schedule(new SortCommand(robot.spindexer));
             CommandScheduler.getInstance().run();
 
             hardware.write();
