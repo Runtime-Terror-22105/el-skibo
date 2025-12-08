@@ -158,7 +158,9 @@ public class SpindexerSubsystem extends SubsystemBase {
 
 
     public void sortBalls() {
+        Log.d("spindexer", "des ang before sort "+this.desiredAngle);
         this.goToAngle120(0);
+        Log.d("spindexer", "des ang aft 0 "+this.desiredAngle);
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
@@ -201,6 +203,7 @@ public class SpindexerSubsystem extends SubsystemBase {
             Log.d("spindexer", "not enough balls to run logic ready pos:" + READY_POSITION);
             this.rotate(READY_POSITION);
         }
+        Log.d("spindexer", "des ang after sort"+this.desiredAngle);
 
     }
 
