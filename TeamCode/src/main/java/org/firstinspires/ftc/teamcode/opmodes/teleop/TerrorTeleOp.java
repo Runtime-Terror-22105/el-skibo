@@ -31,6 +31,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.SortCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
@@ -103,11 +104,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
 
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
-        GamepadButton adjustSpindexZeroLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
-        GamepadButton adjustSpindexZeroRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
 
-        GamepadButton adjustTurretLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
-        GamepadButton adjustTurretRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
+        GamepadButton adjustTurretLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
+        GamepadButton adjustTurretRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
+
+        GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
 
         Trigger threeBallsAreInside = new Trigger(() -> {
             final char[] balls = robot.spindexer.getBallPositions();
@@ -174,6 +175,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         adjustTurretLeft.whileHeld(new AdjustTurretOffsetCommand(robot, false));
         adjustTurretRight.whileHeld(new AdjustTurretOffsetCommand(robot, true));
+
+        sortButton.whenPressed(robot::toggleAutoSort);
 
         // driver 2
         GamepadButton motifPGPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);

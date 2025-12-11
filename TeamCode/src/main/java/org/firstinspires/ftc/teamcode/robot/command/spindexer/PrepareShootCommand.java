@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -11,12 +12,13 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
+import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
     public static double SHOOTER_RPM = 3500;
-    public static double PRE_YAW_ANGLE = 30.0;  // degrees
+//    public static double PRE_YAW_ANGLE = 30.0;  // degrees
     public static int PRE_YAW_DELAY = 250;  // milliseconds
     public static int RAMP_DELAY = 500;  // milliseconds
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 750;
@@ -33,7 +35,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT),
 
-                // Phase 1 and 2: ???
+                // Phase 1: ???
                 new InstantCommand(() -> robot.shooter.isAutoVelOn = rpm == null),
                 new InstantCommand(() -> {
                     if (hoodAngle == null) {
@@ -52,9 +54,12 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 ),
                 new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW), // todo: adjust this delay based on how long it takes for these two servos
 
-                // Phase 3: rotate to pre-transfer yaw
-                // TODO: angle needs to be relative to current position, NOT absolute
-                new SetSpindexerYawCommand(robot.spindexer, Math.toRadians(PRE_YAW_ANGLE)),
+                // Phase 2/3: Sort the balls, spin to pre-transfer yaw
+                new ConditionalCommand(
+                        new SortCommand(robot.spindexer),
+                        new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
+                        robot::getAutoSort
+                ),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(PRE_YAW_DELAY),
 
