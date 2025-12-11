@@ -6,9 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
-import com.seattlesolvers.solverslib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Team;
@@ -21,8 +19,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
-
-import java.util.Set;
 
 
 /**
@@ -127,7 +123,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.autoSort = !this.autoSort;
     }
 
-    public boolean doAutoSort() {
+    public boolean getAutoSort() {
         return this.autoSort;
     }
 }

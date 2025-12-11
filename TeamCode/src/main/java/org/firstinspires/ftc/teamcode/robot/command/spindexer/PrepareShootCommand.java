@@ -58,7 +58,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new ConditionalCommand(
                         new SortCommand(robot.spindexer),
                         new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
-                        robot::doAutoSort
+                        robot::getAutoSort
                 ),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(PRE_YAW_DELAY),
