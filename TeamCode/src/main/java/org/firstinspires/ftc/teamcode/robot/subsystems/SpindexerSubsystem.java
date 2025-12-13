@@ -22,8 +22,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double INTAKE_WALL_1_DOWN = 1.0;
     public static double INTAKE_WALL_1_UP = 0.05;
-    public static double INTAKE_WALL_2_DOWN = 0.85;
-    public static double INTAKE_WALL_2_UP = 0.0;
+    public static double INTAKE_WALL_2_DOWN = 0.0;
+    public static double INTAKE_WALL_2_UP = 0.85;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.03;
