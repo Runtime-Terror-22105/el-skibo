@@ -49,8 +49,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretLowerBound = Math.PI/2; //currently 90 deg, var in rad
     public static double turretUpperBound = 3*Math.PI/2; //currently 270 deg, var in rad
 
-    public static double hoodPosMax = 0.35; //maximum position the servo can go to
-    public static double hoodPosMin = 0.55; //min position the servo can go to
+    public static double hoodPosMax = 0.85; //maximum position the servo can go to
+    public static double hoodPosMin = 0.2; //min position the servo can go to
     public static double hoodAngleMax = 1.2217; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.8726; //radian measure of hood at min pos
 
