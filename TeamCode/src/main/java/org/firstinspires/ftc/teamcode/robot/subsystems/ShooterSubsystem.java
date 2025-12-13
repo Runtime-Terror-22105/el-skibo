@@ -25,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
-            new PidfController.PidfCoefficients(0.0001, 0.000115, 0.00, 0, 0);
+            new PidfController.PidfCoefficients(0.0002, 0.0, 0.0, 0.00017, 0);
     public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
     // the current pid + speed
@@ -49,8 +49,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretLowerBound = Math.PI/2; //currently 90 deg, var in rad
     public static double turretUpperBound = 3*Math.PI/2; //currently 270 deg, var in rad
 
-    public static double hoodPosMax = 0.35; //maximum position the servo can go to
-    public static double hoodPosMin = 0.55; //min position the servo can go to
+    public static double hoodPosMax = 0.85; //maximum position the servo can go to
+    public static double hoodPosMin = 0.2; //min position the servo can go to
     public static double hoodAngleMax = 0.919427826056; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.632748891943; //radian measure of hood at min pos
     public static double robotHeight = 14.0; //in
@@ -210,7 +210,7 @@ public class ShooterSubsystem extends SubsystemBase {
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
         this.shooterPID.setTargetPosition(getGoalVelocity());
-        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
+        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), getGoalVelocity());
     }
 
     public void addTurretOffset(double change){
