@@ -25,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
-            new PidfController.PidfCoefficients(0.0001, 0.000115, 0.00, 0, 0);
+            new PidfController.PidfCoefficients(0.0002, 0.0, 0.0, 0.00017, 0);
     public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
     // the current pid + speed
@@ -211,7 +211,7 @@ public class ShooterSubsystem extends SubsystemBase {
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
         this.shooterPID.setTargetPosition(getGoalVelocity());
-        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(),0);
+        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), getGoalVelocity());
     }
 
     public void addTurretOffset(double change){
