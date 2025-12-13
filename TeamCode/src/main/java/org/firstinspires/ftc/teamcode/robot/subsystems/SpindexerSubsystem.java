@@ -20,10 +20,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
-    public static double INTAKE_WALL_1_DOWN = 0.45;
-    public static double INTAKE_WALL_1_UP = 0.1;
-    public static double INTAKE_WALL_2_DOWN = 0.48;
-    public static double INTAKE_WALL_2_UP = 0.8;
+    public static double INTAKE_WALL_1_DOWN = 1.0;
+    public static double INTAKE_WALL_1_UP = 0.05;
+    public static double INTAKE_WALL_2_DOWN = 0.0;
+    public static double INTAKE_WALL_2_UP = 0.85;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.03;
@@ -32,8 +32,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double DIDDY_POLE_ACTIVE = 0.71;
-    public static double DIDDY_POLE_DEACITVE = 0.91;
+    public static double DIDDY_POLE_ACTIVE = 0.2;
+    public static double DIDDY_POLE_DEACITVE = 0.4;
 
     public double diddyPos = DIDDY_POLE_DEACITVE;
 
@@ -44,8 +44,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.3, 0, 0, 0, 0);
-    public static double yawPidTolerance = Math.toRadians(10); // radians
+            new PidfController.PidfCoefficients(0.6, 0, 0.018, 0, 0.15);
+    public static double yawPidTolerance = Math.toRadians(2); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
