@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public class HangSubsystem extends SubsystemBase {
     public static double HANG_SPINDEXER_POWER = 0.5; // todo: increase this if it would be good
     public static double HANG_ANGLE_STOP_DEGREES = 80; // todo: adjust this value
-    public static double PTO_ENGAGED_POSITION = 0.8;
-    public static double PTO_DISENGAGED_POSITION = 0.5;
+    public static double PTO_ENGAGED_POSITION = 0.58;
+    public static double PTO_DISENGAGED_POSITION = 0.35;
 
     private final RobotHardware hardware;
 
