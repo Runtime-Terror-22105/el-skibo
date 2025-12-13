@@ -7,6 +7,7 @@ import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
@@ -27,6 +28,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double SHOOTER_RAMP_ACTIVE = 0.4;
     public static double SHOOTER_RAMP_DEACTIVE = 0.03;
+
+    public static double MAX_POWER = 1.0;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -249,13 +252,16 @@ public class SpindexerSubsystem extends SubsystemBase {
         }
 
         this.updateSpindexer();
-        this.hardware.spindexerRotate.setPower(this.spindexerPower);
+        double clampedPower = Math.max(-MAX_POWER, Math.min(MAX_POWER, spindexerPower));
+        this.hardware.spindexerRotate.setPower(clampedPower);
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
         this.hardware.spindexerDiddyServo.setPosition(diddyPos);
         this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
-        Robot.debugTelemetry.addData("Spindexer Power", spindexerPower);
+        Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
+//        Robot.debugTelemetry.addData("Intake Current", this.hardware.intake.getCurrent(CurrentUnit.AMPS));
+//        Robot.debugTelemetry.addData("Spindexer Current", this.hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS));
         Robot.debugTelemetry.addData("Spindexer Position (deg)", Math.toDegrees(Angle.angleWrap(getPosition())));
         Robot.debugTelemetry.addData("Spindexer Target (deg)", Math.toDegrees(Angle.angleWrap(getTargetYaw())));
     }
