@@ -50,7 +50,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
 
     public static double velocity = 450;
     public static double pitch = ShooterSubsystem.hoodPosMin;
-    public static double turretPos = 0.5;
+    public static double turretPos = 0;
 
     @Override
     public void runOpMode() {
