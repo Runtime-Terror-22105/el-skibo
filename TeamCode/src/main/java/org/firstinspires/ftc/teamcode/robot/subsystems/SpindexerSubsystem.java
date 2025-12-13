@@ -40,7 +40,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
 
-    public static double READY_POSITION = (1D / 6D) * Math.PI; //position for the first ball as the ramp goes down
+    public static double READY_POSITION = (-1D / 6D) * Math.PI; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
@@ -255,6 +255,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware.spindexerDiddyServo.setPosition(diddyPos);
         this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
+        Robot.debugTelemetry.addData("Spindexer Power", spindexerPower);
         Robot.debugTelemetry.addData("Spindexer Position (deg)", Math.toDegrees(Angle.angleWrap(getPosition())));
         Robot.debugTelemetry.addData("Spindexer Target (deg)", Math.toDegrees(Angle.angleWrap(getTargetYaw())));
     }
