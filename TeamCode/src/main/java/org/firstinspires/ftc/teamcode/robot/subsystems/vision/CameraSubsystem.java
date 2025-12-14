@@ -154,8 +154,8 @@ public class CameraSubsystem extends SubsystemBase {
         localizationTag = null;
 
         for (AprilTagDetection tag : detections) {
-            if (tag.id >= 21 && tag.id <= 23 && !decodedGlyph) {
-                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            if (tag.id >= 21 && tag.id <= 23) {
+                if (!decodedGlyph) setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             }
             else
             {
