@@ -146,11 +146,6 @@ public class CameraSubsystem extends SubsystemBase {
         gameGlyph = glyph;
     }
 
-    public boolean isLocalizationTagSeen()
-    {
-        return localizationTag != null;
-    }
-
     @Override
     public void periodic() {
         if (vPortalField == null) return;
@@ -167,7 +162,7 @@ public class CameraSubsystem extends SubsystemBase {
              localizationTag = tag;
             }
         }
-        if(!detections.isEmpty())
+        if(localizationTag != null)
         {
 
             Pose robotPose = rawCameraPoseToRobotPose(localizationTag);
@@ -176,10 +171,7 @@ public class CameraSubsystem extends SubsystemBase {
             debugLastDetection = robotPose;
             debugDetectionTime = System.currentTimeMillis();
 
-            if(isLocalizationTagSeen())
-            {
 //                robot.follower.poseTracker.setPose(robotPose);
-            }
         }
 
         if (debugLastDetection != null) {
