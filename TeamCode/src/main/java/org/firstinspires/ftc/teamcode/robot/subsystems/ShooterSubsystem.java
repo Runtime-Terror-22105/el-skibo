@@ -143,10 +143,36 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
+
+
         this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, turretYaw));
         this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
     }
+
+    public void manualAimAutoHood (double velocity, double turretYaw) {
+
+        Pose botPosTemp = this.robot.follower.getPose();
+        Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
+        Pose2d goalPos = this.goalPosLookupTable.get();
+
+        this.isAutoAimOn = false;
+        this.setSpeed(this.velToRPM(velocity));
+
+        if (this.isAutoHoodOn) {
+            calcHoodPod(botPos, goalPos, apexHeight);
+        }
+        Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
+
+        Log.i("shooter", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
+        Log.i("shooter", "Calculated hood pitch (rad)" + this.goalPitch);
+
+
+        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, turretYaw));
+        this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+
+    }
+
 
 
     private double findYawAngle(Pose2d goalPos){

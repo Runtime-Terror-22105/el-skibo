@@ -49,7 +49,6 @@ public class BetterShooterAimTuner extends LinearOpMode {
     private final Robot robot = new Robot();
 
     public static double velocity = 450;
-    public static double pitch = ShooterSubsystem.hoodPosMin;
     public static double turretPos = 0;
 
     @Override
@@ -193,7 +192,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
 
-            robot.shooter.manualAim(velocity, pitch, turretPos);
+            robot.shooter.manualAimAutoHood(velocity, turretPos);
 
             CommandScheduler.getInstance().run();
 
