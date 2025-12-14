@@ -149,6 +149,11 @@ public class CameraSubsystem extends SubsystemBase {
         gameGlyph = glyph;
     }
 
+    public boolean isLocalizationTagSeen()
+    {
+        return localizationTag != null;
+    }
+
     @Override
     public void periodic() {
         if (vPortalField == null) return;
@@ -175,7 +180,10 @@ public class CameraSubsystem extends SubsystemBase {
 //            tele.addData("atag distance", rawPose);
 
             tele.addData("seentagpos",getPedroPosition(localizationTag));
-            robot.follower.poseTracker.setPose(getPedroPosition(localizationTag));
+            if(isLocalizationTagSeen())
+            {
+                robot.follower.poseTracker.setPose(getPedroPosition(localizationTag));
+            }
 //            tele.addData("turretAngle",robot.shooter.goalTurretAngle);
         }
     }
