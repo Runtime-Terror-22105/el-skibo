@@ -12,7 +12,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -99,7 +98,7 @@ public class RobotHardware {
     public HardwareMap hwMap;
     private final TerrorPublisher publisher = new TerrorPublisher();
 
-    public boolean disableColorSensor = false;
+    public boolean enableColorSensor = true;
 
     public enum HardwareOptions {
         CAMERA
@@ -249,7 +248,7 @@ public class RobotHardware {
 
     public void write() {
         this.publisher.write();
-        if (!this.disableColorSensor) {
+        if (this.enableColorSensor) {
             this.updateColorSensors();
         }
     }
