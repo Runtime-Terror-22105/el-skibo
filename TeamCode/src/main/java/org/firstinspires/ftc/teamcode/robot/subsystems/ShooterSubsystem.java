@@ -32,7 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterPower = 0.0; //flywheel - motor power
 
-    public static double turretPosAt180 = 0.47; //pos pointed directly towards the back
+    public static double turretPosAt180 = 0.35; //pos pointed directly towards the back
     public static double posChange90 = 0.38; //servo pos change that rotates turret 90 deg
 
     public double goalPitch; //hood - rad
@@ -62,6 +62,18 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoVelOn;
     public boolean isAutoHoodOn;
     private final Robot robot;
+    public static class ShooterValues{
+        public double velocity;
+        public double rad;
+        public ShooterValues(double v, double r){
+            this.velocity = v;
+            this.rad = r;
+
+
+        }
+
+
+    }
 
     public ShooterSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
@@ -91,25 +103,27 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalTurretAngle = this.findYawAngle(goalPos);
         this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
-        double calcVelocity;
-        if(usingHardCodedShooterTable)
-        {
-            calcVelocity = HardCodedLookup.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
-        }
-        else{
-            calcVelocity = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
-        }
+        ShooterValues math;
+//        if(usingHardCodedShooterTable)
+//        {
+//            calcVelocity = HardCodedLookup.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
+//        }
+//        else{
+//            math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
+//        }
+        math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
         //calcVelcoity - in/sec
 
-        Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", calcVelocity);
+        Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", math.velocity);
 
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
         if (this.isAutoVelOn) {
-            this.setSpeed(this.velToRPM(calcVelocity)); // todo: add back
+            this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
         }
         if (this.isAutoHoodOn) {
-            calcHoodPod(botPos, goalPos, apexHeight);
+            this.goalPitch = math.rad;
+            this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         }
         Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
 
@@ -143,8 +157,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-
-
 
         this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, turretYaw));
         this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
