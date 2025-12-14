@@ -84,6 +84,9 @@ public class CameraSubsystem extends SubsystemBase {
 
     private ArrayList<AprilTagDetection> detections;
 
+    //should only ever be the blue or red goal which is 20 and 24 respectively
+    private AprilTagDetection localizationTag;
+
     private Telemetry tele;
 
     public CameraSubsystem() {
@@ -151,21 +154,28 @@ public class CameraSubsystem extends SubsystemBase {
         if (vPortalField == null) return;
 
         this.detections = aTagProcessor.getDetections();
+        localizationTag = null;
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23 && !decodedGlyph) {
                 setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             }
+            else
+            {
+             localizationTag = tag;
+            }
         }
         if(!detections.isEmpty())
         {
-            AprilTagDetection tag = detections.get(0);
-            Pose2D rawPose = new Pose2D(DistanceUnit.INCH,tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,AngleUnit.RADIANS,tag.ftcPose.yaw);
+//            AprilTagDetection tag = detections.get(0);
+//            Pose2D rawPose = new Pose2D(DistanceUnit.INCH,tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,AngleUnit.RADIANS,tag.ftcPose.yaw);
 
-            tele.addData("atag raw pose distance", tag.robotPose.getPosition());
+//            tele.addData("atag raw pose distance", tag.robotPose.getPosition());
 //            tele.addData("atag field pos", tag.metadata.fieldPosition);
 //            tele.addData("atag distance", rawPose);
-            tele.addData("seentagpos",getPedroPosition(detections.get(0)));
+
+            tele.addData("seentagpos",getPedroPosition(localizationTag));
+            robot.follower.poseTracker.setPose(getPedroPosition(localizationTag));
 //            tele.addData("turretAngle",robot.shooter.goalTurretAngle);
         }
     }
