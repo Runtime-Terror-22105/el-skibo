@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 
+import android.util.Log;
 import android.util.Pair;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -19,7 +20,7 @@ public class ShooterLookupTable {
     private static final double CUTOFF = 50;
 
     private static final InterpLUT SHORT_VELOCITY_LUT = new InterpLUT(); // in/s
-    private static InterpLUT FAR_VELOCITY_LUT = new InterpLUT(); // in/s
+    private static InterpLUT FAR_VELOCITY_LUT; // in/s
 
     public static class LookupValue {
         public double distance;
@@ -50,16 +51,13 @@ public class ShooterLookupTable {
         // todo: temporarily putting this here so we can dashboard
         FAR_VELOCITY_LUT = new InterpLUT();
         for (LookupValue dataPoint : DATA_POINTS) {
+            Log.i("ShooterLookupTable", "("+dataPoint.distance + ", "+dataPoint.speed+")");
             FAR_VELOCITY_LUT.add(dataPoint.distance, dataPoint.speed);
         }
         FAR_VELOCITY_LUT.createLUT();
 
-
         distanceToGoalIn = Math.max(MIN_DIST, Math.min(MAX_DIST, distanceToGoalIn));
-        double velocity;
 
-        velocity = FAR_VELOCITY_LUT.get(distanceToGoalIn);
-
-        return velocity;
+        return FAR_VELOCITY_LUT.get(distanceToGoalIn);
     }
 }
