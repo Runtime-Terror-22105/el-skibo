@@ -49,6 +49,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
     private final Robot robot = new Robot();
 
     public static double velocity = 450;
+    public static double hoodAngle = 0.7;
     public static double turretPos = 0;
 
     @Override
@@ -113,7 +114,8 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
         ));
 
-        reverseIntakeButton.whenActive(new ConditionalCommand(
+        reverseIntakeButton.whenActive(
+                new ConditionalCommand(
                 new SetIntakeSpeedCommand(robot.intake, -1.0),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING //robot.robotState != FULL
@@ -192,7 +194,13 @@ public class BetterShooterAimTuner extends LinearOpMode {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
 
-            robot.shooter.manualAimAutoHood(velocity, turretPos);
+            robot.shooter.manualAim(velocity, hoodAngle, turretPos);
+            robot.spindexer.enableRamp();
+
+            if (robot.robotState == INTAKING){
+                Log.d("data point", "distance: "+ Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2))+ " velocoity: " + velocity + " hood angle: " + hoodAngle);
+            }
+
 
             CommandScheduler.getInstance().run();
 
