@@ -295,7 +295,7 @@ public abstract class Auto extends LinearOpMode {
     public void runOpMode() {
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
+        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
 
         robot.init(hardware, telemetry);
         robot.goalPos = team.getGoalPos();

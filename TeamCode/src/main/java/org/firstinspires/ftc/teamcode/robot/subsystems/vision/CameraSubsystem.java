@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -83,7 +78,13 @@ public class CameraSubsystem extends SubsystemBase {
 
     private ArrayList<AprilTagDetection> detections;
 
+    //should only ever be the blue or red goal which is 20 and 24 respectively
+    private AprilTagDetection localizationTag;
+
     private Telemetry tele;
+
+    private Pose debugLastDetection = null; // for debug only
+    private long debugDetectionTime = 0; // for debug only
 
     public CameraSubsystem() {
         this.vPortalField = null;
@@ -150,22 +151,34 @@ public class CameraSubsystem extends SubsystemBase {
         if (vPortalField == null) return;
 
         this.detections = aTagProcessor.getDetections();
+        localizationTag = null;
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23 && !decodedGlyph) {
                 setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             }
+            else
+            {
+             localizationTag = tag;
+            }
         }
-        if(!detections.isEmpty())
+        if(localizationTag != null)
         {
-            AprilTagDetection tag = detections.get(0);
-            Pose2D rawPose = new Pose2D(DistanceUnit.INCH,tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,AngleUnit.RADIANS,tag.ftcPose.yaw);
 
-            tele.addData("atag raw pose distance", tag.robotPose.getPosition());
-//            tele.addData("atag field pos", tag.metadata.fieldPosition);
-//            tele.addData("atag distance", rawPose);
-            tele.addData("seentagpos",getPedroPosition(detections.get(0)));
-//            tele.addData("turretAngle",robot.shooter.goalTurretAngle);
+            Pose robotPose = rawCameraPoseToRobotPose(localizationTag);
+            tele.addData("seentagpos", robotPose);
+
+            debugLastDetection = robotPose;
+            debugDetectionTime = System.currentTimeMillis();
+
+//                robot.follower.poseTracker.setPose(robotPose);
+        }
+
+        if (debugLastDetection != null) {
+            // Fade color from red to black as detection gets older
+            int ageMs = (int)(System.currentTimeMillis() - debugDetectionTime);
+            int red = Math.max(0, 255 - ageMs / 5);
+            FtcDashDrawing.drawRobot(debugLastDetection != null ? debugLastDetection : new Pose(0,0,0), String.format("#%02X0000", red));
         }
     }
 
@@ -174,24 +187,9 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     //this should be ok?
-    public Pose getPedroPosition(AprilTagDetection tag)
-    {
-//        Pose2D rawPose = new Pose2D(
-//                DistanceUnit.INCH,
-//                tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,
-//                tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,
-//                AngleUnit.RADIANS,
-//                tag.robotPose.getOrientation().getYaw()-tag.ftcPose.yaw);
-//        return rawPose;
-        Pose2D rawPose = new Pose2D(
-                                    DistanceUnit.INCH,
-                                    tag.robotPose.getPosition().x,
-                                    tag.robotPose.getPosition().y,
-                                    AngleUnit.RADIANS,
-                                    tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)
-                                    );
-        tele.addData("global position",rawPose);
-             return PoseConverter.pose2DToPose(rawPose,InvertedFTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+    private Pose rawCameraPoseToRobotPose(AprilTagDetection tag) {
+        Pose cameraPose = new Pose(72+tag.robotPose.getPosition().y,72-tag.robotPose.getPosition().x,tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
+        return cameraPose;
     }
 
     public double getOrientationFromCameraRad(AprilTagDetection tag)

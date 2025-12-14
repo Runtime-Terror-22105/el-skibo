@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @Config
 public class IntakeSubsystem extends SubsystemBase {
-    private final RobotHardware hardware;
+    private final Robot robot;
 
     public static double DOWN_LEFT = 0.655; //servo pos
     public static double UP_LEFT = 0.2;
@@ -24,8 +25,8 @@ public class IntakeSubsystem extends SubsystemBase {
     //Two states: up and down, with keys 'left' and 'right' which have the respective positions for the servos
     private IntakePitch pitch = IntakePitch.DOWN;
 
-    public IntakeSubsystem(RobotHardware hardware) {
-        this.hardware = hardware;
+    public IntakeSubsystem(Robot robot) {
+        this.robot = robot;
         this.targetSpeed = 0;
     }
 
@@ -47,8 +48,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        hardware.intake.setPower(this.targetSpeed);
-        hardware.intakePitchLeft.setPosition(pitch.left.get());
-        hardware.intakePitchRight.setPosition(pitch.right.get());
+        robot.hardware.enableColorSensor = RobotState.INTAKING.equals(robot.robotState);
+
+        robot.hardware.intake.setPower(this.targetSpeed);
+        robot.hardware.intakePitchLeft.setPosition(pitch.left.get());
+        robot.hardware.intakePitchRight.setPosition(pitch.right.get());
     }
 }
