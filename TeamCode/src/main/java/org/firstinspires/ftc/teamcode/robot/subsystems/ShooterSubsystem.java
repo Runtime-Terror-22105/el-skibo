@@ -117,15 +117,16 @@ public class ShooterSubsystem extends SubsystemBase {
         Log.i("shooter", "Calculated hood pitch (rad)" + this.goalPitch);
     }
 
-    public void calcHoodPod(Pose2d botPos, Pose2d goalPos, double arcHeight){
+    public void calcHoodPod(Pose2d botPos, Pose2d goalPos, double arcHeight) {
+        // note: arcHeight is usually set to the apexHeight variable, which is currently 60
         Log.d("shooter", "running hood math");
 
-        double h = arcHeight;
+        double h = arcHeight-robotHeight; // the delta y at the apex
 
         //my formulas
         double horDist = Math.sqrt(Math.pow((botPos.x-goalPos.x),2) +
                 Math.pow((botPos.y-goalPos.y),2)); //simple pythagrean therom
-        double verDist = goalHeight - robotHeight;
+        double verDist = goalHeight - robotHeight; // delta y at the goal
         double theta = Math.atan(((2*h)/horDist) *
                 (1 + Math.sqrt(1 - (verDist/h)))); //in radians, from math
         Log.d("shooter", "goal hood angle" + theta);
