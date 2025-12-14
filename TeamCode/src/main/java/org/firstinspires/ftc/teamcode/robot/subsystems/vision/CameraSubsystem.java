@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.ftc.FTCCoordinates;
 import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.geometry.PedroCoordinates;
@@ -178,20 +179,13 @@ public class CameraSubsystem extends SubsystemBase {
     {
 //        Pose2D rawPose = new Pose2D(
 //                DistanceUnit.INCH,
-//                tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,
-//                tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,
+//                tag.robotPose.getPosition().x,
+//                tag.robotPose.getPosition().y,
 //                AngleUnit.RADIANS,
-//                tag.robotPose.getOrientation().getYaw()-tag.ftcPose.yaw);
-//        return rawPose;
-        Pose2D rawPose = new Pose2D(
-                                    DistanceUnit.INCH,
-                                    tag.robotPose.getPosition().x,
-                                    tag.robotPose.getPosition().y,
-                                    AngleUnit.RADIANS,
-                                    tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)
-                                    );
-        tele.addData("global position",rawPose);
-             return PoseConverter.pose2DToPose(rawPose,InvertedFTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+//                tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)
+//        );
+//        tele.addData("global position",rawPose);
+        return new Pose(72+tag.robotPose.getPosition().y,72-tag.robotPose.getPosition().x,tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
     }
 
     public double getOrientationFromCameraRad(AprilTagDetection tag)
