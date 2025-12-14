@@ -1,20 +1,14 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.ftc.FTCCoordinates;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -88,6 +82,9 @@ public class CameraSubsystem extends SubsystemBase {
     private AprilTagDetection localizationTag;
 
     private Telemetry tele;
+
+    private Pose debugLastDetection = null; // for debug only
+    private long debugDetectionTime = 0; // for debug only
 
     public CameraSubsystem() {
         this.vPortalField = null;
@@ -172,19 +169,24 @@ public class CameraSubsystem extends SubsystemBase {
         }
         if(!detections.isEmpty())
         {
-//            AprilTagDetection tag = detections.get(0);
-//            Pose2D rawPose = new Pose2D(DistanceUnit.INCH,tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,AngleUnit.RADIANS,tag.ftcPose.yaw);
 
-//            tele.addData("atag raw pose distance", tag.robotPose.getPosition());
-//            tele.addData("atag field pos", tag.metadata.fieldPosition);
-//            tele.addData("atag distance", rawPose);
+            Pose robotPose = rawCameraPoseToRobotPose(localizationTag);
+            tele.addData("seentagpos", robotPose);
 
-            tele.addData("seentagpos",getPedroPosition(localizationTag));
+            debugLastDetection = robotPose;
+            debugDetectionTime = System.currentTimeMillis();
+
             if(isLocalizationTagSeen())
             {
-                robot.follower.poseTracker.setPose(getPedroPosition(localizationTag));
+//                robot.follower.poseTracker.setPose(robotPose);
             }
-//            tele.addData("turretAngle",robot.shooter.goalTurretAngle);
+        }
+
+        if (debugLastDetection != null) {
+            // Fade color from red to black as detection gets older
+            int ageMs = (int)(System.currentTimeMillis() - debugDetectionTime);
+            int red = Math.max(0, 255 - ageMs / 5);
+            FtcDashDrawing.drawRobot(debugLastDetection != null ? debugLastDetection : new Pose(0,0,0), String.format("#%02X0000", red));
         }
     }
 
@@ -193,17 +195,9 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     //this should be ok?
-    public Pose getPedroPosition(AprilTagDetection tag)
-    {
-//        Pose2D rawPose = new Pose2D(
-//                DistanceUnit.INCH,
-//                tag.robotPose.getPosition().x,
-//                tag.robotPose.getPosition().y,
-//                AngleUnit.RADIANS,
-//                tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)
-//        );
-//        tele.addData("global position",rawPose);
-        return new Pose(72+tag.robotPose.getPosition().y,72-tag.robotPose.getPosition().x,tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
+    private Pose rawCameraPoseToRobotPose(AprilTagDetection tag) {
+        Pose cameraPose = new Pose(72+tag.robotPose.getPosition().y,72-tag.robotPose.getPosition().x,tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
+        return cameraPose;
     }
 
     public double getOrientationFromCameraRad(AprilTagDetection tag)

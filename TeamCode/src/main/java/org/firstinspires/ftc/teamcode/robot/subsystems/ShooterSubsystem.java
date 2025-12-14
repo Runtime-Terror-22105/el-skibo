@@ -251,16 +251,16 @@ public class ShooterSubsystem extends SubsystemBase {
         else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
         // shooter pitch
-        hardware.shooterPitch.setPosition(this.goalPitchPos);
+//        hardware.shooterPitch.setPosition(this.goalPitchPos);
 
         // flywheel pids
         this.updateShooter();
         Robot.debugTelemetry.addData("Shooter Power", shooterPower);
-        hardware.shooterLeft.setPower(shooterPower);
-        hardware.shooterRight.setPower(shooterPower);
+//        hardware.shooterLeft.setPower(shooterPower);
+//        hardware.shooterRight.setPower(shooterPower);
 
         //turret
-        hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
-        hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
+//        hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
+//        hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
     }
 }
