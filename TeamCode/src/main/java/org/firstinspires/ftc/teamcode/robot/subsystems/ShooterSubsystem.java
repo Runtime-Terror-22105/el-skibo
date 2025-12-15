@@ -151,12 +151,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** lets you set a velocity and angle manually*/
     public void manualAim(double velocity, double pitch, double turretYaw) {
+        Pose2d goalPos = this.goalPosLookupTable.get();
 
         this.isAutoAimOn = false;
         this.setSpeed(this.velToRPM(velocity));
 
-        this.goalPitch = pitch;
-        this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        this.goalTurretAngle = this.findYawAngle(goalPos);
+        this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
         this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, turretYaw));
         this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
