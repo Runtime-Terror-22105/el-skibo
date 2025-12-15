@@ -43,6 +43,17 @@ public class FtcDashDrawing {
         sendPacket();
     }
 
+    public static void drawDot(Pose pose, String color) {
+        if (packet == null) {
+            packet = new TelemetryPacket();
+        }
+
+        pose = pose.getAsCoordinateSystem(FTCCoordinates.INSTANCE);
+        packet.fieldOverlay().setStroke(color);
+        packet.fieldOverlay().setFill(color);
+        packet.fieldOverlay().fillCircle(pose.getX(), pose.getY(), 1.0);
+    }
+
     public static void drawRobot(Pose pose, String color) {
         if (packet == null) {
             packet = new TelemetryPacket();
