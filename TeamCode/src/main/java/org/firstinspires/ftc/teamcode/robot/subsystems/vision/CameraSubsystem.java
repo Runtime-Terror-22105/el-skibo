@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
+import android.util.Log;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -7,6 +8,7 @@ import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -31,7 +33,6 @@ public class CameraSubsystem extends SubsystemBase {
     private OpenCvCamera spindexerCamera;
 
 //    private double turretCenterToRobotCenterUnitNeededX = 0; //this is perfectly centered
-    public static double turretCenterToRobotCenterMeters = 0.2311;
 
     //robot dimemnnsions 16 inches by 15 inches
 
@@ -39,13 +40,14 @@ public class CameraSubsystem extends SubsystemBase {
 
     public static double cameraPhaseChangeAngleRadians = Math.toRadians(120);
 
-    public static double tempTurretAngle = 0;
-
     public static Pose2d blueGlobalPose = new Pose2d(3000,3000,0.959931);
 
     public static Pose2d redGlobalPose = new Pose2d(3000,3000,-0.959931);
 
     public static Pose2d motifGlobalPose = new Pose2d(3000,3000,0);
+
+    public static Coordinate cameraToTurretCenterOffset = new Coordinate(2.2, 4.8);
+    public static Coordinate turretToRobotCenterOffset = new Coordinate(0, 9.098425);
 
 
     Telemetry telemetry;
@@ -186,85 +188,19 @@ public class CameraSubsystem extends SubsystemBase {
         return !detections.isEmpty();
     }
 
-    //this should be ok?
     private Pose rawCameraPoseToRobotPose(AprilTagDetection tag) {
-        Pose cameraPose = new Pose(72+tag.robotPose.getPosition().y,72-tag.robotPose.getPosition().x,tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
-        return cameraPose;
-    }
+        double robotHeading = robot.follower.getHeading();
+        Pose rawCameraPose = new Pose(72+tag.robotPose.getPosition().y,72-tag.robotPose.getPosition().x,tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
 
-    public double getOrientationFromCameraRad(AprilTagDetection tag)
-    {
-        /*"global banking" is a value that is given per tag, as in if the robot were looking forward like this
-       (-55deg)     (55deg)
-        *  /     \
-              ^
-              |
-              |
-              |
+        double turretYaw = rawCameraPose.getHeading() - robotHeading;
+        Pose cameraToTurretCenter = new Pose(cameraToTurretCenterOffset.x, cameraToTurretCenterOffset.y, 0).rotate(turretYaw, true);
+        Log.i("CameraSubsystem","turret yaw calculated: "+Math.toDegrees(turretYaw) + " degrees");
+        Log.i("CameraSubsystem","turret yaw goal: "+Math.toDegrees(robot.shooter.getGoalTurretYaw()) + " degrees"); 
+        Pose cameraToRobotCenter = cameraToTurretCenter.minus(new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0)).rotate(robotHeading, false);
+//        Log.i("CameraSubsystem","camera to robot center dist: "+cameraToRobotCenterDist);
+//        cameraToRobotCenterDist = Coordinate.rotate(cameraToRobotCenterDist, new Coordinate(0,0), robot.follower.getPose().getHeading());
+//        Log.i("CameraSubsystem","camera to robot center dist, rotated: "+cameraToRobotCenterDist);
 
-
-        given this situation
-
-      (global banked at -55)
-        /(camera returns the tag being banked at -35)
-            ^
-            | (turret angle is facing 270 in code (hopefully)
-   180 <----  (robot's global angle)
-
-        clockkwise positiev
-
-        globalBanking+seenAngle+turret=robots global
-        -55-35+270=(-90)+270=180
-        this should hopefully work (can't wait for it to not)
-        */
-        double heading;
-        switch(VisionConstants.APRILTAG.tagMap.get(tag.id))
-        {
-            case "BLUESCORE":
-                heading = blueGlobalPose.heading;
-                break;
-//            case "GPP":
-//                break;
-//            case "PGP":
-//                break;
-//            case "PPG":
-//                break;
-            case "REDSCORE":
-                heading = redGlobalPose.heading;
-                break;
-            default:
-                heading = motifGlobalPose.heading;
-                break;
-        }
-        return heading+tag.ftcPose.range+tempTurretAngle;
-
-    }
-
-    public Pose2d getPositionCamera()
-    {
-
-        if (detections.isEmpty()) {
-            return null;
-        }
-
-        // todo: choose only one apriltag to use
-        AprilTagDetection tag = detections.get(0);
-        return new Pose2d(tag.robotPose.getPosition().x-VisionConstants.APRILTAG.cameraOffset.x,tag.robotPose.getPosition().y-VisionConstants.APRILTAG.cameraOffset.y,tag.robotPose.getPosition().z-VisionConstants.APRILTAG.cameraOffset.z);
-    }
-
-    //this gives the actual coords from the robot center to the april tag which makes the robot center 0,0 relative
-    //to the outputed value
-
-    private double getCoordinateComponentX(AprilTagDetection tag) {
-        return ((tag.ftcPose.x/39.37) + turretRadiusMeters*Math.cos(tempTurretAngle + cameraPhaseChangeAngleRadians));
-    }
-
-    private double getCoordinateComponentY(AprilTagDetection tag) {
-        return (tag.ftcPose.y/39.37 + turretRadiusMeters*Math.sin(tempTurretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterMeters);
-    }
-
-    public Pose2d getRobotCenterCoordinateToAprilTag() {
-        AprilTagDetection tag = detections.get(0);
-        return new Pose2d(getCoordinateComponentX(tag), getCoordinateComponentY(tag),getOrientationFromCameraRad(tag));
+        return rawCameraPose.minus(cameraToRobotCenter);
     }
 }
