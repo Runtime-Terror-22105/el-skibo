@@ -32,7 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterPower = 0.0; //flywheel - motor power
 
-    public static double turretPosAt180 = 0.1; //pos pointed directly towards the back
+    public static double turretPosAt180 = 0.35; //pos pointed directly towards the back
     public static double posChange90 = 0.35; //servo pos change that rotates turret 90 deg
 
     public double goalPitch; //hood - rad
@@ -156,11 +156,13 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = false;
         this.setSpeed(this.velToRPM(velocity));
 
+        this.goalPitch = pitch;
+        this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+
         this.goalTurretAngle = this.findYawAngle(goalPos);
         this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
 
-        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, turretYaw));
-        this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+
 
     }
 
