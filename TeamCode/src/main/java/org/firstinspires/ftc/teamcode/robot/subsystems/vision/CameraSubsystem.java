@@ -4,13 +4,13 @@ import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
-import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -18,7 +18,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.ArrayList;
 
@@ -26,6 +25,11 @@ import java.util.ArrayList;
 public class CameraSubsystem extends SubsystemBase {
     public static Coordinate cameraToTurretCenterOffset = new Coordinate(4.8, 2.2);
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-2.2, 0);
+
+    public static double CONVERGENCE_RATE = 0.1;
+    public static double FULL_RESET_CONVERGENCE_RATE = 0.5;
+    public static double VELOCITY_THRESHOLD = 5.0; // inches per second
+    public static double FULL_RESET_THRESHOLD_ANGLE = 10.0; // degrees
 
     private AprilTagProcessor aTagProcessor;
 
@@ -38,28 +42,13 @@ public class CameraSubsystem extends SubsystemBase {
     public Robot robot;
     public RobotHardware hardware;
 
-
     public GLYPH gameGlyph;
     private boolean decodedGlyph = false; //when the movie uses the title of the movie
-
-    /**
-     * @return order of the balls in the spindexer with top:0 right:1 left:2
-     * G/P:colors, N:no ball detected
-     */
-//    public char[] getBalls()
-//    {
-//        return spindexerPipeline.getBalls();
-//    }
 
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public final VisionPortal vPortalField;
 
     private ArrayList<AprilTagDetection> detections;
-
-    //should only ever be the blue or red goal which is 20 and 24 respectively
-    private AprilTagDetection localizationTag;
-
-    private Telemetry tele;
 
     private Pose debugLastDetection = null; // for debug only
     private long debugDetectionTime = 0; // for debug only
@@ -68,9 +57,8 @@ public class CameraSubsystem extends SubsystemBase {
         this.vPortalField = null;
     }
 
-    public CameraSubsystem(Telemetry tele, Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
+    public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
         this.robot = robot;
-        this.tele = tele;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
         this.aTagProcessor = createAprilTagProcessor();
@@ -129,7 +117,8 @@ public class CameraSubsystem extends SubsystemBase {
         if (vPortalField == null) return;
 
         this.detections = aTagProcessor.getDetections();
-        localizationTag = null;
+        //should only ever be the blue or red goal which is 20 and 24 respectively
+        AprilTagDetection localizationTag = null;
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23) {
@@ -139,15 +128,10 @@ public class CameraSubsystem extends SubsystemBase {
                 localizationTag = tag;
             }
         }
-        if (localizationTag != null && localizationTag.robotPose != null) {
-
-            Pose robotPose = rawCameraPoseToRobotPose(localizationTag);
-            tele.addData("seentagpos", robotPose);
-
-            debugLastDetection = robotPose;
-            debugDetectionTime = System.currentTimeMillis();
-
-            robot.follower.poseTracker.setPose(robotPose);
+        robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
+        if (localizationTag != null && localizationTag.robotPose != null
+            && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
+            handleLocalizationDetection(localizationTag);
         }
 
         if (debugLastDetection != null) {
@@ -158,10 +142,29 @@ public class CameraSubsystem extends SubsystemBase {
         }
     }
 
-    private Pose rawCameraPoseToRobotPose(AprilTagDetection tag) {
-        double robotHeading = robot.follower.getHeading();
+    private void handleLocalizationDetection(AprilTagDetection tag) {
         Pose cameraFieldPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI);
 //        FtcDashDrawing.drawDot(cameraFieldPose, "#0000FF");
+
+        double turretAngle = robot.shooter.getGoalTurretYaw();
+        double cameraRobotHeading = cameraFieldPose.getHeading() - turretAngle;
+        double pinpointRobotHeading = robot.follower.poseTracker.getPose().getHeading();
+
+        // If the Pinpoint IMU heading is extremely off from the calculated angle, this means we've
+        // likely inited the IMU in the wrong position. So, we will do a "full localization reset"
+        // to correct it.
+//        boolean isFullReset = MathFunctions.getSmallestAngleDifference(cameraRobotHeading, pinpointRobotHeading) < Math.toRadians(FULL_RESET_THRESHOLD_ANGLE);
+        boolean isFullReset = false;  // causes bugs
+        double robotHeading;
+        double convergenceRate;
+        if (isFullReset) {
+            System.out.println("Performing full localization reset from camera!");
+            robotHeading = cameraRobotHeading;
+            convergenceRate = FULL_RESET_CONVERGENCE_RATE;
+        } else {
+            robotHeading = pinpointRobotHeading;
+            convergenceRate = CONVERGENCE_RATE;
+        }
 
         Pose turretVector = new Pose(cameraToTurretCenterOffset.x, cameraToTurretCenterOffset.y, 0).rotate(cameraFieldPose.getHeading(), false);
         Pose turretCenter = cameraFieldPose.minus(turretVector);
@@ -169,6 +172,22 @@ public class CameraSubsystem extends SubsystemBase {
         Pose robotVector = new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0).rotate(robotHeading, false);
         Pose robotCenter = turretCenter.minus(robotVector);
 
-        return new Pose(robotCenter.getX(), robotCenter.getY(), robotHeading);
+        Pose robotPose = new Pose(robotCenter.getX(), robotCenter.getY(), robotHeading);
+
+        debugLastDetection = robotPose;
+        debugDetectionTime = System.currentTimeMillis();
+
+        // Apply exponential convergence
+        Pose currentPose = robot.follower.poseTracker.getPose();
+        Pose convergedPose = new Pose(
+                currentPose.getX() + convergenceRate * (robotPose.getX() - currentPose.getX()),
+                currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
+                currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
+        );
+        if (isFullReset) {
+            robot.follower.poseTracker.setPose(convergedPose);
+        } else {
+            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
+        }
     }
 }
