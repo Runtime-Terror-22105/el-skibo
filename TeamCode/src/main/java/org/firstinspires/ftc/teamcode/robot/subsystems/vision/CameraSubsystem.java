@@ -164,7 +164,7 @@ public class CameraSubsystem extends SubsystemBase {
              localizationTag = tag;
             }
         }
-        if(localizationTag != null)
+        if(localizationTag != null && localizationTag.robotPose != null)
         {
 
             Pose robotPose = rawCameraPoseToRobotPose(localizationTag);
