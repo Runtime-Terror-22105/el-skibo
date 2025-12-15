@@ -256,6 +256,9 @@ public class ShooterSubsystem extends SubsystemBase {
         this.turretOffset += change;
     }
 
+    public double getGoalTurretYaw() {
+        return this.goalTurretAngle;
+    }
 
     @Override
     public void periodic() {
