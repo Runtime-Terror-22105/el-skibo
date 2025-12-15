@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -53,5 +55,7 @@ public class IntakeSubsystem extends SubsystemBase {
         robot.hardware.intake.setPower(this.targetSpeed);
         robot.hardware.intakePitchLeft.setPosition(pitch.left.get());
         robot.hardware.intakePitchRight.setPosition(pitch.right.get());
+
+        Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());
     }
 }
