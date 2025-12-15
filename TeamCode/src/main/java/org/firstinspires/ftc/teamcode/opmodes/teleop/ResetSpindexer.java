@@ -8,5 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class ResetSpindexer extends LinearOpMode {
     public void runOpMode() {
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }
