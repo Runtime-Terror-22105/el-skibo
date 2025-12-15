@@ -192,10 +192,12 @@ public class CameraSubsystem extends SubsystemBase {
         double robotHeading = robot.follower.getHeading();
         Pose rawCameraPose = new Pose(72+tag.robotPose.getPosition().y,72-tag.robotPose.getPosition().x,tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
 
-        double turretYaw = rawCameraPose.getHeading() - robotHeading;
+        double turretYaw = rawCameraPose.getHeading() - robotHeading + Math.PI;
         Pose cameraToTurretCenter = new Pose(cameraToTurretCenterOffset.x, cameraToTurretCenterOffset.y, 0).rotate(turretYaw, true);
         Log.i("CameraSubsystem","turret yaw calculated: "+Math.toDegrees(turretYaw) + " degrees");
-        Log.i("CameraSubsystem","turret yaw goal: "+Math.toDegrees(robot.shooter.getGoalTurretYaw()) + " degrees"); 
+        Log.i("CameraSubsystem","turret yaw goal: "+Math.toDegrees(robot.shooter.getGoalTurretYaw()) + " degrees");
+        Robot.debugTelemetry.addData("Turret Yaw Calc (deg)", Math.toDegrees(turretYaw));
+        Robot.debugTelemetry.addData("Turret Yaw Goal (deg)", Math.toDegrees(robot.shooter.getGoalTurretYaw()));
         Pose cameraToRobotCenter = cameraToTurretCenter.minus(new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0)).rotate(robotHeading, false);
 //        Log.i("CameraSubsystem","camera to robot center dist: "+cameraToRobotCenterDist);
 //        cameraToRobotCenterDist = Coordinate.rotate(cameraToRobotCenterDist, new Coordinate(0,0), robot.follower.getPose().getHeading());
