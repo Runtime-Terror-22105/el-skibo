@@ -78,6 +78,18 @@ public class BetterShooterAimTuner extends LinearOpMode {
                         () -> (double) gamepad1.right_stick_x, robot)
                 );
 
+        Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
+
+        intakeButton.whenActive(new ConditionalCommand(
+                new SequentialCommandGroup(
+                        new GoToIntakeStateCommand(robot)
+//                    new WaitForIntakeCommand(robot),
+//                    new GoToFullStateCommand(robot)
+                ),
+                new InstantCommand(() -> {} ),
+                () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
+        ));
+
 
         //homing command executing here
 
