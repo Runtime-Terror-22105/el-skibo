@@ -35,8 +35,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double DIDDY_POLE_ACTIVE = 0.2;
-    public static double DIDDY_POLE_DEACITVE = 0.4;
+    public static double DIDDY_POLE_ACTIVE = 0.23;
+    public static double DIDDY_POLE_DEACITVE = 0.45;
 
     public double diddyPos = DIDDY_POLE_DEACITVE;
 

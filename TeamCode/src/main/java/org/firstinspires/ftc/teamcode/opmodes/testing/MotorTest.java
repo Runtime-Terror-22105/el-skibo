@@ -48,7 +48,7 @@ public class MotorTest extends LinearOpMode {
             }
 
             if (showEncoderOutput && !motorName.isEmpty()) {
-                TerrorEncoder shooterEncoder = new TerrorEncoder(new TerrorMotorNormal((DcMotorEx) hardwareMap.get(DcMotor.class, "shooterLeft"), 0.05, 1.0));
+                TerrorEncoder shooterEncoder = new TerrorEncoder(new TerrorMotorNormal((DcMotorEx) hardwareMap.get(DcMotor.class, "motorRearLeft"), 0.05, 1.0));
                 telemetry.addData("Current velocity (ticks/sec)", shooterEncoder.getVelocity());
 
                 // I'm pretty sure we're using this motor? https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/

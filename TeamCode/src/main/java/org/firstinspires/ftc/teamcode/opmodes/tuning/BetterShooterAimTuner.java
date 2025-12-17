@@ -52,6 +52,8 @@ public class BetterShooterAimTuner extends LinearOpMode {
     public static double velocity = 450;
     public static double hoodAngle = 0.7;
     public static double turretPos = 0;
+    public static boolean autoHood  = true;
+    public static double spindexOffset = -0.3;
 
     @Override
     public void runOpMode() {
@@ -89,6 +91,11 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 new InstantCommand(() -> {} ),
                 () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
         ));
+        intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
+                new GoToRestingStateCommand(robot),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
+        ));
 
 
         //homing command executing here
@@ -100,7 +107,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
                         new InstantCommand(() -> robot.shooter.setSpeed(3500D)))
         );
 
-
+        robot.spindexer.rotate(spindexOffset);
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
@@ -112,14 +119,19 @@ public class BetterShooterAimTuner extends LinearOpMode {
 //            if (balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N') {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
+            if (autoHood){
+                robot.shooter.manualAim(velocity, hoodAngle, turretPos);
+            }
+            else{
+                robot.shooter.manualAimAutoHood(velocity, turretPos);
+            }
 
-            robot.shooter.manualAim(velocity, hoodAngle, turretPos);
             robot.spindexer.enableRamp();
             robot.intake.setSpeed(DEFAULT_SPEED);
-            robot.spindexer.setWallDown();
+
 
             if (robot.robotState == INTAKING){
-                Log.d("data point", "distance: "+ Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2))+ " velocoity: " + robot.shooter.getVelocityRpm()/6.469 + " hood angle: " + hoodAngle);
+                Log.d("data point", "distance: "+ Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2))+ " velocoity: " + robot.shooter.getGoalVelocity()/6.469 + " hood angle: " + hoodAngle);
             }
 
 
