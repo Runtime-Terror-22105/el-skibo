@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 import static org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.DEFAULT_SPEED;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -43,6 +44,10 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 @TeleOp(name = "Better Shooter Aim Tuner", group = "Tuning")
 @Config
 public class BetterShooterAimTuner extends LinearOpMode {
@@ -54,6 +59,8 @@ public class BetterShooterAimTuner extends LinearOpMode {
     public static double turretPos = 0;
     public static boolean autoHood  = true;
     public static double spindexOffset = -0.3;
+
+    public static String OUTPUT_FILE = "shooter_tuning_data.csv";
 
     @Override
     public void runOpMode() {
@@ -130,8 +137,24 @@ public class BetterShooterAimTuner extends LinearOpMode {
             robot.intake.setSpeed(DEFAULT_SPEED);
 
 
-            if (robot.robotState == INTAKING){
-                Log.d("data point", "distance: "+ Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2))+ " velocoity: " + robot.shooter.getGoalVelocity()/6.469 + " hood angle: " + hoodAngle);
+            if (robot.robotState == INTAKING) {
+                double dist = Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) +
+                        Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2));
+                double vel = robot.shooter.getGoalVelocity()/6.469;
+                String str = "distance: " + dist + " velocity: " + vel + " hood angle: " + hoodAngle;
+                Log.d("data point", str);
+
+                // save the data point to a file
+                File outputFile = new File(OUTPUT_FILE);
+                if (outputFile.exists()) {
+                    outputFile.delete(); // delete the file if it already exists
+                }
+                try (FileOutputStream out = new FileOutputStream(outputFile)) {
+                    out.write(str.getBytes());
+                    Log.d("data point", "Data point saved to " + outputFile.getAbsolutePath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
 
