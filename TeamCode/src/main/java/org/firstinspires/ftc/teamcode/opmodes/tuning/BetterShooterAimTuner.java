@@ -116,6 +116,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
             robot.shooter.manualAim(velocity, hoodAngle, turretPos);
             robot.spindexer.enableRamp();
             robot.intake.setSpeed(DEFAULT_SPEED);
+            robot.spindexer.setWallDown();
 
             if (robot.robotState == INTAKING){
                 Log.d("data point", "distance: "+ Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2))+ " velocoity: " + robot.shooter.getVelocityRpm()/6.469 + " hood angle: " + hoodAngle);
