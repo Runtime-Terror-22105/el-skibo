@@ -55,7 +55,7 @@ public class ShimmyShoot3Ball extends CommandBase {
         if(!setupFinished)
         {
             robot.spindexer.goToAngle120(robot.spindexer.getPosition()-Math.toRadians(angleDiff));
-            setupFinished = timer.milliseconds() <= spindexTimeDelay;
+            setupFinished = timer.milliseconds() >= spindexTimeDelay;
             if(setupFinished)
             {
                 timer.reset();
