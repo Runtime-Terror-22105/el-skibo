@@ -9,24 +9,36 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 
-@TeleOp(name = "Motor Test", group = "Testing")
+@TeleOp(name = "Motor Servo Test", group = "Testing")
 @Config
-public class MotorTest extends LinearOpMode {
-    // targets
+public class MotorServoTest extends LinearOpMode {
+    // motor stuff
     public static String motorName = "";
     public static double motorPower = 0D;
 
     public static String motorName2 = "";
     public static double motorPower2 = 0D;
-    public static String motorName3 = "";
-    public static double motorPower3 = 0D;
 
     public static boolean showEncoderOutput = true;
+
+
+
+    // servo stuff
+    public static String servoName = "";
+    public static double servoPosition = 0D;
+
+    public static String servoName2 = "";
+    public static double servoPosition2 = 0D;
+
+    public static boolean useExtendedPwmRange = false;
 
     @Override
     public void runOpMode() {
@@ -35,16 +47,13 @@ public class MotorTest extends LinearOpMode {
         waitForStart();
         double maxvel=0;
         while (opModeIsActive()) {
+            // motor stuff
             if (!motorName.isEmpty()) {
                 hardwareMap.get(DcMotor.class, motorName).setPower(motorPower);
             }
 
             if (!motorName2.isEmpty()) {
                 hardwareMap.get(DcMotor.class, motorName2).setPower(motorPower2);
-            }
-
-            if (!motorName3.isEmpty()) {
-                hardwareMap.get(DcMotor.class, motorName3).setPower(motorPower3);
             }
 
             if (showEncoderOutput && !motorName.isEmpty()) {
@@ -57,6 +66,36 @@ public class MotorTest extends LinearOpMode {
                 telemetry.addData("Max Velocity(rpm)", maxvel); // 145.1 ticks per revolution
                 telemetry.addData("Current (amps)", ((DcMotorEx) hardwareMap.get(DcMotor.class, motorName)).getCurrent(CurrentUnit.AMPS));
                 telemetry.update();
+            }
+
+
+
+            // servo stuff
+            if (!servoName.isEmpty()) {
+
+                Servo servo = hardwareMap.get(Servo.class, servoName);
+
+                if (useExtendedPwmRange) {
+                    int portNumber = servo.getPortNumber();
+                    PwmControl.PwmRange customRange = new PwmControl.PwmRange(500, 2500);  // Adjust based on servo specs
+
+                    ServoControllerEx servoController = (ServoControllerEx) servo.getController();
+                    servoController.setServoPwmRange(portNumber, customRange);
+                }
+
+                servo.setPosition(servoPosition);
+            }
+
+            if (!servoName2.isEmpty()) {
+                Servo servo2 = hardwareMap.get(Servo.class, servoName2);
+                if (useExtendedPwmRange) {
+                    int portNumber = servo2.getPortNumber();
+                    PwmControl.PwmRange customRange = new PwmControl.PwmRange(500, 2500);  // Adjust based on servo specs
+
+                    ServoControllerEx servoController2 = (ServoControllerEx) servo2.getController();
+                    servoController2.setServoPwmRange(portNumber, customRange);
+                }
+                servo2.setPosition(servoPosition2);
             }
         }
     }

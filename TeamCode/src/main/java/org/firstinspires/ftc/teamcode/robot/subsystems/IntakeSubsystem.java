@@ -1,19 +1,22 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @Config
 public class IntakeSubsystem extends SubsystemBase {
-    private final RobotHardware hardware;
+    private final Robot robot;
 
-    public static double DOWN_LEFT = 0.655; //servo pos
-    public static double UP_LEFT = 0.2;
-    public static double DOWN_RIGHT = 0.0;
-    public static double UP_RIGHT = 0.44;
+    public static double DOWN_LEFT = 0.91; //servo pos
+    public static double UP_LEFT = 0.5;
+    public static double DOWN_RIGHT = 0.13;
+    public static double UP_RIGHT = 0.54;
 
     public static double DEFAULT_SPEED = 0.9;
 
@@ -24,8 +27,8 @@ public class IntakeSubsystem extends SubsystemBase {
     //Two states: up and down, with keys 'left' and 'right' which have the respective positions for the servos
     private IntakePitch pitch = IntakePitch.DOWN;
 
-    public IntakeSubsystem(RobotHardware hardware) {
-        this.hardware = hardware;
+    public IntakeSubsystem(Robot robot) {
+        this.robot = robot;
         this.targetSpeed = 0;
     }
 
@@ -47,8 +50,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        hardware.intake.setPower(this.targetSpeed);
-        hardware.intakePitchLeft.setPosition(pitch.left.get());
-        hardware.intakePitchRight.setPosition(pitch.right.get());
+        robot.hardware.enableColorSensor = RobotState.INTAKING.equals(robot.robotState);
+
+        robot.hardware.intake.setPower(this.targetSpeed);
+        robot.hardware.intakePitchLeft.setPosition(pitch.left.get());
+        robot.hardware.intakePitchRight.setPosition(pitch.right.get());
+
+        Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());
     }
 }

@@ -71,12 +71,13 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
         // Initialize the drivetrain
         this.follower = Constants.createFollower(hardware.hwMap);
+        this.follower.breakFollowing();
 
         // NB: SubsystemBase will automatically register the subsystems for us
         this.drive = new DriveSubsystem(this);
         this.shooter = new ShooterSubsystem(hardware, this);
         this.spindexer = new SpindexerSubsystem(hardware, this);
-        this.intake = new IntakeSubsystem(hardware);
+        this.intake = new IntakeSubsystem(this);
         this.hang = new HangSubsystem(hardware);
         this.lightControl = new LightControl2(hardware,this);
 
@@ -86,7 +87,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         // Set up the camera
         if (hardware.fieldCamera != null) {
 
-            this.camera = new CameraSubsystem(tele,this,hardware, CameraSubsystem.LiveViewSettings.FIELD);
+            this.camera = new CameraSubsystem(this,hardware, CameraSubsystem.LiveViewSettings.FIELD);
 //            this.camera = new TerrorCameraVisionPortal.Builder()
 //                    .setCamera(hardware.fieldCamera)
 //                    .setCameraResolution(new Size(320, 240))

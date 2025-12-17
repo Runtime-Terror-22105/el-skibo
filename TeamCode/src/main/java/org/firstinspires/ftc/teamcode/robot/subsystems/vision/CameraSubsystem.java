@@ -1,60 +1,36 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
+
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.ftc.FTCCoordinates;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.robot.init.Robot;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.math.Coordinate;
+import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.ArrayList;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
+    public static Coordinate cameraToTurretCenterOffset = new Coordinate(4.8, 2.2);
+    public static Coordinate turretToRobotCenterOffset = new Coordinate(-2.2, 0);
 
-    //TODO: turrentCenterDists, turretRadiusvalue, cameraphasechange all values needed, and the pose2d in
-    //TODO: getRobotCenterCoordinateToAprilTag heading is needed
+    public static double CONVERGENCE_RATE = 0.1;
+    public static double FULL_RESET_CONVERGENCE_RATE = 0.5;
+    public static double VELOCITY_THRESHOLD = 5.0; // inches per second
+    public static double FULL_RESET_THRESHOLD_ANGLE = 10.0; // degrees
 
-    private OpenCvCamera aprilTagCamera;
-    private OpenCvCamera spindexerCamera;
-
-//    private double turretCenterToRobotCenterUnitNeededX = 0; //this is perfectly centered
-    public static double turretCenterToRobotCenterMeters = 0.2311;
-
-    //robot dimemnnsions 16 inches by 15 inches
-
-    public static double turretRadiusMeters = 0.13335;
-
-    public static double cameraPhaseChangeAngleRadians = Math.toRadians(120);
-
-    public static double tempTurretAngle = 0;
-
-    public static Pose2d blueGlobalPose = new Pose2d(3000,3000,0.959931);
-
-    public static Pose2d redGlobalPose = new Pose2d(3000,3000,-0.959931);
-
-    public static Pose2d motifGlobalPose = new Pose2d(3000,3000,0);
-
-
-    Telemetry telemetry;
     private AprilTagProcessor aTagProcessor;
 
     public enum GLYPH {
@@ -66,36 +42,23 @@ public class CameraSubsystem extends SubsystemBase {
     public Robot robot;
     public RobotHardware hardware;
 
-
     public GLYPH gameGlyph;
     private boolean decodedGlyph = false; //when the movie uses the title of the movie
-
-    /**
-     * @return order of the balls in the spindexer with top:0 right:1 left:2
-     * G/P:colors, N:no ball detected
-     */
-//    public char[] getBalls()
-//    {
-//        return spindexerPipeline.getBalls();
-//    }
 
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public final VisionPortal vPortalField;
 
     private ArrayList<AprilTagDetection> detections;
 
-    //should only ever be the blue or red goal which is 20 and 24 respectively
-    private AprilTagDetection localizationTag;
-
-    private Telemetry tele;
+    private Pose debugLastDetection = null; // for debug only
+    private long debugDetectionTime = 0; // for debug only
 
     public CameraSubsystem() {
         this.vPortalField = null;
     }
 
-    public CameraSubsystem(Telemetry tele,Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
+    public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
         this.robot = robot;
-        this.tele = tele;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
         this.aTagProcessor = createAprilTagProcessor();
@@ -133,7 +96,7 @@ public class CameraSubsystem extends SubsystemBase {
 //                    .setLensIntrinsics() // TODO: placeholder to remind us to calibrate the camera
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
-                .setLensIntrinsics(910.121,910.121,648.374,394.354)
+                .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
     }
 
@@ -149,136 +112,82 @@ public class CameraSubsystem extends SubsystemBase {
         gameGlyph = glyph;
     }
 
-    public boolean isLocalizationTagSeen()
-    {
-        return localizationTag != null;
-    }
-
     @Override
     public void periodic() {
         if (vPortalField == null) return;
 
         this.detections = aTagProcessor.getDetections();
-        localizationTag = null;
+        //should only ever be the blue or red goal which is 20 and 24 respectively
+        AprilTagDetection localizationTag = null;
 
         for (AprilTagDetection tag : detections) {
-            if (tag.id >= 21 && tag.id <= 23 && !decodedGlyph) {
-                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            if (tag.id >= 21 && tag.id <= 23) {
+                if (!decodedGlyph)
+                    setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            } else {
+                localizationTag = tag;
             }
-            else
-            {
-             localizationTag = tag;
-            }
         }
-        if(!detections.isEmpty())
-        {
-//            AprilTagDetection tag = detections.get(0);
-//            Pose2D rawPose = new Pose2D(DistanceUnit.INCH,tag.metadata.fieldPosition.get(0)-tag.robotPose.getPosition().x,tag.metadata.fieldPosition.get(1)-tag.robotPose.getPosition().y,AngleUnit.RADIANS,tag.ftcPose.yaw);
+        robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
+        if (localizationTag != null && localizationTag.robotPose != null
+            && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
+            handleLocalizationDetection(localizationTag);
+        }
 
-//            tele.addData("atag raw pose distance", tag.robotPose.getPosition());
-//            tele.addData("atag field pos", tag.metadata.fieldPosition);
-//            tele.addData("atag distance", rawPose);
-
-            tele.addData("seentagpos",getPedroPosition(localizationTag));
-            if(isLocalizationTagSeen())
-            {
-                robot.follower.poseTracker.setPose(getPedroPosition(localizationTag));
-            }
-//            tele.addData("turretAngle",robot.shooter.goalTurretAngle);
+        if (debugLastDetection != null) {
+            // Fade color from red to black as detection gets older
+            int ageMs = (int) (System.currentTimeMillis() - debugDetectionTime);
+            int red = Math.max(0, 255 - ageMs / 5);
+            FtcDashDrawing.drawRobot(debugLastDetection != null ? debugLastDetection : new Pose(0, 0, 0), String.format("#%02X0000", red));
         }
     }
 
-    public boolean hasDetections() {
-        return !detections.isEmpty();
-    }
+    private void handleLocalizationDetection(AprilTagDetection tag) {
+        Pose cameraFieldPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI);
+//        FtcDashDrawing.drawDot(cameraFieldPose, "#0000FF");
 
-    //this should be ok?
-    public Pose getPedroPosition(AprilTagDetection tag)
-    {
-//        Pose2D rawPose = new Pose2D(
-//                DistanceUnit.INCH,
-//                tag.robotPose.getPosition().x,
-//                tag.robotPose.getPosition().y,
-//                AngleUnit.RADIANS,
-//                tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS)
-//        );
-//        tele.addData("global position",rawPose);
-        return new Pose(72+tag.robotPose.getPosition().y,72-tag.robotPose.getPosition().x,tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
-    }
+        double turretAngle = robot.shooter.getGoalTurretYaw();
+        double cameraRobotHeading = cameraFieldPose.getHeading() - turretAngle;
+        double pinpointRobotHeading = robot.follower.poseTracker.getPose().getHeading();
 
-    public double getOrientationFromCameraRad(AprilTagDetection tag)
-    {
-        /*"global banking" is a value that is given per tag, as in if the robot were looking forward like this
-       (-55deg)     (55deg)
-        *  /     \
-              ^
-              |
-              |
-              |
-
-
-        given this situation
-
-      (global banked at -55)
-        /(camera returns the tag being banked at -35)
-            ^
-            | (turret angle is facing 270 in code (hopefully)
-   180 <----  (robot's global angle)
-
-        clockkwise positiev
-
-        globalBanking+seenAngle+turret=robots global
-        -55-35+270=(-90)+270=180
-        this should hopefully work (can't wait for it to not)
-        */
-        double heading;
-        switch(VisionConstants.APRILTAG.tagMap.get(tag.id))
-        {
-            case "BLUESCORE":
-                heading = blueGlobalPose.heading;
-                break;
-//            case "GPP":
-//                break;
-//            case "PGP":
-//                break;
-//            case "PPG":
-//                break;
-            case "REDSCORE":
-                heading = redGlobalPose.heading;
-                break;
-            default:
-                heading = motifGlobalPose.heading;
-                break;
-        }
-        return heading+tag.ftcPose.range+tempTurretAngle;
-
-    }
-
-    public Pose2d getPositionCamera()
-    {
-
-        if (detections.isEmpty()) {
-            return null;
+        // If the Pinpoint IMU heading is extremely off from the calculated angle, this means we've
+        // likely inited the IMU in the wrong position. So, we will do a "full localization reset"
+        // to correct it.
+//        boolean isFullReset = MathFunctions.getSmallestAngleDifference(cameraRobotHeading, pinpointRobotHeading) < Math.toRadians(FULL_RESET_THRESHOLD_ANGLE);
+        boolean isFullReset = false;  // causes bugs
+        double robotHeading;
+        double convergenceRate;
+        if (isFullReset) {
+            System.out.println("Performing full localization reset from camera!");
+            robotHeading = cameraRobotHeading;
+            convergenceRate = FULL_RESET_CONVERGENCE_RATE;
+        } else {
+            robotHeading = pinpointRobotHeading;
+            convergenceRate = CONVERGENCE_RATE;
         }
 
-        // todo: choose only one apriltag to use
-        AprilTagDetection tag = detections.get(0);
-        return new Pose2d(tag.robotPose.getPosition().x-VisionConstants.APRILTAG.cameraOffset.x,tag.robotPose.getPosition().y-VisionConstants.APRILTAG.cameraOffset.y,tag.robotPose.getPosition().z-VisionConstants.APRILTAG.cameraOffset.z);
-    }
+        Pose turretVector = new Pose(cameraToTurretCenterOffset.x, cameraToTurretCenterOffset.y, 0).rotate(cameraFieldPose.getHeading(), false);
+        Pose turretCenter = cameraFieldPose.minus(turretVector);
+//        FtcDashDrawing.drawDot(turretCenter, "#FF00FF");
+        Pose robotVector = new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0).rotate(robotHeading, false);
+        Pose robotCenter = turretCenter.minus(robotVector);
 
-    //this gives the actual coords from the robot center to the april tag which makes the robot center 0,0 relative
-    //to the outputed value
+        Pose robotPose = new Pose(robotCenter.getX(), robotCenter.getY(), robotHeading);
 
-    private double getCoordinateComponentX(AprilTagDetection tag) {
-        return ((tag.ftcPose.x/39.37) + turretRadiusMeters*Math.cos(tempTurretAngle + cameraPhaseChangeAngleRadians));
-    }
+        debugLastDetection = robotPose;
+        debugDetectionTime = System.currentTimeMillis();
 
-    private double getCoordinateComponentY(AprilTagDetection tag) {
-        return (tag.ftcPose.y/39.37 + turretRadiusMeters*Math.sin(tempTurretAngle + cameraPhaseChangeAngleRadians) + turretCenterToRobotCenterMeters);
-    }
-
-    public Pose2d getRobotCenterCoordinateToAprilTag() {
-        AprilTagDetection tag = detections.get(0);
-        return new Pose2d(getCoordinateComponentX(tag), getCoordinateComponentY(tag),getOrientationFromCameraRad(tag));
+        // Apply exponential convergence
+        Pose currentPose = robot.follower.poseTracker.getPose();
+        Pose convergedPose = new Pose(
+                currentPose.getX() + convergenceRate * (robotPose.getX() - currentPose.getX()),
+                currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
+                currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
+        );
+        if (isFullReset) {
+            robot.follower.poseTracker.setPose(convergedPose);
+        } else {
+            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
+        }
     }
 }
