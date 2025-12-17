@@ -38,17 +38,15 @@ public class ShooterLookupTable {
     }
 
     public static LookupValue[] VEL_DATA_POINTS = new LookupValue[]{
-            new LookupValue(35, 451),
-            new LookupValue(45, 470),
-            new LookupValue(55, 490),
-            new LookupValue(60, 500),
-            new LookupValue(70, 530)
+            new LookupValue(0, 700),
+            new LookupValue(20.4, 700),
+            new LookupValue(83.3, 830),
+
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
-            new HoodLookupValue(35, 451), //rad
-            new HoodLookupValue(36, 451),
-            new HoodLookupValue(37, 451),
-            new HoodLookupValue(38, 451),
+            new HoodLookupValue(0, 700),
+            new HoodLookupValue(20.4, 0.7), //rad
+            new HoodLookupValue(83.3, 0.8),
     };
 
     static {
@@ -60,27 +58,27 @@ public class ShooterLookupTable {
 
     public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
         // todo: temporarily putting this here so we can dashboard
-//        FAR_VELOCITY_LUT = new InterpLUT();
-//        HOOD_LUT = new InterpLUT();
-//        for (LookupValue dataPoint : VEL_DATA_POINTS) {
-//            FAR_VELOCITY_LUT.add(dataPoint.distance, dataPoint.speed);
-//        }
-//        FAR_VELOCITY_LUT.createLUT();
-//
-//        for (HoodLookupValue dataPoint : HOOD_DATA_POINTS) {
-//            HOOD_LUT.add(dataPoint.distance, dataPoint.rad);
-//        }
-//        HOOD_LUT.createLUT();
-//
-//
-//        distanceToGoalIn = Math.max(MIN_DIST, Math.min(MAX_DIST, distanceToGoalIn));
-//        double rad;
-//        double velocity;
-//
-//        velocity = FAR_VELOCITY_LUT.get(distanceToGoalIn);
-//        rad = HOOD_LUT.get(distanceToGoalIn);
-//
-//        return new ShooterSubsystem.ShooterValues(velocity, rad);
-        return new ShooterSubsystem.ShooterValues(0,0);
+        FAR_VELOCITY_LUT = new InterpLUT();
+        HOOD_LUT = new InterpLUT();
+        for (LookupValue dataPoint : VEL_DATA_POINTS) {
+            FAR_VELOCITY_LUT.add(dataPoint.distance, dataPoint.speed);
+        }
+        FAR_VELOCITY_LUT.createLUT();
+
+        for (HoodLookupValue dataPoint : HOOD_DATA_POINTS) {
+            HOOD_LUT.add(dataPoint.distance, dataPoint.rad);
+        }
+        HOOD_LUT.createLUT();
+
+
+        distanceToGoalIn = Math.max(MIN_DIST, Math.min(MAX_DIST, distanceToGoalIn));
+        double rad;
+        double velocity;
+
+        velocity = FAR_VELOCITY_LUT.get(distanceToGoalIn);
+        rad = HOOD_LUT.get(distanceToGoalIn);
+
+        return new ShooterSubsystem.ShooterValues(velocity, rad);
+        //return new ShooterSubsystem.ShooterValues(0,0);
     }
 }
