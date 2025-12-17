@@ -79,15 +79,15 @@ dependencies {
     implementation "org.solverslib:core:${solversLibVersion}"
     implementation "org.solverslib:pedroPathing:${solversLibVersion}"
 
-    implementation ('com.pedropathing:ftc:2.0.3'){
+    implementation ('com.pedropathing:ftc:2.0.4'){
         exclude group: "com.acmerobotics.dashboard"
     }
-    implementation 'com.pedropathing:telemetry:0.0.6'
+    implementation 'com.pedropathing:telemetry:1.0.0'
 
     implementation "com.github.ori-coval.Koala-Log:KoalaLogger:${koalaLogVersion}"
     annotationProcessor "com.github.ori-coval.Koala-Log:KoalaLoggingProcessor:${koalaLogVersion}"
 
-//    implementation("com.acmerobotics.slothboard:dashboard:0.2.4+0.4.17")
+    implementation("com.acmerobotics.dashboard:dashboard:0.5.1")
 
     implementation "com.bylazar:fullpanels:${panelsVersion}"
 

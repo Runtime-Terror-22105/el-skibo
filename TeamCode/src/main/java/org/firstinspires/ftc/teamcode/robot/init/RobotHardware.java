@@ -12,7 +12,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -37,10 +36,10 @@ import java.util.List;
 public class RobotHardware {
     // Drivetrain motors & servos
     // NB: Use pedro pathing's Follower rather than access these directly.
-//    public TerrorMotorNormal motorFroTntLeft;
-//    public TerrorMotorNormal motorRearRight;
-//    public TerrorMotorNormal motorFrontRight;
-//    public TerrorMotorNormal motorRearLeft;
+    public TerrorMotorNormal motorFrontLeft;
+    public TerrorMotorNormal motorRearRight;
+    public TerrorMotorNormal motorFrontRight;
+    public TerrorMotorNormal motorRearLeft;
 
     // Turret
     public TerrorServo turretYawLeft;  // rotates the turret yaw
@@ -99,7 +98,7 @@ public class RobotHardware {
     public HardwareMap hwMap;
     private final TerrorPublisher publisher = new TerrorPublisher();
 
-    public boolean disableColorSensor = false;
+    public boolean enableColorSensor = true;
 
     public enum HardwareOptions {
         CAMERA
@@ -109,27 +108,30 @@ public class RobotHardware {
         this.hwMap = hwMap;
 
         // Initialize the drivetrain motors
-        TerrorMotorNormal motorFrontLeft = new TerrorMotorNormal(
+        motorFrontLeft = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorFrontLeft"),
                 0.05,
                 1.0
         );
-        TerrorMotorNormal motorFrontRight = new TerrorMotorNormal(
+        motorFrontRight = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorFrontRight"),
                 0.05,
                 1.0
         );
-        TerrorMotorNormal motorRearRight = new TerrorMotorNormal(
+        motorRearRight = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorRearRight"),
                 0.05,
                 1.0
         );
-        TerrorMotorNormal motorRearLeft = new TerrorMotorNormal(
+        motorRearLeft = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "motorRearLeft"),
                 0.05,
                 1.0
         );
-
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize the turret
         this.turretYawLeft = new TerrorServo(
@@ -249,7 +251,7 @@ public class RobotHardware {
 
     public void write() {
         this.publisher.write();
-        if (!this.disableColorSensor) {
+        if (this.enableColorSensor) {
             this.updateColorSensors();
         }
     }

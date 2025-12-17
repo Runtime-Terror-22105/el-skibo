@@ -26,10 +26,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double INTAKE_WALL_2_DOWN = 0.0;
     public static double INTAKE_WALL_2_UP = 0.85;
 
-    public static double SHOOTER_RAMP_ACTIVE = 0.4;
+    public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.03;
 
-    public static double MAX_POWER = 1.0;
+    public static double MAX_POWER = 0.6;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -48,7 +48,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
             new PidfController.PidfCoefficients(0.55, 0, 0.019, 0, 0.15);
-    public static double yawPidTolerance = Math.toRadians(2); // radians
+    public static double yawPidTolerance = Math.toRadians(3); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
