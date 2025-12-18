@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 @TeleOp(name="Spindexer Tuner", group="Tuning")
@@ -16,9 +15,7 @@ public class SpindexTuner extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    public static double extensionTarget = 0.0;
-
-    public static double goalAngle=0.0;
+    public static double GOAL_ANGLE = 0.0;
 
     @Override
     public void runOpMode() {
@@ -33,15 +30,15 @@ public class SpindexTuner extends LinearOpMode {
                 hub.clearBulkCache();
             }
 
-            robot.spindexer.setYaw(goalAngle);
+            robot.spindexer.setYaw(GOAL_ANGLE);
 
             robot.spindexer.periodic();
 
 
             hardware.write();
 
-            robot.telemetry.addData("Yaw of Spindexer", goalAngle);
-            robot.telemetry.addData("Current angle", robot.spindexer.getPosition());
+            robot.telemetry.addData("Yaw of Spindexer", GOAL_ANGLE);
+            robot.telemetry.addData("Current angle (degrees)", Math.toDegrees(robot.spindexer.getPosition()));
             robot.telemetry.addData("Current power", robot.spindexer.spindexerPower);
             robot.telemetry.update();
 

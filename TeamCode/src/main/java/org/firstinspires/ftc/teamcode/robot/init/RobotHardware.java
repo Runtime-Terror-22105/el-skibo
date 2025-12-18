@@ -57,7 +57,8 @@ public class RobotHardware {
     public TerrorEncoder shooterEncoder;   // i forgot to write the comment
 
     // Spindexer
-    public static double SPINDEXER_ENCODER_OFFSET = 3.23;
+    public static double SPINDEXER_ENCODER_OFFSET_DEGREES = Math.toDegrees(-0.94);
+    public static boolean SPINDEXER_ENCODER_REVERSED = true;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerIntakeWallServo1;
     public TerrorServo spindexerIntakeWallServo2;
@@ -210,8 +211,8 @@ public class RobotHardware {
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
         // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
-        this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class,"spindexEncoder"), true);
-        this.spindexerEncoder.setOffset(SPINDEXER_ENCODER_OFFSET);
+        this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class,"spindexEncoder"), SPINDEXER_ENCODER_REVERSED);
+        this.spindexerEncoder.setOffset(Math.toRadians(SPINDEXER_ENCODER_OFFSET_DEGREES));
 //        this.spindexerEncoder.stop_and_reset();
       // TODO: figure out spindexer encoder direction
 

@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.robot.hardware.sensors;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.datastructures.CircularBuffer;
 
+@Config
 public class TerrorAnalogEncoder {
+    public static double VOLTAGE_MIN = 0.041;
+    public static double VOLTAGE_MAX = 3.1;
+
     private double offset = 0;
     private final AnalogInput encoder;
     private final boolean reversed;
@@ -23,16 +28,25 @@ public class TerrorAnalogEncoder {
         this.timer = new ElapsedTime();
     }
 
+    public double getCurrentPositionWithoutOffset() {
+        double pos = ((encoder.getVoltage() - VOLTAGE_MIN) / VOLTAGE_MAX) * Math.PI*2;
+        if (reversed) {
+            pos = 2*Math.PI - pos;
+        }
+        pos = Angle.normalize(pos);
+        return pos;
+    }
+
     /**
      * Returns the CURRENT position of the servo from the absolute encoder.
      * @return The absolute position.
      */
     public double getCurrentPosition() {
-        double pos = ((encoder.getVoltage() - 0.043) / 3.1) * Math.PI*2*multilpier_offset;
+        double pos = ((encoder.getVoltage() - VOLTAGE_MIN) / VOLTAGE_MAX) * Math.PI*2*multilpier_offset + offset;
         if (reversed) {
             pos = 2*Math.PI - pos;
         }
-        pos = Angle.normalize(pos + offset);
+        pos = Angle.normalize(pos);
         return pos;
     }
 
