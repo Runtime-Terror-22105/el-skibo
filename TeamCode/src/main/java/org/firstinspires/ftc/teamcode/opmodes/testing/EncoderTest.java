@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,11 +21,15 @@ public class EncoderTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO);
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
+
         waitForStart();
         while(opModeIsActive())
         {
-            telemetry.addData("spindexerencoderpos",String.valueOf(hardware.spindexerEncoder.getCurrentPosition()));
-            telemetry.addData("spindexerencoderpos",String.valueOf(hardware.hwMap.get(AnalogInput.class,"spindexEncoder").getVoltage()));
+            double voltage = hardware.hwMap.get(AnalogInput.class, "spindexEncoder").getVoltage();
+            telemetry.addData("raw voltage (volts)",String.valueOf(voltage));
+            telemetry.addData("without offset (degrees)", Math.toDegrees(hardware.spindexerEncoder.getCurrentPositionWithoutOffset()));
+            telemetry.addData("with offset (degrees)", Math.toDegrees(hardware.spindexerEncoder.getCurrentPosition()));
             telemetry.update();
         }
     }

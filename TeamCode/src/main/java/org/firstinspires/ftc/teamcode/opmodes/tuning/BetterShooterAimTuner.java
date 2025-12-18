@@ -41,6 +41,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
@@ -115,6 +116,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
         );
 
         robot.spindexer.rotate(spindexOffset);
+        RobotState oldstate = robot.robotState;
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
@@ -137,7 +139,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
             robot.intake.setSpeed(DEFAULT_SPEED);
 
 
-            if (robot.robotState == INTAKING) {
+            if (robot.robotState == INTAKING && oldstate != INTAKING) {
                 double dist = Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) +
                         Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2));
                 double vel = robot.shooter.getGoalVelocity()/6.469;
@@ -156,6 +158,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
                     e.printStackTrace();
                 }
             }
+            oldstate = robot.robotState;
 
 
             CommandScheduler.getInstance().run();
