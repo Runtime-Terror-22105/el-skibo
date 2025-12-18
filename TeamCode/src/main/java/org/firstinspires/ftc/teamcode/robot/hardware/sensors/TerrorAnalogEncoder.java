@@ -9,8 +9,11 @@ import org.firstinspires.ftc.teamcode.math.datastructures.CircularBuffer;
 
 @Config
 public class TerrorAnalogEncoder {
+    public static double ANGLE_120_MIN = 0;
+    public static double ANGLE_240_MIN = 0;
+
     public static double VOLTAGE_MIN = 0.041;
-    public static double VOLTAGE_MAX = 3.1;
+    public static double VOLTAGE_MAX = 3.145;
 
     private double offset = 0;
     private final AnalogInput encoder;
@@ -29,7 +32,7 @@ public class TerrorAnalogEncoder {
     }
 
     public double getCurrentPositionWithoutOffset() {
-        double pos = ((encoder.getVoltage() - VOLTAGE_MIN) / VOLTAGE_MAX) * Math.PI*2;
+        double pos = ((encoder.getVoltage() - VOLTAGE_MIN) / (VOLTAGE_MAX-VOLTAGE_MIN)) * Math.PI*2;
         if (reversed) {
             pos = 2*Math.PI - pos;
         }
@@ -42,7 +45,7 @@ public class TerrorAnalogEncoder {
      * @return The absolute position.
      */
     public double getCurrentPosition() {
-        double pos = ((encoder.getVoltage() - VOLTAGE_MIN) / VOLTAGE_MAX) * Math.PI*2*multilpier_offset + offset;
+        double pos = ((encoder.getVoltage() - VOLTAGE_MIN) / (VOLTAGE_MAX-VOLTAGE_MIN)) * Math.PI*2*multilpier_offset + offset;
         if (reversed) {
             pos = 2*Math.PI - pos;
         }
