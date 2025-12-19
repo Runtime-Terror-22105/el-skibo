@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem.PTO_
 import static org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem.PTO_ENGAGED_POSITION;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,9 +14,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
+@Config
 @TeleOp(name = "Reset Hang", group = "TeleOp")
 public class ResetHangOpmode extends LinearOpMode {
-    public static volatile double HANG_LOWERING_POWER = 0.3;
+    public static volatile double HANG_LOWERING_POWER = 1.0;
 
     private final RobotHardware hw = new RobotHardware();
 
@@ -35,6 +37,7 @@ public class ResetHangOpmode extends LinearOpMode {
             telemetry.addLine("Time to reset hang!");
             telemetry.addLine("Hold the left trigger (LT) to lower the robot.");
             telemetry.addLine("Press (A) to reset the PTO.");
+            telemetry.update();
 
             // note: we do NOT use the robot class bc otherwise disabling the spindexer pid will be annoying
             // and failing to do so could break the robot
@@ -46,6 +49,8 @@ public class ResetHangOpmode extends LinearOpMode {
             } else {
                 hw.spindexerRotate.setPower(0);
             }
+
+            hw.write();
 
             if (gamepad1.aWasPressed()) {
                 ptoActive = false;
