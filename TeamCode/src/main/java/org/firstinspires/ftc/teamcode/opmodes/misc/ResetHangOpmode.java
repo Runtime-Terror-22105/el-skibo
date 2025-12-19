@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem.PTO_
 import static org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem.PTO_ENGAGED_POSITION;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,9 +14,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
+@Config
 @TeleOp(name = "Reset Hang", group = "TeleOp")
 public class ResetHangOpmode extends LinearOpMode {
-    public static volatile double HANG_LOWERING_POWER = 0.3;
+    public static volatile double HANG_LOWERING_POWER = 1.0;
 
     private final RobotHardware hw = new RobotHardware();
 
