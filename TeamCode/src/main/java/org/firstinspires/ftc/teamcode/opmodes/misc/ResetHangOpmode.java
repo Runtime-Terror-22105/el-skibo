@@ -48,6 +48,8 @@ public class ResetHangOpmode extends LinearOpMode {
                 hw.spindexerRotate.setPower(0);
             }
 
+            hw.write();
+
             if (gamepad1.aWasPressed()) {
                 ptoActive = false;
             }
