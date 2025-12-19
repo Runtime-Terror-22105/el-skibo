@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.command.shooter;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandBase;
@@ -51,31 +53,35 @@ public class ShimmyShoot3BallAlt extends CommandBase {
         if(isTurning)
         {
             isTurning = (timer.milliseconds() <= turnTimeMS);
-            if(!isShooting)
+            if(!isTurning)
             {
-                timer.reset();
                 isShooting = true;
+                isShimmying = false;
+                isTurning = false;
+                Log.i("ShimmyShoot", "is Shooting");
+                timer.reset();
             }
-            return;
         }
-        if(isShooting)
+        else if(isShooting)
         {
             isShooting = (timer.milliseconds() <= shootTimeMS);
             robot.spindexer.setPidEnabled(false);
             robot.spindexer.setSpindexerPower(spindexTurnPower);
             if(!isShooting)
             {
-                ballsShot++;
+                isShooting = false;
                 isShimmying = true;
+                isTurning = false;
+                Log.i("ShimmyShoot", "is Shimmying");
+                ballsShot++;
                 timer.reset();
                 robot.spindexer.setPidEnabled(true);
                 robot.spindexer.setSpindexerPower(0);
                 shimmyTarget = robot.spindexer.getPosition() + Math.toRadians(5);
                 unshimmyTarget = robot.spindexer.getPosition();
             }
-            return;
         }
-        if(isShimmying)
+        else if(isShimmying)
         {
             if(timer.milliseconds() <= shimmyTimeMS/2)
             {
@@ -88,8 +94,11 @@ public class ShimmyShoot3BallAlt extends CommandBase {
             isShimmying = (timer.milliseconds() <= shimmyTimeMS);
             if(!isShimmying)
             {
-                robot.spindexer.rotate(Math.toRadians(120));
+                isShooting = false;
+                isShimmying = false;
                 isTurning = true;
+                Log.i("ShimmyShoot", "is flipping " + Math.toDegrees(robot.spindexer.getPosition()));
+                robot.spindexer.rotate(Math.toRadians(120));
                 timer.reset();
             }
         }
