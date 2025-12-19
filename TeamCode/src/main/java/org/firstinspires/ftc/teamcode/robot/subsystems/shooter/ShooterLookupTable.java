@@ -38,6 +38,7 @@ public class ShooterLookupTable {
             new LookupValue(54.99, 780),
             new LookupValue(62.7, 775),
             new LookupValue(83.3, 830),
+            new LookupValue(87.56152811761086, 850),
 
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
@@ -47,6 +48,7 @@ public class ShooterLookupTable {
             new HoodLookupValue(54.99, 0.735),
             new HoodLookupValue(62.7, 0.8),//rad
             new HoodLookupValue(83.3, 0.8),
+            new HoodLookupValue(87.56152811761086, 0.85),
     };
 
     static {
