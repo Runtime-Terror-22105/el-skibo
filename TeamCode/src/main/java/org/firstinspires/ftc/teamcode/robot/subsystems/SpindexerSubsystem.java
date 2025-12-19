@@ -68,6 +68,11 @@ public class SpindexerSubsystem extends SubsystemBase {
         return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
     }
 
+    public double getRawPosition()
+    {
+        return hardware.spindexerEncoder.getCurrentPosition();
+    }
+
     public double getTargetYaw() {
         return desiredAngle;
     }

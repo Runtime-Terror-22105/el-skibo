@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 @Config
 public class ShimmyShoot3Ball extends CommandBase {
 //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
-    public static double SPINDEX_TRANSFER_POWER = -1;
-    public static int spindexTimeDelay = 2000;
-    public static int resetDelay = 100;
+    public static double SPINDEX_TRANSFER_POWER = 1;
+    public static int spindexTimeDelay = 8000;
+    public static int resetDelay = 8000;
 
     public static int angleDiff = 5;
 
@@ -30,6 +30,7 @@ public class ShimmyShoot3Ball extends CommandBase {
     private boolean resetFinished = true;
 
     private double lastKnownSpindexerPos = 0;
+    private double lastKnownEncoderPos = 0;
 
     private int ballsShot = 0;
 
@@ -47,8 +48,9 @@ public class ShimmyShoot3Ball extends CommandBase {
         robot.robotState = RobotState.SHOOTING;
         robot.intake.setSpeed(IntakeSubsystem.DEFAULT_SPEED);
         timer.reset();
-        robot.spindexer.goToAngle120(Math.toRadians(angleDiff)); // starts at 0 so its ok
+        robot.spindexer.goToAngle360(Math.toRadians(angleDiff)); // starts at 0 so its ok
         lastKnownSpindexerPos = Math.toRadians(angleDiff);
+        lastKnownEncoderPos = robot.spindexer.getRawPosition();
 //        robot.spindexer.setPidEnabled(true);
     }
 
@@ -77,13 +79,14 @@ public class ShimmyShoot3Ball extends CommandBase {
             }
             return;
         }
-        if(Math.abs(robot.spindexer.getPosition()-lastKnownSpindexerPos) >= Math.toRadians(120))
+        if(Math.abs(robot.spindexer.getRawPosition()-lastKnownEncoderPos) >= Math.toRadians(120))
         {
             robot.gatekeep = 2;
             robot.spindexer.setSpindexerPower(0);
             robot.spindexer.setPidEnabled(true);
             robot.spindexer.goToAngle120(lastKnownSpindexerPos+Math.toRadians(120+angleDiff));
             lastKnownSpindexerPos += Math.toRadians(120+angleDiff);
+            lastKnownEncoderPos = robot.spindexer.getRawPosition();
             resetFinished = false;
             ballsShot++;
             timer.reset();
