@@ -35,7 +35,7 @@ public class LightControl2 extends SubsystemBase {
             break;
 
             case 1:
-                hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
+                hardware.lights.setColor(TerrorLight.LightColors.BLUE);
                 break;
 
             case 2:
