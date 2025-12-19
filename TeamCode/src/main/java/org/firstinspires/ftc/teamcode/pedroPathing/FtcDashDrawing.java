@@ -31,6 +31,14 @@ public class FtcDashDrawing {
         return result;
     }
 
+    private static void maybeInitFieldPacket() {
+        if (packet == null) {
+            packet = new TelemetryPacket();
+            packet.fieldOverlay()
+                    .drawImage("/dash/decode.webp", 24, 24, 48, 48, Math.toRadians(180), 24, 24, false);
+        }
+    }
+
     public static void drawDebug(Follower follower) {
         if (follower.getCurrentPath() != null) {
             drawPath(follower.getCurrentPath(), "#3F51B5");
@@ -44,9 +52,7 @@ public class FtcDashDrawing {
     }
 
     public static void drawDot(Pose pose, String color) {
-        if (packet == null) {
-            packet = new TelemetryPacket();
-        }
+        maybeInitFieldPacket();
 
         pose = pose.getAsCoordinateSystem(FTCCoordinates.INSTANCE);
         packet.fieldOverlay().setStroke(color);
@@ -55,18 +61,14 @@ public class FtcDashDrawing {
     }
 
     public static void drawRobot(Pose pose, String color) {
-        if (packet == null) {
-            packet = new TelemetryPacket();
-        }
+        maybeInitFieldPacket();
 
         packet.fieldOverlay().setStroke(color);
         drawRobotOnCanvas(packet.fieldOverlay(), pose.copy());
     }
 
     public static void drawPath(Path path, String color) {
-        if (packet == null) {
-            packet = new TelemetryPacket();
-        }
+        maybeInitFieldPacket();
 
         packet.fieldOverlay().setStroke(color);
         drawPath(packet.fieldOverlay(), convertPointsToFTC(path.getPanelsDrawingPoints()));
@@ -80,9 +82,7 @@ public class FtcDashDrawing {
     }
 
     public static void drawPoseHistory(PoseHistory poseTracker, String color) {
-        if (packet == null) {
-            packet = new TelemetryPacket();
-        }
+        maybeInitFieldPacket();
 
         // Convert pose x and y to FTC coords
         double[][] ftcPoints = convertPointsToFTC(new double[][]{poseTracker.getXPositionsArray(), poseTracker.getYPositionsArray()});

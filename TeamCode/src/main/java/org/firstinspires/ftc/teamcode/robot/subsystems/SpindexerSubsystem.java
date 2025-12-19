@@ -7,7 +7,6 @@ import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
@@ -35,10 +34,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double DIDDY_POLE_ACTIVE = 0.23;
-    public static double DIDDY_POLE_DEACITVE = 0.45;
+    public static double TRANSFER_POLE_ACTIVE = 0.23;
+    public static double TRANSFER_POLE_DEACITVE = 0.45;
 
-    public double diddyPos = DIDDY_POLE_DEACITVE;
+    public double transferPolePosition = TRANSFER_POLE_DEACITVE;
 
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
@@ -163,12 +162,12 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.intakeWallPosition2 = INTAKE_WALL_2_UP;
     }
 
-    public void Oilup() {
-        this.diddyPos = DIDDY_POLE_ACTIVE;
+    public void activatePole() {
+        this.transferPolePosition = TRANSFER_POLE_ACTIVE;
     }
 
-    public void Oildown() {
-        this.diddyPos = DIDDY_POLE_DEACITVE;
+    public void deactivatePole() {
+        this.transferPolePosition = TRANSFER_POLE_DEACITVE;
     }
 
 
@@ -287,7 +286,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware.spindexerRotate.setPower(clampedPower);
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
-        this.hardware.spindexerDiddyServo.setPosition(diddyPos);
+        this.hardware.spindexerTransferPoleServo.setPosition(transferPolePosition);
         this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
         Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
