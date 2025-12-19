@@ -3,11 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 //import static org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable.FAR_VELOCITY_LUT;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.seattlesolvers.solverslib.util.InterpLUT;
 
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
