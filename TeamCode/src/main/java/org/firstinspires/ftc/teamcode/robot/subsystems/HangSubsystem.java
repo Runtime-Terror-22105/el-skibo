@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 import java.util.function.Supplier;
@@ -25,10 +26,10 @@ public class HangSubsystem extends SubsystemBase {
         }
     }
 
-    public static double HANG_SPINDEXER_POWER = 0.5; // todo: increase this if it would be good
+    public static double HANG_SPINDEXER_POWER = 1.0; // todo: increase this if it would be good
     public static double HANG_ANGLE_STOP_DEGREES = 90.0; // todo: adjust this value
 
-    public static double HANG_DOWN_POWER = -0.3;
+    public static double HANG_DOWN_POWER = -0.7;
     public static double HANG_ANGLE_TWO_DEGREES = 60.0;
 
     public static double PTO_ENGAGED_POSITION = 0.58;
@@ -61,16 +62,17 @@ public class HangSubsystem extends SubsystemBase {
 
         if(!ptoEngaged) return;
 
-        double roll = hardware.imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES);
-        Log.i("HangSubsystem", "Robot Roll: " + roll + " deg");
+        double pitch = hardware.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
+        Robot.debugTelemetry.addData("Robot Pitch", pitch);
+        Log.i("HangSubsystem", "Robot Pitch: " + pitch + " deg");
 
         double power = position.power.get();
         double angle = position.angle.get();
         if (power > 0) {
-            if (roll < angle) hardware.spindexerRotate.setPower(power);
+            if (pitch < angle) hardware.spindexerRotate.setPower(power);
             else hardware.spindexerRotate.setPower(0);
         } else if (power < 0) {
-            if (roll > angle) hardware.spindexerRotate.setPower(power);
+            if (pitch > angle) hardware.spindexerRotate.setPower(power);
             else hardware.spindexerRotate.setPower(0);
         } else {
             hardware.spindexerRotate.setPower(0);

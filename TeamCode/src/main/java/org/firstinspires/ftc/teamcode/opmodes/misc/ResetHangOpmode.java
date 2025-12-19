@@ -37,6 +37,7 @@ public class ResetHangOpmode extends LinearOpMode {
             telemetry.addLine("Time to reset hang!");
             telemetry.addLine("Hold the left trigger (LT) to lower the robot.");
             telemetry.addLine("Press (A) to reset the PTO.");
+            telemetry.update();
 
             // note: we do NOT use the robot class bc otherwise disabling the spindexer pid will be annoying
             // and failing to do so could break the robot
@@ -48,6 +49,8 @@ public class ResetHangOpmode extends LinearOpMode {
             } else {
                 hw.spindexerRotate.setPower(0);
             }
+
+            hw.write();
 
             if (gamepad1.aWasPressed()) {
                 ptoActive = false;
