@@ -28,7 +28,7 @@ public class LightControl2 extends SubsystemBase {
     @Override
     public void periodic()
     {
-        switch(robot.gatekeep)
+        switch(robot.debugLight)
         {
             case 0:
                 hardware.lights.setColor(TerrorLight.LightColors.RED);

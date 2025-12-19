@@ -9,6 +9,7 @@ import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerPoleActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
@@ -32,7 +33,7 @@ public class ShimmyShoot3Ball extends CommandBase {
     private double lastKnownSpindexerPos = 0;
     private double lastKnownEncoderPos = 0;
 
-    private int ballsShot = 0;
+    private int ballsShot = 1;
 
     private ElapsedTime timer = new ElapsedTime();
 
@@ -51,6 +52,8 @@ public class ShimmyShoot3Ball extends CommandBase {
         robot.spindexer.goToAngle360(Math.toRadians(angleDiff)); // starts at 0 so its ok
         lastKnownSpindexerPos = Math.toRadians(angleDiff);
         lastKnownEncoderPos = robot.spindexer.getRawPosition();
+        robot.spindexer.setPidEnabled(true);
+//        robot.hardware.spindexerRotate.setCurrentAlert(, CurrentUnit.AMPS);
 //        robot.spindexer.setPidEnabled(true);
     }
 
@@ -58,7 +61,7 @@ public class ShimmyShoot3Ball extends CommandBase {
     public void execute() {
         if(!setupFinished)
         {
-            robot.gatekeep = 0;
+            robot.debugLight = 0;
             robot.spindexer.goToAngle120(lastKnownSpindexerPos-Math.toRadians(angleDiff));
             setupFinished = timer.milliseconds() >= spindexTimeDelay;
             if(setupFinished)
@@ -70,7 +73,7 @@ public class ShimmyShoot3Ball extends CommandBase {
         }
         if(!resetFinished)
         {
-            robot.gatekeep = 3;
+            robot.debugLight = 3;
             resetFinished = timer.milliseconds() >= resetDelay;
             if(resetFinished)
             {
@@ -81,7 +84,7 @@ public class ShimmyShoot3Ball extends CommandBase {
         }
         if(Math.abs(robot.spindexer.getRawPosition()-lastKnownEncoderPos) >= Math.toRadians(120))
         {
-            robot.gatekeep = 2;
+            robot.debugLight = 2;
             robot.spindexer.setSpindexerPower(0);
             robot.spindexer.setPidEnabled(true);
             robot.spindexer.goToAngle120(lastKnownSpindexerPos+Math.toRadians(120+angleDiff));
@@ -95,7 +98,7 @@ public class ShimmyShoot3Ball extends CommandBase {
         {
             robot.spindexer.setPidEnabled(false);
             robot.spindexer.setSpindexerPower(SPINDEX_TRANSFER_POWER);
-            robot.gatekeep = 1;
+            robot.debugLight = 1;
         }
     }
 
