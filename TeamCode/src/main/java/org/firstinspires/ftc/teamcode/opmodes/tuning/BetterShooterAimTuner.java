@@ -118,7 +118,6 @@ public class BetterShooterAimTuner extends LinearOpMode {
                         new InstantCommand(() -> robot.shooter.setSpeed(3500D)))
         );
 
-        robot.spindexer.rotate(spindexOffset);
         RobotState oldstate = robot.robotState;
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
@@ -142,6 +141,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
             }
 
             robot.spindexer.enableRamp();
+            robot.spindexer.setPidEnabled(false);
             if (useIntake) robot.intake.setSpeed(DEFAULT_SPEED);
 
 
