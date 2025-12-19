@@ -1,18 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.command.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.robocol.Command;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandBase;
-import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
-import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerPoleActive;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
@@ -113,7 +104,7 @@ public class ShimmyShoot3Ball extends CommandBase {
         robot.spindexer.setPidEnabled(true);
         robot.spindexer.setPidEnabled(true);
         robot.intake.setSpeed(0);
-        robot.spindexer.Oildown();
+        robot.spindexer.deactivatePole();
         robot.spindexer.disableRamp();
         robot.spindexer.goToAngle120(0);
         robot.robotState = RobotState.RESTING;

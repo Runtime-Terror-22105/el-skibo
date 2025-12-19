@@ -8,9 +8,9 @@ public class SetSpindexerPoleActive extends InstantCommand {
     public SetSpindexerPoleActive(SpindexerSubsystem spindexer, boolean active) {
         super(() -> {
             if (active) {
-                spindexer.Oilup();
+                spindexer.activatePole();
             } else {
-                spindexer.Oildown();
+                spindexer.deactivatePole();
             }
         });
     }
