@@ -14,11 +14,29 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 
+import java.lang.reflect.Field;
+
 @Config
 public class FtcDashDrawing {
     public static double FIELD_ROTATION_DEGREES = 90;
     public static double ROBOT_RADIUS = 9.0;
     private static TelemetryPacket packet;
+
+    static {
+        try {
+            Canvas newDefaultField = new Canvas();
+            newDefaultField.setAlpha(0.4);
+            newDefaultField.drawImage("/dash/decode.webp", 0, 0, 144, 144, Math.toRadians(270), 72, 72, false);
+            newDefaultField.setAlpha(1.0);
+            newDefaultField.drawGrid(0, 0, 144, 144, 7, 7);
+
+            Field defaultField = TelemetryPacket.class.getDeclaredField("DEFAULT_FIELD");
+            defaultField.setAccessible(true);
+            defaultField.set(null, newDefaultField);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
 
     public FtcDashDrawing() {
     }
@@ -36,9 +54,7 @@ public class FtcDashDrawing {
 
     private static void maybeInitFieldPacket() {
         if (packet == null) {
-            packet = new TelemetryPacket(false);
-            packet.fieldOverlay()
-                    .drawImage("/dash/decode.webp", 0, 0, 24*6, 24*6, Math.toRadians(FIELD_ROTATION_DEGREES), 0, 0, false);
+            packet = new TelemetryPacket();
         }
     }
 
