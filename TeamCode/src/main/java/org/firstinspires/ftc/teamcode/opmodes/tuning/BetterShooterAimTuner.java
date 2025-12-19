@@ -137,6 +137,8 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 } else {
                     robot.shooter.manualAimAutoHood(velocity, turretPos);
                 }
+            } else {
+                robot.shooter.isAutoAimOn = true;
             }
 
             robot.spindexer.enableRamp();
