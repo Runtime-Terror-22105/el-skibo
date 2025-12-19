@@ -265,6 +265,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if (robot.hang.isPtoEngaged()) {
+            hardware.shooterLeft.setPower(0);
+            hardware.shooterRight.setPower(0);
+            return;
+        }
+
         if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
         else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
