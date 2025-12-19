@@ -60,6 +60,9 @@ public class BetterShooterAimTuner extends LinearOpMode {
     public static double turretPos = 0;
     public static boolean autoHood  = true;
     public static double spindexOffset = -0.3;
+    public static boolean useIntake = false;
+
+    public static boolean testingAutoShoot = false;
 
     public static String OUTPUT_FILE = "shooter_tuning_data.csv";
 
@@ -97,7 +100,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
 //                    new GoToFullStateCommand(robot)
                 ),
                 new InstantCommand(() -> {} ),
-                () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
+                () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && useIntake
         ));
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
@@ -128,15 +131,16 @@ public class BetterShooterAimTuner extends LinearOpMode {
 //            if (balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N') {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
-            if (autoHood){
-                robot.shooter.manualAim(velocity, hoodAngle, turretPos);
-            }
-            else{
-                robot.shooter.manualAimAutoHood(velocity, turretPos);
+            if (!testingAutoShoot) {
+                if (autoHood) {
+                    robot.shooter.manualAim(velocity, hoodAngle, turretPos);
+                } else {
+                    robot.shooter.manualAimAutoHood(velocity, turretPos);
+                }
             }
 
             robot.spindexer.enableRamp();
-            robot.intake.setSpeed(DEFAULT_SPEED);
+            if (useIntake) robot.intake.setSpeed(DEFAULT_SPEED);
 
 
             if (robot.robotState == INTAKING && oldstate != INTAKING) {
