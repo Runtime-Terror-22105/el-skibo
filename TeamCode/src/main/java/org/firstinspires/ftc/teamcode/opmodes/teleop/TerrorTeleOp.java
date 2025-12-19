@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
@@ -124,7 +125,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             return balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N';
         });
 
-        hangButton.whenPressed(new GoToClimbStateCommand(robot));
+        hangButton.whenPressed(new ConditionalCommand(
+                new GoToClimbStateCommand(robot, HangSubsystem.Position.RESTING),
+                new GoToClimbStateCommand(robot, HangSubsystem.Position.FULL_90),
+                () -> robot.hang.isPtoEngaged()
+        ));
         intakeButton.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
                     new GoToIntakeStateCommand(robot)
