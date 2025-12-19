@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ftc.FTCCoordinates;
@@ -13,8 +14,10 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 
+@Config
 public class FtcDashDrawing {
-    public static final double ROBOT_RADIUS = 9.0;
+    public static double FIELD_ROTATION_DEGREES = 90;
+    public static double ROBOT_RADIUS = 9.0;
     private static TelemetryPacket packet;
 
     public FtcDashDrawing() {
@@ -33,9 +36,9 @@ public class FtcDashDrawing {
 
     private static void maybeInitFieldPacket() {
         if (packet == null) {
-            packet = new TelemetryPacket();
+            packet = new TelemetryPacket(false);
             packet.fieldOverlay()
-                    .drawImage("/dash/decode.webp", 24, 24, 48, 48, Math.toRadians(180), 24, 24, false);
+                    .drawImage("/dash/decode.webp", 0, 0, 24*6, 24*6, Math.toRadians(FIELD_ROTATION_DEGREES), 0, 0, false);
         }
     }
 
