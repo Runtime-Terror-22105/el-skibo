@@ -19,6 +19,23 @@ public class LightControl2 extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
+    private boolean isManualLighting = false;
+
+    public void setIsManualLighting(boolean state)
+    {
+        this.isManualLighting = state;
+    }
+
+    public void setManualLightColor(TerrorLight.LightColors color)
+    {
+        hardware.lights.setColor(color);
+    }
+
+    public boolean getIsManualLighting()
+    {
+        return isManualLighting;
+    }
+
     public LightControl2(RobotHardware hardware, Robot robot) {
         this.hardware = hardware;
         this.robot = robot;
@@ -28,72 +45,56 @@ public class LightControl2 extends SubsystemBase {
     @Override
     public void periodic()
     {
-        switch(robot.debugLight)
+        if(isManualLighting)
         {
-            case 0:
-                hardware.lights.setColor(TerrorLight.LightColors.RED);
-            break;
+            return;
+        }
+        robot.telemetry.addData("State for the lights",robot.getState());
+        switch(robot.robotState)
+        {
+            case RESTING:
+                hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                break;
 
-            case 1:
+            case INTAKING:
                 hardware.lights.setColor(TerrorLight.LightColors.BLUE);
                 break;
 
-            case 2:
+            //i might be misunderstanding
+//           case FULL:
+//                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+//                break;
+
+            case NOT_READY:
+                hardware.lights.setColor(TerrorLight.LightColors.RED);
+                break;
+
+            case TRANSFER:
+                hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
+                break;
+
+            case READY_TO_SHOOT:
+                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+
+                break;
+
+            case SHOOTING:
                 hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
                 break;
 
-            case 3:
-                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+
+            case CLIMBING:
+                break;
+
+            case DONE_CLIMB:
                 break;
 
 
+            default:
+                hardware.lights.setColor(TerrorLight.LightColors.PINK);
+
+                break;
         }
-//        robot.telemetry.addData("State for the lights",robot.getState());
-//        switch(robot.robotState)
-//        {
-//            case RESTING:
-//                hardware.lights.setColor(TerrorLight.LightColors.PINK);
-//                break;
-//
-//            case INTAKING:
-//                hardware.lights.setColor(TerrorLight.LightColors.BLUE);
-//                break;
-//
-//            //i might be misunderstanding
-////           case FULL:
-////                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
-////                break;
-//
-//            case NOT_READY:
-//                hardware.lights.setColor(TerrorLight.LightColors.RED);
-//                break;
-//
-//            case TRANSFER:
-//                hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
-//                break;
-//
-//            case READY_TO_SHOOT:
-//                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
-//
-//                break;
-//
-//            case SHOOTING:
-//                hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
-//                break;
-//
-//
-//            case CLIMBING:
-//                break;
-//
-//            case DONE_CLIMB:
-//                break;
-//
-//
-//            default:
-//                hardware.lights.setColor(TerrorLight.LightColors.PINK);
-//
-//                break;
-//        }
 
     }
 }
