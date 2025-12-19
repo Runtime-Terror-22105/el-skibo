@@ -21,11 +21,13 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 public class ShimmyShoot3Ball extends CommandBase {
 //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
     public static double SPINDEX_TRANSFER_POWER = -1;
-    public static int spindexTimeDelay = 200;
+    public static int spindexTimeDelay = 2000;
+    public static int resetDelay = 100;
 
     public static int angleDiff = 5;
 
     private boolean setupFinished = false;
+    private boolean resetFinished = true;
 
     private double lastKnownSpindexerPos = 0;
 
@@ -45,30 +47,44 @@ public class ShimmyShoot3Ball extends CommandBase {
         robot.robotState = RobotState.SHOOTING;
         robot.intake.setSpeed(IntakeSubsystem.DEFAULT_SPEED);
         timer.reset();
-        robot.spindexer.goToAngle120(Math.toRadians(angleDiff));
-        lastKnownSpindexerPos = 0;
-        robot.spindexer.setPidEnabled(false);
+        robot.spindexer.goToAngle120(Math.toRadians(angleDiff)); // starts at 0 so its ok
+        lastKnownSpindexerPos = Math.toRadians(angleDiff);
+//        robot.spindexer.setPidEnabled(true);
     }
 
     @Override
     public void execute() {
         if(!setupFinished)
         {
-            robot.spindexer.goToAngle120(robot.spindexer.getPosition()-Math.toRadians(angleDiff));
+            robot.gatekeep = 0;
+            robot.spindexer.goToAngle120(lastKnownSpindexerPos-Math.toRadians(angleDiff));
             setupFinished = timer.milliseconds() >= spindexTimeDelay;
             if(setupFinished)
             {
+                lastKnownSpindexerPos -= Math.toRadians(angleDiff);
+                timer.reset();
+            }
+            return;
+        }
+        if(!resetFinished)
+        {
+            robot.gatekeep = 3;
+            resetFinished = timer.milliseconds() >= resetDelay;
+            if(resetFinished)
+            {
+                setupFinished = false;
                 timer.reset();
             }
             return;
         }
         if(Math.abs(robot.spindexer.getPosition()-lastKnownSpindexerPos) >= Math.toRadians(120))
         {
+            robot.gatekeep = 2;
             robot.spindexer.setSpindexerPower(0);
             robot.spindexer.setPidEnabled(true);
             robot.spindexer.goToAngle120(lastKnownSpindexerPos+Math.toRadians(120+angleDiff));
-            lastKnownSpindexerPos = robot.spindexer.getPosition();
-            setupFinished = false;
+            lastKnownSpindexerPos += Math.toRadians(120+angleDiff);
+            resetFinished = false;
             ballsShot++;
             timer.reset();
         }
@@ -76,6 +92,7 @@ public class ShimmyShoot3Ball extends CommandBase {
         {
             robot.spindexer.setPidEnabled(false);
             robot.spindexer.setSpindexerPower(SPINDEX_TRANSFER_POWER);
+            robot.gatekeep = 1;
         }
     }
 
