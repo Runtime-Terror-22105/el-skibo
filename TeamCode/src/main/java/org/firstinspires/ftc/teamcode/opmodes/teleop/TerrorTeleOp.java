@@ -44,6 +44,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 @Config
 
 public abstract class TerrorTeleOp extends LinearOpMode {
+    public static boolean LOG_MOTOR_CURRENT = false;
+
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
@@ -266,28 +268,29 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             long dt = time - lastLoop;
             lastLoop = time;
 
-            double flc = hardware.motorFrontLeft.getCurrent(CurrentUnit.AMPS);
-            double frc = hardware.motorFrontRight.getCurrent(CurrentUnit.AMPS);
-            double blc = hardware.motorRearLeft.getCurrent(CurrentUnit.AMPS);
-            double brc = hardware.motorRearRight.getCurrent(CurrentUnit.AMPS);
-            double sl = hardware.shooterLeft.getCurrent(CurrentUnit.AMPS);
-            double sr = hardware.shooterRight.getCurrent(CurrentUnit.AMPS);
-            double spr = hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS);
-            double it = hardware.intake.getCurrent(CurrentUnit.AMPS);
+            if (LOG_MOTOR_CURRENT) {
+                double flc = hardware.motorFrontLeft.getCurrent(CurrentUnit.AMPS);
+                double frc = hardware.motorFrontRight.getCurrent(CurrentUnit.AMPS);
+                double blc = hardware.motorRearLeft.getCurrent(CurrentUnit.AMPS);
+                double brc = hardware.motorRearRight.getCurrent(CurrentUnit.AMPS);
+                double sl = hardware.shooterLeft.getCurrent(CurrentUnit.AMPS);
+                double sr = hardware.shooterRight.getCurrent(CurrentUnit.AMPS);
+                double spr = hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS);
+                double it = hardware.intake.getCurrent(CurrentUnit.AMPS);
 
 
-            double totalCurrent = flc + frc + blc + brc + sl + sr + spr + it;
+                double totalCurrent = flc + frc + blc + brc + sl + sr + spr + it;
 
-            robot.telemetry.addData("Front Left DT (A)", String.format("%.2f", flc));
-            robot.telemetry.addData("Front Right DT (A)", String.format("%.2f", frc));
-            robot.telemetry.addData("Rear Left DT (A)", String.format("%.2f", blc));
-            robot.telemetry.addData("Rear Right DT (A)", String.format("%.2f", brc));
-            robot.telemetry.addData("Shooter Left (A)", String.format("%.2f", sl));
-            robot.telemetry.addData("Shooter Right (A)", String.format("%.2f", sr));
-            robot.telemetry.addData("Spindexer (A)", String.format("%.2f", spr));
-            robot.telemetry.addData("Intake (A)", String.format("%.2f", it));
-            robot.telemetry.addData("Total Current (A)", String.format("%.2f", totalCurrent));
-            robot.telemetry.update();
+                robot.telemetry.addData("Front Left DT (A)", String.format("%.2f", flc));
+                robot.telemetry.addData("Front Right DT (A)", String.format("%.2f", frc));
+                robot.telemetry.addData("Rear Left DT (A)", String.format("%.2f", blc));
+                robot.telemetry.addData("Rear Right DT (A)", String.format("%.2f", brc));
+                robot.telemetry.addData("Shooter Left (A)", String.format("%.2f", sl));
+                robot.telemetry.addData("Shooter Right (A)", String.format("%.2f", sr));
+                robot.telemetry.addData("Spindexer (A)", String.format("%.2f", spr));
+                robot.telemetry.addData("Intake (A)", String.format("%.2f", it));
+                robot.telemetry.addData("Total Current (A)", String.format("%.2f", totalCurrent));
+            }
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
             robot.telemetry.update();
         }
