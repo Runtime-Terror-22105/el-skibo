@@ -86,6 +86,30 @@ public class SpindexerSubsystem extends SubsystemBase {
      * <p>Use this when moving to an angle less than 120 degrees away.</p>
      * @param angle The angle to go to, in radians.
      */
+    public void goToAngle120Real(double angle) {
+        double bestAngle = this.desiredAngle;
+        double bestError = Double.POSITIVE_INFINITY;
+
+        double sector = 2 * Math.PI / 3.0; // 120 deg
+
+        // basically just loop through the three sides to see which is optimal
+        for (int i = 0; i < 3; i++) {
+            double equiv = angle + i * sector; // the equivalent angle in our current area
+            double error = Angle.angleWrap(equiv - this.desiredAngle);
+            if (Math.abs(error) < bestError) {
+                bestError = Math.abs(error);
+                bestAngle = this.desiredAngle + error;
+            }
+        }
+
+        this.desiredAngle = bestAngle;
+    }
+
+    /**
+     * <p>Snaps the spindexer to a desired angle, while doing modulus to avoid unnecessary rotation.</p>
+     * <p>Use this when moving to an angle less than 120 degrees away.</p>
+     * @param angle The angle to go to, in radians.
+     */
     public void goToAngle120(double angle) {
         this.desiredAngle = angle;
         // TODO restore this function later once spindexer is no longer cooked

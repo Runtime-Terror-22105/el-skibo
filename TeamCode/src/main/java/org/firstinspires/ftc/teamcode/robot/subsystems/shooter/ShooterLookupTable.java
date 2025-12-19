@@ -7,12 +7,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 
 @Config
 public class ShooterLookupTable {
-    private static final double MIN_DIST = 35.01;
-    private static final double MAX_DIST = 69.967;
-
-    private static final double CUTOFF = 50;
-
-
     private static InterpLUT FAR_VELOCITY_LUT; // in/s
     private static InterpLUT HOOD_LUT;
 
@@ -24,8 +18,8 @@ public class ShooterLookupTable {
             this.distance = d;
             this.speed = s;
         }
-
     }
+
     public static class HoodLookupValue {
         public double distance;
         public double rad;
@@ -76,13 +70,19 @@ public class ShooterLookupTable {
         }
         HOOD_LUT.createLUT();
 
-
-        distanceToGoalIn = Math.max(MIN_DIST, Math.min(MAX_DIST, distanceToGoalIn));
         double rad;
         double velocity;
 
-        velocity = FAR_VELOCITY_LUT.get(distanceToGoalIn);
-        rad = HOOD_LUT.get(distanceToGoalIn);
+        velocity = FAR_VELOCITY_LUT.get(
+                Math.max(VEL_DATA_POINTS[0].distance,
+                        Math.min(VEL_DATA_POINTS[VEL_DATA_POINTS.length - 1].distance,
+                                distanceToGoalIn))
+        );
+        rad = HOOD_LUT.get(
+                Math.max(HOOD_DATA_POINTS[0].distance,
+                        Math.min(HOOD_DATA_POINTS[HOOD_DATA_POINTS.length - 1].distance,
+                                distanceToGoalIn))
+        );
 
         return new ShooterSubsystem.ShooterValues(velocity, rad);
         //return new ShooterSubsystem.ShooterValues(0,0);

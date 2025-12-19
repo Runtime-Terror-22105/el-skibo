@@ -40,7 +40,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
 
-    public int gatekeep = 0;
+    public int debugLight = 0;
 
 
     public CameraSubsystem camera;
