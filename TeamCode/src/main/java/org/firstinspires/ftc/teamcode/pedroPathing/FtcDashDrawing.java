@@ -38,7 +38,7 @@ public class FtcDashDrawing {
         if (packet == null) {
             packet = new TelemetryPacket(false);
             packet.fieldOverlay()
-                    .drawImage("/dash/decode.webp", 0, 0, 24*6, 24*6, Math.toRadians(FIELD_ROTATION_DEGREES), 24, 24, false);
+                    .drawImage("/dash/decode.webp", 0, 0, 24*6, 24*6, Math.toRadians(FIELD_ROTATION_DEGREES), 0, 0, false);
         }
     }
 
