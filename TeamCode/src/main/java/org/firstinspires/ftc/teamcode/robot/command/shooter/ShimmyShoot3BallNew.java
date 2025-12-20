@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
 @Config
-public class ShimmyShoot3Ball extends CommandBase {
+public class ShimmyShoot3BallNew extends CommandBase {
     private ElapsedTime timer = new ElapsedTime();
 
     public static double spindexTurnPower = -0.5;
@@ -32,9 +32,11 @@ public class ShimmyShoot3Ball extends CommandBase {
 
     private int ballsShot = 0;
 
+    private double lastKnownSpindexPosition = 0;
+
     private Robot robot;
 
-    public ShimmyShoot3Ball(Robot robot) {
+    public ShimmyShoot3BallNew(Robot robot) {
         this.robot = robot;
     }
 
@@ -54,12 +56,11 @@ public class ShimmyShoot3Ball extends CommandBase {
     public void execute() {
         if(isTurning)
         {
-            isTurning = (timer.milliseconds() <= turnTimeMS);
+            isTurning = (timer.milliseconds() <= turnTimeMS) || Math.abs(robot.spindexer.getPosition()-lastKnownSpindexPosition) > Math.toRadians(120);
             if(!isTurning)
             {
                 isShooting = true;
                 isShimmying = false;
-                isTurning = false;
                 Log.i("ShimmyShoot", "is Shooting");
                 timer.reset();
             }
@@ -71,7 +72,6 @@ public class ShimmyShoot3Ball extends CommandBase {
             robot.spindexer.setSpindexerPower(spindexTurnPower);
             if(!isShooting)
             {
-                isShooting = false;
                 isShimmying = true;
                 isTurning = false;
                 Log.i("ShimmyShoot", "is Shimmying");
@@ -97,8 +97,8 @@ public class ShimmyShoot3Ball extends CommandBase {
             if(!isShimmying)
             {
                 isShooting = false;
-                isShimmying = false;
                 isTurning = true;
+                lastKnownSpindexPosition = robot.spindexer.getPosition();
                 Log.i("ShimmyShoot", "is flipping " + Math.toDegrees(robot.spindexer.getPosition()));
                 robot.spindexer.rotate(Math.toRadians(120));
                 timer.reset();
