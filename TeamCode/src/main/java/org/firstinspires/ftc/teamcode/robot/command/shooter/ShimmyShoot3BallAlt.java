@@ -16,9 +16,9 @@ public class ShimmyShoot3BallAlt extends CommandBase {
 
     public static double spindexTurnPower = -0.5;
 
-    public static double turnTimeMS = 2000;
+    public static double turnTimeMS = 1000;
 
-    public static double shootTimeMS = 2000;
+    public static double shootTimeMS = 1500;
     public static double shimmyTimeMS = 250;
 
     private double shimmyTarget = 0;
@@ -47,6 +47,8 @@ public class ShimmyShoot3BallAlt extends CommandBase {
         robot.intake.setSpeed(IntakeSubsystem.DEFAULT_SPEED);
         timer.reset();
         isShooting = true;
+        isTurning = false;
+        isShimmying = false;
         robot.spindexer.setPidEnabled(true);
     }
 
