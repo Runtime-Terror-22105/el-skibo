@@ -55,6 +55,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public double desiredAngle;
 
+    private double homedSpindexerOffset;
+
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
         this.hardware = hardware;
@@ -82,7 +84,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public double getPosition() {
-        return Angle.normalize(getPositionRaw());
+        return Angle.normalize(getPositionRaw() + this.homedSpindexerOffset);
     }
 
     // TODO: restore this eventually
@@ -97,6 +99,13 @@ public class SpindexerSubsystem extends SubsystemBase {
     public boolean atTargetYaw() {
         // TODO: potentially beware of angle wrapping here
         return this.yawPid.atTargetPosition(getPosition());
+    }
+
+    public void setHomedSpindexerOffset(double offset) {
+        this.homedSpindexerOffset = offset;
+    }
+    public double getHomedSpindexerOffset() {
+        return this.homedSpindexerOffset;
     }
 
     /**
