@@ -82,7 +82,6 @@ public class LightControl2 extends SubsystemBase {
                 hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
                 break;
 
-
             case CLIMBING:
                 break;
 

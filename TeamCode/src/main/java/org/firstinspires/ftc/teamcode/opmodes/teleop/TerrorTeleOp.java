@@ -50,7 +50,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     private final Robot robot = new Robot();
 
     public Team color;
-    public static ShootingMethod shootingMethod = ShootingMethod.SHIMMY_SHOOT;
+    public static ShootingMethod shootingMethod = ShootingMethod.SHOOT_3_BALLS;
 
     private long lastLoop = System.nanoTime();
 
@@ -174,7 +174,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                     () -> robot.robotState != SHOOTING
             ));
         }
-        else if (shootingMethod == ShootingMethod.SHIMMY_SHOOT){
+        else if (shootingMethod == ShootingMethod.SHIMMY_SHOOT) {
             shoot3button.whenPressed(new ConditionalCommand(
                     new ConditionalCommand( // if we already did the transfer, just shoot immediately
                             new ShimmyShoot3Ball(robot),
