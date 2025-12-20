@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot.command.shooter;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
