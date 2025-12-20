@@ -32,6 +32,8 @@ public class ShimmyShoot3BallAlt extends CommandBase {
 
     private int ballsShot = 0;
 
+    private double lastKnownSpindexPosition = 0;
+
     private Robot robot;
 
     public ShimmyShoot3BallAlt(Robot robot) {
@@ -52,12 +54,11 @@ public class ShimmyShoot3BallAlt extends CommandBase {
     public void execute() {
         if(isTurning)
         {
-            isTurning = (timer.milliseconds() <= turnTimeMS);
+            isTurning = (timer.milliseconds() <= turnTimeMS) || Math.abs(robot.spindexer.getRawPosition()-lastKnownSpindexPosition) > Math.toRadians(120);
             if(!isTurning)
             {
                 isShooting = true;
                 isShimmying = false;
-                isTurning = false;
                 Log.i("ShimmyShoot", "is Shooting");
                 timer.reset();
             }
@@ -69,7 +70,6 @@ public class ShimmyShoot3BallAlt extends CommandBase {
             robot.spindexer.setSpindexerPower(spindexTurnPower);
             if(!isShooting)
             {
-                isShooting = false;
                 isShimmying = true;
                 isTurning = false;
                 Log.i("ShimmyShoot", "is Shimmying");
@@ -95,8 +95,8 @@ public class ShimmyShoot3BallAlt extends CommandBase {
             if(!isShimmying)
             {
                 isShooting = false;
-                isShimmying = false;
                 isTurning = true;
+                lastKnownSpindexPosition = robot.spindexer.getRawPosition();
                 Log.i("ShimmyShoot", "is flipping " + Math.toDegrees(robot.spindexer.getPosition()));
                 robot.spindexer.rotate(Math.toRadians(120));
                 timer.reset();
