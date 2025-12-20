@@ -26,6 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
@@ -71,7 +72,7 @@ public class IntakeCommandTest extends LinearOpMode {
         GamepadButton adjustSpindexerLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
         GamepadButton adjustSpindexerRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
 
-        intakeButton.whenActive(new GoToIntakeStateCommand(robot));
+        intakeButton.whenActive(new SequentialCommandGroup(new LogCatCommand("intake testing", "button pressed"), new GoToIntakeStateCommand(robot)));
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
         adjustSpindexerLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
