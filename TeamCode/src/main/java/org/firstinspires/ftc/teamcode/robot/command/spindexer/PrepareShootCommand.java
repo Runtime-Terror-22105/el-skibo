@@ -38,10 +38,15 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 // Phase 1: ???
                 new InstantCommand(() -> robot.shooter.isAutoVelOn = rpm == null),
                 new InstantCommand(() -> {
-                    if (hoodAngle == null) {
-                        robot.shooter.isAutoHoodOn = true;
-                    } else {
-                        robot.shooter.isAutoHoodOn = false;
+//                    if (hoodAngle == null) {
+//                        robot.shooter.isAutoHoodOn = true;
+//                    } else {
+//                        robot.shooter.isAutoHoodOn = false;
+//                        robot.shooter.goalPitch = hoodAngle;
+//                    }
+                    robot.shooter.isAutoHoodOn = hoodAngle == null;
+                    if(hoodAngle != null)
+                    {
                         robot.shooter.goalPitch = hoodAngle;
                     }
                 }),
@@ -61,7 +66,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         robot::getAutoSort
                 ),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
-                new WaitCommand(PRE_YAW_DELAY),
+//                new WaitCommand(PRE_YAW_DELAY),
 
                 // Phase 4: drop down ramp and start intake
                 new SetSpindexerRampActive(robot.spindexer, true),
