@@ -58,6 +58,7 @@ public class RobotHardware {
 
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET_DEGREES = 54.5;
+    public static double SPINDEXER_MOTOR_ENCODER_OFFSET_TICKS = 0;
     public static boolean SPINDEXER_ENCODER_REVERSED = true;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerIntakeWallServo1;
@@ -65,6 +66,7 @@ public class RobotHardware {
     public TerrorServo spindexerTransferPoleServo;
     public TerrorServo spindexerTransferRampServo; // todo -- in position: 0, out position: 0.3
     public TerrorAnalogEncoder spindexerEncoder;
+    public TerrorEncoder spindexerMotorEncoder;
 
     /*
              top (the one that shoots)
@@ -213,6 +215,11 @@ public class RobotHardware {
         // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
         this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class,"spindexEncoder"), SPINDEXER_ENCODER_REVERSED);
         this.spindexerEncoder.setOffset(Math.toRadians(SPINDEXER_ENCODER_OFFSET_DEGREES));
+
+        this.spindexerMotorEncoder = new TerrorEncoder(motorFrontLeft, ((1D+(46D/11D))*28D) * 5.6D);
+        this.spindexerMotorEncoder.stop_and_reset();
+        this.spindexerMotorEncoder.setDirection(TerrorEncoder.Direction.FORWARD); // TODO: figure out spindexer encoder direction
+
 //        this.spindexerEncoder.stop_and_reset();
       // TODO: figure out spindexer encoder direction
 
