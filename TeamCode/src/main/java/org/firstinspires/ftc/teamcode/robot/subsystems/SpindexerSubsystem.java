@@ -95,7 +95,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public boolean atTargetYaw() {
         // TODO: potentially beware of angle wrapping here
-        return this.yawPid.atTargetPosition(getPosition());
+        return this.yawPid.atTargetPosition(getPositionRaw());
     }
 
     public void setHomedSpindexerOffset(double offset) {
