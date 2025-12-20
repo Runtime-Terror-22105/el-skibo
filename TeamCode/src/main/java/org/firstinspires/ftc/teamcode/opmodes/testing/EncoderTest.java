@@ -45,7 +45,7 @@ public class EncoderTest extends LinearOpMode {
     }
 
     public double getPositionTicks() {
-        return hardware.spindexerMotorEncoder.getCurrentPosition() - RobotHardware.SPINDEXER_MOTOR_ENCODER_OFFSET_TICKS;
+        return hardware.spindexerMotorEncoder.getCurrentPosition();
     }
 
     public double getPosition() {
