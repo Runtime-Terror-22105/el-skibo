@@ -33,15 +33,20 @@ public class PrepareShootCommand extends SequentialCommandGroup {
 
     public PrepareShootCommand(Robot robot, Double hoodAngle, Double rpm, IntakePitch pitch) {
         super(
-                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT),
+                new InstantCommand(() -> robot.robotState = RobotState.TRANSFER),
 
                 // Phase 1: ???
                 new InstantCommand(() -> robot.shooter.isAutoVelOn = rpm == null),
                 new InstantCommand(() -> {
-                    if (hoodAngle == null) {
-                        robot.shooter.isAutoHoodOn = true;
-                    } else {
-                        robot.shooter.isAutoHoodOn = false;
+//                    if (hoodAngle == null) {
+//                        robot.shooter.isAutoHoodOn = true;
+//                    } else {
+//                        robot.shooter.isAutoHoodOn = false;
+//                        robot.shooter.goalPitch = hoodAngle;
+//                    }
+                    robot.shooter.isAutoHoodOn = hoodAngle == null;
+                    if(hoodAngle != null)
+                    {
                         robot.shooter.goalPitch = hoodAngle;
                     }
                 }),
@@ -57,15 +62,16 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 // Phase 2/3: Sort the balls, spin to pre-transfer yaw
                 new ConditionalCommand(
                         new SortCommand(robot.spindexer),
-                        new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
+                        new SetSpindexerYawCommand(robot.spindexer, -SpindexerSubsystem.READY_POSITION),
                         robot::getAutoSort
                 ),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
-                new WaitCommand(PRE_YAW_DELAY),
+//                new WaitCommand(PRE_YAW_DELAY),
 
                 // Phase 4: drop down ramp and start intake
                 new SetSpindexerRampActive(robot.spindexer, true),
-                new WaitCommand(RAMP_DELAY) // todo: adjust this delay based on how long it takes for ramp to drop
+                new WaitCommand(RAMP_DELAY), // todo: adjust this delay based on how long it takes for ramp to drop
+                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT)
         );
     }
 }
