@@ -77,8 +77,12 @@ public class SpindexerSubsystem extends SubsystemBase {
         return hardware.spindexerMotorEncoder.getCurrentPosition() - RobotHardware.SPINDEXER_MOTOR_ENCODER_OFFSET_TICKS;
     }
 
-    public double getPosition() {
+    public double getPositionRaw() {
         return ticksToRadians(getPositionTicks());
+    }
+
+    public double getPosition() {
+        return Angle.normalize(getPositionRaw());
     }
 
     // TODO: restore this eventually
