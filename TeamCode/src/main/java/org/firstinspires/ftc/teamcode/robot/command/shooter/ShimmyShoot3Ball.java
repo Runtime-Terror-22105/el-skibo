@@ -56,7 +56,7 @@ public class ShimmyShoot3Ball extends CommandBase {
     public void execute() {
         if(isTurning)
         {
-            isTurning = (timer.milliseconds() <= turnTimeMS) || Math.abs(robot.spindexer.getRawPosition()-lastKnownSpindexPosition) > Math.toRadians(120);
+            isTurning = (timer.milliseconds() <= turnTimeMS) || Math.abs(robot.spindexer.getPosition()-lastKnownSpindexPosition) > Math.toRadians(120);
             if(!isTurning)
             {
                 isShooting = true;
@@ -98,7 +98,7 @@ public class ShimmyShoot3Ball extends CommandBase {
             {
                 isShooting = false;
                 isTurning = true;
-                lastKnownSpindexPosition = robot.spindexer.getRawPosition();
+                lastKnownSpindexPosition = robot.spindexer.getPosition();
                 Log.i("ShimmyShoot", "is flipping " + Math.toDegrees(robot.spindexer.getPosition()));
                 robot.spindexer.rotate(Math.toRadians(120));
                 timer.reset();

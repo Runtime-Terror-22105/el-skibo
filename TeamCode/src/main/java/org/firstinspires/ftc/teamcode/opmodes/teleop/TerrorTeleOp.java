@@ -50,7 +50,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     private final Robot robot = new Robot();
 
     public Team color;
-    public static ShootingMethod shootingMethod = ShootingMethod.SHOOT_3_BALLS;
+    public static ShootingMethod shootingMethod = ShootingMethod.SHIMMY_SHOOT;
 
     private long lastLoop = System.nanoTime();
 
