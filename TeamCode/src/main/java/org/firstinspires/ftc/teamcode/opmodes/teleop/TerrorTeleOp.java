@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.TRANSFER;
 
 import android.util.Log;
 
@@ -133,18 +134,14 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.hang.isPtoEngaged()
         ));
         intakeButton.whenActive(new ConditionalCommand(
-                new SequentialCommandGroup(
-                    new GoToIntakeStateCommand(robot)
-//                    new WaitForIntakeCommand(robot),
-//                    new GoToFullStateCommand(robot)
-                ),
+                new GoToIntakeStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
+                () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER
         ));
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT
+                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(

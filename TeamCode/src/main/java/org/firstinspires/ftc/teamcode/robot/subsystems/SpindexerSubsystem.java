@@ -61,10 +61,11 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
         this.sensors = new TerrorColorSensor[]{hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
+        this.homedSpindexerOffset = 0;
         this.desiredAngle = getPosition();
-        goToAngle120(0);
         this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(0.0);
+        goToAngle120(0);
     }
 
     public static double ticksToRadians(double ticks) {
@@ -75,12 +76,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         return (radians / (2.0 * Math.PI)) * TICKS_PER_REVOLUTION;
     }
 
-    public double getPositionTicks() {
-        return hardware.spindexerMotorEncoder.getCurrentPosition() - RobotHardware.SPINDEXER_MOTOR_ENCODER_OFFSET_TICKS;
-    }
-
     public double getPositionRaw() {
-        return ticksToRadians(getPositionTicks()) + this.homedSpindexerOffset;
+        return ticksToRadians(hardware.spindexerMotorEncoder.getCurrentPosition()) + this.homedSpindexerOffset;
     }
 
     public double getPosition() {

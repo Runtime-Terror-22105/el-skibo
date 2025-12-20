@@ -58,7 +58,6 @@ public class RobotHardware {
 
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET_DEGREES = 54.5;
-    public static double SPINDEXER_MOTOR_ENCODER_OFFSET_TICKS = 0;
     public static boolean SPINDEXER_ENCODER_REVERSED = true;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerIntakeWallServo1;
