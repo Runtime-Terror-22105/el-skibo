@@ -19,9 +19,9 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 public class PrepareShootCommand extends SequentialCommandGroup {
     public static double SHOOTER_RPM = 3500;
 //    public static double PRE_YAW_ANGLE = 30.0;  // degrees
-    public static int PRE_YAW_DELAY = 250;  // milliseconds
-    public static int RAMP_DELAY = 500;  // milliseconds
-    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 750;
+//    public static int PRE_YAW_DELAY = 250;  // milliseconds
+    public static int RAMP_DELAY = 150;  // milliseconds
+    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 150;
 
     public PrepareShootCommand(Robot robot) {
         this(robot, null, null, IntakePitch.UP);
