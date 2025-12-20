@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -34,6 +37,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public PrepareShootCommand(Robot robot, Double hoodAngle, Double rpm, IntakePitch pitch) {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.TRANSFER),
+                new LogCatCommand("PrepareShootCommand", "Beginning prepare shoot", Log.INFO),
 
                 // Phase 1: ???
                 new InstantCommand(() -> robot.shooter.isAutoVelOn = rpm == null),
@@ -58,6 +62,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                     new SetShooterRPMCommand(robot.shooter, rpm)
                 ),
                 new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW), // todo: adjust this delay based on how long it takes for these two servos
+                new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO),
 
                 // Phase 2/3: Sort the balls, spin to pre-transfer yaw
                 new ConditionalCommand(
@@ -66,11 +71,13 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         robot::getAutoSort
                 ),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new LogCatCommand("PrepareShootCommand", "Phase 2/3 done", Log.INFO),
 //                new WaitCommand(PRE_YAW_DELAY),
 
                 // Phase 4: drop down ramp and start intake
                 new SetSpindexerRampActive(robot.spindexer, true),
                 new WaitCommand(RAMP_DELAY), // todo: adjust this delay based on how long it takes for ramp to drop
+                new LogCatCommand("PrepareShootCommand", "Phase 4 done", Log.INFO),
                 new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT)
         );
     }
