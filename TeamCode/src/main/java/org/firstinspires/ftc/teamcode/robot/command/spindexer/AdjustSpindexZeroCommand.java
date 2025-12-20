@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -13,6 +15,7 @@ public class AdjustSpindexZeroCommand extends InstantCommand {
 
     public AdjustSpindexZeroCommand(Robot robot, boolean increase) {
         super(() -> {
+            Log.d("spindexer", "Changing offset, direction: "+ increase);
                     robot.spindexer.setHomedSpindexerOffset(
                             robot.spindexer.getHomedSpindexerOffset() +
                                     Math.toRadians(INCREASE_AMOUNT_DEGREES) * (increase ? -1 : 1));

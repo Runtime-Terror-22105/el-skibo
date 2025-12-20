@@ -34,8 +34,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double TRANSFER_POLE_ACTIVE = 0.23;
-    public static double TRANSFER_POLE_DEACITVE = 0.45;
+    public static double TRANSFER_POLE_ACTIVE = 0.6;
+    public static double TRANSFER_POLE_DEACITVE = 0.93;
 
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (208D/58D);
 
