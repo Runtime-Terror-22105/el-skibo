@@ -23,7 +23,7 @@ public class GoToIntakeStateCommand extends SequentialCommandGroup {
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                         new SetSpindexerYawCommand(robot.spindexer, 0)
                 ),
-                new WaitForSpindexerYawCommand(robot.spindexer),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000L),
                 new SetSpindexerWallDown(robot.spindexer, true)
         );
     }
