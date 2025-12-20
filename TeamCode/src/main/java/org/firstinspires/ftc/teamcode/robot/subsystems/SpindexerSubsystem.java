@@ -281,10 +281,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void updateSpindexer() {
         // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
         // we calculate error ourselves and feed into PID.
-        this.yawPid.setTargetPosition(0.0);
+        this.yawPid.setTargetPosition(desiredAngle);
         if (pidEnabled) {
-            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
-            this.spindexerPower = yawPid.calculatePower(error, 0);
+//            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
+            this.spindexerPower = yawPid.calculatePower(desiredAngle, 0);
         }
     }
 
