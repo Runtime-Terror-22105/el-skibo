@@ -177,10 +177,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         else if (shootingMethod == ShootingMethod.SHIMMY_SHOOT){
             shoot3button.whenPressed(new ConditionalCommand(
                     new ConditionalCommand( // if we already did the transfer, just shoot immediately
-                            new ShimmyShoot3BallAlt(robot),
+                            new ShimmyShoot3Ball(robot),
                             new SequentialCommandGroup(
                                     new PrepareShootCommand(robot),
-                                    new ShimmyShoot3BallAlt(robot)
+                                    new ShimmyShoot3Ball(robot)
                             ),
                             () -> robot.robotState == READY_TO_SHOOT
                     ),
