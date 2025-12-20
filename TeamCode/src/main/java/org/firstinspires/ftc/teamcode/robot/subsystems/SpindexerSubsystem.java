@@ -37,6 +37,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double TRANSFER_POLE_ACTIVE = 0.23;
     public static double TRANSFER_POLE_DEACITVE = 0.45;
 
+    public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (58D/208D);
+
     public double transferPolePosition = TRANSFER_POLE_DEACITVE;
 
     public double spindexerPower = 0.0;
@@ -63,14 +65,26 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(0.0);
     }
 
-    public double getPosition() {
-        return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
+    public static double ticksToRadians(double ticks) {
+        return (ticks / TICKS_PER_REVOLUTION) * 2.0 * Math.PI;
     }
 
-    public double getRawPosition()
-    {
-        return hardware.spindexerEncoder.getCurrentPosition();
+    private static double radiansToTicks(double radians) {
+        return (radians / (2.0 * Math.PI)) * TICKS_PER_REVOLUTION;
     }
+
+    public double getPositionTicks() {
+        return hardware.spindexerMotorEncoder.getCurrentPosition() - RobotHardware.SPINDEXER_MOTOR_ENCODER_OFFSET_TICKS;
+    }
+
+    public double getPosition() {
+        return ticksToRadians(getPositionTicks());
+    }
+
+    // TODO: restore this eventually
+//    public double getPosition() {
+////        return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
+//    }
 
     public double getTargetYaw() {
         return desiredAngle;
@@ -268,7 +282,6 @@ public class SpindexerSubsystem extends SubsystemBase {
             double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
             this.spindexerPower = yawPid.calculatePower(error, 0);
         }
-
     }
 
 
