@@ -31,6 +31,7 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.AdjustSpindexZeroCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -116,8 +117,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
 
-        GamepadButton adjustTurretLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
-        GamepadButton adjustTurretRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
+        GamepadButton adjustSpindexerLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
+        GamepadButton adjustSpindexerRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
 
         GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
 
@@ -219,8 +220,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
 
-        adjustTurretLeft.whileHeld(new AdjustTurretOffsetCommand(robot, false));
-        adjustTurretRight.whileHeld(new AdjustTurretOffsetCommand(robot, true));
+        adjustSpindexerLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
+        adjustSpindexerRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
 
         sortButton.whenPressed(robot::toggleAutoSort);
 
