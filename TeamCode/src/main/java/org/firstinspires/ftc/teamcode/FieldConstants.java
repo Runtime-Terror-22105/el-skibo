@@ -17,4 +17,5 @@ public class FieldConstants {
 
     public static String MOTIF_DATA_KEY = "motif";
     public static String AUTO_ENDING_DATA_KEY = "auto ending pos, tele starting pos";
+    public static String SPINDEXER_POSITION_KEY = "spindexer position at end of teleop";
 }

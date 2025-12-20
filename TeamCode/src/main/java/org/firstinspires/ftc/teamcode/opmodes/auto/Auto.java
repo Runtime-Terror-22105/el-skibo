@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
@@ -24,7 +25,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.ShimmyShoot3BallAlt;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -59,6 +60,8 @@ public abstract class Auto extends LinearOpMode {
     public static int PRELOAD_PRE_SHOOT_DELAY = 3000;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
+
+    public static double MAX_DRIVETRAIN_POWER_INTAKING = 0.8;
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -219,14 +222,14 @@ public abstract class Auto extends LinearOpMode {
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new ShimmyShoot3BallAlt(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
                 new WaitCommand(SHOOT_DELAY)
         );
 
         intake1Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, prepareIntake1Path, true),
+                        new FollowPathCommand(robot.follower, prepareIntake1Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
@@ -240,14 +243,14 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShimmyShoot3BallAlt(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
         intake2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, prepareIntake2Path, true),
+                        new FollowPathCommand(robot.follower, prepareIntake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
@@ -260,14 +263,14 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShimmyShoot3BallAlt(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
 
         intake3Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, prepareIntake3Path, true),
+                        new FollowPathCommand(robot.follower, prepareIntake3Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
@@ -281,7 +284,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShimmyShoot3BallAlt(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -347,6 +350,7 @@ public abstract class Auto extends LinearOpMode {
 
 //            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
             blackboard.put(AUTO_ENDING_DATA_KEY, robot.follower.getPose());
+            blackboard.put(SPINDEXER_POSITION_KEY, robot.spindexer.getPosition());
 
             hardware.write();
 
