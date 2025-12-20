@@ -80,11 +80,11 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public double getPositionRaw() {
-        return ticksToRadians(getPositionTicks());
+        return ticksToRadians(getPositionTicks()) + this.homedSpindexerOffset;
     }
 
     public double getPosition() {
-        return Angle.normalize(getPositionRaw() + this.homedSpindexerOffset);
+        return Angle.normalize(getPositionRaw());
     }
 
     // TODO: restore this eventually
@@ -138,24 +138,24 @@ public class SpindexerSubsystem extends SubsystemBase {
      * @param angle The angle to go to, in radians.
      */
     public void goToAngle120(double angle) {
-        this.desiredAngle = angle;
+//        this.desiredAngle = angle;
         // TODO restore this function later once spindexer is no longer cooked
-//        double bestAngle = this.desiredAngle;
-//        double bestError = Double.POSITIVE_INFINITY;
-//
-//        double sector = 2 * Math.PI / 3.0; // 120 deg
-//
-//        // basically just loop through the three sides to see which is optimal
-//        for (int i = 0; i < 3; i++) {
-//            double equiv = angle + i * sector; // the equivalent angle in our current area
-//            double error = Angle.angleWrap(equiv - this.desiredAngle);
-//            if (Math.abs(error) < bestError) {
-//                bestError = Math.abs(error);
-//                bestAngle = this.desiredAngle + error;
-//            }
-//        }
-//
-//        this.desiredAngle = bestAngle;
+        double bestAngle = this.desiredAngle;
+        double bestError = Double.POSITIVE_INFINITY;
+
+        double sector = 2 * Math.PI / 3.0; // 120 deg
+
+        // basically just loop through the three sides to see which is optimal
+        for (int i = 0; i < 3; i++) {
+            double equiv = angle + i * sector; // the equivalent angle in our current area
+            double error = Angle.angleWrap(equiv - this.desiredAngle);
+            if (Math.abs(error) < bestError) {
+                bestError = Math.abs(error);
+                bestAngle = this.desiredAngle + error;
+            }
+        }
+
+        this.desiredAngle = bestAngle;
     }
 
 
