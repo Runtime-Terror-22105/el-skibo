@@ -32,7 +32,6 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.SortCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
