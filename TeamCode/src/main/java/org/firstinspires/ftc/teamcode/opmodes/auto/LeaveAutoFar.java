@@ -9,7 +9,6 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.Command;
@@ -23,10 +22,9 @@ import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.ShimmyShoot3BallAlt;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.ShimmyShoot3Ball;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
-import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -79,7 +77,7 @@ public abstract class LeaveAutoFar extends LinearOpMode {
                         new PrepareShootCommand(robot)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
-                new ShimmyShoot3BallAlt(robot),
+                new ShimmyShoot3Ball(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500)
 
         );

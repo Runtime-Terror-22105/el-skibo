@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.ShimmyShoot3BallAlt;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.ShimmyShoot3Ball;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -222,7 +222,7 @@ public abstract class Auto extends LinearOpMode {
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
-                new ShimmyShoot3BallAlt(robot),
+                new ShimmyShoot3Ball(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -243,7 +243,7 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShimmyShoot3BallAlt(robot),
+                new ShimmyShoot3Ball(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -263,7 +263,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShimmyShoot3BallAlt(robot),
+                new ShimmyShoot3Ball(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -284,7 +284,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShimmyShoot3BallAlt(robot),
+                new ShimmyShoot3Ball(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
