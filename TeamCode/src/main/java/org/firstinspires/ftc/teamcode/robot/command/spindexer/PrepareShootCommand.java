@@ -33,7 +33,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
 
     public PrepareShootCommand(Robot robot, Double hoodAngle, Double rpm, IntakePitch pitch) {
         super(
-                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT),
+                new InstantCommand(() -> robot.robotState = RobotState.TRANSFER),
 
                 // Phase 1: ???
                 new InstantCommand(() -> robot.shooter.isAutoVelOn = rpm == null),
@@ -70,7 +70,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
 
                 // Phase 4: drop down ramp and start intake
                 new SetSpindexerRampActive(robot.spindexer, true),
-                new WaitCommand(RAMP_DELAY) // todo: adjust this delay based on how long it takes for ramp to drop
+                new WaitCommand(RAMP_DELAY), // todo: adjust this delay based on how long it takes for ramp to drop
+                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT)
         );
     }
 }
