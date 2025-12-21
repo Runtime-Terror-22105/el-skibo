@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
@@ -83,15 +84,22 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         this.setTeam(color);
         Object motif = blackboard.getOrDefault(MOTIF_DATA_KEY, null);
         Object autoEnd = blackboard.getOrDefault(AUTO_ENDING_DATA_KEY, null);
+        Object spindexerPosition = blackboard.getOrDefault(SPINDEXER_POSITION_KEY, null);
         Log.i("Auto", "Ending position after auto " + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
         if (motif != null) {
             robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
+            blackboard.put(MOTIF_DATA_KEY, null);
         }
         if (autoEnd != null) {
             robot.follower.setStartingPose((Pose) autoEnd);
+            blackboard.put(AUTO_ENDING_DATA_KEY, null);
         } else {
             robot.follower.setStartingPose(color.getStartPosAuto().toPedro());
         }
+//        if (spindexerPosition != null) {
+//            robot.spindexer.setHomedSpindexerOffset(-((double) spindexerPosition));
+//            blackboard.put(SPINDEXER_POSITION_KEY, null);
+//        }
 
         waitForStart();
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
