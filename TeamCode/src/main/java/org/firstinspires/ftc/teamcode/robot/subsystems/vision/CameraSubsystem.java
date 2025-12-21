@@ -105,6 +105,23 @@ public class CameraSubsystem extends SubsystemBase {
         return null;
     }
 
+    public char[] getGlyphCharArray() {
+        if (decodedGlyph) {
+            switch(gameGlyph)
+            {
+                case GPP:
+                    return new char[]{'G','P','P'};
+
+                case PGP:
+                    return new char[]{'P','G','P'};
+
+                case PPG:
+                    return new char[]{'P','P','G'};
+            }
+        }
+        return null;
+    }
+
     public void setGlyph(GLYPH glyph) {
         decodedGlyph = true;
         gameGlyph = glyph;
