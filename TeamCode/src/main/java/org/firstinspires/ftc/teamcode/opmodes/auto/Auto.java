@@ -47,17 +47,17 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
     public static Pose2d SHOOT_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
 
-    public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 63, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE = new Pose2d(INTAKE_1_POSE.x, 63, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(INTAKE_1_POSE.x, 60, Math.toRadians(180));
 
-    public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 40, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE = new Pose2d(24, 40, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(24, 37, Math.toRadians(180));
 
     public static Pose2d PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 0;
-    public static int PRELOAD_PRE_SHOOT_DELAY = 3000;
+    public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
 
@@ -291,7 +291,7 @@ public abstract class Auto extends LinearOpMode {
 
         parkCommand = new SequentialCommandGroup(
                 new GoToRestingStateCommand(robot),
-                new FollowPathCommand(robot.follower, parkPath, true)
+                new FollowPathCommand(robot.follower, parkPath, false)
         );
     }
 

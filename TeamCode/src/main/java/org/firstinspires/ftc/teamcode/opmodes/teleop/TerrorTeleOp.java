@@ -288,6 +288,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 robot.telemetry.addData("Intake (A)", String.format("%.2f", it));
                 robot.telemetry.addData("Total Current (A)", String.format("%.2f", totalCurrent));
             }
+            double dist = Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.goalPos.x, 2) +
+                    Math.pow(robot.follower.getPose().getY()-robot.goalPos.y, 2));
+            robot.telemetry.addData("Distance (in)", dist);
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
             robot.telemetry.update();
         }
