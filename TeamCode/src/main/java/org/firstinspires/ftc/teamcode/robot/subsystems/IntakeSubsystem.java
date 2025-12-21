@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 public class IntakeSubsystem extends SubsystemBase {
     private final Robot robot;
 
-    public static double DOWN_LEFT = 0.55; //servo pos
+    public static double DOWN_LEFT = 0.57; //servo pos
     public static double UP_LEFT = 0.1;
-    public static double DOWN_RIGHT = 0.48;
+    public static double DOWN_RIGHT = 0.53;
     public static double UP_RIGHT = 0.93;
 
     public static double DEFAULT_SPEED = 0.9;

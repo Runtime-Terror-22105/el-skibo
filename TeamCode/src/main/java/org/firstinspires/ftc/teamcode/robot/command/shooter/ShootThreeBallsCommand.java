@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 public class ShootThreeBallsCommand extends SequentialCommandGroup {
 //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
     public static double SPINDEX_TRANSFER_POWER = -1;
-    public static int SPINDEX_TRANSFER_TIME = 1200;  // milliseconds
+    public static int SPINDEX_TRANSFER_TIME = 2000;  // milliseconds
 
     private final Robot robot;
 
