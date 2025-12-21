@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.broadcom.BatchColorSensor;
 import com.qualcomm.hardware.broadcom.BroadcomColorSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -17,8 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+@Config
 public class TerrorColorSensor implements NormalizedColorSensor {
-
     public static double MAX_DIST = 50;
 
     private final RevColorSensorV3 sensor;

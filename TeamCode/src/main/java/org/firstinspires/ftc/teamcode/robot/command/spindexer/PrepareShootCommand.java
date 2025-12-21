@@ -21,7 +21,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
     public static int RAMP_DELAY = 150;  // milliseconds
-    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 300;
+    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 650;
+    public static long SPINDEXER_TIMEOUT = 600L;
 
     public PrepareShootCommand(Robot robot) {
         this(robot, null, null, IntakePitch.UP);
@@ -61,7 +62,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         new SetSpindexerYawCommand(robot.spindexer, -SpindexerSubsystem.READY_POSITION),
                         robot::getAutoSort
                 ),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(SPINDEXER_TIMEOUT),
                 new LogCatCommand("PrepareShootCommand", "Phase 2/3 done", Log.INFO),
 
                 // Phase 4: drop down ramp and start intake
