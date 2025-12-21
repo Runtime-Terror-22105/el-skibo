@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.graphics.Camera;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -132,6 +133,11 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.desiredAngle = bestAngle;
     }
 
+    public void goToNearestSide()
+    {
+        goToAngle120(0);
+    }
+
     /**
      * <p>Snaps the spindexer to a desired angle, while doing modulus to avoid unnecessary rotation.</p>
      * <p>Use this when moving to an angle less than 120 degrees away.</p>
@@ -220,6 +226,92 @@ public class SpindexerSubsystem extends SubsystemBase {
         int nearestIndex = new String(getBallPositions()).indexOf(color);
         return yawOffsets[nearestIndex];
     }
+
+    public void newSort()
+    {
+        robot.spindexer.goToNearestSide(); //align with nearest side
+        String currentFillingString = new String(getBallPositions());
+        String gameFillingString = new String(robot.camera.getGlyphCharArray());
+        if(currentFillingString.indexOf('N') != -1 ||
+                currentFillingString.indexOf('G') == -1 ||
+                currentFillingString.indexOf('P') == -1)
+        {
+            Log.d("spindexer", "not enough balls to run logic");
+            return;
+        }
+
+        if(currentFillingString.length() - currentFillingString.replace("G","").length() != 1)
+        {
+            Log.d("spindexer", "too many greens to run logic");
+            return;
+        }
+
+        //# = ours-game
+
+        //OURS: PPG
+        //GAME: GPP
+        //+2 rotate forward
+
+        //OURS: PPG
+        //GAME: PGP
+        //+1 rotate backward
+
+        //OURS GPP
+        //GAME: PGP
+        //-1 rotate forward
+
+        //OURS GPP
+        //GAME PPG
+        //-2 rotate backward
+
+
+        //rule
+        //+2: rotate forward
+        //+1 rotate backward
+        //-1 rotate forward
+        //-2 rotate backward
+
+        double rotateAmount = Math.toDegrees(120) + READY_POSITION;
+
+        switch(currentFillingString.indexOf('G') - gameFillingString.indexOf('G'))
+        {
+            case 0:
+                this.rotate(READY_POSITION);
+                break;
+
+            case 2:
+
+            case -1:
+                this.rotate(rotateAmount);
+                break;
+
+            case 1:
+
+            case -2:
+                this.rotate(-rotateAmount);
+                break;
+        }
+    }
+
+
+
+
+    /*
+    how to sort
+   OURS PPG
+   GAME GPP
+   ROTATE COUNTERCLOCKWISE 1
+
+
+
+
+
+
+
+     */
+    //GET OUR BALLS POSITION
+    //PPG
+
 
 
     public void sortBalls() {
