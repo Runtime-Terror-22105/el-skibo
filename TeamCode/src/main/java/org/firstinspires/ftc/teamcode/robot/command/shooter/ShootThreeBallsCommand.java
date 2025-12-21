@@ -40,17 +40,16 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                     robot.spindexer.setSpindexerPower(SPINDEX_TRANSFER_POWER);
                 }),
                 new WaitCommand(SPINDEX_TRANSFER_TIME),
-                new InstantCommand(() -> {
-                    robot.spindexer.setSpindexerPower(0.0);
-                    robot.spindexer.setPidEnabled(true);
-                }),
+                new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
+                new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
 
                 // reset spindexer, intake, shooter, and pole
                 new ParallelCommandGroup(
                         new SetIntakeSpeedCommand(robot.intake, 0),
                         new SetSpindexerPoleActive(robot.spindexer, false),
                         new SetSpindexerRampActive(robot.spindexer, false),
-                        new SetSpindexerYawCommand(robot.spindexer, 0.0)
+                        new SetSpindexerYawCommand(robot.spindexer, 0.0),
+                        new InstantCommand(() -> robot.spindexer.setPidEnabled(true))
                 ),
                 new InstantCommand(() -> robot.robotState = RobotState.RESTING)
         );

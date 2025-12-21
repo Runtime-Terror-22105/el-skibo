@@ -137,7 +137,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void goToAngle120(double angle) {
 //        this.desiredAngle = angle;
         // TODO restore this function later once spindexer is no longer cooked
-        double bestAngle = this.desiredAngle;
+        double currAngle = getPositionRaw();
+        double bestAngle = currAngle;
         double bestError = Double.POSITIVE_INFINITY;
 
         double sector = 2 * Math.PI / 3.0; // 120 deg
@@ -145,10 +146,10 @@ public class SpindexerSubsystem extends SubsystemBase {
         // basically just loop through the three sides to see which is optimal
         for (int i = 0; i < 3; i++) {
             double equiv = angle + i * sector; // the equivalent angle in our current area
-            double error = Angle.angleWrap(equiv - this.desiredAngle);
+            double error = Angle.angleWrap(equiv - currAngle);
             if (Math.abs(error) < bestError) {
                 bestError = Math.abs(error);
-                bestAngle = this.desiredAngle + error;
+                bestAngle = currAngle + error;
             }
         }
 
