@@ -57,12 +57,7 @@ public class DriveCommand extends CommandBase {
     public void end(boolean interrupted) {
 
     }
-
-//    @Override
-//    public Set<Subsystem> getRequirements() {
-//        return Collections.emptySet();
-//    }
-
+    
     public double slr(double joystick_value) {
         return Math.pow(joystick_value, 5);
     }
