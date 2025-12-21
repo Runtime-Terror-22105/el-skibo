@@ -27,9 +27,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-2.2, 0);
 
     public static double CONVERGENCE_RATE = 0.1;
-    public static double FULL_RESET_CONVERGENCE_RATE = 0.5;
     public static double VELOCITY_THRESHOLD = 5.0; // inches per second
-    public static double FULL_RESET_THRESHOLD_ANGLE = 10.0; // degrees
 
     private AprilTagProcessor aTagProcessor;
 
@@ -154,17 +152,10 @@ public class CameraSubsystem extends SubsystemBase {
         // likely inited the IMU in the wrong position. So, we will do a "full localization reset"
         // to correct it.
 //        boolean isFullReset = MathFunctions.getSmallestAngleDifference(cameraRobotHeading, pinpointRobotHeading) < Math.toRadians(FULL_RESET_THRESHOLD_ANGLE);
-        boolean isFullReset = false;  // causes bugs
         double robotHeading;
         double convergenceRate;
-        if (isFullReset) {
-            System.out.println("Performing full localization reset from camera!");
-            robotHeading = cameraRobotHeading;
-            convergenceRate = FULL_RESET_CONVERGENCE_RATE;
-        } else {
-            robotHeading = pinpointRobotHeading;
-            convergenceRate = CONVERGENCE_RATE;
-        }
+        robotHeading = pinpointRobotHeading;
+        convergenceRate = CONVERGENCE_RATE;
 
         Pose turretVector = new Pose(cameraToTurretCenterOffset.x, cameraToTurretCenterOffset.y, 0).rotate(cameraFieldPose.getHeading(), false);
         Pose turretCenter = cameraFieldPose.minus(turretVector);
@@ -184,10 +175,6 @@ public class CameraSubsystem extends SubsystemBase {
                 currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
                 currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
         );
-        if (isFullReset) {
-            robot.follower.poseTracker.setPose(convergedPose);
-        } else {
-            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
-        }
+        robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
     }
 }
