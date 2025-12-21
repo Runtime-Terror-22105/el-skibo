@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 
 @Config
 public class FieldConstants {
-    public static Pose2d BLUE_GOAL_POS = new Pose2d(16, 134, 0.0);
-    public static Pose2d RED_GOAL_POS = new Pose2d(130, 134, 0.0);
+    public static Pose2d BLUE_GOAL_POS = new Pose2d(16, 130, 0.0);
+    public static Pose2d RED_GOAL_POS = new Pose2d(130, 130, 0.0);
     public static Pose2d BLUE_START_POS_TELEOP = new Pose2d(20, 123, Math.toRadians(-37.7));
     public static Pose2d RED_START_POS_TELEOP = new Pose2d(124, 123, Math.toRadians(217.7));
     public static Pose2d BLUE_START_POS_AUTO = new Pose2d(20, 123, Math.toRadians(-37.7));
