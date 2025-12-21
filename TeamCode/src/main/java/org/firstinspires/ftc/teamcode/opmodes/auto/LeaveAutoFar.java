@@ -115,7 +115,6 @@ public abstract class LeaveAutoFar extends LinearOpMode {
         waitForStart();
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-                shootPreloadCommand,
                 parkCommand
         ));
 
