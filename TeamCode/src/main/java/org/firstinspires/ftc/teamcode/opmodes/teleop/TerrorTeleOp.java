@@ -176,7 +176,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                             () -> robot.robotState == READY_TO_SHOOT
                     ),
                     new InstantCommand(() -> {} ),
-                    () -> robot.robotState != SHOOTING
+                    () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
             ));
         }
         else if (shootingMethod == ShootingMethod.SHIMMY_SHOOT) {

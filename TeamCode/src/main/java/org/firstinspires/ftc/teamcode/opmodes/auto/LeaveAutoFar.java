@@ -32,6 +32,8 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 @Config
 public abstract class LeaveAutoFar extends LinearOpMode {
 
+    public static Pose parkEnd = new Pose (30, 0, 1D/2D*Math.PI);
+
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
     private final Team team;
@@ -56,7 +58,6 @@ public abstract class LeaveAutoFar extends LinearOpMode {
         }
     }
     private void buildPaths(Pose2d startPose, boolean mirror) {
-        Pose parkEnd = new Pose (48, 30, 1D/2D*Math.PI);
         if (mirror) {
             parkEnd.mirror();
         }

@@ -25,14 +25,14 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double INTAKE_WALL_1_DOWN = 0.95;
     public static double INTAKE_WALL_1_UP = 0.15;
-    public static double INTAKE_WALL_2_DOWN = 0.25;
+    public static double INTAKE_WALL_2_DOWN = 0.2;
     public static double INTAKE_WALL_2_UP = 1;
 
-    public static double SHOOTER_RAMP_ACTIVE = 0.3;
+    public static double SHOOTER_RAMP_ACTIVE = 0.35;
     public static double SHOOTER_RAMP_DEACTIVE = 0.03;
 
     public static double MAX_POWER_14V = 0.35;
-    public static double MAX_POWER_12V = 0.5;
+    public static double MAX_POWER_12V = 0.35;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -48,7 +48,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
 
-    public static double READY_POSITION = (-1D / 6D) * Math.PI; //position for the first ball as the ramp goes down
+    public static double READY_POSITION = -0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
@@ -392,6 +392,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
         double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
         this.hardware.spindexerRotate.setPower(clampedPower);
+//        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
         this.hardware.spindexerTransferPoleServo.setPosition(transferPolePosition);
