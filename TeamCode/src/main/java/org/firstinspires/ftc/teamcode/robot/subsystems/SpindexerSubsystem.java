@@ -7,6 +7,8 @@ import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
+import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
@@ -28,7 +30,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.03;
 
-    public static double MAX_POWER = 0.6;
+    public static double MAX_POWER_14V = 0.35;
+    public static double MAX_POWER_12V = 0.5;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -310,7 +313,10 @@ public class SpindexerSubsystem extends SubsystemBase {
         }
 
         this.updateSpindexer();
-        double clampedPower = Math.max(-MAX_POWER, Math.min(MAX_POWER, spindexerPower));
+        double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
+        Log.i("SpindexerSubsystem", "max power: " + maxPower);
+        Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
+        double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
         this.hardware.spindexerRotate.setPower(clampedPower);
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);

@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
@@ -101,6 +102,7 @@ public class RobotHardware {
     private final TerrorPublisher publisher = new TerrorPublisher();
 
     public boolean enableColorSensor = true;
+    public double initialVoltage;
 
     public enum HardwareOptions {
         CAMERA
@@ -246,6 +248,8 @@ public class RobotHardware {
         }
         this.initLynx(bulkCachingMode);
         this.initImu();
+
+        this.initialVoltage = controlHub.getInputVoltage(VoltageUnit.VOLTS);
 
         // Other Sensors
     }
