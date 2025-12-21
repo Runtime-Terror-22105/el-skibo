@@ -34,7 +34,7 @@ public class SortTest extends LinearOpMode {
 
         robot.camera.setGlyph(glyph);
 
-        CommandScheduler.getInstance().schedule(new WaitCommand(500).andThen(new SortCommand(robot.spindexer)));
+        CommandScheduler.getInstance().schedule(new WaitCommand(500).andThen(new SortCommand(robot)));
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.

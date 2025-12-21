@@ -227,9 +227,12 @@ public class SpindexerSubsystem extends SubsystemBase {
         return yawOffsets[nearestIndex];
     }
 
+    /**
+     * <p>PLEASE DO NOT USE THIS WILLY NILLY!!!
+     * you gotta use the command because it only can do the senses when the balls get aligned</p>
+     * */
     public void newSort()
     {
-        robot.spindexer.goToNearestSide(); //align with nearest side
         String currentFillingString = new String(getBallPositions());
         String gameFillingString = new String(robot.camera.getGlyphCharArray());
         if(currentFillingString.indexOf('N') != -1 ||
@@ -292,27 +295,6 @@ public class SpindexerSubsystem extends SubsystemBase {
                 break;
         }
     }
-
-
-
-
-    /*
-    how to sort
-   OURS PPG
-   GAME GPP
-   ROTATE COUNTERCLOCKWISE 1
-
-
-
-
-
-
-
-     */
-    //GET OUR BALLS POSITION
-    //PPG
-
-
 
     public void sortBalls() {
         Log.d("spindexer", "des ang before sort "+this.desiredAngle);
