@@ -43,20 +43,20 @@ public abstract class Auto extends LinearOpMode {
     public static Double SHOOT_PRELOAD_RPM = null;
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
-    public static Pose2d INTAKE_1_POSE = new Pose2d(26, 85.149, Math.toRadians(180));
+    public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
     public static Pose2d SHOOT_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE = new Pose2d(INTAKE_1_POSE.x, 60, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(20, 60, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE = new Pose2d(24, 37, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(20, 37, Math.toRadians(180));
 
     public static Pose2d PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
 
     public static int PRE_INTAKE_DELAY = 0;
-    public static int INTAKE_DELAY = 0;
+    public static int INTAKE_DELAY = 400;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;

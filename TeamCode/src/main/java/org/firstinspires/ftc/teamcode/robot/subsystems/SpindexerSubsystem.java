@@ -271,7 +271,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         //-1 rotate forward
         //-2 rotate backward
 
-        double rotateAmount = Math.toDegrees(120) + READY_POSITION;
+        double rotateAmount = Math.toRadians(120) + READY_POSITION;
 
         switch(currentFillingString.indexOf('G') - gameFillingString.indexOf('G'))
         {
