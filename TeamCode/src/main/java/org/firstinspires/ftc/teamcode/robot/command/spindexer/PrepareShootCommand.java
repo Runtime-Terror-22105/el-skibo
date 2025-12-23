@@ -58,7 +58,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
 
                 // Phase 2/3: Sort the balls, spin to pre-transfer yaw
                 new ConditionalCommand(
-                        new SortCommand(robot.spindexer),
+                        new SortCommand(robot),
                         new SetSpindexerYawCommand(robot.spindexer, -SpindexerSubsystem.READY_POSITION),
                         robot::getAutoSort
                 ),
