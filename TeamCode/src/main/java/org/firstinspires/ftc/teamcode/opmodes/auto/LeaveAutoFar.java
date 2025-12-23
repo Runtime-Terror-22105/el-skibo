@@ -33,6 +33,8 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 public abstract class LeaveAutoFar extends LinearOpMode {
 
     public static Pose parkEnd = new Pose (30, 0, 1D/2D*Math.PI);
+    public static Pose BLUE_START = new Pose(48, 0, 1D/2D*Math.PI);
+    public static Pose RED_START = new Pose(96, 0, 1D/2D*Math.PI);
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -100,11 +102,10 @@ public abstract class LeaveAutoFar extends LinearOpMode {
         robot.goalPos = team.getGoalPos();
         if (this.team == Team.BLUE){
 
-            robot.follower.setStartingPose(new Pose(48, 0, 1D/2D*Math.PI));
+            robot.follower.setStartingPose(BLUE_START);
         }
         else {
-
-            robot.follower.setStartingPose(new Pose(96, 0, 1D/2D*Math.PI));
+            robot.follower.setStartingPose(RED_START);
         }
 
 
