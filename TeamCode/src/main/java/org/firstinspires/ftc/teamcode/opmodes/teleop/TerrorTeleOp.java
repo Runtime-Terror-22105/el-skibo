@@ -94,7 +94,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             robot.follower.setStartingPose((Pose) autoEnd);
             blackboard.put(AUTO_ENDING_DATA_KEY, null);
         } else {
-            robot.follower.setStartingPose(color.getStartPosAuto().toPedro());
+            robot.follower.setStartingPose(color.getStartPosNear().toPedro());
         }
 //        if (spindexerPosition != null) {
 //            robot.spindexer.setHomedSpindexerOffset(-((double) spindexerPosition));

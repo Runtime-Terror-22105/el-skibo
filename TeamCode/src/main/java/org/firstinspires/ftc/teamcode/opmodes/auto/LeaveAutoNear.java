@@ -114,7 +114,7 @@ public class LeaveAutoNear extends LinearOpMode {
 
 
 
-        buildPaths(team.getStartPosAuto(), Team.RED.equals(team));
+        buildPaths(team.getStartPosNear(), Team.RED.equals(team));
         buildCommands();
         robot.follower.setMaxPower(1.0);
 

@@ -11,6 +11,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.Command;
@@ -19,6 +20,8 @@ import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
+import com.skeletonarmy.marrow.prompts.OptionPrompt;
+import com.skeletonarmy.marrow.prompts.Prompter;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
@@ -36,7 +39,13 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @Config
 @Configurable
-public abstract class Auto extends LinearOpMode {
+@Autonomous(name = "Build-A-Bear Auto", group = "Auto")
+public class CustomizableAuto extends LinearOpMode {
+    public enum StartingPosition {
+        NEAR,
+        FAR
+    }
+
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
@@ -65,7 +74,8 @@ public abstract class Auto extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
-    private final Team team;
+    private final Prompter prompter = new Prompter(this);
+    private Team team;
 
     private PathChain shootPreloadPath;
     private PathChain prepareIntake1Path, intake1Path, shoot1Path;
@@ -80,17 +90,6 @@ public abstract class Auto extends LinearOpMode {
     private Command parkCommand;
 
     private long lastLoop = System.nanoTime();
-
-    protected Auto(Team team) {
-
-        this.team = team;
-        if (team == Team.BLUE){
-            robot.goalPos = FieldConstants.BLUE_GOAL_POS;
-        }
-        else {
-            robot.goalPos = FieldConstants.RED_GOAL_POS;
-        }
-    }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
         Pose shootPreloadPose = SHOOT_PRELOAD_POSE.toPedro();
@@ -295,15 +294,48 @@ public abstract class Auto extends LinearOpMode {
         );
     }
 
+    public void setTeam(Team team) {
+        this.team = team;
+        if (team == Team.BLUE){
+            robot.goalPos = FieldConstants.BLUE_GOAL_POS;
+        }
+        else {
+            robot.goalPos = FieldConstants.RED_GOAL_POS;
+        }
+        robot.goalPos = team.getGoalPos();
+    }
+
+    public void setStartingPosition(StartingPosition startPos) {
+        Pose2d startPose;
+        if (startPos == StartingPosition.NEAR) {
+            startPose = team.getStartPosNear();
+        } else {
+            startPose = team.getStartPosFar();
+        }
+        robot.follower.setStartingPose(startPose.toPedro());
+        buildPaths(startPose, Team.RED.equals(team));
+    }
+
+    public void onPromptsComplete() {
+        setTeam(prompter.get("alliance"));
+        setStartingPosition(prompter.get("start"));
+    }
+
     public void runOpMode() {
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-
         robot.init(hardware, telemetry);
-        robot.goalPos = team.getGoalPos();
-        robot.follower.setStartingPose(team.getStartPosNear().toPedro());
+
+        // this is the one auto to rule them all
+        prompter.prompt("alliance", new OptionPrompt<>("Select Alliance", Team.RED, Team.BLUE))
+                .prompt("start", new OptionPrompt<>("Starting Position", StartingPosition.NEAR, StartingPosition.FAR))
+                .onComplete(this::onPromptsComplete);
+
+        while (opModeInInit()) {
+            prompter.run();
+        }
 
         buildPaths(team.getStartPosNear(), Team.RED.equals(team));
         buildCommands();
