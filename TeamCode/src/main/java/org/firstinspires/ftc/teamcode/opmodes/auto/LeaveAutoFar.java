@@ -110,7 +110,7 @@ public abstract class LeaveAutoFar extends LinearOpMode {
 
 
 
-        buildPaths(team.getStartPosAuto(), Team.RED.equals(team));
+        buildPaths(team.getStartPosFar(), Team.RED.equals(team));
         buildCommands();
         robot.follower.setMaxPower(1.0);
 
