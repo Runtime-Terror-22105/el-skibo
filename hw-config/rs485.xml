@@ -7,7 +7,6 @@
             <goBILDA5202SeriesMotor name="shooterRight" port="1" />
             <goBILDA5202SeriesMotor name="intake" port="2" />
             <goBILDA5202SeriesMotor name="spindexerRotate" port="3" />
-            <Servo name="transferPoleServo" port="1" />
             <Servo name="spindexerIntakeWall1" port="5" />
             <RevColorSensorV3 name="topSensor" port="0" bus="0" />
             <RevColorSensorV3 name="leftSensor" port="0" bus="1" />
