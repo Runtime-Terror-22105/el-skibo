@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
-import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.HardCodedLookup;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
 
 @Config
@@ -61,6 +60,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoAimOn;
     public boolean isAutoVelOn;
     public boolean isAutoHoodOn;
+    public boolean isAutoTurretOn;
     private final Robot robot;
     public static class ShooterValues{
         public double velocity;
@@ -100,8 +100,11 @@ public class ShooterSubsystem extends SubsystemBase {
         Pose2d goalPos = this.goalPosLookupTable.get();
 
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
-        this.goalTurretAngle = this.findYawAngle(goalPos);
-        this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+        if (isAutoTurretOn){
+            this.goalTurretAngle = this.findYawAngle(goalPos);
+            this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+        }
+
 
         ShooterValues math;
 //        if(usingHardCodedShooterTable)
