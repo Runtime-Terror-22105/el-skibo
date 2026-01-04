@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.seattlesolvers.solverslib.util.InterpLUT;
 import com.seattlesolvers.solverslib.util.LUT;
+import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -33,7 +34,7 @@ public class SpindexerEncoderLUT {
             new SpindexLookupValue(120, 130),
             new SpindexLookupValue(240, 230),
 
-            new SpindexLookupValue(0 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 30),
+            new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), 330),
             new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 150),
             new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 30),
 
@@ -46,8 +47,10 @@ public class SpindexerEncoderLUT {
 
     public SpindexLookupValue get(int angle){
         /*If you pass in an int data type, it assumes deg */
+
+        double _angle = MathUtils.normalizeDegrees(angle, true);
         for (SpindexLookupValue data : DATA_POINTS){
-            if (angle == data.targetAngleDeg){
+            if (_angle == data.targetAngleDeg){
                 Log.i("SpindexLut", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
                 return data;
             }
@@ -59,6 +62,7 @@ public class SpindexerEncoderLUT {
 
     public SpindexLookupValue get(double angle){
         /*If you pass in a double data type, it assumes rad */
+        angle = MathUtils.normalizeRadians(angle, true);
         for (SpindexLookupValue data : DATA_POINTS){
             if (angle == data.targetAngleRad){
                 Log.i("SpindexLut", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
