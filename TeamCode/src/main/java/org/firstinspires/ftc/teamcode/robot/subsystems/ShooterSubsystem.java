@@ -91,6 +91,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
+    public static double turretAngleToServoPos(double angleRad) {
+        return Algebra.mapRange(angleRad, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+    }
+
     public void doAutoShoot(){
         Log.i("shooter", "Doing autoshoot!");
         this.isAutoAimOn = true;
@@ -102,7 +106,7 @@ public class ShooterSubsystem extends SubsystemBase {
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         if (isAutoTurretOn){
             this.goalTurretAngle = this.findYawAngle(goalPos);
-            this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+            this.goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
         }
 
 
@@ -163,10 +167,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
         this.goalTurretAngle = this.findYawAngle(goalPos);
-        this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
-
-
-
+        this.goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
     }
 
     public void manualAimAutoHood (double velocity, double turretYaw) {
@@ -188,8 +189,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, turretYaw));
-        this.goalTurretPos = Algebra.mapRange(this.goalTurretAngle, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
-
+        this.goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
     }
 
 
