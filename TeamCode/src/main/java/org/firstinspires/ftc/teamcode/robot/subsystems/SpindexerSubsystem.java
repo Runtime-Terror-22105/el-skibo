@@ -38,7 +38,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (208D/58D);
+    public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (225D/32D);
 
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
