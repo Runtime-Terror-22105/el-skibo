@@ -119,7 +119,6 @@ public class ShimmyShoot3Ball extends CommandBase {
         robot.spindexer.setSpindexerPower(0.0);
         robot.spindexer.setPidEnabled(true);
         robot.intake.setSpeed(0);
-        robot.spindexer.deactivatePole();
         robot.spindexer.disableRamp();
         robot.spindexer.goToAngle120(0);
         robot.robotState = RobotState.RESTING;

@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
-    public static int RAMP_DELAY = 150;  // milliseconds
+    public static int RAMP_DELAY = 200;  // milliseconds
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 650;
     public static long SPINDEXER_TIMEOUT = 600L;
 
@@ -50,7 +50,6 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                     new SetIntakePitchCommand(robot.intake, pitch),
                     new SetIntakeSpeedCommand(robot.intake, 0),
                     new SetSpindexerWallDown(robot.spindexer, false),
-                    new SetSpindexerPoleActive(robot.spindexer, true),
                     new SetShooterRPMCommand(robot.shooter, rpm)
                 ),
                 new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW), // todo: adjust this delay based on how long it takes for these two servos
