@@ -11,11 +11,8 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.ChangeSpindexerYawCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerPoleActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
@@ -43,10 +40,9 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
                 new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
 
-                // reset spindexer, intake, shooter, and pole
+                // reset spindexer, intake, shooter
                 new ParallelCommandGroup(
                         new SetIntakeSpeedCommand(robot.intake, 0),
-                        new SetSpindexerPoleActive(robot.spindexer, false),
                         new SetSpindexerRampActive(robot.spindexer, false),
                         new SetSpindexerYawCommand(robot.spindexer, 0.0),
                         new InstantCommand(() -> robot.spindexer.setPidEnabled(true))

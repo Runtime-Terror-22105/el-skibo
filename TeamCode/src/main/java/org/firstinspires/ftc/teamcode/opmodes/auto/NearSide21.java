@@ -26,19 +26,29 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.ToggleAutoTurretCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
+
+
+/*
+TODO: shoot far away would make this pretty feasible
+as of the now the way it works is that it just goes to the position and then back to where we shoot
+but it repeats it 3 times in the sequential command group
+and alternative to doing this would be just making the path itself do it but i dont know
+if there is any advantage to doing that (optimizations maybe?)
+
+either way, if we can grab the balls and then just shoot from far side that would be baller
+
+ */
 
 @Config
 @Configurable
-public abstract class Auto extends LinearOpMode {
+public abstract class NearSide21 extends LinearOpMode {
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
@@ -49,6 +59,10 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
     public static Pose2d SHOOT_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
 
+    //TODO: figure out how to find this value and really all the human values
+
+    public static Pose2d POSSIBLE_ALT_SHOOT_POSE_IDK_LOWK =  new Pose2d(35.034,98.001,Math.toRadians(315));
+
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
     public static Pose2d INTAKE_2_POSE = new Pose2d(20, 60, Math.toRadians(180));
 
@@ -56,6 +70,10 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 37, Math.toRadians(180));
 
     public static Pose2d PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
+
+    public static Pose2d PREPARE_HUMAN_POSE = new Pose2d(0,0,Math.toRadians(225)); // still a filler
+
+    public static Pose2d HUMAN_POSE = new Pose2d(0,0,Math.toRadians(225)); //this is a filler
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 400;
@@ -73,25 +91,30 @@ public abstract class Auto extends LinearOpMode {
     private PathChain prepareIntake1Path, intake1Path, shoot1Path;
     private PathChain prepareIntake2Path, intake2Path, shoot2Path;
     private PathChain prepareIntake3Path, intake3Path, shoot3Path;
+
+    private PathChain prepareIntakeHumanPath, intakeHumanPath, shootHumanPath;
     private PathChain parkPath;
 
     private Command shootPreloadCommand;
     private Command intake1Command, shoot1Command;
     private Command intake2Command, shoot2Command;
     private Command intake3Command, shoot3Command;
+
+    private Command intakeHumanCommand, shootHumanCommand;
     private Command parkCommand;
 
     private long lastLoop = System.nanoTime();
 
-    protected Auto(Team team) {
+    protected NearSide21(Team team) {
 
         this.team = team;
+        robot.goalPos = FieldConstants.RED_GOAL_POS;
         if (team == Team.BLUE){
             robot.goalPos = FieldConstants.BLUE_GOAL_POS;
         }
-        else {
-            robot.goalPos = FieldConstants.RED_GOAL_POS;
-        }
+//        else {
+//            robot.goalPos = FieldConstants.RED_GOAL_POS;
+//        }
     }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
@@ -109,6 +132,10 @@ public abstract class Auto extends LinearOpMode {
         Pose intake3Pose = INTAKE_3_POSE.toPedro();
         Pose parkPose = PARK_POSE.toPedro();
 
+        Pose humanPose = HUMAN_POSE.toPedro(); //i dont think its worth even converting this
+        Pose prepareHumanPose = PREPARE_HUMAN_POSE.toPedro();
+        Pose humanControlPose = new Pose(0,0); // i dont know what this means
+
         if (mirror) {
             shootPreloadPose = shootPreloadPose.mirror();
             prepareIntake1Pose = prepareIntake1Pose.mirror();
@@ -123,6 +150,10 @@ public abstract class Auto extends LinearOpMode {
             intake3Control = intake3Control.mirror();
             intake3Pose = intake3Pose.mirror();
             parkPose = parkPose.mirror();
+
+            humanPose = humanPose.mirror();
+            prepareHumanPose = prepareHumanPose.mirror();
+            humanControlPose = humanControlPose.mirror();
         }
 
         Follower follower = robot.follower;
@@ -193,6 +224,7 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setLinearHeadingInterpolation(shootPose.getHeading(), prepareIntake3Pose.getHeading())
                 .build();
+
         intake3Path = follower
                 .pathBuilder()
                 .addPath(
@@ -204,6 +236,34 @@ public abstract class Auto extends LinearOpMode {
                 .pathBuilder()
                 .addPath(
                         new BezierLine(intake3Pose, shootPose)
+                )
+                .setConstantHeadingInterpolation(shootPose.getHeading())
+                .build();
+
+        prepareIntakeHumanPath = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                shootPose,
+                                humanControlPose,
+                                prepareHumanPose
+                        )
+                )
+                .setLinearHeadingInterpolation(shootPose.getHeading(), prepareHumanPose.getHeading())
+                .build();
+
+        intakeHumanPath = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(prepareHumanPose, humanPose)
+                )
+                .setLinearHeadingInterpolation(prepareHumanPose.getHeading(), humanPose.getHeading())
+                .build();
+
+        shootHumanPath = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(humanPose, shootPose)
                 )
                 .setConstantHeadingInterpolation(shootPose.getHeading())
                 .build();
@@ -221,10 +281,8 @@ public abstract class Auto extends LinearOpMode {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
-                        new FollowPathCommand(robot.follower, shootPreloadPath, true),
-                        new ToggleAutoTurretCommand(robot, false, ShooterSubsystem.turretUpperBound)
+                        new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
-                new ToggleAutoTurretCommand(robot, true),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
@@ -293,6 +351,28 @@ public abstract class Auto extends LinearOpMode {
                 new WaitCommand(SHOOT_DELAY)
         );
 
+        intakeHumanCommand = new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, prepareIntakeHumanPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitCommand(PRE_INTAKE_DELAY),
+                new FollowPathCommand(robot.follower, intakeHumanPath, true),
+                new WaitCommand(INTAKE_DELAY),
+                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM)
+        );
+
+        shootHumanCommand = new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, shootHumanPath, true),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
+                ),
+                new WaitCommand(PRE_SHOOT_DELAY),
+                new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitCommand(SHOOT_DELAY)
+        );
+
         parkCommand = new SequentialCommandGroup(
                 new GoToRestingStateCommand(robot),
                 new FollowPathCommand(robot.follower, parkPath, false)
@@ -307,9 +387,9 @@ public abstract class Auto extends LinearOpMode {
 
         robot.init(hardware, telemetry);
         robot.goalPos = team.getGoalPos();
-        robot.follower.setStartingPose(team.getStartPosNear().toPedro());
+        robot.follower.setStartingPose(team.getStartPosAuto().toPedro());
 
-        buildPaths(team.getStartPosNear(), Team.RED.equals(team));
+        buildPaths(team.getStartPosAuto(), Team.RED.equals(team));
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
 
@@ -334,11 +414,14 @@ public abstract class Auto extends LinearOpMode {
         waitForStart();
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-                shootPreloadCommand,
-                intake1Command, shoot1Command,
-                intake2Command, shoot2Command,
-                intake3Command, shoot3Command,
-                parkCommand
+                shootPreloadCommand, //3
+                intake1Command, shoot1Command, //6
+                intake2Command, shoot2Command, //9
+                intake3Command, shoot3Command, //12
+                intakeHumanCommand, shootHumanCommand, //15
+                intakeHumanCommand, shootHumanCommand, //18
+                intakeHumanCommand, shootHumanCommand, //21
+                parkCommand //i dont know if this will be doable in the time lowk
         ));
 
         lastLoop = System.nanoTime();
