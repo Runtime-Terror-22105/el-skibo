@@ -50,7 +50,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        robot.hardware.enableColorSensor = RobotState.INTAKING.equals(robot.robotState);
+        //robot.hardware.enableColorSensor = RobotState.INTAKING.equals(robot.robotState);
+        robot.hardware.enableColorSensor = true;
 
         robot.hardware.intake.setPower(this.targetSpeed);
         robot.hardware.intakePitchLeft.setPosition(pitch.left.get());
