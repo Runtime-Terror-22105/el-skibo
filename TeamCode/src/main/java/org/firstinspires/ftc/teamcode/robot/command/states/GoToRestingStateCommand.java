@@ -6,7 +6,6 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerPoleActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerWallDown;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -21,7 +20,6 @@ public class GoToRestingStateCommand extends SequentialCommandGroup {
 //                new SetShooterManualAimCommand(robot.shooter, 400, 45.0, 0.0),
                 new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new SetIntakeSpeedCommand(robot.intake, 0.0),
-                new SetSpindexerPoleActive(robot.spindexer, false),
                 new SetSpindexerRampActive(robot.spindexer, false),
                 new SetSpindexerWallDown(robot.spindexer, false)
         ));
