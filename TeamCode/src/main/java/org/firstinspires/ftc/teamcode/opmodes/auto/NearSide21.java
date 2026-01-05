@@ -387,9 +387,9 @@ public abstract class NearSide21 extends LinearOpMode {
 
         robot.init(hardware, telemetry);
         robot.goalPos = team.getGoalPos();
-        robot.follower.setStartingPose(team.getStartPosAuto().toPedro());
+        robot.follower.setStartingPose(team.getStartPosNear().toPedro());
 
-        buildPaths(team.getStartPosAuto(), Team.RED.equals(team));
+        buildPaths(team.getStartPosNear(), Team.RED.equals(team));
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
 
