@@ -59,6 +59,12 @@ public class Pose2d {
         return new Pose(this.x, this.y, this.heading);
     }
 
+    public Pose toPedro(boolean mirror) {
+        Pose p = new Pose(this.x, this.y, this.heading);
+        if (mirror) return p.mirror();
+        return p;
+    }
+
     public Pose2d mult(double scalar) {
         this.x *= scalar;
         this.y *= scalar;
