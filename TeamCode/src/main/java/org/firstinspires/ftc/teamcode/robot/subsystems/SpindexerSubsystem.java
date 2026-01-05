@@ -29,21 +29,16 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double INTAKE_WALL_2_UP = 1;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.35;
-    public static double SHOOTER_RAMP_DEACTIVE = 0.03;
+    public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
-    public static double MAX_POWER_14V = 0.35;
-    public static double MAX_POWER_12V = 0.35;
+    public static double MAX_POWER_14V = 100;
+    public static double MAX_POWER_12V = 100;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
-    public static double TRANSFER_POLE_ACTIVE = 0.6;
-    public static double TRANSFER_POLE_DEACITVE = 0.93;
-
-    public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (208D/58D);
-
-    public double transferPolePosition = TRANSFER_POLE_DEACITVE;
+    public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (225D/32D);
 
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
@@ -52,7 +47,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.55, 0, 0.019, 0, 0.12);
+            new PidfController.PidfCoefficients(1.4, 0, 0.03, 0, 0.0);
     public static double yawPidTolerance = Math.toRadians(3); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
@@ -199,15 +194,6 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.intakeWallPosition1 = INTAKE_WALL_1_UP;
         this.intakeWallPosition2 = INTAKE_WALL_2_UP;
     }
-
-    public void activatePole() {
-        this.transferPolePosition = TRANSFER_POLE_ACTIVE;
-    }
-
-    public void deactivatePole() {
-        this.transferPolePosition = TRANSFER_POLE_DEACITVE;
-    }
-
 
     public void enableRamp() {
         shooterRampPosition = SHOOTER_RAMP_ACTIVE;
@@ -395,7 +381,6 @@ public class SpindexerSubsystem extends SubsystemBase {
 //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
-        this.hardware.spindexerTransferPoleServo.setPosition(transferPolePosition);
         this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
         Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
