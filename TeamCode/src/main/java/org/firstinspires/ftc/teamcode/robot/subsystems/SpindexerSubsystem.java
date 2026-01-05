@@ -28,7 +28,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double INTAKE_WALL_2_DOWN = 0.2;
     public static double INTAKE_WALL_2_UP = 1;
 
-    public static double SHOOTER_RAMP_ACTIVE = 0.35;
+    public static double SHOOTER_RAMP_ACTIVE = 0.00;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
     public static double MAX_POWER_14V = 100;
@@ -43,7 +43,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public double spindexerPower = 0.0;
     public TerrorColorSensor[] sensors;
 
-    public static double READY_POSITION = -0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
+    public static double READY_POSITION = 0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
@@ -310,17 +310,17 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
-                double normalizedError = MathUtils.normalizeRadians(-(READY_POSITION - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
                 Log.d("spindexer", "glyph gpp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
-                double normalizedError = MathUtils.normalizeRadians(-((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
                 Log.d("spindexer", "glyph pgp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else {
-                double normalizedError = MathUtils.normalizeRadians(-((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
                 Log.d("spindexer", "glyph ppg normalized error" + normalizedError);
                 this.rotate(normalizedError);
             }

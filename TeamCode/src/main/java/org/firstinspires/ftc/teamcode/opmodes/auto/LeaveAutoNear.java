@@ -110,6 +110,7 @@ public class LeaveAutoNear extends LinearOpMode {
 
         robot.init(hardware, telemetry);
         robot.goalPos = team.getGoalPos();
+        robot.follower.setStartingPose(team.getStartPosAuto().toPedro());
 
 
 

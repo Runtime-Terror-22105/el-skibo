@@ -222,7 +222,7 @@ public abstract class Auto extends LinearOpMode {
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true),
-                        new ToggleAutoTurretCommand(robot, false, ShooterSubsystem.turretUpperBound)
+                        new ToggleAutoTurretCommand(robot, false, ShooterSubsystem.turretLowerBound)
                 ),
                 new ToggleAutoTurretCommand(robot, true),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
