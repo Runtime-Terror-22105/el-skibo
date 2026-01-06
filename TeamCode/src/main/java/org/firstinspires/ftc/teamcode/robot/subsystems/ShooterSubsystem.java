@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
 
@@ -128,7 +129,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if (this.isAutoVelOn) {
             this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
         }
-        if (this.isAutoHoodOn) {
+        if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
             this.goalPitch = math.rad;
             this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         }
