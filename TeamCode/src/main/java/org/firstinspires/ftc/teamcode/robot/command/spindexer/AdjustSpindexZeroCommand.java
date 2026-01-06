@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 public class AdjustSpindexZeroCommand extends InstantCommand {
     public static double INCREASE_AMOUNT_DEGREES = 1;
 
+    @Deprecated
+    //Only works if using motor encoder, not absolute
     public AdjustSpindexZeroCommand(Robot robot, boolean increase) {
         super(() -> {
             Log.d("spindexer", "Changing offset, direction: "+ increase);
