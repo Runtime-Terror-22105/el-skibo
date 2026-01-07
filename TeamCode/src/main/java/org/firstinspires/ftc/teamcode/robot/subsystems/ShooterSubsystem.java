@@ -69,8 +69,6 @@ public class ShooterSubsystem extends SubsystemBase {
         public ShooterValues(double v, double r){
             this.velocity = v;
             this.rad = r;
-
-
         }
 
 
@@ -89,7 +87,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = true;
         this.isAutoVelOn = true;
         this.isAutoHoodOn = true;
-
+        this.isAutoTurretOn = true;
     }
 
     public static double turretAngleToServoPos(double angleRad) {
