@@ -17,7 +17,8 @@ import java.util.function.Supplier;
 @Config
 public class DriveCommand extends CommandBase {
 
-    public static double ROTATION_MULTIPLIER = 0.43;
+    public static double ROTATION_MULTIPLIER_14V = 0.43;
+    public static double ROTATION_MULTIPLIER_12V = 0.5;
 
     private final Robot robot;
     private final Supplier<Double> x, y, turn;
@@ -42,10 +43,11 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
         //add more stuff from before i dont want to do this
+        double rotationMultiplier = Algebra.mapRangeNoClamp(robot.hardware.initialVoltage, 12, 14, ROTATION_MULTIPLIER_12V, ROTATION_MULTIPLIER_14V);
         double left_x = -x.get();
         double left_y = -y.get();
         double right_x = -turn.get();
-        robot.follower.setTeleOpDrive(left_y, left_x, right_x*ROTATION_MULTIPLIER);
+        robot.follower.setTeleOpDrive(left_y, left_x, right_x * rotationMultiplier);
 //        robot.drivetrain.move(
 //                direction,
 //                rotation,

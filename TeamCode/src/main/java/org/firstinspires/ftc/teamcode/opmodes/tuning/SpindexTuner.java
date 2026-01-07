@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerEncoderLUT;
 
 @Config
 @TeleOp(name="Spindexer Tuner", group="Tuning")
@@ -14,6 +15,7 @@ public class SpindexTuner extends LinearOpMode {
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
+    private final SpindexerEncoderLUT lut = new SpindexerEncoderLUT(robot);
 
     public static double GOAL_ANGLE = 0.0;
 
@@ -30,15 +32,18 @@ public class SpindexTuner extends LinearOpMode {
                 hub.clearBulkCache();
             }
 
-            robot.spindexer.setYaw(GOAL_ANGLE);
+            robot.spindexer.setYaw(GOAL_ANGLE*(Math.PI/180));
 
             robot.spindexer.periodic();
+
+
 
 
             hardware.write();
 
             robot.telemetry.addData("Yaw of Spindexer", GOAL_ANGLE);
             robot.telemetry.addData("Current angle (degrees)", Math.toDegrees(robot.spindexer.getPosition()));
+            robot.telemetry.addData("Desired Angle (degrees)" , lut.get(robot.spindexer.desiredAngle).correctedAngleDeg);
             robot.telemetry.addData("Current power", robot.spindexer.spindexerPower);
             robot.telemetry.update();
 

@@ -84,7 +84,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.lightControl = new LightControl2(hardware,this);
 
         // Other
-        this.setAutoSort(false);
+        this.setAutoSort(true);
 
         // Set up the camera
         if (hardware.fieldCamera != null) {
