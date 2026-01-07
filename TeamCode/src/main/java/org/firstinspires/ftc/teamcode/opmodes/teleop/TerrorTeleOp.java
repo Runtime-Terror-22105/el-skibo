@@ -126,8 +126,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
 
-        GamepadButton adjustSpindexerLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
-        GamepadButton adjustSpindexerRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
+        //GamepadButton adjustSpindexerLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
+        //GamepadButton adjustSpindexerRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
 
         GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
 
@@ -225,8 +225,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
 
-        adjustSpindexerLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
-        adjustSpindexerRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
+        //adjustSpindexerLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
+        //adjustSpindexerRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
 
         sortButton.whenPressed(robot::toggleAutoSort);
 

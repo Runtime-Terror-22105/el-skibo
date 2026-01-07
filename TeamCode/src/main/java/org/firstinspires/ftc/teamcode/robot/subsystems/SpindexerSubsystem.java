@@ -28,11 +28,11 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double INTAKE_WALL_2_DOWN = 0.2;
     public static double INTAKE_WALL_2_UP = 1;
 
-    public static double SHOOTER_RAMP_ACTIVE = 0.00;
+    public static double SHOOTER_RAMP_ACTIVE = 0.35;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
-    public static double MAX_POWER_14V = 100;
-    public static double MAX_POWER_12V = 100;
+    public static double MAX_POWER_14V = 0.7;
+    public static double MAX_POWER_12V = 0.7;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -53,6 +53,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
     public double desiredAngle;
+    public SpindexerEncoderLUT angleLUT;
 
     private double homedSpindexerOffset;
 
@@ -64,6 +65,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.desiredAngle = getPosition();
         this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(0.0);
+        this.angleLUT = new SpindexerEncoderLUT(this.robot);
         goToAngle120(0);
     }
 
@@ -76,17 +78,18 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public double getPositionRaw() {
-        return ticksToRadians(hardware.spindexerMotorEncoder.getCurrentPosition()) + this.homedSpindexerOffset;
+        return hardware.spindexerEncoder.getCurrentPosition();
     }
 
     public double getPosition() {
-        return Angle.normalize(getPositionRaw());
+        return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
     }
 
     // TODO: restore this eventually
 //    public double getPosition() {
 ////        return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
 //    }
+
 
     public double getTargetYaw() {
         return desiredAngle;
@@ -104,29 +107,6 @@ public class SpindexerSubsystem extends SubsystemBase {
         return this.homedSpindexerOffset;
     }
 
-    /**
-     * <p>Snaps the spindexer to a desired angle, while doing modulus to avoid unnecessary rotation.</p>
-     * <p>Use this when moving to an angle less than 120 degrees away.</p>
-     * @param angle The angle to go to, in radians.
-     */
-    public void goToAngle120Real(double angle) {
-        double bestAngle = this.desiredAngle;
-        double bestError = Double.POSITIVE_INFINITY;
-
-        double sector = 2 * Math.PI / 3.0; // 120 deg
-
-        // basically just loop through the three sides to see which is optimal
-        for (int i = 0; i < 3; i++) {
-            double equiv = angle + i * sector; // the equivalent angle in our current area
-            double error = Angle.angleWrap(equiv - this.desiredAngle);
-            if (Math.abs(error) < bestError) {
-                bestError = Math.abs(error);
-                bestAngle = this.desiredAngle + error;
-            }
-        }
-
-        this.desiredAngle = bestAngle;
-    }
 
     public void goToNearestSide()
     {
@@ -283,9 +263,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void sortBalls() {
-        Log.d("spindexer", "des ang before sort "+this.desiredAngle);
+        Log.d("spindexer", "des ang before sort "+ this.desiredAngle);
+        Log.d("spindexer", "des ang before sort deg "+ this.desiredAngle * (180D/Math.PI));
         this.goToAngle120(0);
-        Log.d("spindexer", "des ang aft 0 "+this.desiredAngle);
+        Log.d("spindexer", "des ang aft 0 "+ this.desiredAngle);
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
@@ -355,10 +336,11 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void updateSpindexer() {
         // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
         // we calculate error ourselves and feed into PID.
-        this.yawPid.setTargetPosition(desiredAngle);
+        SpindexerEncoderLUT.SpindexLookupValue desAngle = this.angleLUT.get(desiredAngle);
+        this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
         if (pidEnabled) {
 //            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
-            this.spindexerPower = yawPid.calculatePower(getPositionRaw(), 0);
+            this.spindexerPower = yawPid.calculatePower(getPositionRaw(), 0, true);
         }
     }
 
