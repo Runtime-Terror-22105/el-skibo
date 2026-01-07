@@ -434,6 +434,7 @@ public class CustomizableAuto extends LinearOpMode {
         waitForStart();
 
         lastLoop = System.nanoTime();
+        CommandScheduler.getInstance().schedule(paths);
 
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
