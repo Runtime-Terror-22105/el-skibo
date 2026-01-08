@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -39,6 +40,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 @Config
 @Configurable
 public abstract class Auto extends LinearOpMode {
+    public static boolean stopAfterPreload = false;
+
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
@@ -335,10 +338,18 @@ public abstract class Auto extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 shootPreloadCommand,
-                intake1Command, shoot1Command,
-                intake2Command, shoot2Command,
-                intake3Command, shoot3Command,
-                parkCommand
+                new ConditionalCommand(
+                        new SequentialCommandGroup(
+                            intake1Command, shoot1Command,
+                            intake2Command, shoot2Command,
+                            intake3Command, shoot3Command,
+                            parkCommand
+                        ),
+                        new SequentialCommandGroup(
+                                new GoToRestingStateCommand(robot)
+                        ),
+                        () -> !stopAfterPreload
+                )
         ));
 
         lastLoop = System.nanoTime();
