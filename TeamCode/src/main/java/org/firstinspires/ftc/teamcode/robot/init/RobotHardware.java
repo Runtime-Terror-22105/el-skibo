@@ -177,7 +177,7 @@ public class RobotHardware {
         // Initialize the spindexer
         this.spindexerRotate = new TerrorMotorNormal(
                 (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
-                0.05,
+                0.01,
                 1.0
         );
         this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
