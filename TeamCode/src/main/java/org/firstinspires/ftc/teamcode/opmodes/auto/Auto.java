@@ -9,6 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -50,11 +51,12 @@ public abstract class Auto extends LinearOpMode {
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
     public static Double SHOOT_PRELOAD_RPM = null;
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(50, 94, Math.toRadians(315));
+    public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
-    public static Pose2d SHOOT_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
     public static Pose2d INTAKE_2_POSE = new Pose2d(20, 60, Math.toRadians(180));
@@ -107,7 +109,8 @@ public abstract class Auto extends LinearOpMode {
         Pose intake1Pose = INTAKE_1_POSE.toPedro();
         Pose pushGateControl = new Pose(44.87356321839081, 72.82758620689656);
         Pose pushGatePose = PUSH_GATE_POSE.toPedro();
-        Pose shootPose = SHOOT_POSE.toPedro();
+        Pose shootEdgePose = SHOOT_EDGE_POSE.toPedro();
+        Pose shootLastPose = SHOOT_LAST_POSE.toPedro();
         Pose prepareIntake2Pose = PREPARE_INTAKE_2_POSE.toPedro();
         Pose intake2Control = new Pose(56.751, 69.765);
         Pose intake2Pose = INTAKE_2_POSE.toPedro();
@@ -122,7 +125,8 @@ public abstract class Auto extends LinearOpMode {
             intake1Pose = intake1Pose.mirror();
             pushGateControl = pushGateControl.mirror();
             pushGatePose = pushGatePose.mirror();
-            shootPose = shootPose.mirror();
+            shootEdgePose = shootEdgePose.mirror();
+            shootLastPose = shootLastPose.mirror();
             prepareIntake2Pose = prepareIntake2Pose.mirror();
             intake2Control = intake2Control.mirror();
             intake2Pose = intake2Pose.mirror();
@@ -158,21 +162,22 @@ public abstract class Auto extends LinearOpMode {
         shoot1Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(intake1Pose, shootPose)
+                        new BezierLine(intake1Pose, shootEdgePose)
                 )
-                .setConstantHeadingInterpolation(shootPose.getHeading())
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         prepareIntake2Path = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                shootPose,
+                                shootEdgePose,
                                 intake2Control,
                                 prepareIntake2Pose
                         )
                 )
-                .setLinearHeadingInterpolation(shootPose.getHeading(), prepareIntake2Pose.getHeading())
+                .setLinearHeadingInterpolation(shoot1Path.getFinalHeadingGoal(), prepareIntake2Pose.getHeading())
                 .build();
         intake2Path = follower
                 .pathBuilder()
@@ -184,21 +189,22 @@ public abstract class Auto extends LinearOpMode {
         shoot2Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(intake2Pose, shootPose)
+                        new BezierLine(intake2Pose, shootEdgePose)
                 )
-                .setConstantHeadingInterpolation(shootPose.getHeading())
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         prepareIntake3Path = follower
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                shootPose,
+                                shootEdgePose,
                                 intake3Control,
                                 prepareIntake3Pose
                         )
                 )
-                .setLinearHeadingInterpolation(shootPose.getHeading(), prepareIntake3Pose.getHeading())
+                .setLinearHeadingInterpolation(shoot2Path.getFinalHeadingGoal(), prepareIntake3Pose.getHeading())
                 .build();
         intake3Path = follower
                 .pathBuilder()
@@ -210,17 +216,18 @@ public abstract class Auto extends LinearOpMode {
         shoot3Path = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(intake3Pose, shootPose)
+                        new BezierLine(intake3Pose, shootLastPose)
                 )
-                .setConstantHeadingInterpolation(shootPose.getHeading())
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         parkPath = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, parkPose)
+                        new BezierLine(shootLastPose, parkPose)
                 )
-                .setLinearHeadingInterpolation(shootPose.getHeading(), parkPose.getHeading())
+                .setLinearHeadingInterpolation(shootLastPose.getHeading(), parkPose.getHeading())
                 .build();
     }
 
@@ -290,8 +297,7 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake3Path, true),
-                new WaitCommand(INTAKE_DELAY),
-                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM)
+                new WaitCommand(INTAKE_DELAY)
         );
         shoot3Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
