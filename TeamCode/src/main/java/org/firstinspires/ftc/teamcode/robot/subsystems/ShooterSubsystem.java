@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -26,7 +27,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
-            new PidfController.PidfCoefficients(0.0002, 0.0, 0.0, 0.00017, 0);
+            new PidfController.PidfCoefficients(0.0005, 0.0, 0.0, 0.00018, 0);
     public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
     // the current pid + speed
@@ -255,8 +256,9 @@ public class ShooterSubsystem extends SubsystemBase {
         Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
+        double voltageScale = 12.0 / this.hardware.controlHub.getInputVoltage(VoltageUnit.VOLTS);
         this.shooterPID.setTargetPosition(getGoalVelocity());
-        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), getGoalVelocity());
+        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), voltageScale * getGoalVelocity());
     }
 
     public void addTurretOffset(double change){
