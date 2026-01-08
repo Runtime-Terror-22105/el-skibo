@@ -9,6 +9,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
@@ -69,8 +70,6 @@ public class ShooterSubsystem extends SubsystemBase {
         public ShooterValues(double v, double r){
             this.velocity = v;
             this.rad = r;
-
-
         }
 
 
@@ -89,7 +88,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = true;
         this.isAutoVelOn = true;
         this.isAutoHoodOn = true;
-
+        this.isAutoTurretOn = true;
     }
 
     public static double turretAngleToServoPos(double angleRad) {
@@ -103,6 +102,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Pose botPosTemp = this.robot.follower.getPose();
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
         Pose2d goalPos = this.goalPosLookupTable.get();
+        FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         if (isAutoTurretOn){

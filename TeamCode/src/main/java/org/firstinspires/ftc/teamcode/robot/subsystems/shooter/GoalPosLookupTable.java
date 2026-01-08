@@ -5,11 +5,13 @@ import android.util.Log;
 import com.pedropathing.VectorCalculator;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
-import com.seattlesolvers.solverslib.util.InterpLUT;
-
+import com.seattlesolvers.solverslib.geometry.Vector2d;
+import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.apache.commons.math3.analysis.function.Acos;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Angle;
+import org.firstinspires.ftc.teamcode.math.InterpLUTSafe;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
@@ -17,7 +19,7 @@ public class GoalPosLookupTable {
     private final Robot robot;
     public Pose2d ogGoalPoint;
 
-    private InterpLUT GOAL_CHANGE_LUT;
+    private InterpLUTSafe GOAL_CHANGE_LUT;
     public static class GoalLookupValue {
         public double angle;
         public double pointChange;
@@ -33,9 +35,17 @@ public class GoalPosLookupTable {
             //POSITIVE VALUE MEANS CHANGE IN Y
 
             //Currently these are just guesses
-            new GoalLookupValue(0, -2),
+            new GoalLookupValue(0, -6),
             new GoalLookupValue((1D/4D * Math.PI), 0),
-            new GoalLookupValue((1D/2D * Math.PI), 2)
+            new GoalLookupValue((1D/2D * Math.PI), 6)
+//            new GoalLookupValue(-Math.PI/2, -12),
+//            new GoalLookupValue(-0.94, -12),
+//            new GoalLookupValue(-0.9, 0),
+//            new GoalLookupValue(-Math.PI/4, 0),
+//            new GoalLookupValue(-0.6, 1.67),
+//            new GoalLookupValue(-0.5, 4.67),
+//            new GoalLookupValue(-0.1, 9.41),
+//            new GoalLookupValue(0.25, 9.41),
     };
 
 
@@ -44,8 +54,8 @@ public class GoalPosLookupTable {
         this.robot = robot;
         this.ogGoalPoint = this.robot.goalPos;
     }
-    private double calcAngleWithWall(){
 
+    private double calcAngleWithWall(){
         Vector goalToRobot;
         Pose robotPose = robot.follower.getPose();
         if (this.robot.color == Team.RED){
@@ -57,7 +67,7 @@ public class GoalPosLookupTable {
             goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
         }
 
-        double angle = Math.abs(goalToRobot.getTheta());
+        double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
         if (angle > ((1D/2D)*Math.PI)){
             angle = (1D/4D)*Math.PI;
         }
@@ -70,7 +80,7 @@ public class GoalPosLookupTable {
 
     public Pose2d get(){
 
-        GOAL_CHANGE_LUT = new InterpLUT();
+        GOAL_CHANGE_LUT = new InterpLUTSafe();
         for (GoalLookupValue dataPoint : DATA_POINTS) {
             GOAL_CHANGE_LUT.add(dataPoint.angle, dataPoint.pointChange);
         }
