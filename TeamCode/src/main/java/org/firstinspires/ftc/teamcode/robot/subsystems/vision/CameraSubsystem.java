@@ -145,8 +145,7 @@ public class CameraSubsystem extends SubsystemBase {
             }
         }
         robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
-        if (!disableRelocalization &&
-            localizationTag != null && localizationTag.robotPose != null
+        if (localizationTag != null && localizationTag.robotPose != null
             && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
             handleLocalizationDetection(localizationTag);
         }
@@ -188,12 +187,14 @@ public class CameraSubsystem extends SubsystemBase {
         debugDetectionTime = System.currentTimeMillis();
 
         // Apply exponential convergence
-        Pose currentPose = robot.follower.poseTracker.getPose();
-        Pose convergedPose = new Pose(
-                currentPose.getX() + convergenceRate * (robotPose.getX() - currentPose.getX()),
-                currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
-                currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
-        );
-        robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
+        if (!disableRelocalization) {
+            Pose currentPose = robot.follower.poseTracker.getPose();
+            Pose convergedPose = new Pose(
+                    currentPose.getX() + convergenceRate * (robotPose.getX() - currentPose.getX()),
+                    currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
+                    currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
+            );
+            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
+        }
     }
 }
