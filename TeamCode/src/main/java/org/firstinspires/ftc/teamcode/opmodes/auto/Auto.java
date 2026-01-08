@@ -288,8 +288,7 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake3Path, true),
-                new WaitCommand(INTAKE_DELAY),
-                new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM)
+                new WaitCommand(INTAKE_DELAY)
         );
         shoot3Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
