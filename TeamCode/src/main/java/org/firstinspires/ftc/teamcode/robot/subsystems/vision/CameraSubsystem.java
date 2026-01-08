@@ -33,6 +33,8 @@ public class CameraSubsystem extends SubsystemBase {
 
     private AprilTagProcessor aTagProcessor;
 
+    private boolean shouldScanForGlyphs = false;
+
     public enum GLYPH {
         GPP, PGP, PPG
     }
@@ -43,7 +45,7 @@ public class CameraSubsystem extends SubsystemBase {
     public RobotHardware hardware;
 
     public GLYPH gameGlyph;
-    private boolean decodedGlyph = false; //when the movie uses the title of the movie
+    private boolean decodedGlyph = true; //when the movie uses the title of the movie
 
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public final VisionPortal vPortalField;
@@ -55,6 +57,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     public CameraSubsystem() {
         this.vPortalField = null;
+        this.shouldScanForGlyphs = true;
     }
 
     public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
@@ -82,6 +85,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         vPortalField = vPortalFieldBuilder.build();
 //        vPortalSpindexer = vPortalSpindexerBuilder.build();
+        this.shouldScanForGlyphs = true;
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
@@ -98,6 +102,14 @@ public class CameraSubsystem extends SubsystemBase {
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
+    }
+
+    public void stopScanningForGlyphs() {
+        this.shouldScanForGlyphs = false;
+    }
+
+    public void startScanningForGlyphs() {
+        this.shouldScanForGlyphs = true;
     }
 
     public GLYPH getGlyph() {
@@ -140,7 +152,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23) {
-                if (!decodedGlyph)
+                if (!decodedGlyph && shouldScanForGlyphs)
                     setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             } else {
                 localizationTag = tag;
