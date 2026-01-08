@@ -16,9 +16,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
@@ -40,6 +42,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 @Config
 @Configurable
 public abstract class Auto extends LinearOpMode {
+    public static long TIME_UNTIL_START_SCANNING_GLYPHS = 200;
+
     public static boolean stopAfterPreload = false;
 
     public static double MAX_POWER = 1.0;
@@ -225,7 +229,11 @@ public abstract class Auto extends LinearOpMode {
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true),
-                        new ToggleAutoTurretCommand(robot, false, ShooterSubsystem.turretLowerBound)
+                        new ToggleAutoTurretCommand(robot, false, ShooterSubsystem.turretLowerBound),
+                        new SequentialCommandGroup(
+                                new WaitCommand(TIME_UNTIL_START_SCANNING_GLYPHS),
+                                new InstantCommand(() -> robot.camera.startScanningForGlyphs()),
+                        ))
                 ),
                 new ToggleAutoTurretCommand(robot, true),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
@@ -309,6 +317,8 @@ public abstract class Auto extends LinearOpMode {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
 
         robot.init(hardware, telemetry);
+        robot.camera.stopScanningForGlyphs();
+
         robot.goalPos = team.getGoalPos();
         robot.follower.setStartingPose(team.getStartPosNear().toPedro());
 
