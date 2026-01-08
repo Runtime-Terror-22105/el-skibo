@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 
+import android.util.Log;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -126,6 +127,7 @@ public class CameraSubsystem extends SubsystemBase {
     public void setGlyph(GLYPH glyph) {
         decodedGlyph = true;
         gameGlyph = glyph;
+        Log.i("CameraSubsystem", "Found glyph " + gameGlyph);
     }
 
     @Override
@@ -144,6 +146,7 @@ public class CameraSubsystem extends SubsystemBase {
                 localizationTag = tag;
             }
         }
+        robot.telemetry.addData("Glyph", gameGlyph);
         robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
         robot.telemetry.addData("Localization Tag", localizationTag);
         if (localizationTag != null && localizationTag.robotPose != null
