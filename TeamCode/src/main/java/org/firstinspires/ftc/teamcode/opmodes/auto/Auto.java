@@ -239,8 +239,8 @@ public abstract class Auto extends LinearOpMode {
                         new ToggleAutoTurretCommand(robot, false, ShooterSubsystem.turretLowerBound),
                         new SequentialCommandGroup(
                                 new WaitCommand(TIME_UNTIL_START_SCANNING_GLYPHS),
-                                new InstantCommand(() -> robot.camera.startScanningForGlyphs()),
-                        ))
+                                new InstantCommand(() -> robot.camera.startScanningForGlyphs())
+                        )
                 ),
                 new ToggleAutoTurretCommand(robot, true),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
