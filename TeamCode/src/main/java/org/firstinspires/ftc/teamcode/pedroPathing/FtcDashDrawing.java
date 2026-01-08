@@ -79,6 +79,11 @@ public class FtcDashDrawing {
         packet.fieldOverlay().fillCircle(pose.getX(), pose.getY(), 1.0);
     }
 
+    /**
+     * Draws a pose as a lttle robot on FTC dashboard wth a certan color.
+     * @param pose The pose to draw
+     * @param color The color, a string hex code in the format "#AAAAAA", a hash followed by 6 hex digits
+     */
     public static void drawRobot(Pose pose, String color) {
         maybeInitFieldPacket();
 
