@@ -30,13 +30,13 @@ public class SpindexerEncoderLUT {
 
     public static SpindexLookupValue[] DATA_POINTS = new SpindexLookupValue[]{
 
-            new SpindexLookupValue(0, 355),
-            new SpindexLookupValue(120, 121),
-            new SpindexLookupValue(240, 237),
+            new SpindexLookupValue(0, 0),
+            new SpindexLookupValue(120, 116),
+            new SpindexLookupValue(240, 242.3),
 
-            new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), 27),
-            new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 151),
-            new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 267),
+            new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), 30),
+            new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 150),
+            new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 270),
 
     };
     public SpindexerEncoderLUT(Robot robot){
