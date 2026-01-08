@@ -10,6 +10,7 @@ import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.apache.commons.math3.analysis.function.Acos;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.InterpLUTSafe;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -66,7 +67,7 @@ public class GoalPosLookupTable {
             goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
         }
 
-        double angle = Math.abs(goalToRobot.getTheta());
+        double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
         if (angle > ((1D/2D)*Math.PI)){
             angle = (1D/4D)*Math.PI;
         }
