@@ -23,7 +23,8 @@ import java.util.ArrayList;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
-    public static Coordinate cameraToTurretCenterOffset = new Coordinate(4.8, 2.2);
+    public static boolean disableRelocalization = false;
+    public static Coordinate cameraToTurretCenterOffset = new Coordinate(5.25, 2.25);
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-2.2, 0);
 
     public static double CONVERGENCE_RATE = 0.1;
@@ -192,6 +193,10 @@ public class CameraSubsystem extends SubsystemBase {
                 currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
                 currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
         );
-        robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
+        if (disableRelocalization) {
+            FtcDashDrawing.drawRobot(convergedPose, "#0000FF");
+        } else {
+            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
+        }
     }
 }
