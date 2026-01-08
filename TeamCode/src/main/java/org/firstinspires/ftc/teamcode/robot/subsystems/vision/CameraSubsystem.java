@@ -145,7 +145,8 @@ public class CameraSubsystem extends SubsystemBase {
             }
         }
         robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
-        if (localizationTag != null && localizationTag.robotPose != null
+        if (!disableRelocalization &&
+            localizationTag != null && localizationTag.robotPose != null
             && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
             handleLocalizationDetection(localizationTag);
         }
@@ -193,10 +194,6 @@ public class CameraSubsystem extends SubsystemBase {
                 currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
                 currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
         );
-        if (disableRelocalization) {
-            FtcDashDrawing.drawRobot(convergedPose, "#0000FF");
-        } else {
-            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
-        }
+        robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
     }
 }
