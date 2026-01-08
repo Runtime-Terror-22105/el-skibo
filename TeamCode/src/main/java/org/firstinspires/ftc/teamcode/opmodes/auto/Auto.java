@@ -9,6 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -172,7 +173,7 @@ public abstract class Auto extends LinearOpMode {
                                 prepareIntake2Pose
                         )
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(shoot1Path.getFinalHeadingGoal(), prepareIntake2Pose.getHeading())
                 .build();
         intake2Path = follower
                 .pathBuilder()
@@ -199,7 +200,7 @@ public abstract class Auto extends LinearOpMode {
                                 prepareIntake3Pose
                         )
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(shoot2Path.getFinalHeadingGoal(), prepareIntake3Pose.getHeading())
                 .build();
         intake3Path = follower
                 .pathBuilder()
