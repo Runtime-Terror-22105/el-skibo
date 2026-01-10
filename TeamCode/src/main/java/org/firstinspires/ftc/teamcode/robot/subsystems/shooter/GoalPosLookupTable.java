@@ -31,8 +31,8 @@ public class GoalPosLookupTable {
     }
 
     public static GoalLookupValue[] DATA_POINTS = new GoalLookupValue[]{
-            //NEGATIVE VALUE MEANS CHANGE IN X
-            //POSITIVE VALUE MEANS CHANGE IN Y
+            //NEGATIVE VALUE MEANS CHANGE IN Y
+            //POSITIVE VALUE MEANS CHANGE IN X
 
             //Currently these are just guesses
             new GoalLookupValue(0, -6),
@@ -86,13 +86,13 @@ public class GoalPosLookupTable {
         double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
         Pose2d newGoalPos = robot.goalPos.copy();
         if (change < 0){
-            if (robot.color == Team.BLUE) {
-                newGoalPos.x -= Math.abs(change);
-            } else {
-                newGoalPos.x += Math.abs(change);
-            }
+            newGoalPos.y -= Math.abs(change);
         } else if(change > 0){
-            newGoalPos.y += Math.abs(change);
+            if (robot.color == Team.BLUE) {
+                newGoalPos.x += Math.abs(change);
+            } else {
+                newGoalPos.x -= Math.abs(change);
+            }
         }
 
         Log.d("goalPos", "old goal pos" + robot.goalPos);
