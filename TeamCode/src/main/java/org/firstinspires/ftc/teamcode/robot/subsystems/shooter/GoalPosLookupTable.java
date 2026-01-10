@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.VectorCalculator;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
@@ -15,11 +16,15 @@ import org.firstinspires.ftc.teamcode.math.InterpLUTSafe;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
+@Config
 public class GoalPosLookupTable {
+    public static double Y_OFFSET = 3.0;
+    public static double X_OFFSET = 6.0;
+
     private final Robot robot;
     public Pose2d ogGoalPoint;
 
-    private InterpLUTSafe GOAL_CHANGE_LUT;
+    private static InterpLUTSafe GOAL_CHANGE_LUT;
     public static class GoalLookupValue {
         public double angle;
         public double pointChange;
@@ -48,7 +53,17 @@ public class GoalPosLookupTable {
 //            new GoalLookupValue(0.25, 9.41),
     };
 
+    private static void updateDataPoints() {
+        DATA_POINTS[0].pointChange = -Y_OFFSET;
+        DATA_POINTS[1].pointChange = 0;
+        DATA_POINTS[2].pointChange = X_OFFSET;
 
+        GOAL_CHANGE_LUT = new InterpLUTSafe();
+        for (GoalLookupValue dataPoint : DATA_POINTS) {
+            GOAL_CHANGE_LUT.add(dataPoint.angle, dataPoint.pointChange);
+        }
+        GOAL_CHANGE_LUT.createLUT();
+    }
 
     public GoalPosLookupTable(Robot robot){
         this.robot = robot;
@@ -76,12 +91,7 @@ public class GoalPosLookupTable {
     }
 
     public Pose2d get(){
-
-        GOAL_CHANGE_LUT = new InterpLUTSafe();
-        for (GoalLookupValue dataPoint : DATA_POINTS) {
-            GOAL_CHANGE_LUT.add(dataPoint.angle, dataPoint.pointChange);
-        }
-        GOAL_CHANGE_LUT.createLUT();
+        updateDataPoints();
 
         double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
         Pose2d newGoalPos = robot.goalPos.copy();
