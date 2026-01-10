@@ -4,7 +4,6 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -41,7 +40,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @Config
-@Configurable
 public abstract class Auto extends LinearOpMode {
     public static long TIME_UNTIL_START_SCANNING_GLYPHS = 200;
 
