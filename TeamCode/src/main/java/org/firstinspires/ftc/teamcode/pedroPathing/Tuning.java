@@ -92,8 +92,8 @@ public class Tuning extends SelectableOpMode {
 
     public static void drawCurrent() {
         try {
-            Drawing.drawRobot(follower.getPose());
-            Drawing.sendPacket();
+            FtcDashDrawing.drawRobot(follower.getPose(), "#4CAF50");
+            FtcDashDrawing.sendPacket();
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
@@ -101,7 +101,7 @@ public class Tuning extends SelectableOpMode {
 
     public static void drawCurrentAndHistory() {
         FtcDashDrawing.drawDebug(follower);
-        Drawing.drawPoseHistory(poseHistory);
+        FtcDashDrawing.drawPoseHistory(poseHistory, "#4CAF50");
         drawCurrent();
     }
 

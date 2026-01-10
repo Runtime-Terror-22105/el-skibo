@@ -115,7 +115,7 @@ public class FtcDashDrawing {
         packet.fieldOverlay().strokePolyline(ftcPoints[0], ftcPoints[1]);
     }
 
-    private static boolean sendPacket() {
+    public static boolean sendPacket() {
         if (packet != null) {
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
             packet = null;
