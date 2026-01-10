@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
 @Config
 public class GoalPosLookupTable {
-    public static double Y_OFFSET = 3.0;
+    public static double Y_OFFSET = 4.0;
     public static double X_OFFSET = 6.0;
 
     private final Robot robot;
