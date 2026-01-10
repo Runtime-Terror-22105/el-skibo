@@ -46,27 +46,11 @@ public class SpindexerEncoderLUT {
 
     }
 
-    public SpindexLookupValue get(int angle){
-        /*If you pass in an int data type, it assumes deg */
-
-        double _angle = MathUtils.normalizeDegrees(angle, true);
-        for (SpindexLookupValue data : DATA_POINTS){
-            if (Math.abs(MathFunctions.getSmallestAngleDifference(Math.toRadians(_angle),
-                    Math.toRadians(data.targetAngleDeg))) < 1.0){
-                Log.i("SpindexLut", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
-                return data;
-            }
-        }
-        Log.i("SpindexLut", "No point found for passed in deg angle: " + angle);
-        return new SpindexLookupValue(angle, angle);
-
-    }
-
     public SpindexLookupValue get(double angle){
         /*If you pass in a double data type, it assumes rad */
         angle = MathUtils.normalizeRadians(angle, true);
         for (SpindexLookupValue data : DATA_POINTS){
-            if (Math.abs(MathFunctions.getSmallestAngleDifference(angle, data.targetAngleRad)) < Math.toRadians(1.0)) {
+            if (MathFunctions.getSmallestAngleDifference(angle, data.targetAngleRad) < Math.toRadians(1.0)) {
                 Log.i("SpindexLut", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
                 return data;
             }
