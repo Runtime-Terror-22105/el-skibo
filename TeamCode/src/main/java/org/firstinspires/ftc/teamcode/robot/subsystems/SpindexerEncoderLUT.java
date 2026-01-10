@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import android.util.Log;
 
+import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 import com.seattlesolvers.solverslib.util.LUT;
 import com.seattlesolvers.solverslib.util.MathUtils;
@@ -50,7 +51,8 @@ public class SpindexerEncoderLUT {
 
         double _angle = MathUtils.normalizeDegrees(angle, true);
         for (SpindexLookupValue data : DATA_POINTS){
-            if (_angle == data.targetAngleDeg){
+            if (Math.abs(MathFunctions.getSmallestAngleDifference(Math.toRadians(_angle),
+                    Math.toRadians(data.targetAngleDeg))) < 1.0){
                 Log.i("SpindexLut", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
                 return data;
             }
@@ -64,7 +66,7 @@ public class SpindexerEncoderLUT {
         /*If you pass in a double data type, it assumes rad */
         angle = MathUtils.normalizeRadians(angle, true);
         for (SpindexLookupValue data : DATA_POINTS){
-            if (angle == data.targetAngleRad){
+            if (Math.abs(MathFunctions.getSmallestAngleDifference(angle, data.targetAngleRad)) < Math.toRadians(1.0)) {
                 Log.i("SpindexLut", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
                 return data;
             }
