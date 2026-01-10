@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 
@@ -61,6 +63,7 @@ public class ShooterLookupTable {
     }
 
     public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
+        Log.i("shooter", "distance to goal" +distanceToGoalIn);
         // todo: temporarily putting this here so we can dashboard
         FAR_VELOCITY_LUT = new InterpLUT();
         HOOD_LUT = new InterpLUT();
