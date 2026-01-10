@@ -20,7 +20,6 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
-import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
@@ -49,7 +48,7 @@ public abstract class Auto extends LinearOpMode {
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
     public static Double SHOOT_PRELOAD_RPM = null;
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(50, 94, Math.toRadians(315));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(50, 94, Math.toRadians(45));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
@@ -93,10 +92,9 @@ public abstract class Auto extends LinearOpMode {
     protected Auto(Team team) {
 
         this.team = team;
-        if (team == Team.BLUE){
+        if (team == Team.BLUE) {
             robot.goalPos = FieldConstants.BLUE_GOAL_POS;
-        }
-        else {
+        } else {
             robot.goalPos = FieldConstants.RED_GOAL_POS;
         }
     }
@@ -162,7 +160,14 @@ public abstract class Auto extends LinearOpMode {
                 .addPath(
                         new BezierLine(intake1Pose, shootEdgePose)
                 )
-                .setTangentHeadingInterpolation()
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.5, HeadingInterpolator.tangent),
+                                new HeadingInterpolator.PiecewiseNode(0.5, 1.0,
+                                        HeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), shootEdgePose.getHeading(), 1.0)
+                                )
+                        )
+                )
                 .setReversed()
                 .build();
 
@@ -354,10 +359,10 @@ public abstract class Auto extends LinearOpMode {
                 shootPreloadCommand,
                 new ConditionalCommand(
                         new SequentialCommandGroup(
-                            intake1Command, shoot1Command,
-                            intake2Command, shoot2Command,
-                            intake3Command, shoot3Command,
-                            parkCommand
+                                intake1Command, shoot1Command,
+                                intake2Command, shoot2Command,
+                                intake3Command, shoot3Command,
+                                parkCommand
                         ),
                         new SequentialCommandGroup(
                                 new GoToRestingStateCommand(robot)
