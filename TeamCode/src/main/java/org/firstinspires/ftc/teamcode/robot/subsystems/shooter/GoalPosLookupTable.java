@@ -55,17 +55,14 @@ public class GoalPosLookupTable {
         this.ogGoalPoint = this.robot.goalPos;
     }
 
+    // Note: Returned angle is returned as if the robot color is always blue.
     private double calcAngleWithWall(){
-        Vector goalToRobot;
         Pose robotPose = robot.follower.getPose();
-        if (this.robot.color == Team.RED){
-            goalToRobot = new Vector(new Pose(robotPose.getX()-144D, robotPose.getY()-144D));
-
+        if (Team.RED.equals(robot.color)) {
+            robotPose = robotPose.mirror();
         }
-        else {
 
-            goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
-        }
+        Vector goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
 
         double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
         if (angle > ((1D/2D)*Math.PI)){
@@ -89,13 +86,13 @@ public class GoalPosLookupTable {
         double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
         Pose2d newGoalPos = robot.goalPos.copy();
         if (change < 0){
-            newGoalPos.x -= Math.abs(change);
-
-        }
-        else if(change > 0){
-            if (robot.color == Team.BLUE) newGoalPos.y += Math.abs(change);
-            else newGoalPos.y -= Math.abs(change);
-
+            if (robot.color == Team.BLUE) {
+                newGoalPos.x -= Math.abs(change);
+            } else {
+                newGoalPos.x += Math.abs(change);
+            }
+        } else if(change > 0){
+            newGoalPos.y += Math.abs(change);
         }
 
         Log.d("goalPos", "old goal pos" + robot.goalPos);
