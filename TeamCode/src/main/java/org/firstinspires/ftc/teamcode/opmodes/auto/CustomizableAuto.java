@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_K
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -42,7 +41,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 import kotlin.NotImplementedError;
 
 @Config
-@Configurable
 @Autonomous(name = "Build-A-Bear Auto", group = "Auto")
 public class CustomizableAuto extends LinearOpMode {
     private boolean mirror;

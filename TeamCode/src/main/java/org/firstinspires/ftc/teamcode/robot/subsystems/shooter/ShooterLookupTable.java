@@ -32,14 +32,14 @@ public class ShooterLookupTable {
     }
 
     public static LookupValue[] VEL_DATA_POINTS = new LookupValue[]{
-            new LookupValue(0, 700),
-            new LookupValue(20.4, 700),
-            new LookupValue(39.502, 730),
-            new LookupValue(54.99, 780),
-            new LookupValue(62.7, 775),
-            new LookupValue(83.3, 830),
-            new LookupValue(87.56152811761086, 850),
-            new LookupValue(250, 900)
+            new LookupValue(0, 650),
+            new LookupValue(20.4, 630),
+            new LookupValue(39.502, 660),
+            new LookupValue(54.99, 710),
+            new LookupValue(62.7, 715),
+            new LookupValue(83.3, 750),
+            new LookupValue(87.56152811761086, 770),
+            new LookupValue(250, 850)
 
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
