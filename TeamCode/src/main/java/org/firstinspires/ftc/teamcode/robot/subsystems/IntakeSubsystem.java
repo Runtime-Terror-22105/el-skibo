@@ -15,7 +15,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public static double DOWN_LEFT = 0.42; //servo pos
     public static double UP_LEFT = 0.0;
-    public static double DOWN_RIGHT = 0.31;
+    public static double DOWN_RIGHT = 0.3;
     public static double UP_RIGHT = 0.76;
 
     public static double DEFAULT_SPEED = 0.9;

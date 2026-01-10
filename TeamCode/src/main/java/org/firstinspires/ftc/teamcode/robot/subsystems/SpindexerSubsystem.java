@@ -31,8 +31,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.35;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
-    public static double MAX_POWER_14V = 0.55;
-    public static double MAX_POWER_12V = 0.55;
+    public static double MAX_POWER_14V = 0.6;
+    public static double MAX_POWER_12V = 0.6;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -47,7 +47,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(1.4, 0, 0.03, 0, 0.0);
+            new PidfController.PidfCoefficients(0.95, 0, 0.03, 0, 0.0);
     public static double yawPidTolerance = Math.toRadians(3); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
