@@ -256,7 +256,8 @@ public class ShooterSubsystem extends SubsystemBase {
         Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
-        double voltageScale = 12.0 / this.hardware.controlHub.getInputVoltage(VoltageUnit.VOLTS);
+        double voltageScale = 12.0 / Math.min(11.0, Math.max(13.0, this.hardware.initialVoltage));
+
         this.shooterPID.setTargetPosition(getGoalVelocity());
         this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), voltageScale * getGoalVelocity());
     }
