@@ -243,11 +243,12 @@ public abstract class Auto extends LinearOpMode {
     }
 
     private void buildCommands() {
+        double turretAngleForMotif = Team.BLUE.equals(team) ? ShooterSubsystem.turretLowerBound : ShooterSubsystem.turretUpperBound;
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true),
-                        new ToggleAutoTurretCommand(robot, false, ShooterSubsystem.turretLowerBound),
+                        new ToggleAutoTurretCommand(robot, false, turretAngleForMotif),
                         new SequentialCommandGroup(
                                 new WaitCommand(TIME_UNTIL_START_SCANNING_GLYPHS),
                                 new InstantCommand(() -> robot.camera.startScanningForGlyphs())
