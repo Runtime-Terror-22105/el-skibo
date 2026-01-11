@@ -42,8 +42,8 @@ public class ShooterLookupTable {
             new LookupValue(50.07, 620),
             new LookupValue(64.2, 665),
             new LookupValue(80.5, 715),
-            new LookupValue(120.6, 810),
-            new LookupValue(129.5, 850),
+//            new LookupValue(120.6, 810),
+//            new LookupValue(129.5, 850),
 
             // OLD VALUES
 //            new LookupValue(20.4, 580),
@@ -65,8 +65,8 @@ public class ShooterLookupTable {
             new HoodLookupValue(50.07, 0.708),
             new HoodLookupValue(64.2, 0.74),
             new HoodLookupValue(80.5, 0.76),
-            new HoodLookupValue(120.6, 0.9),
-            new HoodLookupValue(129.5, 0.9),
+//            new HoodLookupValue(120.6, 0.9),
+//            new HoodLookupValue(129.5, 0.9),
 
             // old vals
 //            new HoodLookupValue(20.4, 0.7),
