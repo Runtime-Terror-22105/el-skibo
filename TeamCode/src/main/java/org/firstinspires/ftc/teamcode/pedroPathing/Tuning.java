@@ -7,7 +7,6 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.stopRobot;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.telemetryA;
 
-import com.bylazar.configurables.PanelsConfigurables;
 import com.pedropathing.follower.Follower;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -75,7 +74,7 @@ public class Tuning extends SelectableOpMode {
     public void onSelect() {
         if (follower == null) {
             follower = Constants.createFollower(hardwareMap);
-            PanelsConfigurables.INSTANCE.refreshClass(this);
+//            PanelsConfigurables.INSTANCE.refreshClass(this);
         } else {
             follower = Constants.createFollower(hardwareMap);
         }

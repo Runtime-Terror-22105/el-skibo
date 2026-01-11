@@ -87,7 +87,7 @@ dependencies {
 
     implementation("com.acmerobotics.dashboard:dashboard:0.5.1")
 
-    implementation "com.bylazar:fullpanels:${panelsVersion}"
+//    implementation "com.bylazar:fullpanels:${panelsVersion}"
 
     // these are both old versions, but they need to be old
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
