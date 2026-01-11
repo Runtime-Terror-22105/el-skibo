@@ -25,6 +25,7 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
@@ -164,7 +165,7 @@ public abstract class Auto extends LinearOpMode {
                         HeadingInterpolator.piecewise(
                                 new HeadingInterpolator.PiecewiseNode(0.0, 0.5, HeadingInterpolator.tangent),
                                 new HeadingInterpolator.PiecewiseNode(0.5, 1.0,
-                                        HeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), shootEdgePose.getHeading(), 1.0)
+                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), shootEdgePose.getHeading(), 0.5, 1.0)
                                 )
                         )
                 )
@@ -211,7 +212,7 @@ public abstract class Auto extends LinearOpMode {
                         HeadingInterpolator.piecewise(
                                 new HeadingInterpolator.PiecewiseNode(0.0, 0.5, HeadingInterpolator.tangent),
                                 new HeadingInterpolator.PiecewiseNode(0.5, 1.0,
-                                        HeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), prepareIntake3Pose.getHeading(), 0.8)
+                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), prepareIntake3Pose.getHeading(), 0.5, 0.8)
                                 )
                         )
                 )
