@@ -54,7 +54,7 @@ public class ShooterLookupTable {
 //            new LookupValue(87.56152811761086, 720),
             
             // other endpoint (prevent crashing)
-            new LookupValue(250, 800)
+            new LookupValue(250, 850)
 
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
@@ -76,7 +76,7 @@ public class ShooterLookupTable {
 //            new HoodLookupValue(83.3, 0.8),
 //            new HoodLookupValue(87.56152811761086, 0.85),
 
-            new HoodLookupValue(250, 0.9)
+            new HoodLookupValue(250, ShooterSubsystem.hoodAngleMax)
     };
 
     static {
