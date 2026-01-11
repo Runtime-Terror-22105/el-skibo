@@ -30,6 +30,7 @@ public class AprilTagProcessorDash implements VisionProcessor, CameraStreamSourc
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
+        processor.init(width, height, calibration);
         lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
     }
 
