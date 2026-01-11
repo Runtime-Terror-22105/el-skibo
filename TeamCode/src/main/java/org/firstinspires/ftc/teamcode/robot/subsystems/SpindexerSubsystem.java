@@ -23,6 +23,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
+    public static double MANUAL_SPINDEX_POWER = 0.02;
+
     public static double INTAKE_WALL_1_DOWN = 1;
     public static double INTAKE_WALL_1_UP = 0;
     public static double INTAKE_WALL_2_DOWN = 0;
