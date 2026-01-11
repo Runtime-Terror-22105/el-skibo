@@ -9,6 +9,8 @@ import static org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.DE
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -23,6 +25,8 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Angle;
+import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -47,6 +51,8 @@ public class BetterShooterAimTuner extends LinearOpMode {
     public static boolean autoHood  = true;
     public static double spindexOffset = -0.3;
     public static boolean useIntake = false;
+    public static boolean tuneGoalPos = false;
+    public static double goalPosOffset = 0;
 
     public static boolean testingAutoShoot = false;
 
@@ -117,10 +123,17 @@ public class BetterShooterAimTuner extends LinearOpMode {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
             if (!testingAutoShoot) {
-                if (autoHood) {
+                if (!tuneGoalPos) {
                     robot.shooter.manualAim(velocity, hoodAngle, turretPos);
                 } else {
-                    robot.shooter.manualAimAutoHood(velocity, turretPos);
+                    Pose2d goalPos = FieldConstants.BLUE_GOAL_POS;
+                    if (goalPosOffset < 0){
+                        goalPos.x += goalPosOffset;
+                    }
+                    else if (goalPosOffset >0){
+                        goalPos.y += goalPosOffset;
+                    }
+                    robot.shooter.manualAimGoalPos(velocity, hoodAngle, goalPos);
                 }
             } else {
                 robot.shooter.isAutoAimOn = true;
@@ -137,6 +150,16 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 double vel = robot.shooter.getGoalVelocity()/6.469;
                 String str = "distance: " + dist + " velocity: " + vel + " hood angle: " + hoodAngle;
                 Log.d("data point", str);
+
+                Vector goalToRobot;
+                Pose robotPose = robot.follower.getPose();
+                goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
+                double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
+                if (angle > ((1D/2D)*Math.PI)){
+                    angle = (1D/4D)*Math.PI;
+                }
+
+                Log.d("data point", "angle" + angle + "offset "+ goalPosOffset);
 
                 // save the data point to a file
                 File outputFile = new File(OUTPUT_FILE);
