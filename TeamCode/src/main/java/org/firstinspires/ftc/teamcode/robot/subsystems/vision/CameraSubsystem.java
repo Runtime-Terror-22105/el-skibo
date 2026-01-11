@@ -165,17 +165,17 @@ public class CameraSubsystem extends SubsystemBase {
 //            this.camera.getExposureControl().setExposure(100, TimeUnit.MICROSECONDS);
 //            this.camera.getGainControl().setGain(255);
 //        }
-        try {
-            ExposureControl exposure = vPortalField.getCameraControl(ExposureControl.class);
-            GainControl gain = vPortalField.getCameraControl(GainControl.class);
-            exposure.setMode(ExposureControl.Mode.Manual);
-            exposure.setExposure(EXPOSURE_MICROSECONDS, TimeUnit.MICROSECONDS);
-            gain.setGain(GAIN);
-        } catch (IllegalStateException e) {
-            // there's an error where it says that you cannot set controls until camera starts streaming
-            // todo handle ths properly and don't just do a try-catch
-            Log.w("CameraSubsystem", e);
-        }
+//        try {
+//            ExposureControl exposure = vPortalField.getCameraControl(ExposureControl.class);
+//            GainControl gain = vPortalField.getCameraControl(GainControl.class);
+//            exposure.setMode(ExposureControl.Mode.Manual);
+//            exposure.setExposure(EXPOSURE_MICROSECONDS, TimeUnit.MICROSECONDS);
+//            gain.setGain(GAIN);
+//        } catch (IllegalStateException e) {
+//            // there's an error where it says that you cannot set controls until camera starts streaming
+//            // todo handle ths properly and don't just do a try-catch
+//            Log.w("CameraSubsystem", e);
+//        }
 
 
         this.detections = aTagProcessor.getDetections();
