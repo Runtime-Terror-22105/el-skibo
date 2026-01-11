@@ -50,7 +50,7 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
     public static Double SHOOT_PRELOAD_RPM = null;
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(50, 94, Math.toRadians(45));
-    public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 110.644, Math.toRadians(315));
+    public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 114.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
@@ -163,9 +163,9 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setHeadingInterpolation(
                         HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.5, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(0.5, 1.0,
-                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), shootEdgePose.getHeading(), 0.5, 1.0)
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
+                                new HeadingInterpolator.PiecewiseNode(0.4, 1.0,
+                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), shootEdgePose.getHeading(), 0.4, 0.8)
                                 )
                         )
                 )
@@ -210,9 +210,9 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setHeadingInterpolation(
                         HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.5, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(0.5, 1.0,
-                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), prepareIntake3Pose.getHeading(), 0.5, 0.8)
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
+                                new HeadingInterpolator.PiecewiseNode(0.4, 1.0,
+                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), prepareIntake3Pose.getHeading(), 0.4, 0.7)
                                 )
                         )
                 )
