@@ -34,6 +34,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.AdjustSpindexZeroCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.ChangeSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -169,13 +170,13 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState == RESTING || robot.robotState == INTAKING
         ));
 
-        manualSpindexLeft.whileHeld(() -> {robot.spindexer.setSpindexerPower(-SpindexerSubsystem.MANUAL_SPINDEX_POWER);});
+        manualSpindexLeft.whileHeld(new ChangeSpindexerYawCommand(robot.spindexer,Math.toRadians(-SpindexerSubsystem.MANUAL_SPINDEXER_DEGREE_CHANGE)));
 
-        manualSpindexRight.whileHeld(() -> {robot.spindexer.setSpindexerPower(SpindexerSubsystem.MANUAL_SPINDEX_POWER);});
+        manualSpindexRight.whileHeld(new ChangeSpindexerYawCommand(robot.spindexer,Math.toRadians(SpindexerSubsystem.MANUAL_SPINDEXER_DEGREE_CHANGE)));
 
-        manualSpindexLeft.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
-
-        manualSpindexRight.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
+//        manualSpindexLeft.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
+//
+//        manualSpindexRight.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
 
         if (shootingMethod == ShootingMethod.SHOOT_3_BALLS){
             shoot3button.whenPressed(new ConditionalCommand(
