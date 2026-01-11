@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 import android.util.Log;
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
@@ -21,6 +24,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
@@ -31,7 +35,10 @@ public class CameraSubsystem extends SubsystemBase {
     public static double CONVERGENCE_RATE = 0.1;
     public static double VELOCITY_THRESHOLD = 5.0; // inches per second
 
-    private AprilTagProcessor aTagProcessor;
+    public static long EXPOSURE_MICROSECONDS = 200;
+    public static int GAIN = 255;
+
+    private AprilTagProcessorDash aTagProcessor;
 
     private boolean shouldScanForGlyphs = false;
 
@@ -64,7 +71,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
-        this.aTagProcessor = createAprilTagProcessor();
+        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
@@ -84,7 +91,8 @@ public class CameraSubsystem extends SubsystemBase {
         }
 
         vPortalField = vPortalFieldBuilder.build();
-//        vPortalSpindexer = vPortalSpindexerBuilder.build();
+
+        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
     }
 
@@ -146,12 +154,37 @@ public class CameraSubsystem extends SubsystemBase {
     public void periodic() {
         if (vPortalField == null) return;
 
+        // Reference for Logitech C270:
+//        public void setDefaultExposure() {
+//            this.camera.getExposureControl().setMode(ExposureControl.Mode.AperturePriority);
+//            this.camera.getGainControl().setGain(64);
+//        }
+//
+//        public void setLowExposure() {
+//            this.camera.getExposureControl().setMode(ExposureControl.Mode.Manual);
+//            this.camera.getExposureControl().setExposure(100, TimeUnit.MICROSECONDS);
+//            this.camera.getGainControl().setGain(255);
+//        }
+//        try {
+//            ExposureControl exposure = vPortalField.getCameraControl(ExposureControl.class);
+//            GainControl gain = vPortalField.getCameraControl(GainControl.class);
+//            exposure.setMode(ExposureControl.Mode.Manual);
+//            exposure.setExposure(EXPOSURE_MICROSECONDS, TimeUnit.MICROSECONDS);
+//            gain.setGain(GAIN);
+//        } catch (IllegalStateException e) {
+//            // there's an error where it says that you cannot set controls until camera starts streaming
+//            // todo handle ths properly and don't just do a try-catch
+//            Log.w("CameraSubsystem", e);
+//        }
+
+
         this.detections = aTagProcessor.getDetections();
         //should only ever be the blue or red goal which is 20 and 24 respectively
         AprilTagDetection localizationTag = null;
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23) {
+                robot.telemetry.addData("seenButUnusedGlyph", GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
                 if (!decodedGlyph && shouldScanForGlyphs)
                     setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             } else {

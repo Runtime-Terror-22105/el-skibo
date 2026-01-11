@@ -23,16 +23,18 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
-    public static double INTAKE_WALL_1_DOWN = 0.95;
-    public static double INTAKE_WALL_1_UP = 0.15;
-    public static double INTAKE_WALL_2_DOWN = 0.2;
+    public static double MANUAL_SPINDEX_POWER = 0.02;
+
+    public static double INTAKE_WALL_1_DOWN = 1;
+    public static double INTAKE_WALL_1_UP = 0;
+    public static double INTAKE_WALL_2_DOWN = 0;
     public static double INTAKE_WALL_2_UP = 1;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.35;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
-    public static double MAX_POWER_14V = 0.7;
-    public static double MAX_POWER_12V = 0.7;
+    public static double MAX_POWER_14V = 0.55;
+    public static double MAX_POWER_12V = 0.55;
 
     public double intakeWallPosition1 = INTAKE_WALL_1_UP;
     public double intakeWallPosition2 = INTAKE_WALL_2_UP;
@@ -47,8 +49,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(1.4, 0, 0.03, 0, 0.0);
-    public static double yawPidTolerance = Math.toRadians(3); // radians
+            new PidfController.PidfCoefficients(0.9, 0, 0.04, 0, 0);
+    public static double yawPidTolerance = Math.toRadians(4); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
@@ -97,7 +99,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public boolean atTargetYaw() {
         // TODO: potentially beware of angle wrapping here
-        return this.yawPid.atTargetPosition(getPositionRaw());
+        return this.yawPid.atTargetPosition(getPositionRaw(), true);
     }
 
     public void setHomedSpindexerOffset(double offset) {
@@ -337,6 +339,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
         // we calculate error ourselves and feed into PID.
         SpindexerEncoderLUT.SpindexLookupValue desAngle = this.angleLUT.get(desiredAngle);
+        Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
+
         this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
         if (pidEnabled) {
 //            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
