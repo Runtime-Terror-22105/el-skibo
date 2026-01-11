@@ -22,6 +22,8 @@ public class AprilTagProcessorDash implements VisionProcessor, CameraStreamSourc
 
     public final AprilTagProcessor processor;
 
+    private int frameWidth, frameHeight;
+
     public AprilTagProcessorDash(AprilTagProcessor processor) {
         this.processor = processor;
     }
@@ -33,21 +35,21 @@ public class AprilTagProcessorDash implements VisionProcessor, CameraStreamSourc
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+        this.frameHeight = frame.height();
+        this.frameWidth = frame.width();
+
+        Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
+        Utils.matToBitmap(frame, b);
+        lastFrame.set(b);
+
         return processor.processFrame(frame, captureTimeNanos);
     }
 
     @Override
     public void onDrawFrame(Canvas canvasSkb, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
         // we gnore the ftc canvas
-        Bitmap bitmap = Bitmap.createBitmap(
-                frame.width(),
-                frame.height(),
-                Bitmap.Config.RGB_565
-        );
-        Utils.matToBitmap(frame, bitmap);
-
         // create Canvas backed by THIS bitmap
-        Canvas canvas = new Canvas(bitmap);
+        Canvas canvas = new Canvas(lastFrame.get());
 
         processor.onDrawFrame(canvas, onscreenWidth, onscreenHeight, scaleBmpPxToCanvasPx, scaleCanvasDensity, userContext);
     }
