@@ -49,17 +49,17 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
     public static Double SHOOT_PRELOAD_RPM = null;
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(50, 94, Math.toRadians(45));
-    public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
+    public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 110.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE = new Pose2d(20, 60, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(20, 62, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE = new Pose2d(20, 37, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
     public static Pose2d PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
 
@@ -207,7 +207,14 @@ public abstract class Auto extends LinearOpMode {
                                 prepareIntake3Pose
                         )
                 )
-                .setLinearHeadingInterpolation(shoot2Path.getFinalHeadingGoal(), prepareIntake3Pose.getHeading())
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.5, HeadingInterpolator.tangent),
+                                new HeadingInterpolator.PiecewiseNode(0.5, 1.0,
+                                        HeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), prepareIntake3Pose.getHeading(), 0.8)
+                                )
+                        )
+                )
                 .build();
         intake3Path = follower
                 .pathBuilder()
