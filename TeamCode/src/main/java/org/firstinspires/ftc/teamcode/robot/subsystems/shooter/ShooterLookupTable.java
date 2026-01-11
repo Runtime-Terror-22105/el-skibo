@@ -34,24 +34,48 @@ public class ShooterLookupTable {
     }
 
     public static LookupValue[] VEL_DATA_POINTS = new LookupValue[]{
+            // endpoint (prevent crashing)
             new LookupValue(0, 600),
-            new LookupValue(20.4, 580),
-            new LookupValue(39.502, 610),
-            new LookupValue(54.99, 660),
-            new LookupValue(62.7, 665),
-            new LookupValue(83.3, 700),
-            new LookupValue(87.56152811761086, 720),
+            
+            // NEW VALUES
+            new LookupValue(39.16, 605),
+            new LookupValue(50.07, 620),
+            new LookupValue(64.2, 665),
+            new LookupValue(80.5, 715),
+            new LookupValue(120.6, 810),
+            new LookupValue(129.5, 850),
+
+            // OLD VALUES
+//            new LookupValue(20.4, 580),
+//            new LookupValue(39.502, 610),
+//            new LookupValue(54.99, 660),
+//            new LookupValue(62.7, 665),
+//            new LookupValue(83.3, 700),
+//            new LookupValue(87.56152811761086, 720),
+            
+            // other endpoint (prevent crashing)
             new LookupValue(250, 800)
 
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
             new HoodLookupValue(0, 0.7),
-            new HoodLookupValue(20.4, 0.7),
-            new HoodLookupValue(39.502, 0.735),
-            new HoodLookupValue(54.99, 0.735),
-            new HoodLookupValue(62.7, 0.8),//rad
-            new HoodLookupValue(83.3, 0.8),
-            new HoodLookupValue(87.56152811761086, 0.85),
+
+            // new vals
+            new HoodLookupValue(39.16, 0.7),
+            new HoodLookupValue(50.07, 0.708),
+            new HoodLookupValue(64.2, 0.74),
+            new HoodLookupValue(80.5, 0.76),
+            new HoodLookupValue(120.6, 0.9),
+            new HoodLookupValue(129.5, 0.9),
+
+            // old vals
+//            new HoodLookupValue(20.4, 0.7),
+//            new HoodLookupValue(39.502, 0.735),
+//            new HoodLookupValue(54.99, 0.735),
+//            new HoodLookupValue(62.7, 0.8),//rad
+//            new HoodLookupValue(83.3, 0.8),
+//            new HoodLookupValue(87.56152811761086, 0.85),
+
             new HoodLookupValue(250, 0.9)
     };
 
