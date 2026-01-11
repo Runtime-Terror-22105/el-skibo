@@ -152,6 +152,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23) {
+                robot.telemetry.addData("seenButUnusedGlyph", GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
                 if (!decodedGlyph && shouldScanForGlyphs)
                     setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             } else {
