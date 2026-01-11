@@ -92,23 +92,6 @@ public class CameraSubsystem extends SubsystemBase {
 
         vPortalField = vPortalFieldBuilder.build();
 
-        // Reference for Logitech C270:
-//        public void setDefaultExposure() {
-//            this.camera.getExposureControl().setMode(ExposureControl.Mode.AperturePriority);
-//            this.camera.getGainControl().setGain(64);
-//        }
-//
-//        public void setLowExposure() {
-//            this.camera.getExposureControl().setMode(ExposureControl.Mode.Manual);
-//            this.camera.getExposureControl().setExposure(100, TimeUnit.MICROSECONDS);
-//            this.camera.getGainControl().setGain(255);
-//        }
-        ExposureControl exposure = vPortalField.getCameraControl(ExposureControl.class);
-        GainControl gain = vPortalField.getCameraControl(GainControl.class);
-        exposure.setMode(ExposureControl.Mode.Manual);
-        exposure.setExposure(EXPOSURE_MICROSECONDS, TimeUnit.MICROSECONDS);
-        gain.setGain(GAIN);
-
         FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
     }
@@ -170,6 +153,30 @@ public class CameraSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         if (vPortalField == null) return;
+
+        // Reference for Logitech C270:
+//        public void setDefaultExposure() {
+//            this.camera.getExposureControl().setMode(ExposureControl.Mode.AperturePriority);
+//            this.camera.getGainControl().setGain(64);
+//        }
+//
+//        public void setLowExposure() {
+//            this.camera.getExposureControl().setMode(ExposureControl.Mode.Manual);
+//            this.camera.getExposureControl().setExposure(100, TimeUnit.MICROSECONDS);
+//            this.camera.getGainControl().setGain(255);
+//        }
+        try {
+            ExposureControl exposure = vPortalField.getCameraControl(ExposureControl.class);
+            GainControl gain = vPortalField.getCameraControl(GainControl.class);
+            exposure.setMode(ExposureControl.Mode.Manual);
+            exposure.setExposure(EXPOSURE_MICROSECONDS, TimeUnit.MICROSECONDS);
+            gain.setGain(GAIN);
+        } catch (IllegalStateException e) {
+            // there's an error where it says that you cannot set controls until camera starts streaming
+            // todo handle ths properly and don't just do a try-catch
+            Log.w("CameraSubsystem", e);
+        }
+
 
         this.detections = aTagProcessor.getDetections();
         //should only ever be the blue or red goal which is 20 and 24 respectively
