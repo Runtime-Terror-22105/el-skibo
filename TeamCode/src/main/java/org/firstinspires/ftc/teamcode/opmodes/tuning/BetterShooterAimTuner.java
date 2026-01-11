@@ -158,6 +158,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
 
             hardware.write();
 
+            FtcDashDrawing.drawDot(robot.shooter.goalPosLookupTable.get().toPedro(), "#000000");
             FtcDashDrawing.drawDebug(robot.follower);
             robot.telemetry.addData("Robot Position", robot.follower.getPose());
             robot.telemetry.addData("Goal Position", robot.shooter.goalPosLookupTable.get());
