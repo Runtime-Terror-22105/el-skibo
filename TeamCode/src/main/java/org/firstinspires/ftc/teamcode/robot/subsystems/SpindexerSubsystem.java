@@ -337,6 +337,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
         // we calculate error ourselves and feed into PID.
         SpindexerEncoderLUT.SpindexLookupValue desAngle = this.angleLUT.get(desiredAngle);
+        Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
+
         this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
         if (pidEnabled) {
 //            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
