@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.VectorCalculator;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
@@ -15,11 +16,15 @@ import org.firstinspires.ftc.teamcode.math.InterpLUTSafe;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
+@Config
 public class GoalPosLookupTable {
+    public static double Y_OFFSET = 4.0;
+    public static double X_OFFSET = 6.0;
+
     private final Robot robot;
     public Pose2d ogGoalPoint;
 
-    private InterpLUTSafe GOAL_CHANGE_LUT;
+    private static InterpLUTSafe GOAL_CHANGE_LUT;
     public static class GoalLookupValue {
         public double angle;
         public double pointChange;
@@ -31,8 +36,8 @@ public class GoalPosLookupTable {
     }
 
     public static GoalLookupValue[] DATA_POINTS = new GoalLookupValue[]{
-            //NEGATIVE VALUE MEANS CHANGE IN X
-            //POSITIVE VALUE MEANS CHANGE IN Y
+            //NEGATIVE VALUE MEANS CHANGE IN Y
+            //POSITIVE VALUE MEANS CHANGE IN X
 
             //Currently these are just guesses
             new GoalLookupValue(0, -6),
@@ -48,24 +53,31 @@ public class GoalPosLookupTable {
 //            new GoalLookupValue(0.25, 9.41),
     };
 
+    private static void updateDataPoints() {
+        DATA_POINTS[0].pointChange = -Y_OFFSET;
+        DATA_POINTS[1].pointChange = 0;
+        DATA_POINTS[2].pointChange = X_OFFSET;
 
+        GOAL_CHANGE_LUT = new InterpLUTSafe();
+        for (GoalLookupValue dataPoint : DATA_POINTS) {
+            GOAL_CHANGE_LUT.add(dataPoint.angle, dataPoint.pointChange);
+        }
+        GOAL_CHANGE_LUT.createLUT();
+    }
 
     public GoalPosLookupTable(Robot robot){
         this.robot = robot;
         this.ogGoalPoint = this.robot.goalPos;
     }
 
+    // Note: Returned angle is returned as if the robot color is always blue.
     private double calcAngleWithWall(){
-        Vector goalToRobot;
         Pose robotPose = robot.follower.getPose();
-        if (this.robot.color == Team.RED){
-            goalToRobot = new Vector(new Pose(robotPose.getX()-144D, robotPose.getY()-144D));
-
+        if (Team.RED.equals(robot.color)) {
+            robotPose = robotPose.mirror();
         }
-        else {
 
-            goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
-        }
+        Vector goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
 
         double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
         if (angle > ((1D/2D)*Math.PI)){
@@ -79,23 +91,18 @@ public class GoalPosLookupTable {
     }
 
     public Pose2d get(){
-
-        GOAL_CHANGE_LUT = new InterpLUTSafe();
-        for (GoalLookupValue dataPoint : DATA_POINTS) {
-            GOAL_CHANGE_LUT.add(dataPoint.angle, dataPoint.pointChange);
-        }
-        GOAL_CHANGE_LUT.createLUT();
+        updateDataPoints();
 
         double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
         Pose2d newGoalPos = robot.goalPos.copy();
         if (change < 0){
-            newGoalPos.x -= Math.abs(change);
-
-        }
-        else if(change > 0){
-            if (robot.color == Team.BLUE) newGoalPos.y += Math.abs(change);
-            else newGoalPos.y -= Math.abs(change);
-
+            newGoalPos.y -= Math.abs(change);
+        } else if(change > 0){
+            if (robot.color == Team.BLUE) {
+                newGoalPos.x += Math.abs(change);
+            } else {
+                newGoalPos.x -= Math.abs(change);
+            }
         }
 
         Log.d("goalPos", "old goal pos" + robot.goalPos);

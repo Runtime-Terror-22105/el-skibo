@@ -41,6 +41,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
 @Config
@@ -115,6 +116,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                         () -> (double) gamepad1.right_stick_x, robot)
                        );
 
+        GamepadButton manualSpindexLeft = new GamepadButton(gamepad1ex,GamepadKeys.Button.DPAD_LEFT);
+        GamepadButton manualSpindexRight = new GamepadButton(gamepad1ex,GamepadKeys.Button.DPAD_RIGHT);
+
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
         Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
@@ -164,6 +168,14 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState == RESTING || robot.robotState == INTAKING
         ));
+
+        manualSpindexLeft.whileHeld(() -> {robot.spindexer.setSpindexerPower(-SpindexerSubsystem.MANUAL_SPINDEX_POWER);});
+
+        manualSpindexRight.whileHeld(() -> {robot.spindexer.setSpindexerPower(SpindexerSubsystem.MANUAL_SPINDEX_POWER);});
+
+        manualSpindexLeft.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
+
+        manualSpindexRight.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
 
         if (shootingMethod == ShootingMethod.SHOOT_3_BALLS){
             shoot3button.whenPressed(new ConditionalCommand(
