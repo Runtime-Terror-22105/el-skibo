@@ -31,7 +31,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static double CONVERGENCE_RATE = 0.1;
     public static double VELOCITY_THRESHOLD = 5.0; // inches per second
 
-    private AprilTagProcessor aTagProcessor;
+    private AprilTagProcessorDash aTagProcessor;
 
     private boolean shouldScanForGlyphs = false;
 
@@ -64,7 +64,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
-        this.aTagProcessor = createAprilTagProcessor();
+        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
