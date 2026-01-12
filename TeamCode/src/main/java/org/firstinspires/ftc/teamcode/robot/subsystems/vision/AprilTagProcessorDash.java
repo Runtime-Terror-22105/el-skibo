@@ -22,10 +22,17 @@ public class AprilTagProcessorDash implements VisionProcessor, CameraStreamSourc
 
     public final AprilTagProcessor processor;
 
-    private int frameWidth, frameHeight;
+    private Integer onScreenWidth = null;
+    private Integer onScreenHeight = null;
+    private float scaleBmpPxToCanvasPx = 1.0f;
+    private float scaleCanvasDensity = 1.0f;
 
     public AprilTagProcessorDash(AprilTagProcessor processor) {
         this.processor = processor;
+        this.onScreenWidth = null;
+        this.onScreenHeight = null;
+        this.scaleBmpPxToCanvasPx = 1.0f;
+        this.scaleCanvasDensity = 1.0f;
     }
 
     @Override
@@ -36,23 +43,36 @@ public class AprilTagProcessorDash implements VisionProcessor, CameraStreamSourc
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
-        this.frameHeight = frame.height();
-        this.frameWidth = frame.width();
-
+        // we gnore the ftc canvas
+        // create Canvas backed by THIS bitmap
         Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
         Utils.matToBitmap(frame, b);
+        Object result = processor.processFrame(frame, captureTimeNanos);
+
+//        // i think this might be needed to get a mutable bitmap from the mat, but it is very expensive so id
+//        Bitmap mutableBitmap = b.copy(Bitmap.Config.RGB_565, true);
+        Canvas canvas = new Canvas(b);
+
+        processor.onDrawFrame(
+                canvas,
+                onScreenWidth != null ? onScreenWidth : frame.width(),
+                onScreenHeight != null ? onScreenHeight : frame.height(),
+                scaleBmpPxToCanvasPx,
+                scaleCanvasDensity,
+                result
+        );
+
         lastFrame.set(b);
 
-        return processor.processFrame(frame, captureTimeNanos);
+        return result;
     }
 
     @Override
     public void onDrawFrame(Canvas canvasSkb, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-        // we gnore the ftc canvas
-        // create Canvas backed by THIS bitmap
-        Canvas canvas = new Canvas(lastFrame.get());
-
-        processor.onDrawFrame(canvas, onscreenWidth, onscreenHeight, scaleBmpPxToCanvasPx, scaleCanvasDensity, userContext);
+        this.onScreenWidth = onscreenWidth;
+        this.onScreenHeight = onscreenHeight;
+        this.scaleBmpPxToCanvasPx = scaleBmpPxToCanvasPx;
+        this.scaleCanvasDensity = scaleCanvasDensity;
     }
 
     @Override
