@@ -21,7 +21,7 @@ public class GoToRestingStateCommand extends SequentialCommandGroup {
                 new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new SetIntakeSpeedCommand(robot.intake, 0.0),
                 new SetSpindexerRampActive(robot.spindexer, false),
-                new SetSpindexerWallDown(robot.spindexer, false)
+                new SetSpindexerWallDown(robot.spindexer, true)
         ));
     }
 }
