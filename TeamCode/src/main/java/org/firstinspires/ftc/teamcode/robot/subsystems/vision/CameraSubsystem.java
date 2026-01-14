@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
+    public static String TAG = "CameraSubsystem";
+
     public static boolean disableRelocalization = false;
     public static Coordinate cameraToTurretCenterOffset = new Coordinate(4.7, 2.2);
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-2.2, 0);
@@ -52,7 +54,7 @@ public class CameraSubsystem extends SubsystemBase {
     public RobotHardware hardware;
 
     public GLYPH gameGlyph;
-    private boolean decodedGlyph = true; //when the movie uses the title of the movie
+    private boolean decodedGlyph = false; //when the movie uses the title of the movie
 
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public final VisionPortal vPortalField;
@@ -65,6 +67,7 @@ public class CameraSubsystem extends SubsystemBase {
     public CameraSubsystem() {
         this.vPortalField = null;
         this.shouldScanForGlyphs = true;
+        this.decodedGlyph = false;
     }
 
     public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
@@ -72,6 +75,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.hardware = hardware;
         this.detections = new ArrayList<>();
         this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
+        this.decodedGlyph = false;
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
@@ -185,12 +189,16 @@ public class CameraSubsystem extends SubsystemBase {
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23) {
                 robot.telemetry.addData("seenButUnusedGlyph", GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+                Log.d(TAG, "seenButUnusedGlyph: " + GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
                 if (!decodedGlyph && shouldScanForGlyphs)
                     setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             } else {
                 localizationTag = tag;
             }
         }
+        Log.d(TAG, "Glyph: " + gameGlyph);
+        Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
+        Log.d(TAG, "Localization Tag: " + localizationTag);
         robot.telemetry.addData("Glyph", gameGlyph);
         robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
         robot.telemetry.addData("Localization Tag", localizationTag);
