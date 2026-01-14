@@ -54,7 +54,6 @@ public class CameraSubsystem extends SubsystemBase {
     public RobotHardware hardware;
 
     public GLYPH gameGlyph;
-    private boolean decodedGlyph = false; //when the movie uses the title of the movie
 
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public final VisionPortal vPortalField;
@@ -67,7 +66,6 @@ public class CameraSubsystem extends SubsystemBase {
     public CameraSubsystem() {
         this.vPortalField = null;
         this.shouldScanForGlyphs = true;
-        this.decodedGlyph = false;
     }
 
     public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
@@ -75,7 +73,6 @@ public class CameraSubsystem extends SubsystemBase {
         this.hardware = hardware;
         this.detections = new ArrayList<>();
         this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
-        this.decodedGlyph = false;
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
@@ -125,31 +122,25 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public GLYPH getGlyph() {
-        if (decodedGlyph) {
-            return gameGlyph;
-        }
-        return null;
+        return gameGlyph;
     }
 
     public char[] getGlyphCharArray() {
-        if (decodedGlyph) {
-            switch(gameGlyph)
-            {
-                case GPP:
-                    return new char[]{'G','P','P'};
+        if (gameGlyph == null) return null;
 
-                case PGP:
-                    return new char[]{'P','G','P'};
-
-                case PPG:
-                    return new char[]{'P','P','G'};
-            }
+        switch(gameGlyph)
+        {
+            case GPP:
+                return new char[]{'G','P','P'};
+            case PGP:
+                return new char[]{'P','G','P'};
+            case PPG:
+                return new char[]{'P','P','G'};
         }
         return null;
     }
 
     public void setGlyph(GLYPH glyph) {
-        decodedGlyph = true;
         gameGlyph = glyph;
         Log.i("CameraSubsystem", "Found glyph " + gameGlyph);
     }
@@ -183,15 +174,16 @@ public class CameraSubsystem extends SubsystemBase {
 
 
         this.detections = aTagProcessor.getDetections();
+        Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
         //should only ever be the blue or red goal which is 20 and 24 respectively
         AprilTagDetection localizationTag = null;
 
         for (AprilTagDetection tag : detections) {
             if (tag.id >= 21 && tag.id <= 23) {
-                robot.telemetry.addData("seenButUnusedGlyph", GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
-                Log.d(TAG, "seenButUnusedGlyph: " + GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
-                if (!decodedGlyph && shouldScanForGlyphs)
-                    setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+                GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
+                this.gameGlyph = glyphhh;
+                robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
+                Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
             } else {
                 localizationTag = tag;
             }
