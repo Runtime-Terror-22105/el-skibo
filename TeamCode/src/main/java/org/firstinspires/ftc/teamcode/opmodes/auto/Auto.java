@@ -249,15 +249,13 @@ public abstract class Auto extends LinearOpMode {
                         new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true),
                         new ToggleAutoTurretCommand(robot, false, turretAngleForMotif),
-                        new SequentialCommandGroup(
-                                new WaitCommand(TIME_UNTIL_START_SCANNING_GLYPHS),
-                                new InstantCommand(() -> robot.camera.startScanningForGlyphs())
-                        )
+                        new InstantCommand(() -> robot.camera.startScanningForGlyphs())
                 ),
                 new ToggleAutoTurretCommand(robot, true),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
+                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -344,6 +342,9 @@ public abstract class Auto extends LinearOpMode {
         buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
 
+        // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
+        robot.setAutoSort(true);
+
 //        CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
 //        while (opModeInInit()) {
 //            for (LynxModule hub : hardware.allHubs) {
@@ -382,6 +383,7 @@ public abstract class Auto extends LinearOpMode {
 
         lastLoop = System.nanoTime();
 
+        robot.camera.startScanningForGlyphs();
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
