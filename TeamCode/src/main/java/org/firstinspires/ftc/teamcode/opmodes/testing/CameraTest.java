@@ -26,11 +26,11 @@ public class CameraTest extends LinearOpMode {
         {
             CommandScheduler.getInstance().run();
 
-            telemetry.addData("seenglyph",robot.camera.getGlyph());
+            robot.telemetry.addData("seenglyph",robot.camera.getGlyph());
             //telemetry.addData("position",robot.camera.getPositionCamera());
 //            hardware.fieldCamera
 
-            telemetry.update();
+            robot.telemetry.update();
         }
     }
 }
