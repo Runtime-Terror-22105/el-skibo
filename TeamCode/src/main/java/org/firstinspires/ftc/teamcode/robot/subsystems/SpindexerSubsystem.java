@@ -171,6 +171,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void setWallUp() {
+        this.goingToMoveWallsDownButHaventMovedThemDownYet = false;
         this.intakeWallPosition1 = INTAKE_WALL_1_UP;
         this.intakeWallPosition2 = INTAKE_WALL_2_UP;
     }
