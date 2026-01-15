@@ -23,6 +23,7 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
+import org.apache.commons.math3.util.MathUtils;
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Angle;
@@ -143,6 +144,16 @@ public class BetterShooterAimTuner extends LinearOpMode {
             robot.spindexer.setPidEnabled(false);
             if (useIntake) robot.intake.setSpeed(DEFAULT_SPEED);
 
+            Vector goalToRobot;
+            Pose robotPose = robot.follower.getPose();
+            goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
+            double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
+            if (angle > ((1D/2D)*Math.PI)){
+                angle = (1D/4D)*Math.PI;
+            }
+            robot.telemetry.addData("angle (rad): ", angle);
+            robot.telemetry.addData("angle (deg): ", angle *180D/Math.PI);
+
 
             if (robot.robotState == INTAKING && oldstate != INTAKING) {
                 double dist = Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) +
@@ -151,13 +162,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 String str = "distance: " + dist + " velocity: " + vel + " hood angle: " + hoodAngle;
                 Log.d("data point", str);
 
-                Vector goalToRobot;
-                Pose robotPose = robot.follower.getPose();
-                goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
-                double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
-                if (angle > ((1D/2D)*Math.PI)){
-                    angle = (1D/4D)*Math.PI;
-                }
+
 
                 Log.d("data point", "angle" + angle + "offset "+ goalPosOffset);
 
