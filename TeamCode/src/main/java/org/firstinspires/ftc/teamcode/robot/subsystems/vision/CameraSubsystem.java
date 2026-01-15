@@ -98,7 +98,7 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
-        return new AprilTagProcessor.Builder()
+        AprilTagProcessor processor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
                 .setDrawTagID(true)
@@ -111,6 +111,8 @@ public class CameraSubsystem extends SubsystemBase {
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
+        processor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
+        return processor;
     }
 
     public void stopScanningForGlyphs() {
