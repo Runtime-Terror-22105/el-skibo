@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import android.graphics.Camera;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
@@ -58,6 +55,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public SpindexerEncoderLUT angleLUT;
 
     private double homedSpindexerOffset;
+
+    private boolean goingToMoveWallsDownButHaventMovedThemDownYet;
 
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
@@ -168,8 +167,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void setWallDown() {
-        this.intakeWallPosition1 = INTAKE_WALL_1_DOWN;
-        this.intakeWallPosition2 = INTAKE_WALL_2_DOWN;
+        this.goingToMoveWallsDownButHaventMovedThemDownYet = true;
     }
 
     public void setWallUp() {
@@ -365,9 +363,22 @@ public class SpindexerSubsystem extends SubsystemBase {
         double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
         this.hardware.spindexerRotate.setPower(clampedPower);
 //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
+
+        // basically this just makes it so that the walls go down at the right time after the
+        // pid reaches the target so we never have the walls go down at the wrong spot and jam the spindexer
+        if (goingToMoveWallsDownButHaventMovedThemDownYet && // if we want to set walls down
+                desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
+                pidEnabled && atTargetYaw()
+        ) {
+            intakeWallPosition1 = INTAKE_WALL_1_DOWN;
+            intakeWallPosition2 = INTAKE_WALL_2_DOWN;
+            goingToMoveWallsDownButHaventMovedThemDownYet = false;
+        }
+
         this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
         this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
         this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
+
 
         Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
 //        Robot.debugTelemetry.addData("Intake Current", this.hardware.intake.getCurrent(CurrentUnit.AMPS));
