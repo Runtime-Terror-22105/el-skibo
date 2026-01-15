@@ -36,12 +36,22 @@ public class ShooterLookupTable {
     public static LookupValue[] VEL_DATA_POINTS = new LookupValue[]{
             // endpoint (prevent crashing)
             new LookupValue(0, 600),
-            
+
+            //NEW NEW VALUES (SERENA JAN 14)
+//            new LookupValue(54.9, 590),
+//            new LookupValue(62.4, 600),
+//            new LookupValue(70.1, 615),
+//            new LookupValue(76.7, 620),
+//            new LookupValue(880, 640),
+
+
+
             // NEW VALUES
             new LookupValue(39.16, 605),
             new LookupValue(50.07, 620),
             new LookupValue(64.2, 665),
             new LookupValue(80.5, 715),
+
 //            new LookupValue(120.6, 810),
 //            new LookupValue(129.5, 850),
 
@@ -59,6 +69,15 @@ public class ShooterLookupTable {
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
             new HoodLookupValue(0, 0.7),
+
+
+            //NEW NEW VALUES (SERENA JAN 14)
+//            new HoodLookupValue(54.9, 0.7),
+//            new HoodLookupValue(62.4, 0.75),
+//            new HoodLookupValue(70.1, 0.8),
+//            new HoodLookupValue(76.7, 0.9),
+//            new HoodLookupValue(88.0, 0.9),
+
 
             // new vals
             new HoodLookupValue(39.16, 0.7),

@@ -31,7 +31,7 @@ public class SpindexerEncoderLUT {
 
     public static SpindexLookupValue[] DATA_POINTS = new SpindexLookupValue[]{
 
-            new SpindexLookupValue(0, 0),
+            new SpindexLookupValue(0, 15),
             new SpindexLookupValue(120, 118),
             new SpindexLookupValue(240, 238),
 
