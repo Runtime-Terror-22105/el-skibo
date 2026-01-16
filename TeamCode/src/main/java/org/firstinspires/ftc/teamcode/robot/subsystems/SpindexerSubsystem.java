@@ -197,23 +197,31 @@ public class SpindexerSubsystem extends SubsystemBase {
     /**
      * <p>PLEASE DO NOT USE THIS WILLY NILLY!!!
      * you gotta use the command because it only can do the senses when the balls get aligned</p>
+     *
+     * Newsort returns a boolean indicating whether or not the motif was detected.
+     * If it was detected, it returns true (99.99% of cases)
      * */
-    public void newSort()
+    public boolean newSort()
     {
         String currentFillingString = new String(getBallPositions());
-        String gameFillingString = new String(robot.camera.getGlyphCharArray());
+        char[] glyphArr = robot.camera.getGlyphCharArray();
+        if (glyphArr == null) { return false; }
+        String gameFillingString = new String(glyphArr);
+
         if(currentFillingString.indexOf('N') != -1 ||
                 currentFillingString.indexOf('G') == -1 ||
                 currentFillingString.indexOf('P') == -1)
         {
+            this.rotate(READY_POSITION);
             Log.d("spindexer", "not enough balls to run logic");
-            return;
+            return true;
         }
 
         if(currentFillingString.length() - currentFillingString.replace("G","").length() != 1)
         {
+            this.rotate(READY_POSITION);
             Log.d("spindexer", "too many greens to run logic");
-            return;
+            return true;
         }
 
         //# = ours-game
@@ -261,6 +269,7 @@ public class SpindexerSubsystem extends SubsystemBase {
                 this.rotate(-rotateAmount);
                 break;
         }
+        return true;
     }
 
     public void sortBalls() {
