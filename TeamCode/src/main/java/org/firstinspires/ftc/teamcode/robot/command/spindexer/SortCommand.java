@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.RepeatCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
@@ -19,7 +21,8 @@ public class SortCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(()->robot.spindexer.goToNearestSide()),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(alignTimeMS),
-                new InstantCommand(()->robot.spindexer.sortBalls())
+                new WaitUntilCommand(() -> robot.camera.getGlyph() != null),
+                new InstantCommand(()->robot.spindexer.newSort())
         );
     }
 
