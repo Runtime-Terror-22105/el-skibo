@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class IntakeSubsystem extends SubsystemBase {
@@ -50,13 +51,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //robot.hardware.enableColorSensor = RobotState.INTAKING.equals(robot.robotState);
-        robot.hardware.enableColorSensor = true;
+        try (Profiler.Scope p = Profiler.enter("IntakeSubsystem")) {
+            //robot.hardware.enableColorSensor = RobotState.INTAKING.equals(robot.robotState);
+            robot.hardware.enableColorSensor = true;
 
-        robot.hardware.intake.setPower(this.targetSpeed);
-        robot.hardware.intakePitchLeft.setPosition(pitch.left.get());
-        robot.hardware.intakePitchRight.setPosition(pitch.right.get());
+            robot.hardware.intake.setPower(this.targetSpeed);
+            robot.hardware.intakePitchLeft.setPosition(pitch.left.get());
+            robot.hardware.intakePitchRight.setPosition(pitch.right.get());
 
-        Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());
+            Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());
+        }
     }
 }

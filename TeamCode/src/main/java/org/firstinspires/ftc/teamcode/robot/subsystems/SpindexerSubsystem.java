@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class SpindexerSubsystem extends SubsystemBase {
@@ -360,40 +361,40 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
+            if (robot.hang.isPtoEngaged()) {
+                return;
+            }
 
-
-        if (robot.hang.isPtoEngaged()) {
-            return;
-        }
-
-        this.updateSpindexer();
-        double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
-        Log.i("SpindexerSubsystem", "max power: " + maxPower);
-        Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
-        double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
-        this.hardware.spindexerRotate.setPower(clampedPower);
+            this.updateSpindexer();
+            double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
+            Log.i("SpindexerSubsystem", "max power: " + maxPower);
+            Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
+            double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
+            this.hardware.spindexerRotate.setPower(clampedPower);
 //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
 
-        // basically this just makes it so that the walls go down at the right time after the
-        // pid reaches the target so we never have the walls go down at the wrong spot and jam the spindexer
-        if (goingToMoveWallsDownButHaventMovedThemDownYet && // if we want to set walls down
-                desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
-                pidEnabled && atTargetYaw()
-        ) {
-            intakeWallPosition1 = INTAKE_WALL_1_DOWN;
-            intakeWallPosition2 = INTAKE_WALL_2_DOWN;
-            goingToMoveWallsDownButHaventMovedThemDownYet = false;
-        }
+            // basically this just makes it so that the walls go down at the right time after the
+            // pid reaches the target so we never have the walls go down at the wrong spot and jam the spindexer
+            if (goingToMoveWallsDownButHaventMovedThemDownYet && // if we want to set walls down
+                    desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
+                    pidEnabled && atTargetYaw()
+            ) {
+                intakeWallPosition1 = INTAKE_WALL_1_DOWN;
+                intakeWallPosition2 = INTAKE_WALL_2_DOWN;
+                goingToMoveWallsDownButHaventMovedThemDownYet = false;
+            }
 
-        this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
-        this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
-        this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
+            this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
+            this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
+            this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
 
-        Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
+            Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
 //        Robot.debugTelemetry.addData("Intake Current", this.hardware.intake.getCurrent(CurrentUnit.AMPS));
 //        Robot.debugTelemetry.addData("Spindexer Current", this.hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS));
-        Robot.debugTelemetry.addData("Spindexer Position (deg)", Math.toDegrees(Angle.angleWrap(getPosition())));
-        Robot.debugTelemetry.addData("Spindexer Target (deg)", Math.toDegrees(Angle.angleWrap(getTargetYaw())));
+            Robot.debugTelemetry.addData("Spindexer Position (deg)", Math.toDegrees(Angle.angleWrap(getPosition())));
+            Robot.debugTelemetry.addData("Spindexer Target (deg)", Math.toDegrees(Angle.angleWrap(getTargetYaw())));
+        }
     }
 }

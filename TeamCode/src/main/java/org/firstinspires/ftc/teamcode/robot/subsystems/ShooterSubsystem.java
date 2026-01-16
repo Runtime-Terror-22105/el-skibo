@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
@@ -284,26 +285,28 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (robot.hang.isPtoEngaged()) {
-            hardware.shooterLeft.setPower(0);
-            hardware.shooterRight.setPower(0);
-            return;
+        try (Profiler.Scope p = Profiler.enter("ShooterSubsystem")) {
+            if (robot.hang.isPtoEngaged()) {
+                hardware.shooterLeft.setPower(0);
+                hardware.shooterRight.setPower(0);
+                return;
+            }
+
+            if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
+            else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
+
+            // shooter pitch
+            hardware.shooterPitch.setPosition(this.goalPitchPos);
+
+            // flywheel pids
+            this.updateShooter();
+            Robot.debugTelemetry.addData("Shooter Power", shooterPower);
+            hardware.shooterLeft.setPower(shooterPower);
+            hardware.shooterRight.setPower(shooterPower);
+
+            //turret
+            hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
+            hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
         }
-
-        if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
-        else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
-
-        // shooter pitch
-        hardware.shooterPitch.setPosition(this.goalPitchPos);
-
-        // flywheel pids
-        this.updateShooter();
-        Robot.debugTelemetry.addData("Shooter Power", shooterPower);
-        hardware.shooterLeft.setPower(shooterPower);
-        hardware.shooterRight.setPower(shooterPower);
-
-        //turret
-        hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
-        hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
     }
 }
