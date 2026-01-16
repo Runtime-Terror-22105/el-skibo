@@ -40,6 +40,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public ShooterSubsystem shooter;
     public SpindexerSubsystem spindexer;
 
+    public static boolean shootInTapeZone = false;
+
     public int debugLight = 0;
 
 
@@ -128,5 +130,15 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
     public boolean getAutoSort() {
         return this.autoSort;
+    }
+
+    public boolean getShootInTapeZone()
+    {
+        return shootInTapeZone;
+    }
+
+    public void setShootInTapeZone(boolean setting)
+    {
+        shootInTapeZone = setting;
     }
 }
