@@ -4,6 +4,9 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
+import com.skeletonarmy.marrow.zones.PolygonZone;
+import com.skeletonarmy.marrow.zones.Point;
+
 public class DriveSubsystem extends SubsystemBase {
     private final Robot robot;
 
@@ -14,5 +17,7 @@ public class DriveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         robot.follower.update();
+        robot.robotZone.setPosition(robot.follower.getPose().getX(),robot.follower.getPose().getY());
+        robot.robotZone.setRotation(robot.follower.getHeading());
     }
 }
