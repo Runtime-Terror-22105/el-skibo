@@ -7,6 +7,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.skeletonarmy.marrow.zones.Point;
+import com.skeletonarmy.marrow.zones.PolygonZone;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Team;
@@ -41,7 +43,9 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public SpindexerSubsystem spindexer;
 
     public static boolean shootInTapeZone = false;
+    private final PolygonZone closeLaunchZone = new PolygonZone(new Point(144, 144), new Point(72, 72), new Point(0, 144));
 
+    public final PolygonZone robotZone = new PolygonZone(15, 16);
     public int debugLight = 0;
 
 
@@ -140,5 +144,11 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public void setShootInTapeZone(boolean setting)
     {
         shootInTapeZone = setting;
+    }
+    public boolean isInTapeZone()
+    {
+//        return closeLaunchZone.contains(robotZone.getPosition());
+        //note that there is another method called isFullyInside, make of that what you will
+        return robotZone.isInside(closeLaunchZone);
     }
 }
