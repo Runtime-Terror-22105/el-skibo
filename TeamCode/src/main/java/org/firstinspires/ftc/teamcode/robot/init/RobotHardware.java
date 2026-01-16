@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -259,9 +260,13 @@ public class RobotHardware {
     }
 
     public void write() {
+        Profiler.push("publisher");
         this.publisher.write();
+        Profiler.pop();
         if (this.enableColorSensor) {
+            Profiler.push("colorSensors");
             this.updateColorSensors();
+            Profiler.pop();
         }
     }
 

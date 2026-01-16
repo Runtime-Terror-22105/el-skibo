@@ -44,6 +44,9 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+import org.firstinspires.ftc.teamcode.util.Profiler;
+
+import java.util.List;
 
 @Config
 
@@ -80,6 +83,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
 
     public void runOpMode() {
+        Profiler.init();
+
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, telemetry);
 
@@ -265,22 +270,30 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         lastLoop = System.nanoTime();
 
         while (opModeIsActive()) {
+            Profiler.start();
+
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
+            Profiler.push("clear_cache");
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
+            Profiler.pop();
 
 //            char[] balls = robot.spindexer.getBallPositions();
 //            if (balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N') {
 //                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
 //            }
 
+            Profiler.push("commands");
             CommandScheduler.getInstance().run();
+            Profiler.pop();
 
-
+            Profiler.push("hw_write");
             hardware.write();
+            Profiler.pop();
 
+            Profiler.push("debug");
             FtcDashDrawing.drawDebug(robot.follower);
             long time = System.nanoTime();
             long dt = time - lastLoop;
@@ -314,6 +327,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             robot.telemetry.addData("Distance (in)", dist);
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
             robot.telemetry.update();
+            Profiler.pop();
+
+            Profiler.end();
+            Profiler.sendFlamegraph(telemetry);
         }
 
         blackboard.put(AUTO_ENDING_DATA_KEY, null);

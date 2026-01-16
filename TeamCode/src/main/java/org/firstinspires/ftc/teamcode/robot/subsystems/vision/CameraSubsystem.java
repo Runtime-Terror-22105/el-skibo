@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -149,9 +150,10 @@ public class CameraSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (vPortalField == null) return;
+        try (Profiler.Scope p = Profiler.enter("CameraSubsystem")) {
+            if (vPortalField == null) return;
 
-        // Reference for Logitech C270:
+            // Reference for Logitech C270:
 //        public void setDefaultExposure() {
 //            this.camera.getExposureControl().setMode(ExposureControl.Mode.AperturePriority);
 //            this.camera.getGainControl().setGain(64);
@@ -175,37 +177,38 @@ public class CameraSubsystem extends SubsystemBase {
 //        }
 
 
-        this.detections = aTagProcessor.getDetections();
-        Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
-        //should only ever be the blue or red goal which is 20 and 24 respectively
-        AprilTagDetection localizationTag = null;
+            this.detections = aTagProcessor.getDetections();
+            Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
+            //should only ever be the blue or red goal which is 20 and 24 respectively
+            AprilTagDetection localizationTag = null;
 
-        for (AprilTagDetection tag : detections) {
-            if (tag.id >= 21 && tag.id <= 23) {
-                GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
-                this.gameGlyph = glyphhh;
-                robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
-                Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
-            } else {
-                localizationTag = tag;
+            for (AprilTagDetection tag : detections) {
+                if (tag.id >= 21 && tag.id <= 23) {
+                    GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
+                    this.gameGlyph = glyphhh;
+                    robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
+                    Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
+                } else {
+                    localizationTag = tag;
+                }
             }
-        }
-        Log.d(TAG, "Glyph: " + gameGlyph);
-        Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
-        Log.d(TAG, "Localization Tag: " + localizationTag);
-        robot.telemetry.addData("Glyph", gameGlyph);
-        robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
-        robot.telemetry.addData("Localization Tag", localizationTag);
-        if (localizationTag != null && localizationTag.robotPose != null
-            && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
-            handleLocalizationDetection(localizationTag);
-        }
+            Log.d(TAG, "Glyph: " + gameGlyph);
+            Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
+            Log.d(TAG, "Localization Tag: " + localizationTag);
+            robot.telemetry.addData("Glyph", gameGlyph);
+            robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
+            robot.telemetry.addData("Localization Tag", localizationTag);
+            if (localizationTag != null && localizationTag.robotPose != null
+                    && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
+                handleLocalizationDetection(localizationTag);
+            }
 
-        if (debugLastDetection != null) {
-            // Fade color from red to black as detection gets older
-            int ageMs = (int) (System.currentTimeMillis() - debugDetectionTime);
-            int red = Math.max(0, 255 - ageMs / 5);
-            FtcDashDrawing.drawRobot(debugLastDetection != null ? debugLastDetection : new Pose(0, 0, 0), String.format("#%02X0000", red));
+            if (debugLastDetection != null) {
+                // Fade color from red to black as detection gets older
+                int ageMs = (int) (System.currentTimeMillis() - debugDetectionTime);
+                int red = Math.max(0, 255 - ageMs / 5);
+                FtcDashDrawing.drawRobot(debugLastDetection != null ? debugLastDetection : new Pose(0, 0, 0), String.format("#%02X0000", red));
+            }
         }
     }
 

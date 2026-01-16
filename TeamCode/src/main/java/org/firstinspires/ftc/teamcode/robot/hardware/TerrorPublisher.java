@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robot.hardware;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.util.Profiler;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -78,7 +80,10 @@ public class TerrorPublisher {
     public void write() {
         PriorityQueue<PriorityDevice> devices = new PriorityQueue<>(writingDevices);
         while (!devices.isEmpty()) {
-            devices.poll().device.write();
+            TerrorWritingDevice device = devices.poll().device;
+            Profiler.push(device.getClass().getSimpleName() + ".write");
+            device.write();
+            Profiler.pop();
         }
     }
 
