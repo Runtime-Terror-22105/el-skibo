@@ -143,12 +143,8 @@ public class RobotHardware {
         motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize the turret
-        this.turretYawLeft = new TerrorServo(
-                hwMap.get(Servo.class, "turretYawLeft")
-        );
-        this.turretYawRight = new TerrorServo(
-                hwMap.get(Servo.class, "turretYawRight")
-        );
+        this.turretYawLeft = new TerrorServo(hwMap, "turretYawLeft", 0.001);
+        this.turretYawRight = new TerrorServo(hwMap, "turretYawRight", 0.001);
         this.turretYawLeft.setPwmRange(500, 2500);
         this.turretYawRight.setPwmRange(500, 2500);
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
@@ -176,7 +172,7 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterHood"));
+        this.shooterPitch = new TerrorServo(hwMap, "shooterHood", 0.001);
         this.publisher.subscribe(5, shooterPitch);
 
 
@@ -209,9 +205,9 @@ public class RobotHardware {
                 this.topSensor,
                 this.rightSensor
         };
-        this.spindexerIntakeWallServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall1"));
-        this.spindexerIntakeWallServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall2"));
-        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerTransferRamp"));
+        this.spindexerIntakeWallServo1 = new TerrorServo(hwMap, "spindexerIntakeWall1");
+        this.spindexerIntakeWallServo2 = new TerrorServo(hwMap, "spindexerIntakeWall2");
+        this.spindexerTransferRampServo = new TerrorServo(hwMap, "spindexerTransferRamp");
         this.publisher.subscribe(10, spindexerIntakeWallServo1,
                 spindexerIntakeWallServo2, spindexerTransferRampServo);
 
@@ -239,9 +235,9 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.intakePitchLeft = new TerrorServo(hwMap.get(Servo.class, "intakePitchLeft"));
-        this.intakePitchRight = new TerrorServo(hwMap.get(Servo.class, "intakePitchRight"));
-        this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
+        this.intakePitchLeft = new TerrorServo(hwMap, "intakePitchLeft");
+        this.intakePitchRight = new TerrorServo(hwMap, "intakePitchRight");
+        this.spindexerPTO = new TerrorServo(hwMap, "spindexerPTO");
         this.publisher.subscribe(10,intakePitchRight);
         this.publisher.subscribe(10, intakePitchLeft);
         this.publisher.subscribe(10, spindexerPTO);

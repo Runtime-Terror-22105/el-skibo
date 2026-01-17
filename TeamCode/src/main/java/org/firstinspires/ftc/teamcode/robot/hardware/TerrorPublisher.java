@@ -81,8 +81,10 @@ public class TerrorPublisher {
         PriorityQueue<PriorityDevice> devices = new PriorityQueue<>(writingDevices);
         while (!devices.isEmpty()) {
             TerrorWritingDevice device = devices.poll().device;
-            Profiler.push(device.getClass().getSimpleName() + ".write");
+            Profiler.push(device.getClass().getSimpleName());
+            Profiler.push(device.debugName());
             device.write();
+            Profiler.pop();
             Profiler.pop();
         }
     }
