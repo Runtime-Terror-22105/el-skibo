@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
@@ -19,8 +20,9 @@ public class TerrorServo implements TerrorWritingDevice {
     private final Servo servo;  // The underlying PhotonServo instance
     private double servoPosition;     // Current position of the servo
     private double lastPosition;      // Last set position to prevent unnecessary updates
-    private final double tolerance = 0.0; // Small tolerance to avoid float comparison issues
+    private final double tolerance; // Small tolerance to avoid float comparison issues
     private ServoCommand command = ServoCommand.NONE;
+    private final String debugName;
 
     /**
      * Enum representing possible servo commands.
@@ -35,10 +37,20 @@ public class TerrorServo implements TerrorWritingDevice {
      *
      * @param servo The {@link Servo} instance to wrap.
      */
-    public TerrorServo(@NonNull Servo servo) {
+    public TerrorServo(@NonNull Servo servo, String debugName, double tolerance) {
         this.servo = servo;
         this.servoPosition = servo.getPosition();
         this.lastPosition = -100; // prevent caching at start from being goofy
+        this.debugName = debugName;
+        this.tolerance = tolerance;
+    }
+
+    public TerrorServo(@NonNull HardwareMap hw, String name, double tolerance) {
+        this(hw.get(Servo.class, name), name, tolerance);
+    }
+
+    public TerrorServo(@NonNull HardwareMap hw, String name) {
+        this(hw.get(Servo.class, name), name, 0.0);
     }
 
     /**
@@ -102,5 +114,10 @@ public class TerrorServo implements TerrorWritingDevice {
 
     synchronized public double getSetPosition() {
         return this.servo.getPosition();
+    }
+
+    @Override
+    public String debugName() {
+        return this.debugName;
     }
 }
