@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 import java.util.function.Supplier;
 
@@ -58,24 +59,26 @@ public class HangSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        hardware.spindexerPTO.setPosition(ptoEngaged ? PTO_ENGAGED_POSITION : PTO_DISENGAGED_POSITION);
+        try (Profiler.Scope p = Profiler.enter("HangSubsystem")) {
+            hardware.spindexerPTO.setPosition(ptoEngaged ? PTO_ENGAGED_POSITION : PTO_DISENGAGED_POSITION);
 
-        if(!ptoEngaged) return;
+            if (!ptoEngaged) return;
 
-        double pitch = hardware.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
-        Robot.debugTelemetry.addData("Robot Pitch", pitch);
-        Log.i("HangSubsystem", "Robot Pitch: " + pitch + " deg");
+            double pitch = hardware.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
+            Robot.debugTelemetry.addData("Robot Pitch", pitch);
+            Log.i("HangSubsystem", "Robot Pitch: " + pitch + " deg");
 
-        double power = position.power.get();
-        double angle = position.angle.get();
-        if (power > 0) {
-            if (pitch < angle) hardware.spindexerRotate.setPower(power);
-            else hardware.spindexerRotate.setPower(0);
-        } else if (power < 0) {
-            if (pitch > angle) hardware.spindexerRotate.setPower(power);
-            else hardware.spindexerRotate.setPower(0);
-        } else {
-            hardware.spindexerRotate.setPower(0);
+            double power = position.power.get();
+            double angle = position.angle.get();
+            if (power > 0) {
+                if (pitch < angle) hardware.spindexerRotate.setPower(power);
+                else hardware.spindexerRotate.setPower(0);
+            } else if (power < 0) {
+                if (pitch > angle) hardware.spindexerRotate.setPower(power);
+                else hardware.spindexerRotate.setPower(0);
+            } else {
+                hardware.spindexerRotate.setPower(0);
+            }
         }
     }
 }

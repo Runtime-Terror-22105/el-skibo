@@ -11,7 +11,6 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,6 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +45,6 @@ public class RobotHardware {
     // Turret
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
-
 
 
     // gobuilda pwm lights
@@ -100,8 +99,13 @@ public class RobotHardware {
     public HardwareMap hwMap;
     private final TerrorPublisher publisher = new TerrorPublisher();
 
-    public boolean enableColorSensor = true;
+    private boolean enableColorSensor = true;
+
+    // Voltage monitoring
+    public double nominalVoltage = 12.0;
     public double initialVoltage;
+    private double currentVoltage = Double.NaN;
+    private long lastVoltageTime = -1;
 
     public enum HardwareOptions {
         CAMERA
@@ -112,22 +116,22 @@ public class RobotHardware {
 
         // Initialize the drivetrain motors
         motorFrontLeft = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "motorFrontLeft"),
+                hwMap, "motorFrontLeft",
                 0.05,
                 1.0
         );
         motorFrontRight = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "motorFrontRight"),
+                hwMap, "motorFrontRight",
                 0.05,
                 1.0
         );
         motorRearRight = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "motorRearRight"),
+                hwMap, "motorRearRight",
                 0.05,
                 1.0
         );
         motorRearLeft = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "motorRearLeft"),
+                hwMap, "motorRearLeft",
                 0.05,
                 1.0
         );
@@ -137,12 +141,8 @@ public class RobotHardware {
         motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize the turret
-        this.turretYawLeft = new TerrorServo(
-                hwMap.get(Servo.class, "turretYawLeft")
-        );
-        this.turretYawRight = new TerrorServo(
-                hwMap.get(Servo.class, "turretYawRight")
-        );
+        this.turretYawLeft = new TerrorServo(hwMap, "turretYawLeft", 0.001);
+        this.turretYawRight = new TerrorServo(hwMap, "turretYawRight", 0.001);
         this.turretYawLeft.setPwmRange(500, 2500);
         this.turretYawRight.setPwmRange(500, 2500);
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
@@ -150,12 +150,12 @@ public class RobotHardware {
 
         // Initialize the shooter
         this.shooterLeft = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "shooterLeft"),
+                hwMap, "shooterLeft",
                 0.005,
                 1.0
         );
         this.shooterRight = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "shooterRight"),
+                hwMap, "shooterRight",
                 0.005,
                 1.0
         );
@@ -170,13 +170,13 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterPitch = new TerrorServo(hwMap.get(Servo.class, "shooterHood"));
+        this.shooterPitch = new TerrorServo(hwMap, "shooterHood", 0.001);
         this.publisher.subscribe(5, shooterPitch);
 
 
         // Initialize the spindexer
         this.spindexerRotate = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "spindexerRotate"),
+                hwMap, "spindexerRotate",
                 0.01,
                 1.0
         );
@@ -184,7 +184,7 @@ public class RobotHardware {
         this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, spindexerRotate);
 
-        this.lights=new TerrorLight(hwMap.get(Servo.class, "lights"));
+        this.lights = new TerrorLight(hwMap.get(Servo.class, "lights"));
         this.publisher.subscribe(11, lights);
 
 
@@ -198,33 +198,33 @@ public class RobotHardware {
                 hwMap.get(RevColorSensorV3.class, "rightSensor")
         );
         this.colorSensorIndex = 0;
-        this.colorSensors = new TerrorColorSensor[] {
+        this.colorSensors = new TerrorColorSensor[]{
                 this.leftSensor,
                 this.topSensor,
                 this.rightSensor
         };
-        this.spindexerIntakeWallServo1 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall1"));
-        this.spindexerIntakeWallServo2 = new TerrorServo(hwMap.get(Servo.class, "spindexerIntakeWall2"));
-        this.spindexerTransferRampServo = new TerrorServo(hwMap.get(Servo.class, "spindexerTransferRamp"));
+        this.spindexerIntakeWallServo1 = new TerrorServo(hwMap, "spindexerIntakeWall1");
+        this.spindexerIntakeWallServo2 = new TerrorServo(hwMap, "spindexerIntakeWall2");
+        this.spindexerTransferRampServo = new TerrorServo(hwMap, "spindexerTransferRamp");
         this.publisher.subscribe(10, spindexerIntakeWallServo1,
                 spindexerIntakeWallServo2, spindexerTransferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
         // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
-        this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class,"spindexEncoder"), SPINDEXER_ENCODER_REVERSED);
+        this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "spindexEncoder"), SPINDEXER_ENCODER_REVERSED);
         this.spindexerEncoder.setOffset(Math.toRadians(SPINDEXER_ENCODER_OFFSET_DEGREES));
 
-        this.spindexerMotorEncoder = new TerrorEncoder(motorFrontLeft, ((1D+(46D/11D))*28D) * 5.6D);
+        this.spindexerMotorEncoder = new TerrorEncoder(motorFrontLeft, ((1D + (46D / 11D)) * 28D) * 5.6D);
         this.spindexerMotorEncoder.stop_and_reset();
         this.spindexerMotorEncoder.setDirection(TerrorEncoder.Direction.FORWARD); // TODO: figure out spindexer encoder direction
 
 //        this.spindexerEncoder.stop_and_reset();
-      // TODO: figure out spindexer encoder direction
+        // TODO: figure out spindexer encoder direction
 
         // Initialize the intake
         this.intake = new TerrorMotorNormal(
-                (DcMotorEx) hwMap.get(DcMotor.class, "intake"),
+                hwMap, "intake",
                 0.05,
                 1.0
         );
@@ -233,10 +233,10 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.intakePitchLeft = new TerrorServo(hwMap.get(Servo.class, "intakePitchLeft"));
-        this.intakePitchRight = new TerrorServo(hwMap.get(Servo.class, "intakePitchRight"));
-        this.spindexerPTO = new TerrorServo(hwMap.get(Servo.class, "spindexerPTO"));
-        this.publisher.subscribe(10,intakePitchRight);
+        this.intakePitchLeft = new TerrorServo(hwMap, "intakePitchLeft");
+        this.intakePitchRight = new TerrorServo(hwMap, "intakePitchRight");
+        this.spindexerPTO = new TerrorServo(hwMap, "spindexerPTO");
+        this.publisher.subscribe(10, intakePitchRight);
         this.publisher.subscribe(10, intakePitchLeft);
         this.publisher.subscribe(10, spindexerPTO);
 
@@ -247,9 +247,24 @@ public class RobotHardware {
         this.initLynx(bulkCachingMode);
         this.initImu();
 
-        this.initialVoltage = controlHub.getInputVoltage(VoltageUnit.VOLTS);
+        this.initialVoltage = getCurrentVoltage();
 
         // Other Sensors
+        this.updateAllColorSensors();
+    }
+
+    public double getCurrentVoltage() {
+        // Only read voltage max once per second
+        long time = System.currentTimeMillis();
+        if (time - lastVoltageTime > 1000 || Double.isNaN(currentVoltage)) {
+            currentVoltage = controlHub.getInputVoltage(VoltageUnit.VOLTS);
+            lastVoltageTime = time;
+        }
+        return currentVoltage;
+    }
+
+    public double getVoltageScale() {
+        return nominalVoltage / getCurrentVoltage();
     }
 
     private void updateColorSensors() {
@@ -258,10 +273,36 @@ public class RobotHardware {
         this.colorSensorIndex = (this.colorSensorIndex + 1) % this.colorSensors.length;
     }
 
+    private void updateAllColorSensors() {
+        for (TerrorColorSensor sensor : this.colorSensors) {
+            sensor.update();
+        }
+    }
+
+    public void setEnableColorSensor(boolean enable) {
+        if (this.enableColorSensor != enable) {
+            this.enableColorSensor = enable;
+            if (enable) {
+                // If enabling, read all color sensors immediately
+                this.updateAllColorSensors();
+            } else {
+                // TODO: If disabling, invalidate all color sensors
+                //  rn we cant do this since other code assumes color sensor data is always valid
+//                for (TerrorColorSensor sensor : this.colorSensors) {
+//                    sensor.reset();
+//                }
+            }
+        }
+    }
+
     public void write() {
+        Profiler.push("publisher");
         this.publisher.write();
+        Profiler.pop();
         if (this.enableColorSensor) {
+            Profiler.push("colorSensors");
             this.updateColorSensors();
+            Profiler.pop();
         }
     }
 
@@ -301,7 +342,7 @@ public class RobotHardware {
     }
 
     private void initImu() {
-        this.imu = hwMap.get(IMU.class,  "imu");
+        this.imu = hwMap.get(IMU.class, "imu");
         this.imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,

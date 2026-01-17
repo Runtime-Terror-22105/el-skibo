@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
@@ -268,10 +269,10 @@ public class ShooterSubsystem extends SubsystemBase {
         Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
-        double voltageScale = 12.0 / this.hardware.controlHub.getInputVoltage(VoltageUnit.VOLTS);
 
+        double ff = this.hardware.getVoltageScale() * getGoalVelocity();
         this.shooterPID.setTargetPosition(getGoalVelocity());
-        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), voltageScale * getGoalVelocity());
+        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), ff);
     }
 
     public void addTurretOffset(double change){
@@ -284,26 +285,36 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (robot.hang.isPtoEngaged()) {
-            hardware.shooterLeft.setPower(0);
-            hardware.shooterRight.setPower(0);
-            return;
+        try (Profiler.Scope p = Profiler.enter("ShooterSubsystem")) {
+            if (robot.hang.isPtoEngaged()) {
+                hardware.shooterLeft.setPower(0);
+                hardware.shooterRight.setPower(0);
+                return;
+            }
+
+            Profiler.push("autoshoot");
+            if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
+            else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
+            Profiler.pop();
+
+            // shooter pitch
+            Profiler.push("pitch");
+            hardware.shooterPitch.setPosition(this.goalPitchPos);
+            Profiler.pop();
+
+            // flywheel pids
+            Profiler.push("flywheel");
+            this.updateShooter();
+            Robot.debugTelemetry.addData("Shooter Power", shooterPower);
+            hardware.shooterLeft.setPower(shooterPower);
+            hardware.shooterRight.setPower(shooterPower);
+            Profiler.pop();
+
+            //turret
+            Profiler.push("turret");
+            hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
+            hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
+            Profiler.pop();
         }
-
-        if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
-        else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
-
-        // shooter pitch
-        hardware.shooterPitch.setPosition(this.goalPitchPos);
-
-        // flywheel pids
-        this.updateShooter();
-        Robot.debugTelemetry.addData("Shooter Power", shooterPower);
-        hardware.shooterLeft.setPower(shooterPower);
-        hardware.shooterRight.setPower(shooterPower);
-
-        //turret
-        hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
-        hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
     }
 }

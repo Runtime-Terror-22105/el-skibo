@@ -38,8 +38,8 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -346,6 +346,8 @@ public abstract class Auto extends LinearOpMode {
     }
 
     public void runOpMode() {
+        Profiler.init();
+
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -424,26 +426,39 @@ public abstract class Auto extends LinearOpMode {
         lastLoop = System.nanoTime();
 
         while (opModeIsActive()) {
+            Profiler.start();
+
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
+            Profiler.push("clear_cache");
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
+            Profiler.pop();
 
+            Profiler.push("commands");
             CommandScheduler.getInstance().run();
+            Profiler.pop();
 
 //            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
             blackboard.put(AUTO_ENDING_DATA_KEY, robot.follower.getPose());
             blackboard.put(SPINDEXER_POSITION_KEY, robot.spindexer.getPosition());
 
+            Profiler.push("hwWrite");
             hardware.write();
+            Profiler.pop();
 
+            Profiler.push("debug");
             FtcDashDrawing.drawDebug(robot.follower);
             long time = System.nanoTime();
             long dt = time - lastLoop;
             lastLoop = time;
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
             robot.telemetry.update();
+            Profiler.pop();
+
+            Profiler.end();
+            Profiler.sendFlamegraph(robot.telemetry);
         }
     }
 }

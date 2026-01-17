@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.init.StateTag;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,55 +46,54 @@ public class LightControl2 extends SubsystemBase {
     @Override
     public void periodic()
     {
-        if(isManualLighting)
-        {
-            return;
-        }
-        robot.telemetry.addData("State for the lights",robot.getState());
-        switch(robot.robotState)
-        {
-            case RESTING:
-                hardware.lights.setColor(TerrorLight.LightColors.PINK);
-                break;
+        try (Profiler.Scope p = Profiler.enter("LightControl2")) {
+            if (isManualLighting) {
+                return;
+            }
+            robot.telemetry.addData("State for the lights", robot.getState());
+            switch (robot.robotState) {
+                case RESTING:
+                    hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                    break;
 
-            case INTAKING:
-                hardware.lights.setColor(TerrorLight.LightColors.BLUE);
-                break;
+                case INTAKING:
+                    hardware.lights.setColor(TerrorLight.LightColors.BLUE);
+                    break;
 
-            //i might be misunderstanding
+                //i might be misunderstanding
 //           case FULL:
 //                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
 //                break;
 
-            case NOT_READY:
-                hardware.lights.setColor(TerrorLight.LightColors.RED);
-                break;
+                case NOT_READY:
+                    hardware.lights.setColor(TerrorLight.LightColors.RED);
+                    break;
 
-            case TRANSFER:
-                hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
-                break;
+                case TRANSFER:
+                    hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
+                    break;
 
-            case READY_TO_SHOOT:
-                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+                case READY_TO_SHOOT:
+                    hardware.lights.setColor(TerrorLight.LightColors.GREEN);
 
-                break;
+                    break;
 
-            case SHOOTING:
-                hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
-                break;
+                case SHOOTING:
+                    hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
+                    break;
 
-            case CLIMBING:
-                break;
+                case CLIMBING:
+                    break;
 
-            case DONE_CLIMB:
-                break;
+                case DONE_CLIMB:
+                    break;
 
 
-            default:
-                hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                default:
+                    hardware.lights.setColor(TerrorLight.LightColors.PINK);
 
-                break;
+                    break;
+            }
         }
-
     }
 }
