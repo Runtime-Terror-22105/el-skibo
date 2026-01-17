@@ -38,9 +38,25 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Config
 public abstract class Auto extends LinearOpMode {
+    public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
+    public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
+    static {
+        blueMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.PGP);
+        blueMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.GPP);
+        blueMotifMap.put(CameraSubsystem.GLYPH.GPP, CameraSubsystem.GLYPH.PPG);
+
+        redMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.GPP);
+        redMotifMap.put(CameraSubsystem.GLYPH.GPP, CameraSubsystem.GLYPH.PGP);
+        redMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.PPG);
+    }
+
     public static long TIME_UNTIL_START_SCANNING_GLYPHS = 200;
 
     public static boolean stopAfterPreload = false;
@@ -248,7 +264,11 @@ public abstract class Auto extends LinearOpMode {
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true),
-                        new ToggleAutoTurretCommand(robot, false, turretAngleForMotif),
+                        new ConditionalCommand(
+                                new ToggleAutoTurretCommand(robot, false, turretAngleForMotif),
+                                new InstantCommand(() -> {}),
+                                () -> robot.camera.gameGlyph != null // this checs if the init thing wored
+                        ),
                         new InstantCommand(() -> robot.camera.startScanningForGlyphs())
                 ),
                 new ToggleAutoTurretCommand(robot, true),
@@ -343,27 +363,42 @@ public abstract class Auto extends LinearOpMode {
         robot.follower.setMaxPower(MAX_POWER);
 
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
+        // todo do the rules require that we do ths after init?
         robot.setAutoSort(true);
 
-//        CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM));
-//        while (opModeInInit()) {
-//            for (LynxModule hub : hardware.allHubs) {
-//                hub.clearBulkCache();
-//            }
-//
-//            CommandScheduler.getInstance().run();
-//
-//            hardware.write();
-//
-//            long time = System.nanoTime();
-//            long dt = time - lastLoop;
-//            lastLoop = time;
-//            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
-//            robot.telemetry.update();
-//        }
+        robot.camera.startScanningForGlyphs();
 
+        // we can't spin shooter in init bc it's illegal
+        robot.shooter.isAutoVelOn = false;
+        robot.shooter.setSpeed(0D);
+        while (opModeInInit()) {
+            for (LynxModule hub : hardware.allHubs) {
+                hub.clearBulkCache();
+            }
+
+            CommandScheduler.getInstance().run();
+
+            hardware.write();
+
+            long time = System.nanoTime();
+            long dt = time - lastLoop;
+            lastLoop = time;
+            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
+            robot.telemetry.update();
+        }
+
+        // we're going to see the wrong one
+        if (robot.camera.gameGlyph != null) {
+            robot.camera.stopScanningForGlyphs();
+            if (Team.RED.equals(team)) {
+                robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
+            } else {
+                robot.camera.setGlyph(blueMotifMap.get(robot.camera.gameGlyph));
+            }
+        }
 
         waitForStart();
+        robot.shooter.isAutoVelOn = true;
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 shootPreloadCommand,
@@ -383,7 +418,6 @@ public abstract class Auto extends LinearOpMode {
 
         lastLoop = System.nanoTime();
 
-        robot.camera.startScanningForGlyphs();
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
             // vals would be used.
