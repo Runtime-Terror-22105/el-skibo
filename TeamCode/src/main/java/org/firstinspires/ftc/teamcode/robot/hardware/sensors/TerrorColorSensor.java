@@ -47,6 +47,10 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         }
     }
 
+    public void reset() {
+        reading.reset();
+    }
+
     public void update() {
         reading.read(sensor);
     }
@@ -55,20 +59,20 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     * returns if the color sensor sees this as G,P,orN(none)
      */
     public double getRed(){
-        return reading.red;
+        return reading.red();
     }
 
     public double getGreen(){
-        return reading.green;
+        return reading.green();
     }
 
     public double getBlue(){
-        return reading.blue;
+        return reading.blue();
     }
 
     public double getDist(DistanceUnit unit){
 //        return sensor.getDistance(unit);
-        return unit.fromUnit(DistanceUnit.INCH, reading.distance);
+        return unit.fromUnit(DistanceUnit.INCH, reading.distance());
     }
 
     public char getGreenOrPurple() {

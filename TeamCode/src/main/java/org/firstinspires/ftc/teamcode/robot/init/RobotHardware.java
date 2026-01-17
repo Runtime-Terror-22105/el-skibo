@@ -101,7 +101,7 @@ public class RobotHardware {
     public HardwareMap hwMap;
     private final TerrorPublisher publisher = new TerrorPublisher();
 
-    public boolean enableColorSensor = true;
+    private boolean enableColorSensor = true;
 
     // Voltage monitoring
     public double nominalVoltage = 12.0;
@@ -256,6 +256,7 @@ public class RobotHardware {
         this.initialVoltage = getCurrentVoltage();
 
         // Other Sensors
+        this.updateAllColorSensors();
     }
 
     public double getCurrentVoltage() {
@@ -276,6 +277,27 @@ public class RobotHardware {
         // Update one color sensor per call to spread out the I2C load
         this.colorSensors[this.colorSensorIndex].update();
         this.colorSensorIndex = (this.colorSensorIndex + 1) % this.colorSensors.length;
+    }
+
+    private void updateAllColorSensors() {
+        for (TerrorColorSensor sensor : this.colorSensors) {
+            sensor.update();
+        }
+    }
+
+    public void setEnableColorSensor(boolean enable) {
+        if (this.enableColorSensor != enable) {
+            this.enableColorSensor = enable;
+            if (enable) {
+                // If enabling, read all color sensors immediately
+                this.updateAllColorSensors();
+            } else {
+                // If disabling, invalidate all color sensors
+//                for (TerrorColorSensor sensor : this.colorSensors) {
+//                    sensor.reset();
+//                }
+            }
+        }
     }
 
     public void write() {

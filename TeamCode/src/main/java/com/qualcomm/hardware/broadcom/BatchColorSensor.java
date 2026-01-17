@@ -14,8 +14,17 @@ import java.util.Arrays;
  * @author lunbun
  */
 public class BatchColorSensor {
-    public int red = 0, green = 0, blue = 0;
-    public double distance = Double.MAX_VALUE;
+    public boolean hasData = false;
+    private int red = 0, green = 0, blue = 0;
+    private double distance = Double.MAX_VALUE;
+
+    public void reset() {
+        hasData = false;
+        red = 0;
+        green = 0;
+        blue = 0;
+        distance = Double.MAX_VALUE;
+    }
 
     public void read(RevColorSensorV3 sensor) {
         byte[] regs = sensor.read(BroadcomColorSensor.Register.MAIN_STATUS, 15);
@@ -45,5 +54,33 @@ public class BatchColorSensor {
 //            int max = 255;
 //            argb = Color.argb(Range.clip((int)(a * scale), min, max), Range.clip((int)(r * scale), min, max), Range.clip((int)(g * scale), min, max), Range.clip((int)(b * scale), min, max));
         }
+
+        hasData = true;
+    }
+
+    private void assertHasData() {
+        if (!hasData) {
+            throw new IllegalStateException("No color sensor data available. Did you forget to call update()?");
+        }
+    }
+
+    public int red() {
+        assertHasData();
+        return red;
+    }
+
+    public int green() {
+        assertHasData();
+        return green;
+    }
+
+    public int blue() {
+        assertHasData();
+        return blue;
+    }
+
+    public double distance() {
+        assertHasData();
+        return distance;
     }
 }
