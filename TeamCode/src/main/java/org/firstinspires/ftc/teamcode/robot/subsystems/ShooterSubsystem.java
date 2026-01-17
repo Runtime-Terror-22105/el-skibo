@@ -21,6 +21,12 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+
+    private double loopCount = 0;
+
+    // in loops, how often to update the turret position servo when outside of the shooting zone
+    public static double TURRET_UPDATE_FREQUENCY = 10;
+
     private final RobotHardware hardware;
 
     public static boolean usingHardCodedShooterTable = false;
@@ -107,7 +113,8 @@ public class ShooterSubsystem extends SubsystemBase {
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
-        if (isAutoTurretOn){
+        // also currently only updates when in the tape zone or every 10 loops to reduce wrtes
+        if (isAutoTurretOn && (loopCount == 0 || robot.isInTapeZone())) {
             this.goalTurretAngle = this.findYawAngle(goalPos);
             this.goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
         }
@@ -292,7 +299,10 @@ public class ShooterSubsystem extends SubsystemBase {
                 return;
             }
 
+
+
             Profiler.push("autoshoot");
+            loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
             if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
             Profiler.pop();
