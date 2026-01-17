@@ -145,8 +145,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     {
         shootInTapeZone = setting;
     }
-    public boolean isInTapeZone()
-    {
+
+    public boolean isInTapeZone() {
 //        return closeLaunchZone.contains(robotZone.getPosition());
         //note that there is another method called isFullyInside, make of that what you will
         return robotZone.isInside(closeLaunchZone);
