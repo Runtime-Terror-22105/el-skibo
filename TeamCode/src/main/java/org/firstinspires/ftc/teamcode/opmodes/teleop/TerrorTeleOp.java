@@ -95,7 +95,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         Log.i("Auto", "Ending position after auto " + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
         if (motif != null) {
             robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
+            robot.camera.stopScanningForGlyphs();
             blackboard.put(MOTIF_DATA_KEY, null);
+        } else {
+            robot.camera.startScanningForGlyphs();
         }
         if (autoEnd != null) {
             robot.follower.setStartingPose((Pose) autoEnd);
