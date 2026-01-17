@@ -289,7 +289,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             CommandScheduler.getInstance().run();
             Profiler.pop();
 
-            Profiler.push("hw_write");
+            Profiler.push("hwWrite");
             hardware.write();
             Profiler.pop();
 
@@ -330,7 +330,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             Profiler.pop();
 
             Profiler.end();
-            Profiler.sendFlamegraph(telemetry);
+            Profiler.sendFlamegraph(robot.telemetry);
         }
 
         blackboard.put(AUTO_ENDING_DATA_KEY, null);

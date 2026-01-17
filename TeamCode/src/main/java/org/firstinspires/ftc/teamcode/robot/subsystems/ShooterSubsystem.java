@@ -292,21 +292,29 @@ public class ShooterSubsystem extends SubsystemBase {
                 return;
             }
 
+            Profiler.push("autoshoot");
             if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
+            Profiler.pop();
 
             // shooter pitch
+            Profiler.push("pitch");
             hardware.shooterPitch.setPosition(this.goalPitchPos);
+            Profiler.pop();
 
             // flywheel pids
+            Profiler.push("flywheel");
             this.updateShooter();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
             hardware.shooterLeft.setPower(shooterPower);
             hardware.shooterRight.setPower(shooterPower);
+            Profiler.pop();
 
             //turret
+            Profiler.push("turret");
             hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
             hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
+            Profiler.pop();
         }
     }
 }

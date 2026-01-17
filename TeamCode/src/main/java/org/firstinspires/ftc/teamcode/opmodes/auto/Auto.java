@@ -443,7 +443,7 @@ public abstract class Auto extends LinearOpMode {
             blackboard.put(AUTO_ENDING_DATA_KEY, robot.follower.getPose());
             blackboard.put(SPINDEXER_POSITION_KEY, robot.spindexer.getPosition());
 
-            Profiler.push("hw_write");
+            Profiler.push("hwWrite");
             hardware.write();
             Profiler.pop();
 
@@ -457,7 +457,7 @@ public abstract class Auto extends LinearOpMode {
             Profiler.pop();
 
             Profiler.end();
-            Profiler.sendFlamegraph(telemetry);
+            Profiler.sendFlamegraph(robot.telemetry);
         }
     }
 }
