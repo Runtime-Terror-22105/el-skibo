@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.prompts;
 
-import com.skeletonarmy.marrow.prompts.Button;
+import com.skeletonarmy.marrow.internal.Button;
 import com.skeletonarmy.marrow.prompts.Prompt;
 
 public class DetailedOptionPrompt<T> extends Prompt<T> {
