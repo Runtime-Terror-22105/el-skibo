@@ -16,8 +16,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+//        robot.getShootInTapeZone();
         robot.follower.update();
         robot.robotZone.setPosition(robot.follower.getPose().getX(),robot.follower.getPose().getY());
         robot.robotZone.setRotation(robot.follower.getHeading());
+        robot.telemetry.addData("isInShootZone",robot.isInTapeZone());
     }
 }
