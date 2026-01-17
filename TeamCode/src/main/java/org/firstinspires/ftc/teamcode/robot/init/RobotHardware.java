@@ -102,7 +102,12 @@ public class RobotHardware {
     private final TerrorPublisher publisher = new TerrorPublisher();
 
     public boolean enableColorSensor = true;
+
+    // Voltage monitoring
+    public double nominalVoltage = 12.0;
     public double initialVoltage;
+    private double currentVoltage = Double.NaN;
+    private long lastVoltageTime = -1;
 
     public enum HardwareOptions {
         CAMERA
@@ -248,9 +253,23 @@ public class RobotHardware {
         this.initLynx(bulkCachingMode);
         this.initImu();
 
-        this.initialVoltage = controlHub.getInputVoltage(VoltageUnit.VOLTS);
+        this.initialVoltage = getCurrentVoltage();
 
         // Other Sensors
+    }
+
+    public double getCurrentVoltage() {
+        // Only read voltage max once per second
+        long time = System.currentTimeMillis();
+        if (time - lastVoltageTime > 1000 || Double.isNaN(currentVoltage)) {
+            currentVoltage = controlHub.getInputVoltage(VoltageUnit.VOLTS);
+            lastVoltageTime = time;
+        }
+        return currentVoltage;
+    }
+
+    public double getVoltageScale() {
+        return nominalVoltage / getCurrentVoltage();
     }
 
     private void updateColorSensors() {
