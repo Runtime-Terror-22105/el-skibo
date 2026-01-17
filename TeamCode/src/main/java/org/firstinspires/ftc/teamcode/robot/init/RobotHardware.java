@@ -292,7 +292,8 @@ public class RobotHardware {
                 // If enabling, read all color sensors immediately
                 this.updateAllColorSensors();
             } else {
-                // If disabling, invalidate all color sensors
+                // TODO: If disabling, invalidate all color sensors
+                //  rn we cant do this since other code assumes color sensor data is always valid
 //                for (TerrorColorSensor sensor : this.colorSensors) {
 //                    sensor.reset();
 //                }
