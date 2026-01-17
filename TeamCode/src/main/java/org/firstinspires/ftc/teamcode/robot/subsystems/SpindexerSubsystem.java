@@ -58,6 +58,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     private double homedSpindexerOffset;
 
     private boolean goingToMoveWallsDownButHaventMovedThemDownYet;
+    public boolean overrideMaxPower;
 
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
@@ -342,6 +343,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void setPidEnabled(boolean enabled) {
         spindexerPower = 0.0;
         pidEnabled = enabled;
+        overrideMaxPower = false;
     }
 
     public void updateSpindexer() {
@@ -371,8 +373,9 @@ public class SpindexerSubsystem extends SubsystemBase {
             Log.i("SpindexerSubsystem", "max power: " + maxPower);
             Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
             double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
+            if (this.overrideMaxPower)  clampedPower = spindexerPower;
             this.hardware.spindexerRotate.setPower(clampedPower);
-//        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
+    //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
 
             // basically this just makes it so that the walls go down at the right time after the
             // pid reaches the target so we never have the walls go down at the wrong spot and jam the spindexer
