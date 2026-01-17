@@ -19,7 +19,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
 @Config
 public class ShootThreeBallsCommand extends SequentialCommandGroup {
-//    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
+    public static double ANGLE_THRESHOLD_SPEED_CHANGE = 210;
+    //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
     public static double SPINDEX_TRANSFER_POWER = -1;
     public static int SPINDEX_TRANSFER_TIME = 2000;  // milliseconds
 
@@ -36,7 +37,9 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                     robot.spindexer.setPidEnabled(false);
                     robot.spindexer.setSpindexerPower(SPINDEX_TRANSFER_POWER);
                 }),
-                new WaitCommand(SPINDEX_TRANSFER_TIME),
+                new WaitCommand(SPINDEX_TRANSFER_TIME).deadlineWith(
+                        new SwitchSpeedWhileShooting(robot.spindexer, 1.0, Math.toRadians(ANGLE_THRESHOLD_SPEED_CHANGE))
+                ),
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
                 new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
 
