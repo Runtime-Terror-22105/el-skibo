@@ -26,7 +26,7 @@ public class SlothTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             // change this and watch it update as you repush
-            tele.addData("sloth test", "d");
+            tele.addData("sloth test", "e");
             tele.update();
         }
     }
