@@ -48,7 +48,7 @@ public class MotorTest extends LinearOpMode {
             }
 
             if (showEncoderOutput && !motorName.isEmpty()) {
-                TerrorEncoder shooterEncoder = new TerrorEncoder(new TerrorMotorNormal((DcMotorEx) hardwareMap.get(DcMotor.class, "motorRearLeft"), 0.05, 1.0));
+                TerrorEncoder shooterEncoder = new TerrorEncoder(new TerrorMotorNormal(hardwareMap, "motorRearLeft", 0.05, 1.0));
                 shooterEncoder.setDirection(TerrorEncoder.Direction.REVERSE);
                 telemetry.addData("Current velocity (ticks/sec)", shooterEncoder.getVelocity());
 

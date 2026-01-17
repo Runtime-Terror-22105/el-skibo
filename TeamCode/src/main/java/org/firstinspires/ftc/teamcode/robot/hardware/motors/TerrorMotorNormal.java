@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -31,6 +32,7 @@ public class TerrorMotorNormal implements TerrorWritingDevice, TerrorMotor {
     private int modeChangesIndex;
     private DcMotor.ZeroPowerBehavior zeroPowerBehavior;
     private final MotorCommand[] commands = new MotorCommand[10];
+    private final String debugName;
 
     private boolean areWeSettingPowerInThisLoop = false;
 
@@ -53,7 +55,7 @@ public class TerrorMotorNormal implements TerrorWritingDevice, TerrorMotor {
      * @param powerThreshold The threshold used to prevent unnecessary motor power updates.
      * @param powerScale     The scale to be used for the power
      */
-    public TerrorMotorNormal(@NonNull DcMotorEx motor, double powerThreshold, double powerScale) {
+    public TerrorMotorNormal(@NonNull DcMotorEx motor, double powerThreshold, double powerScale, String debugName) {
         this.resetCommands();
         this.powerThreshold = powerThreshold;
         this.motor = motor;
@@ -67,7 +69,12 @@ public class TerrorMotorNormal implements TerrorWritingDevice, TerrorMotor {
         this.modeChanges = new DcMotor.RunMode[4];
         this.powerScale = powerScale;
         this.areWeSettingPowerInThisLoop = false;
+        this.debugName = debugName;
 //        this.setCurrentAlert(6.9, CurrentUnit.AMPS);
+    }
+
+    public TerrorMotorNormal(@NonNull HardwareMap hw, String name, double powerThreshold, double powerScale) {
+        this(hw.get(DcMotorEx.class, name), powerThreshold, powerScale, name);
     }
 
     public double getSetPower() {
@@ -324,5 +331,10 @@ public class TerrorMotorNormal implements TerrorWritingDevice, TerrorMotor {
      */
     public boolean isOverCurrent() {
         return motor.isOverCurrent();
+    }
+
+    @Override
+    public String debugName() {
+        return this.debugName;
     }
 }
