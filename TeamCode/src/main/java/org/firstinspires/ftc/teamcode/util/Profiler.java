@@ -135,7 +135,7 @@ public final class Profiler {
         String line = prefix + point.name() + " " + (point.duration() / 1_000_000.0);
         result.add(line);
         for (ProfilePoint child : point.children()) {
-            buildFlamegraph(child, prefix + "  ", result);
+            buildFlamegraph(child, prefix + "__", result);
         }
     }
 
