@@ -103,6 +103,7 @@ public abstract class Auto extends LinearOpMode {
     private Command intake2Command, shoot2Command;
     private Command intake3Command, shoot3Command;
     private Command parkCommand;
+    double turretAngleForMotif;
 
     private long lastLoop = System.nanoTime();
 
@@ -259,7 +260,6 @@ public abstract class Auto extends LinearOpMode {
     }
 
     private void buildCommands() {
-        double turretAngleForMotif = Team.BLUE.equals(team) ? ShooterSubsystem.turretLowerBound : ShooterSubsystem.turretUpperBound;
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
@@ -268,8 +268,7 @@ public abstract class Auto extends LinearOpMode {
                                 new ToggleAutoTurretCommand(robot, false, turretAngleForMotif),
                                 new InstantCommand(() -> {}),
                                 () -> robot.camera.gameGlyph != null // this checs if the init thing wored
-                        ),
-                        new InstantCommand(() -> robot.camera.startScanningForGlyphs())
+                        )
                 ),
                 new ToggleAutoTurretCommand(robot, true),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
@@ -355,6 +354,7 @@ public abstract class Auto extends LinearOpMode {
         robot.init(hardware, telemetry);
         robot.camera.stopScanningForGlyphs();
 
+        this.turretAngleForMotif = Team.BLUE.equals(team) ? ShooterSubsystem.turretLowerBound : ShooterSubsystem.turretUpperBound;
         robot.goalPos = team.getGoalPos();
         robot.follower.setStartingPose(team.getStartPosNear().toPedro());
 
@@ -371,6 +371,7 @@ public abstract class Auto extends LinearOpMode {
         // we can't spin shooter in init bc it's illegal
         robot.shooter.isAutoVelOn = false;
         robot.shooter.setSpeed(0D);
+        CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
@@ -390,11 +391,14 @@ public abstract class Auto extends LinearOpMode {
         // we're going to see the wrong one
         if (robot.camera.gameGlyph != null) {
             robot.camera.stopScanningForGlyphs();
+            robot.shooter.isAutoTurretOn = true;
             if (Team.RED.equals(team)) {
                 robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
             } else {
                 robot.camera.setGlyph(blueMotifMap.get(robot.camera.gameGlyph));
             }
+        } else {
+            robot.camera.startScanningForGlyphs();
         }
 
         waitForStart();

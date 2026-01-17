@@ -57,6 +57,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     private double homedSpindexerOffset;
 
     private boolean goingToMoveWallsDownButHaventMovedThemDownYet;
+    public boolean overrideMaxPower;
 
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
@@ -341,6 +342,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void setPidEnabled(boolean enabled) {
         spindexerPower = 0.0;
         pidEnabled = enabled;
+        overrideMaxPower = false;
     }
 
     public void updateSpindexer() {
@@ -371,6 +373,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         Log.i("SpindexerSubsystem", "max power: " + maxPower);
         Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
         double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
+        if (this.overrideMaxPower)  clampedPower = spindexerPower;
         this.hardware.spindexerRotate.setPower(clampedPower);
 //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
 
