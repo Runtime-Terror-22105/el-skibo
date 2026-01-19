@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
@@ -147,6 +148,89 @@ public class ShooterSubsystem extends SubsystemBase {
         Log.i("shooter", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
         Log.i("shooter", "Calculated hood pitch (rad)" + this.goalPitch);
     }
+
+
+    public void doAutoShootWithVelocityCompensation() {
+        Log.i("shooter", "Doing autoshoot with velocity compensation!");
+        this.isAutoAimOn = true;
+
+
+        Pose botPosTemp = this.robot.follower.getPose();
+        Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
+        Pose2d goalPos = this.goalPosLookupTable.get();
+        FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
+
+
+        // Get robot velocity vector from follower
+        Vector robotVelocity = this.robot.follower.getVelocity();
+        double robotVelMagnitude = robotVelocity.getMagnitude(); // in/s
+
+        Log.d("robot vel mag", String.valueOf(robotVelMagnitude));
+
+        double distanceToGoal = Math.sqrt(Math.pow(botPos.x - goalPos.x, 2) + Math.pow(botPos.y - goalPos.y, 2));
+        double verDist = goalHeight - robotHeight;
+
+        double angleToGoal1=Math.atan2(goalPos.y-botPos.y,goalPos.x-botPos.x);
+        double robotHeading=botPos.heading;
+
+        robot.telemetry.addData("Angle", Math.toDegrees(angleToGoal1));
+        robot.telemetry.addData("heading current", Math.toDegrees(robotHeading));
+        robot.telemetry.addData("distance to goal",distanceToGoal);
+        robot.telemetry.addData("magnitude",robotVelMagnitude);
+        robot.telemetry.update();
+
+
+        ShooterValues math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
+        double finalVelocity = math.velocity;
+        double finalLaunchAngle =math.rad;
+        double turretOffsetAngle = 0.0;
+
+        double robotVelAngle = robotVelocity.getTheta();
+        double theta = Angle.normalize(robotVelAngle - angleToGoal1);
+
+        double Vrr = -Math.cos(theta) * robotVelMagnitude;
+
+        double Vrt = Math.sin(theta) * robotVelMagnitude;
+
+        double timeToGoal = distanceToGoal / (math.velocity * Math.cos(math.rad));
+
+        double VxCompensated = (distanceToGoal / timeToGoal) + Vrr;
+
+        double VxNew = Math.sqrt(VxCompensated * VxCompensated + Vrt * Vrt);
+        double Vy = math.velocity * Math.sin(math.rad);
+        double newLaunchAngle = Math.atan2(Vy, VxNew);
+        newLaunchAngle = Math.max(hoodAngleMin, Math.min(hoodAngleMax, newLaunchAngle));
+
+        double newDistanceX = VxNew * timeToGoal;
+        double newVelocitySquared = (g * newDistanceX * newDistanceX) /
+                (2 * Math.cos(newLaunchAngle) * Math.cos(newLaunchAngle) *
+                        (newDistanceX * Math.tan(newLaunchAngle) - verDist));
+        double newVelocity = Math.sqrt(Math.max(0, newVelocitySquared));
+
+        turretOffsetAngle = Math.tan(Vrt/VxCompensated);
+
+        finalVelocity = newVelocity;
+        finalLaunchAngle = newLaunchAngle;
+
+        this.goalTurretAngle = this.findYawAngle(goalPos);
+        this.goalTurretAngle+=turretOffsetAngle;
+        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, this.goalTurretAngle));
+        this.goalTurretPos= turretAngleToServoPos(this.goalTurretAngle);
+
+
+        if (this.isAutoVelOn) {
+            this.setSpeed(this.velToRPM(finalVelocity));
+        }
+
+
+
+        if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
+            this.goalPitch = finalLaunchAngle;
+            this.goalPitchPos = Algebra.mapRange(finalLaunchAngle, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        }
+
+    }
+
 
     public void calcHoodPod(Pose2d botPos, Pose2d goalPos, double arcHeight) {
         // note: arcHeight is usually set to the apexHeight variable, which is currently 60
@@ -303,7 +387,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
-            if (robot.goalPos != null && isAutoAimOn) this.doAutoShoot();
+            if (robot.goalPos != null && isAutoAimOn) this.doAutoShootWithVelocityCompensation();
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
             Profiler.pop();
 
