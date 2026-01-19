@@ -28,7 +28,6 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ToggleAutoTurretCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
@@ -38,7 +37,6 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import java.util.HashMap;
@@ -65,7 +63,6 @@ public abstract class Auto extends LinearOpMode {
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
-    public static Double SHOOT_PRELOAD_RPM = null;
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(50, 94, Math.toRadians(45));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 114.644, Math.toRadians(315));
 
@@ -263,7 +260,7 @@ public abstract class Auto extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM),
+                        new PrepareShootCommand(robot),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true),
                         new ConditionalCommand(
                                 new ToggleAutoTurretCommand(robot, false, turretAngleForMotif),
@@ -291,9 +288,8 @@ public abstract class Auto extends LinearOpMode {
         shoot1Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot1Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
                 ),
-                new SetIntakePitchCommand(robot.intake, IntakePitch.UP),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
@@ -312,7 +308,7 @@ public abstract class Auto extends LinearOpMode {
         shoot2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot2Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
@@ -332,7 +328,7 @@ public abstract class Auto extends LinearOpMode {
         shoot3Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot3Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, SHOOT_PRELOAD_RPM))
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
