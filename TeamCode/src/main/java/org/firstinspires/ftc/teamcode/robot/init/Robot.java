@@ -54,6 +54,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public IntakeSubsystem intake;
     public LightControl2 lightControl;
 
+    public static boolean USE_SOTM = false;
     public Pose2d goalPos;
     private boolean autoSort;
 
