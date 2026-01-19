@@ -40,7 +40,7 @@ public class ShooterPIDTuner extends LinearOpMode {
 
             robot.telemetry.addData("Goal Velocity", goalSpeed);
             robot.telemetry.addData("Current velocity",robot.shooter.getVelocityRpm());
-            robot.telemetry.update();
+//            robot.telemetry.update();
 
         }
 
