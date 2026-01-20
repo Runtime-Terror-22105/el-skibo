@@ -23,6 +23,8 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class ShooterSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
 
+    public static boolean debug = false;
+    public static boolean telemetry = true;
     public static boolean usingHardCodedShooterTable = false;
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
@@ -98,7 +100,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void doAutoShoot(){
-        Log.i("shooter", "Doing autoshoot!");
+        if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
         Pose botPosTemp = this.robot.follower.getPose();
@@ -124,7 +126,7 @@ public class ShooterSubsystem extends SubsystemBase {
         math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
         //calcVelcoity - in/sec
 
-        Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", math.velocity);
+        if (telemetry) Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", math.velocity);
 
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
@@ -135,15 +137,15 @@ public class ShooterSubsystem extends SubsystemBase {
             this.goalPitch = math.rad;
             this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         }
-        Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
+        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
 
-        Log.i("shooter", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
-        Log.i("shooter", "Calculated hood pitch (rad)" + this.goalPitch);
+        if (debug) Log.i("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
+        if (debug) Log.i("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
     }
 
     public void calcHoodPod(Pose2d botPos, Pose2d goalPos, double arcHeight) {
         // note: arcHeight is usually set to the apexHeight variable, which is currently 60
-        Log.d("shooter", "running hood math");
+        if (debug) Log.d("ShooterSubsystem", "running hood math");
 
         double h = arcHeight-robotHeight; // the delta y at the apex
 
@@ -153,10 +155,9 @@ public class ShooterSubsystem extends SubsystemBase {
         double verDist = goalHeight - robotHeight; // delta y at the goal
         double theta = Math.atan(((2*h)/horDist) *
                 (1 + Math.sqrt(1 - (verDist/h)))); //in radians, from math
-        Log.d("shooter", "goal hood angle" + theta);
         this.goalPitch = theta;
         this.goalPitchPos = Algebra.mapRange(theta, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-        Log.d("shooter", "goal hood pos" + this.goalPitchPos);
+        if (debug) Log.d("ShooterSubsystem", "goal hood pos" + this.goalPitchPos);
     }
 
     /** lets you set a velocity and angle manually*/
@@ -197,10 +198,10 @@ public class ShooterSubsystem extends SubsystemBase {
         if (this.isAutoHoodOn) {
             calcHoodPod(botPos, goalPos, apexHeight);
         }
-        Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
+        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
 
-        Log.i("shooter", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
-        Log.i("shooter", "Calculated hood pitch (rad)" + this.goalPitch);
+        if (debug) Log.d("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
+        if (debug) Log.d("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
 
 
         this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, turretYaw));
@@ -219,7 +220,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
          double botHeading = robot.follower.getHeading();
 
-        robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
+        if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
 
 
         // note: this is 0 to 360 instead of -180 to 180 for convenience below
@@ -236,7 +237,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setSpeed(Double goal) {
         /* updates goalVelocity */
         //goal should be in RPM
-        Log.d("shooter", "setSpeed (rpm): " + goal);
+        if (debug) Log.d("ShooterSubsystem", "setSpeed (rpm): " + goal);
         if (goal != null)
             this.goalVelocity = goal;
     }
@@ -265,8 +266,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void updateShooter() {
-        Robot.debugTelemetry.addData("Shooter RPM", this.getVelocityRpm());
-        Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
+        if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", this.getVelocityRpm());
+        if (telemetry) Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
 
