@@ -54,6 +54,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public IntakeSubsystem intake;
     public LightControl2 lightControl;
 
+    public static boolean USE_SOTM = false;
     public Pose2d goalPos;
     private boolean autoSort;
 
@@ -145,8 +146,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     {
         shootInTapeZone = setting;
     }
-    public boolean isInTapeZone()
-    {
+
+    public boolean isInTapeZone() {
 //        return closeLaunchZone.contains(robotZone.getPosition());
         //note that there is another method called isFullyInside, make of that what you will
         return robotZone.isInside(closeLaunchZone);

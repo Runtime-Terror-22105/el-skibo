@@ -78,8 +78,6 @@ public class RobotHardware {
 
     // Intake
     public TerrorMotorNormal intake;
-    public TerrorServo intakePitchLeft;
-    public TerrorServo intakePitchRight;
 
     public TerrorServo spindexerPTO;
 
@@ -233,11 +231,7 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.intakePitchLeft = new TerrorServo(hwMap, "intakePitchLeft");
-        this.intakePitchRight = new TerrorServo(hwMap, "intakePitchRight");
         this.spindexerPTO = new TerrorServo(hwMap, "spindexerPTO");
-        this.publisher.subscribe(10, intakePitchRight);
-        this.publisher.subscribe(10, intakePitchLeft);
         this.publisher.subscribe(10, spindexerPTO);
 
         // Other things

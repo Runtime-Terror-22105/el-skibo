@@ -8,10 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @TeleOp(name = "Intake Test", group = "Testing")
 @Config
@@ -30,9 +28,7 @@ public class Intaketesting extends LinearOpMode {
 
         robot.init(hardware, telemetry);
 
-        SetIntakePitchCommand intakecommand= new SetIntakePitchCommand(robot.intake, IntakePitch.DOWN);
         waitForStart();
-        CommandScheduler.getInstance().schedule(intakecommand);
         CommandScheduler.getInstance().run();
         while (opModeIsActive()) {
             for (LynxModule hub : hardware.allHubs) {
