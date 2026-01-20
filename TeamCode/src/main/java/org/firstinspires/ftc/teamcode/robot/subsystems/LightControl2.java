@@ -19,6 +19,7 @@ public class LightControl2 extends SubsystemBase {
 
     private final RobotHardware hardware;
     private final Robot robot;
+    public static boolean debug = true;
 
     private boolean isManualLighting = false;
 
@@ -50,7 +51,9 @@ public class LightControl2 extends SubsystemBase {
             if (isManualLighting) {
                 return;
             }
-            robot.telemetry.addData("State for the lights", robot.getState());
+            if (debug) {
+                robot.telemetry.addData("State for the lights", robot.getState());
+            }
             switch (robot.robotState) {
                 case RESTING:
                     hardware.lights.setColor(TerrorLight.LightColors.PINK);

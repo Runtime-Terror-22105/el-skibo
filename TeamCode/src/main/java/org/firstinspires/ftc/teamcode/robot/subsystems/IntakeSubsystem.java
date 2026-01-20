@@ -21,6 +21,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public static double DEFAULT_SPEED = 0.9;
 
+    public static boolean debug = false;
+
     private double targetSpeed;
 
     //Down is intaking, up is resting
@@ -58,7 +60,9 @@ public class IntakeSubsystem extends SubsystemBase {
             robot.hardware.intakePitchLeft.setPosition(pitch.left.get());
             robot.hardware.intakePitchRight.setPosition(pitch.right.get());
 
-            Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());
+            if (debug) {
+                Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());
+            }
         }
     }
 }
