@@ -10,13 +10,11 @@ import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
@@ -25,14 +23,10 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long SPINDEXER_TIMEOUT = 600L;
 
     public PrepareShootCommand(Robot robot) {
-        this(robot, null, null, IntakePitch.UP);
+        this(robot, null, null);
     }
 
-    public PrepareShootCommand(Robot robot, Double rpm) {
-        this(robot, null, rpm, IntakePitch.UP);
-    }
-
-    public PrepareShootCommand(Robot robot, Double hoodAngle, Double rpm, IntakePitch pitch) {
+    public PrepareShootCommand(Robot robot, Double hoodAngle, Double rpm) {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.TRANSFER),
                 new LogCatCommand("PrepareShootCommand", "Beginning prepare shoot", Log.INFO),
@@ -47,7 +41,6 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                     }
                 }),
                 new ParallelCommandGroup(
-                    new SetIntakePitchCommand(robot.intake, pitch),
                     new SetIntakeSpeedCommand(robot.intake, 0),
                     new SetSpindexerWallDown(robot.spindexer, false),
                     new SetShooterRPMCommand(robot.shooter, rpm)
