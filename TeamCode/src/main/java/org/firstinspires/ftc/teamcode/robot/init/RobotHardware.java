@@ -61,7 +61,6 @@ public class RobotHardware {
     public static boolean SPINDEXER_ENCODER_REVERSED = false;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerIntakeWallServo;
-    public TerrorServo spindexerIntakeWallServo2;
     public TerrorServo spindexerTransferRampServo; // todo -- in position: 0, out position: 0.3
     public TerrorAnalogEncoder spindexerEncoder;
     public TerrorEncoder spindexerMotorEncoder;
@@ -203,8 +202,7 @@ public class RobotHardware {
         };
         this.spindexerIntakeWallServo = new TerrorServo(hwMap, "spindexerIntakeWall");
         this.spindexerTransferRampServo = new TerrorServo(hwMap, "spindexerTransferRamp");
-        this.publisher.subscribe(10, spindexerIntakeWallServo,
-                spindexerIntakeWallServo2, spindexerTransferRampServo);
+        this.publisher.subscribe(10, spindexerIntakeWallServo, spindexerTransferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
