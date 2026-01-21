@@ -149,6 +149,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             return balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N';
         });
 
+        Trigger botInTapeZone = new Trigger(()-> robot.isInTapeZone() && robot.getShootInTapeZone());
+
+//        botInTapeZone.whenActive(new InstantCommand()->);
+
         hangButton.whenPressed(new ConditionalCommand(
                 new GoToClimbStateCommand(robot, HangSubsystem.Position.RESTING),
                 new GoToClimbStateCommand(robot, HangSubsystem.Position.FULL_90),
