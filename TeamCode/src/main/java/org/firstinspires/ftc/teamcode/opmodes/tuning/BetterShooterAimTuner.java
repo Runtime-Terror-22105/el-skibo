@@ -47,7 +47,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
 
     public static boolean debug = true;
     public static boolean telemetryBool = true;
-
+    public static boolean blueSide = true;
     public static double velocity = 450;
     public static double hoodAngle = 0.7;
     public static double turretPos = 0;
@@ -66,8 +66,14 @@ public class BetterShooterAimTuner extends LinearOpMode {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         robot.init(hardware, telemetry);
         robot.shooter.isAutoAimOn = false;
-        robot.goalPos = FieldConstants.BLUE_GOAL_POS;
-        robot.color = Team.BLUE;
+        if (blueSide) {
+            robot.goalPos = FieldConstants.BLUE_GOAL_POS;
+            robot.color = Team.BLUE;
+        }
+        else{
+            robot.goalPos = FieldConstants.RED_GOAL_POS;
+            robot.color = Team.RED;
+        }
         robot.follower.setStartingPose(robot.color.getStartPosNear().toPedro());
 
 
@@ -128,16 +134,22 @@ public class BetterShooterAimTuner extends LinearOpMode {
             if (!testingAutoShoot) {
                 if (!tuneGoalPos) {
                     robot.shooter.manualAim(velocity, hoodAngle, turretPos);
-                } else {
-                    Pose2d goalPos = FieldConstants.BLUE_GOAL_POS;
-                    if (goalPosOffset < 0){
-                        goalPos.x += goalPosOffset;
+                }
+                else{
+                    Pose2d goalPos = robot.goalPos.copy();
+                    if(goalPosOffset > 0) {
+                        if (robot.color == Team.BLUE) {
+                            goalPos.x += Math.abs(goalPosOffset);
+                        } else {
+                            goalPos.x -= Math.abs(goalPosOffset);
+                        }
                     }
-                    else if (goalPosOffset >0){
+                    else if (goalPosOffset < 0){
                         goalPos.y += goalPosOffset;
                     }
                     robot.shooter.manualAimGoalPos(velocity, hoodAngle, goalPos);
                 }
+
             } else {
                 robot.shooter.isAutoAimOn = true;
             }
@@ -148,6 +160,11 @@ public class BetterShooterAimTuner extends LinearOpMode {
 
             Vector goalToRobot;
             Pose robotPose = robot.follower.getPose();
+
+            if (Team.RED.equals(robot.color)) {
+                robotPose = robotPose.mirror();
+            }
+
             goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
             double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
             if (angle > ((1D/2D)*Math.PI)){

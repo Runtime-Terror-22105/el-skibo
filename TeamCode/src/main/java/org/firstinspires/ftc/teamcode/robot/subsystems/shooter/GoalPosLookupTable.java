@@ -42,9 +42,11 @@ public class GoalPosLookupTable {
             //POSITIVE VALUE MEANS CHANGE IN X
 
             //Currently these are just guesses
-            new GoalLookupValue(0, -6),
-            new GoalLookupValue((1D/4D * Math.PI), 0),
-            new GoalLookupValue((1D/2D * Math.PI), 6)
+            new GoalLookupValue(0.233, -12),
+            new GoalLookupValue(0.806, -7),
+            new GoalLookupValue(0.91, 12),
+            new GoalLookupValue(1.1, -12),
+
 //            new GoalLookupValue(-Math.PI/2, -12),
 //            new GoalLookupValue(-0.94, -12),
 //            new GoalLookupValue(-0.9, 0),
