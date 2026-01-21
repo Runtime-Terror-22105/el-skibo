@@ -23,19 +23,16 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double MANUAL_SPINDEXER_DEGREE_CHANGE = 0.5;
 
-    public static double INTAKE_WALL_1_DOWN = 1;
-    public static double INTAKE_WALL_1_UP = 0;
-    public static double INTAKE_WALL_2_DOWN = 0;
-    public static double INTAKE_WALL_2_UP = 1;
+    public static double INTAKE_WALL_DOWN = 1;
+    public static double INTAKE_WALL_UP = 0;
 
-    public static double SHOOTER_RAMP_ACTIVE = 0.35;
+    public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
     public static double MAX_POWER_14V = 0.55;
     public static double MAX_POWER_12V = 0.55;
 
-    public double intakeWallPosition1 = INTAKE_WALL_1_UP;
-    public double intakeWallPosition2 = INTAKE_WALL_2_UP;
+    public double intakeWallPosition = INTAKE_WALL_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (225D/32D);
@@ -164,8 +161,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public boolean isWallDown() {
-        return this.intakeWallPosition1 == INTAKE_WALL_1_DOWN
-                && this.intakeWallPosition2 == INTAKE_WALL_2_DOWN;
+        return this.intakeWallPosition == INTAKE_WALL_DOWN;
     }
 
     public void setWallDown() {
@@ -174,8 +170,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setWallUp() {
         this.goingToMoveWallsDownButHaventMovedThemDownYet = false;
-        this.intakeWallPosition1 = INTAKE_WALL_1_UP;
-        this.intakeWallPosition2 = INTAKE_WALL_2_UP;
+        this.intakeWallPosition = INTAKE_WALL_UP;
     }
 
     public void enableRamp() {
@@ -383,13 +378,11 @@ public class SpindexerSubsystem extends SubsystemBase {
                     desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
                     pidEnabled && atTargetYaw()
             ) {
-                intakeWallPosition1 = INTAKE_WALL_1_DOWN;
-                intakeWallPosition2 = INTAKE_WALL_2_DOWN;
+                intakeWallPosition = INTAKE_WALL_DOWN;
                 goingToMoveWallsDownButHaventMovedThemDownYet = false;
             }
 
-            this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
-            this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
+            this.hardware.spindexerIntakeWallServo.setPosition(intakeWallPosition);
             this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
 
