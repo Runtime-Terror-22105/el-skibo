@@ -34,8 +34,8 @@ public class SpindexerEncoderLUT {
     public static SpindexLookupValue[] DATA_POINTS = new SpindexLookupValue[]{
 
             new SpindexLookupValue(0, 11),
-            new SpindexLookupValue(120, 118),
-            new SpindexLookupValue(240, 226),
+            new SpindexLookupValue(120, 115),
+            new SpindexLookupValue(240, 232),
 
             new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), 30),
             new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 149),
