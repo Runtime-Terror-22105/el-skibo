@@ -12,6 +12,8 @@ public class ShooterLookupTable {
     private static InterpLUT FAR_VELOCITY_LUT; // in/s
     private static InterpLUT HOOD_LUT;
 
+    public static boolean debug = false;
+
     public static class LookupValue {
         public double distance;
         public double speed;
@@ -35,22 +37,34 @@ public class ShooterLookupTable {
 
     public static LookupValue[] VEL_DATA_POINTS = new LookupValue[]{
             // endpoint (prevent crashing)
-            new LookupValue(0, 600),
+            new LookupValue(0, 590),
 
             //NEW NEW VALUES (SERENA JAN 14)
-//            new LookupValue(54.9, 590),
-//            new LookupValue(62.4, 600),
-//            new LookupValue(70.1, 615),
-//            new LookupValue(76.7, 620),
-//            new LookupValue(880, 640),
+            new LookupValue(54.9, 590),
+            new LookupValue(62.4, 600),
+            new LookupValue(70.1, 605),
+            new LookupValue(77.2, 605),
+
+            new LookupValue(87.9, 625),
+
+            new LookupValue(95.5, 655),
+
+            new LookupValue(104.5, 690),
+            new LookupValue(108.2, 720),
+
+            //far zone
+            new LookupValue(144.1, 860),
+            new LookupValue(154.1, 900),
+
+
 
 
 
             // NEW VALUES
-            new LookupValue(39.16, 605),
-            new LookupValue(50.07, 620),
-            new LookupValue(64.2, 665),
-            new LookupValue(80.5, 715),
+//            new LookupValue(39.16, 605),
+//            new LookupValue(50.07, 620),
+//            new LookupValue(64.2, 665),
+//            new LookupValue(80.5, 715),
 
 //            new LookupValue(120.6, 810),
 //            new LookupValue(129.5, 850),
@@ -64,7 +78,7 @@ public class ShooterLookupTable {
 //            new LookupValue(87.56152811761086, 720),
             
             // other endpoint (prevent crashing)
-            new LookupValue(250, 850)
+            new LookupValue(250, 700)
 
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
@@ -72,18 +86,20 @@ public class ShooterLookupTable {
 
 
             //NEW NEW VALUES (SERENA JAN 14)
-//            new HoodLookupValue(54.9, 0.7),
-//            new HoodLookupValue(62.4, 0.75),
-//            new HoodLookupValue(70.1, 0.8),
-//            new HoodLookupValue(76.7, 0.9),
-//            new HoodLookupValue(88.0, 0.9),
+            new HoodLookupValue(54.9, 0.7),
+            new HoodLookupValue(62.4, 0.75),
+            new HoodLookupValue(70.1, 0.8),
+            new HoodLookupValue(77.2, 0.83),
+            new HoodLookupValue(87.9, 0.85),
+            new HoodLookupValue(95.5, 0.9),
+            new HoodLookupValue(104.5, 0.95),
 
 
             // new vals
-            new HoodLookupValue(39.16, 0.7),
-            new HoodLookupValue(50.07, 0.708),
-            new HoodLookupValue(64.2, 0.74),
-            new HoodLookupValue(80.5, 0.76),
+//            new HoodLookupValue(39.16, 0.7),
+//            new HoodLookupValue(50.07, 0.708),
+//            new HoodLookupValue(64.2, 0.74),
+//            new HoodLookupValue(80.5, 0.76),
 //            new HoodLookupValue(120.6, 0.9),
 //            new HoodLookupValue(129.5, 0.9),
 
@@ -106,7 +122,7 @@ public class ShooterLookupTable {
     }
 
     public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
-        Log.i("shooter", "distance to goal" +distanceToGoalIn);
+        if (debug) Log.i("ShooterLookupTable", "distance to goal" +distanceToGoalIn);
         // todo: temporarily putting this here so we can dashboard
         FAR_VELOCITY_LUT = new InterpLUT();
         HOOD_LUT = new InterpLUT();

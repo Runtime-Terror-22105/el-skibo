@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakePitchCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
@@ -36,7 +35,6 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.prompts.DetailedOptionPrompt;
-import org.firstinspires.ftc.teamcode.robot.subsystems.intake.IntakePitch;
 
 import kotlin.NotImplementedError;
 
@@ -209,25 +207,19 @@ public class CustomizableAuto extends LinearOpMode {
             ShootingPosition shootingPos = shootingPositions[i];
 
             paths.addCommands(
-                    new ParallelCommandGroup(
-                            new FollowPathCommand(robot.follower, robot.follower
-                                    .pathBuilder()
-                                    .addPath(
-                                            new BezierLine(
-                                                    lastPose,
-                                                    getPrepareIntakePose(intakePos)
-                                            )
+                    new FollowPathCommand(robot.follower, robot.follower
+                            .pathBuilder()
+                            .addPath(
+                                    new BezierLine(
+                                            lastPose,
+                                            getPrepareIntakePose(intakePos)
                                     )
-                                    .setLinearHeadingInterpolation(
-                                            lastPose.getHeading(),
-                                            getPrepareIntakePose(intakePos).getHeading()
-                                    )
-                                    .build()),
-                            new SequentialCommandGroup(
-                                    new WaitCommand(PRE_INTAKE_DELAY),
-                                    new SetIntakePitchCommand(robot.intake, IntakePitch.DOWN)
                             )
-                    ),
+                            .setLinearHeadingInterpolation(
+                                    lastPose.getHeading(),
+                                    getPrepareIntakePose(intakePos).getHeading()
+                            )
+                            .build()),
                     new ParallelCommandGroup(
                             new FollowPathCommand(robot.follower, robot.follower
                                     .pathBuilder()

@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class SpindexerSubsystem extends SubsystemBase {
@@ -20,21 +21,21 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
+    public static boolean debug = false;
+    public static boolean telemetry = true;
+
     public static double MANUAL_SPINDEXER_DEGREE_CHANGE = 0.5;
 
-    public static double INTAKE_WALL_1_DOWN = 1;
-    public static double INTAKE_WALL_1_UP = 0;
-    public static double INTAKE_WALL_2_DOWN = 0;
-    public static double INTAKE_WALL_2_UP = 1;
+    public static double INTAKE_WALL_DOWN = 0.67;
+    public static double INTAKE_WALL_UP = 0;
 
-    public static double SHOOTER_RAMP_ACTIVE = 0.35;
+    public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
     public static double MAX_POWER_14V = 0.55;
     public static double MAX_POWER_12V = 0.55;
 
-    public double intakeWallPosition1 = INTAKE_WALL_1_UP;
-    public double intakeWallPosition2 = INTAKE_WALL_2_UP;
+    public double intakeWallPosition = INTAKE_WALL_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
 
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (225D/32D);
@@ -57,6 +58,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     private double homedSpindexerOffset;
 
     private boolean goingToMoveWallsDownButHaventMovedThemDownYet;
+    public boolean overrideMaxPower;
 
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
@@ -150,7 +152,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void goToAngle360(double angle) {
         double error = Angle.angleWrap(angle - this.desiredAngle);
         this.desiredAngle += error;
-        Log.d("spindexer", "desired angle gotTo360" + this.desiredAngle);
+        if (debug) Log.d("SpindexerSubsystem", "desired angle gotTo360" + this.desiredAngle);
     }
 
     /**
@@ -162,8 +164,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public boolean isWallDown() {
-        return this.intakeWallPosition1 == INTAKE_WALL_1_DOWN
-                && this.intakeWallPosition2 == INTAKE_WALL_2_DOWN;
+        return this.intakeWallPosition == INTAKE_WALL_DOWN;
     }
 
     public void setWallDown() {
@@ -172,8 +173,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setWallUp() {
         this.goingToMoveWallsDownButHaventMovedThemDownYet = false;
-        this.intakeWallPosition1 = INTAKE_WALL_1_UP;
-        this.intakeWallPosition2 = INTAKE_WALL_2_UP;
+        this.intakeWallPosition = INTAKE_WALL_UP;
     }
 
     public void enableRamp() {
@@ -213,14 +213,14 @@ public class SpindexerSubsystem extends SubsystemBase {
                 currentFillingString.indexOf('P') == -1)
         {
             this.rotate(READY_POSITION);
-            Log.d("spindexer", "not enough balls to run logic");
+            Log.d("SpindexerSubsystem", "not enough balls to run logic");
             return true;
         }
 
         if(currentFillingString.length() - currentFillingString.replace("G","").length() != 1)
         {
             this.rotate(READY_POSITION);
-            Log.d("spindexer", "too many greens to run logic");
+            Log.d("SpindexerSubsystem", "too many greens to run logic");
             return true;
         }
 
@@ -273,10 +273,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void sortBalls() {
-        Log.d("spindexer", "des ang before sort "+ this.desiredAngle);
-        Log.d("spindexer", "des ang before sort deg "+ this.desiredAngle * (180D/Math.PI));
+        Log.d("SpindexerSubsystem", "des ang before sort "+ this.desiredAngle);
+        Log.d("SpindexerSubsystem", "des ang before sort deg "+ this.desiredAngle * (180D/Math.PI));
         this.goToAngle120(0);
-        Log.d("spindexer", "des ang aft 0 "+ this.desiredAngle);
+        Log.d("SpindexerSubsystem", "des ang aft 0 "+ this.desiredAngle);
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
@@ -294,32 +294,32 @@ public class SpindexerSubsystem extends SubsystemBase {
 
             }
         }
-        Log.d("spindexer", "purple count" + purpleCount);
-        Log.d("spindexer", "green count" + greenCount);
-        Log.d("spindexer", "full count" + fullCount);
-        Log.d("spindexer", "greenPos" + greenPos);
+        Log.d("SpindexerSubsystem", "purple count" + purpleCount);
+        Log.d("SpindexerSubsystem", "green count" + greenCount);
+        Log.d("SpindexerSubsystem", "full count" + fullCount);
+        Log.d("SpindexerSubsystem", "greenPos" + greenPos);
 
         if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
                 double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
-                Log.d("spindexer", "glyph gpp normalized error" + normalizedError);
+                Log.d("SpindexerSubsystem", "glyph gpp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
-                Log.d("spindexer", "glyph pgp normalized error" + normalizedError);
+                Log.d("SpindexerSubsystem", "glyph pgp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
-                Log.d("spindexer", "glyph ppg normalized error" + normalizedError);
+                Log.d("SpindexerSubsystem", "glyph ppg normalized error" + normalizedError);
                 this.rotate(normalizedError);
             }
         } else {
-            Log.d("spindexer", "not enough balls to run logic ready pos:" + READY_POSITION);
+            Log.d("SpindexerSubsystem", "not enough balls to run logic ready pos:" + READY_POSITION);
             this.rotate(READY_POSITION);
         }
-        Log.d("spindexer", "des ang after sort"+this.desiredAngle);
+        Log.d("SpindexerSubsystem", "des ang after sort"+this.desiredAngle);
 
     }
 
@@ -341,13 +341,14 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void setPidEnabled(boolean enabled) {
         spindexerPower = 0.0;
         pidEnabled = enabled;
+        overrideMaxPower = false;
     }
 
     public void updateSpindexer() {
         // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
         // we calculate error ourselves and feed into PID.
         SpindexerEncoderLUT.SpindexLookupValue desAngle = this.angleLUT.get(desiredAngle);
-        Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
+        if (telemetry) Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
 
         this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
         if (pidEnabled) {
@@ -360,40 +361,39 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
+            if (robot.hang.isPtoEngaged()) {
+                return;
+            }
+
+            this.updateSpindexer();
+            double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
+            if (debug) Log.d("SpindexerSubsystem", "max power: " + maxPower);
+            if (debug) Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
+            double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
+            if (this.overrideMaxPower)  clampedPower = spindexerPower;
+            this.hardware.spindexerRotate.setPower(clampedPower);
+    //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
+
+            // basically this just makes it so that the walls go down at the right time after the
+            // pid reaches the target so we never have the walls go down at the wrong spot and jam the spindexer
+            if (goingToMoveWallsDownButHaventMovedThemDownYet && // if we want to set walls down
+                    desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
+                    pidEnabled && atTargetYaw()
+            ) {
+                intakeWallPosition = INTAKE_WALL_DOWN;
+                goingToMoveWallsDownButHaventMovedThemDownYet = false;
+            }
+
+            this.hardware.spindexerIntakeWallServo.setPosition(intakeWallPosition);
+            this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
 
-        if (robot.hang.isPtoEngaged()) {
-            return;
-        }
-
-        this.updateSpindexer();
-        double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
-        Log.i("SpindexerSubsystem", "max power: " + maxPower);
-        Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
-        double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
-        this.hardware.spindexerRotate.setPower(clampedPower);
-//        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
-
-        // basically this just makes it so that the walls go down at the right time after the
-        // pid reaches the target so we never have the walls go down at the wrong spot and jam the spindexer
-        if (goingToMoveWallsDownButHaventMovedThemDownYet && // if we want to set walls down
-                desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
-                pidEnabled && atTargetYaw()
-        ) {
-            intakeWallPosition1 = INTAKE_WALL_1_DOWN;
-            intakeWallPosition2 = INTAKE_WALL_2_DOWN;
-            goingToMoveWallsDownButHaventMovedThemDownYet = false;
-        }
-
-        this.hardware.spindexerIntakeWallServo1.setPosition(intakeWallPosition1);
-        this.hardware.spindexerIntakeWallServo2.setPosition(intakeWallPosition2);
-        this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
-
-
-        Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
+            if (telemetry) Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
 //        Robot.debugTelemetry.addData("Intake Current", this.hardware.intake.getCurrent(CurrentUnit.AMPS));
 //        Robot.debugTelemetry.addData("Spindexer Current", this.hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS));
-        Robot.debugTelemetry.addData("Spindexer Position (deg)", Math.toDegrees(Angle.angleWrap(getPosition())));
-        Robot.debugTelemetry.addData("Spindexer Target (deg)", Math.toDegrees(Angle.angleWrap(getTargetYaw())));
+            if (telemetry) Robot.debugTelemetry.addData("Spindexer Position (deg)", Math.toDegrees(Angle.angleWrap(getPosition())));
+            if (telemetry) Robot.debugTelemetry.addData("Spindexer Target (deg)", Math.toDegrees(Angle.angleWrap(getTargetYaw())));
+        }
     }
 }

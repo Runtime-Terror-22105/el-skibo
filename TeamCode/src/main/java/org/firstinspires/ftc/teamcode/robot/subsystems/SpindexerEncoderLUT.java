@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTabl
 public class SpindexerEncoderLUT {
     private final Robot robot;
 
+    public static boolean debug;
+
 
     public static class SpindexLookupValue {
         public int targetAngleDeg;
@@ -31,13 +33,13 @@ public class SpindexerEncoderLUT {
 
     public static SpindexLookupValue[] DATA_POINTS = new SpindexLookupValue[]{
 
-            new SpindexLookupValue(0, 15),
-            new SpindexLookupValue(120, 118),
-            new SpindexLookupValue(240, 238),
+            new SpindexLookupValue(0, 11),
+            new SpindexLookupValue(120, 115),
+            new SpindexLookupValue(240, 232),
 
             new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), 30),
             new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 149),
-            new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 269),
+            new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 265),
 
     };
     public SpindexerEncoderLUT(Robot robot){
@@ -51,11 +53,11 @@ public class SpindexerEncoderLUT {
         angle = MathUtils.normalizeRadians(angle, true);
         for (SpindexLookupValue data : DATA_POINTS){
             if (MathFunctions.getSmallestAngleDifference(angle, data.targetAngleRad) < Math.toRadians(1.0)) {
-                Log.i("SpindexLut", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
+                if (debug) Log.d("SpindexerEncoderLUT", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
                 return data;
             }
         }
-        Log.i("SpindexLut", "No point found for passed in rad angle: " + angle);
+        if (debug) Log.e("SpindexerEncoderLUT", "No point found for passed in rad angle: " + angle);
         return new SpindexLookupValue((int) (angle * (180/Math.PI)), (int) (angle * (180/Math.PI)));
 
     }
