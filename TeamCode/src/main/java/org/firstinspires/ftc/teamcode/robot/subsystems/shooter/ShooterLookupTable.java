@@ -40,21 +40,22 @@ public class ShooterLookupTable {
             new LookupValue(0, 590),
 
             //NEW NEW VALUES (SERENA JAN 14)
-            new LookupValue(54.9, 590),
-            new LookupValue(62.4, 600),
-            new LookupValue(70.1, 605),
-            new LookupValue(77.2, 605),
+            new LookupValue(38.5, 600),
+            new LookupValue(42.4, 610),
+            new LookupValue(48.7, 615),
+            new LookupValue(56.5, 620),
+            new LookupValue(63.5, 620),
+            new LookupValue(70.7, 625),
+            new LookupValue(77.8, 630),
+            new LookupValue(84.1, 660),
+            new LookupValue(94.1, 720),
 
-            new LookupValue(87.9, 625),
+            //far
+            new LookupValue(124, 860),
+            new LookupValue(134, 900), // this point actuallly untestested casu eim going home
 
-            new LookupValue(95.5, 655),
 
-            new LookupValue(104.5, 690),
-            new LookupValue(108.2, 720),
 
-            //far zone
-            new LookupValue(144.1, 860),
-            new LookupValue(154.1, 900),
 
 
 
@@ -86,13 +87,14 @@ public class ShooterLookupTable {
 
 
             //NEW NEW VALUES (SERENA JAN 14)
-            new HoodLookupValue(54.9, 0.7),
-            new HoodLookupValue(62.4, 0.75),
-            new HoodLookupValue(70.1, 0.8),
-            new HoodLookupValue(77.2, 0.83),
-            new HoodLookupValue(87.9, 0.85),
-            new HoodLookupValue(95.5, 0.9),
-            new HoodLookupValue(104.5, 0.95),
+            new HoodLookupValue(38.5, 0.7),
+            new HoodLookupValue(48.7, 0.72),
+            new HoodLookupValue(56.5, 0.75),
+            new HoodLookupValue(63.4, 0.77),
+            new HoodLookupValue(70.7, 0.8),
+            new HoodLookupValue(77.8, 0.82),
+            new HoodLookupValue(84.1, 0.85),
+
 
 
             // new vals
