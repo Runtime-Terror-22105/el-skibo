@@ -21,6 +21,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     private final RobotHardware hardware;
     private final Robot robot;
 
+    public static boolean debug = false;
+    public static boolean telemetry = true;
+
     public static double MANUAL_SPINDEXER_DEGREE_CHANGE = 0.5;
 
     public static double INTAKE_WALL_DOWN = 1;
@@ -149,7 +152,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void goToAngle360(double angle) {
         double error = Angle.angleWrap(angle - this.desiredAngle);
         this.desiredAngle += error;
-        Log.d("spindexer", "desired angle gotTo360" + this.desiredAngle);
+        if (debug) Log.d("SpindexerSubsystem", "desired angle gotTo360" + this.desiredAngle);
     }
 
     /**
@@ -210,14 +213,14 @@ public class SpindexerSubsystem extends SubsystemBase {
                 currentFillingString.indexOf('P') == -1)
         {
             this.rotate(READY_POSITION);
-            Log.d("spindexer", "not enough balls to run logic");
+            Log.d("SpindexerSubsystem", "not enough balls to run logic");
             return true;
         }
 
         if(currentFillingString.length() - currentFillingString.replace("G","").length() != 1)
         {
             this.rotate(READY_POSITION);
-            Log.d("spindexer", "too many greens to run logic");
+            Log.d("SpindexerSubsystem", "too many greens to run logic");
             return true;
         }
 
@@ -270,10 +273,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public void sortBalls() {
-        Log.d("spindexer", "des ang before sort "+ this.desiredAngle);
-        Log.d("spindexer", "des ang before sort deg "+ this.desiredAngle * (180D/Math.PI));
+        Log.d("SpindexerSubsystem", "des ang before sort "+ this.desiredAngle);
+        Log.d("SpindexerSubsystem", "des ang before sort deg "+ this.desiredAngle * (180D/Math.PI));
         this.goToAngle120(0);
-        Log.d("spindexer", "des ang aft 0 "+ this.desiredAngle);
+        Log.d("SpindexerSubsystem", "des ang aft 0 "+ this.desiredAngle);
         int fullCount = 0;
         double greenPos = 0.0;
         int greenCount = 0;
@@ -291,32 +294,32 @@ public class SpindexerSubsystem extends SubsystemBase {
 
             }
         }
-        Log.d("spindexer", "purple count" + purpleCount);
-        Log.d("spindexer", "green count" + greenCount);
-        Log.d("spindexer", "full count" + fullCount);
-        Log.d("spindexer", "greenPos" + greenPos);
+        Log.d("SpindexerSubsystem", "purple count" + purpleCount);
+        Log.d("SpindexerSubsystem", "green count" + greenCount);
+        Log.d("SpindexerSubsystem", "full count" + fullCount);
+        Log.d("SpindexerSubsystem", "greenPos" + greenPos);
 
         if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
                 double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
-                Log.d("spindexer", "glyph gpp normalized error" + normalizedError);
+                Log.d("SpindexerSubsystem", "glyph gpp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
-                Log.d("spindexer", "glyph pgp normalized error" + normalizedError);
+                Log.d("SpindexerSubsystem", "glyph pgp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else {
                 double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
-                Log.d("spindexer", "glyph ppg normalized error" + normalizedError);
+                Log.d("SpindexerSubsystem", "glyph ppg normalized error" + normalizedError);
                 this.rotate(normalizedError);
             }
         } else {
-            Log.d("spindexer", "not enough balls to run logic ready pos:" + READY_POSITION);
+            Log.d("SpindexerSubsystem", "not enough balls to run logic ready pos:" + READY_POSITION);
             this.rotate(READY_POSITION);
         }
-        Log.d("spindexer", "des ang after sort"+this.desiredAngle);
+        Log.d("SpindexerSubsystem", "des ang after sort"+this.desiredAngle);
 
     }
 
@@ -345,7 +348,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
         // we calculate error ourselves and feed into PID.
         SpindexerEncoderLUT.SpindexLookupValue desAngle = this.angleLUT.get(desiredAngle);
-        Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
+        if (telemetry) Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
 
         this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
         if (pidEnabled) {
@@ -365,8 +368,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
             this.updateSpindexer();
             double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
-            Log.i("SpindexerSubsystem", "max power: " + maxPower);
-            Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
+            if (debug) Log.d("SpindexerSubsystem", "max power: " + maxPower);
+            if (debug) Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
             double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
             if (this.overrideMaxPower)  clampedPower = spindexerPower;
             this.hardware.spindexerRotate.setPower(clampedPower);
@@ -386,11 +389,11 @@ public class SpindexerSubsystem extends SubsystemBase {
             this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
 
 
-            Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
+            if (telemetry) Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
 //        Robot.debugTelemetry.addData("Intake Current", this.hardware.intake.getCurrent(CurrentUnit.AMPS));
 //        Robot.debugTelemetry.addData("Spindexer Current", this.hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS));
-            Robot.debugTelemetry.addData("Spindexer Position (deg)", Math.toDegrees(Angle.angleWrap(getPosition())));
-            Robot.debugTelemetry.addData("Spindexer Target (deg)", Math.toDegrees(Angle.angleWrap(getTargetYaw())));
+            if (telemetry) Robot.debugTelemetry.addData("Spindexer Position (deg)", Math.toDegrees(Angle.angleWrap(getPosition())));
+            if (telemetry) Robot.debugTelemetry.addData("Spindexer Target (deg)", Math.toDegrees(Angle.angleWrap(getTargetYaw())));
         }
     }
 }

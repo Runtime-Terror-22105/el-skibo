@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTabl
 public class SpindexerEncoderLUT {
     private final Robot robot;
 
+    public static boolean debug;
+
 
     public static class SpindexLookupValue {
         public int targetAngleDeg;
@@ -51,11 +53,11 @@ public class SpindexerEncoderLUT {
         angle = MathUtils.normalizeRadians(angle, true);
         for (SpindexLookupValue data : DATA_POINTS){
             if (MathFunctions.getSmallestAngleDifference(angle, data.targetAngleRad) < Math.toRadians(1.0)) {
-                Log.i("SpindexLut", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
+                if (debug) Log.d("SpindexerEncoderLUT", "Point found: ("+data.targetAngleDeg+", " + data.correctedAngleDeg +")");
                 return data;
             }
         }
-        Log.i("SpindexLut", "No point found for passed in rad angle: " + angle);
+        if (debug) Log.e("SpindexerEncoderLUT", "No point found for passed in rad angle: " + angle);
         return new SpindexLookupValue((int) (angle * (180/Math.PI)), (int) (angle * (180/Math.PI)));
 
     }

@@ -12,6 +12,8 @@ public class ShooterLookupTable {
     private static InterpLUT FAR_VELOCITY_LUT; // in/s
     private static InterpLUT HOOD_LUT;
 
+    public static boolean debug = false;
+
     public static class LookupValue {
         public double distance;
         public double speed;
@@ -120,7 +122,7 @@ public class ShooterLookupTable {
     }
 
     public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
-        Log.i("shooter", "distance to goal" +distanceToGoalIn);
+        if (debug) Log.i("ShooterLookupTable", "distance to goal" +distanceToGoalIn);
         // todo: temporarily putting this here so we can dashboard
         FAR_VELOCITY_LUT = new InterpLUT();
         HOOD_LUT = new InterpLUT();
