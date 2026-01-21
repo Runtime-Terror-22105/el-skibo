@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class IntakeSubsystem extends SubsystemBase {
     public static double DEFAULT_SPEED = 0.9;
 
+    public static boolean debug = false;
+
     private final Robot robot;
     private double targetSpeed;
 
@@ -34,7 +36,9 @@ public class IntakeSubsystem extends SubsystemBase {
         try (Profiler.Scope p = Profiler.enter("IntakeSubsystem")) {
             robot.hardware.setEnableColorSensor(RobotState.INTAKING.equals(robot.robotState));
             robot.hardware.intake.setPower(this.targetSpeed);
-            Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());
+            if (debug) {
+                Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());
+            }
         }
     }
 }

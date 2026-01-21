@@ -36,6 +36,8 @@ public class HangSubsystem extends SubsystemBase {
     public static double PTO_ENGAGED_POSITION = 0.58;
     public static double PTO_DISENGAGED_POSITION = 0.35;
 
+    public static boolean debug = true;
+
     private final RobotHardware hardware;
 
     private boolean ptoEngaged = false;
@@ -65,9 +67,10 @@ public class HangSubsystem extends SubsystemBase {
             if (!ptoEngaged) return;
 
             double pitch = hardware.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
-            Robot.debugTelemetry.addData("Robot Pitch", pitch);
-            Log.i("HangSubsystem", "Robot Pitch: " + pitch + " deg");
-
+            if (debug) {
+                Robot.debugTelemetry.addData("Robot Pitch", pitch);
+                Log.i("HangSubsystem", "Robot Pitch: " + pitch + " deg");
+            }
             double power = position.power.get();
             double angle = position.angle.get();
             if (power > 0) {

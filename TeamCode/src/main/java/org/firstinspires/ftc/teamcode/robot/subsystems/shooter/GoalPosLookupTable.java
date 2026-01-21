@@ -21,6 +21,8 @@ public class GoalPosLookupTable {
     public static double Y_OFFSET = 4.0;
     public static double X_OFFSET = 6.0;
 
+    public static boolean debug;
+
     private final Robot robot;
     public Pose2d ogGoalPoint;
 
@@ -84,8 +86,8 @@ public class GoalPosLookupTable {
             angle = (1D/4D)*Math.PI;
         }
 
-        Log.d("goalPos","robot vector" + goalToRobot);
-        Log.d("goalPos","angle" + angle);
+        if (debug) Log.d("GoalPosLookupTable","robot vector" + goalToRobot);
+        if (debug) Log.d("GoalPosLookupTable","angle" + angle);
 
         return angle;
     }
@@ -105,8 +107,8 @@ public class GoalPosLookupTable {
             }
         }
 
-        Log.d("goalPos", "old goal pos" + robot.goalPos);
-        Log.d("goalPos", "new goal pos " + newGoalPos);
+        if (debug) Log.d("GoalPosLookupTable", "old goal pos" + robot.goalPos);
+        if (debug) Log.d("GoalPosLookupTable", "new goal pos " + newGoalPos);
         return newGoalPos;
 
     }

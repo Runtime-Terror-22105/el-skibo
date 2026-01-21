@@ -23,7 +23,6 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.apache.commons.math3.util.MathUtils;
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Angle;
@@ -45,6 +44,9 @@ import java.io.IOException;
 public class BetterShooterAimTuner extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
+
+    public static boolean debug = true;
+    public static boolean telemetryBool = true;
 
     public static double velocity = 450;
     public static double hoodAngle = 0.7;
@@ -151,8 +153,8 @@ public class BetterShooterAimTuner extends LinearOpMode {
             if (angle > ((1D/2D)*Math.PI)){
                 angle = (1D/4D)*Math.PI;
             }
-            robot.telemetry.addData("angle (rad): ", angle);
-            robot.telemetry.addData("angle (deg): ", angle *180D/Math.PI);
+            if (telemetryBool) robot.telemetry.addData("angle (rad): ", angle);
+            if (telemetryBool) robot.telemetry.addData("angle (deg): ", angle *180D/Math.PI);
 
 
             if (robot.robotState == INTAKING && oldstate != INTAKING) {
@@ -160,11 +162,11 @@ public class BetterShooterAimTuner extends LinearOpMode {
                         Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2));
                 double vel = robot.shooter.getGoalVelocity()/6.469;
                 String str = "distance: " + dist + " velocity: " + vel + " hood angle: " + hoodAngle;
-                Log.d("data point", str);
+                if (debug) Log.i("BetterShooterAimTuner", str);
 
 
 
-                Log.d("data point", "angle" + angle + "offset "+ goalPosOffset);
+                if (debug) Log.i("BetterShooterAimTuner", "angle" + angle + "offset "+ goalPosOffset);
 
                 // save the data point to a file
                 File outputFile = new File(OUTPUT_FILE);
@@ -173,7 +175,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 }
                 try (FileOutputStream out = new FileOutputStream(outputFile)) {
                     out.write(str.getBytes());
-                    Log.d("data point", "Data point saved to " + outputFile.getAbsolutePath());
+                    if (debug) Log.i("BetterShooterAimTuner", "Data point saved to " + outputFile.getAbsolutePath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -188,21 +190,23 @@ public class BetterShooterAimTuner extends LinearOpMode {
 
             FtcDashDrawing.drawDot(robot.shooter.goalPosLookupTable.get().toPedro(), "#000000");
             FtcDashDrawing.drawDebug(robot.follower);
-            robot.telemetry.addData("Robot Position", robot.follower.getPose());
-            robot.telemetry.addData("Goal Position", robot.shooter.goalPosLookupTable.get());
-            robot.telemetry.addData("Distance", Math.sqrt(Math.pow(robot.follower.getPose().getX()-robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY()-robot.shooter.goalPosLookupTable.get().y, 2)));
+            if (telemetryBool) {
+                robot.telemetry.addData("Robot Position", robot.follower.getPose());
+                robot.telemetry.addData("Goal Position", robot.shooter.goalPosLookupTable.get());
+                robot.telemetry.addData("Distance", Math.sqrt(Math.pow(robot.follower.getPose().getX() - robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY() - robot.shooter.goalPosLookupTable.get().y, 2)));
 
-            robot.telemetry.addData("Goal Yaw", robot.shooter.goalTurretAngle);
-            robot.telemetry.addData("Goal Turret Pos w/out offset", robot.shooter.goalTurretPos);
-            robot.telemetry.addData("Goal Turret Pos w/ offset", robot.shooter.goalTurretPos+ robot.shooter.turretOffset);
+                robot.telemetry.addData("Goal Yaw", robot.shooter.goalTurretAngle);
+                robot.telemetry.addData("Goal Turret Pos w/out offset", robot.shooter.goalTurretPos);
+                robot.telemetry.addData("Goal Turret Pos w/ offset", robot.shooter.goalTurretPos + robot.shooter.turretOffset);
 
-            robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
-            robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
-            robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocityRpm());
-            robot.telemetry.addData("Current velocity in/sec", robot.shooter.getVelocityRpm()/6.469);
+                robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
+                robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
+                robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocityRpm());
+                robot.telemetry.addData("Current velocity in/sec", robot.shooter.getVelocityRpm() / 6.469);
 
-            robot.telemetry.addData("Goal Pitch", robot.shooter.goalPitch);
-            robot.telemetry.addData("Goal Hood Pos", robot.shooter.goalPitchPos);
+                robot.telemetry.addData("Goal Pitch", robot.shooter.goalPitch);
+                robot.telemetry.addData("Goal Hood Pos", robot.shooter.goalPitchPos);
+            }
 
             robot.telemetry.update();
         }
