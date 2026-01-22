@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.util.BallColor;
 
 @Config
 public class TerrorColorSensor implements NormalizedColorSensor {
@@ -61,21 +62,21 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     /**
      * Returns 'G' for green, 'P' for purple, 'N' for none
      */
-    public char getGreenOrPurple() {
+    public BallColor getGreenOrPurple() {
 
         double[]rgb= {getRed(),getGreen(),getBlue()};
         Log.d("Color-sensor",String.valueOf(getDist(DistanceUnit.MM))+" "+String.valueOf(getGreen()));
         if(getDist(DistanceUnit.MM) >= MAX_DIST){
-            return 'N';
+            return BallColor.NONE;
         }
         else if(rgb[2]>rgb[1] && rgb[2]>rgb[0]){
-            return 'P';
+            return BallColor.PURPLE;
         } else if (rgb[1]>rgb[2]&&rgb[1]>rgb[0]) {
-            return 'G';
+            return BallColor.GREEN;
         }
 
 
-        return 'N';
+        return BallColor.NONE;
     }
 
     public NormalizedRGBA getNormalizedColors() {

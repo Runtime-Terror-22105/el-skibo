@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+import org.firstinspires.ftc.teamcode.util.ArrayUtil;
+import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
@@ -181,12 +183,12 @@ public class SpindexerSubsystem extends SubsystemBase {
         shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
     }
 
-    public char[] getBallPositions() {
+    public BallColor[] getBallPositions() {
         return hardware.colorSensors.readBallColors();
     }
 
-    public double selectColor(char color) {
-        int nearestIndex = new String(getBallPositions()).indexOf(color);
+    public double selectColor(BallColor color) {
+        int nearestIndex = ArrayUtil.indexOf(getBallPositions(), color);
         return yawOffsets[nearestIndex];
     }
 
@@ -199,21 +201,20 @@ public class SpindexerSubsystem extends SubsystemBase {
      * */
     public boolean newSort()
     {
-        String currentFillingString = new String(getBallPositions());
-        char[] glyphArr = robot.camera.getGlyphCharArray();
+        BallColor[] balls = getBallPositions();
+        BallColor[] glyphArr = robot.camera.getGlyphCharArray();
         if (glyphArr == null) { return false; }
-        String gameFillingString = new String(glyphArr);
 
-        if(currentFillingString.indexOf('N') != -1 ||
-                currentFillingString.indexOf('G') == -1 ||
-                currentFillingString.indexOf('P') == -1)
+        if (ArrayUtil.contains(balls, BallColor.NONE) ||
+                !ArrayUtil.contains(balls, BallColor.GREEN) ||
+                !ArrayUtil.contains(balls, BallColor.PURPLE))
         {
             this.rotate(READY_POSITION);
             Log.d("SpindexerSubsystem", "not enough balls to run logic");
             return true;
         }
 
-        if(currentFillingString.length() - currentFillingString.replace("G","").length() != 1)
+        if(ArrayUtil.count(balls, BallColor.GREEN) != 1)
         {
             this.rotate(READY_POSITION);
             Log.d("SpindexerSubsystem", "too many greens to run logic");
@@ -247,7 +248,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         double rotateAmount = Math.toRadians(120) + READY_POSITION;
 
-        switch(currentFillingString.indexOf('G') - gameFillingString.indexOf('G'))
+        switch(ArrayUtil.indexOf(balls, BallColor.GREEN) - ArrayUtil.indexOf(glyphArr, BallColor.GREEN))
         {
             case 0:
                 this.rotate(READY_POSITION);
@@ -277,13 +278,13 @@ public class SpindexerSubsystem extends SubsystemBase {
         double greenPos = 0.0;
         int greenCount = 0;
         int purpleCount = 0;
-        for (char ball : this.getBallPositions()) {
-            Log.d("ball-thing", String.valueOf(ball));
-            if (ball!= 'N') {
+        for (BallColor ball : this.getBallPositions()) {
+            Log.d("ball-thing", String.valueOf(ball.toChar()));
+            if (!BallColor.NONE.equals(ball)) {
                 fullCount += 1;
-                if (ball == 'G') {
+                if (!BallColor.GREEN.equals(ball)) {
                     greenCount += 1;
-                    greenPos = this.selectColor('G');
+                    greenPos = this.selectColor(BallColor.GREEN);
                 } else {
                     purpleCount += 1;
                 }
