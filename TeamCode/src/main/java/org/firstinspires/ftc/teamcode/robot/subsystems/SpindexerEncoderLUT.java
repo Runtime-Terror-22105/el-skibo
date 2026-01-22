@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
-
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 import com.seattlesolvers.solverslib.util.LUT;
@@ -11,10 +11,17 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 
+@Config
 public class SpindexerEncoderLUT {
     private final Robot robot;
 
     public static boolean debug;
+    public static double angle1 = 0;
+    public static double fixedAngle1 = 0;
+    public static double angle2 = 120;
+    public static double fixedAngle2 = 115;
+    public static double angle3 = 240;
+    public static double fixedAngle3 = 233.8;
 
 
     public static class SpindexLookupValue {
@@ -44,11 +51,13 @@ public class SpindexerEncoderLUT {
         }
     }
 
+
+
     public static SpindexLookupValue[] DATA_POINTS = new SpindexLookupValue[]{
 
-            new SpindexLookupValue(0, 0),
-            new SpindexLookupValue(120, 115),
-            new SpindexLookupValue(240, 233.8),
+            new SpindexLookupValue(angle1, fixedAngle1),
+            new SpindexLookupValue(angle2, fixedAngle2),
+            new SpindexLookupValue(angle3, fixedAngle3),
 
             new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), 21.7-2.3),
             new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 137-2.3),
