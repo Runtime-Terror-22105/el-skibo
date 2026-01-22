@@ -19,9 +19,9 @@ public class SpindexerEncoderLUT {
     public static double angle1 = 0;
     public static double fixedAngle1 = 0;
     public static double angle2 = 120;
-    public static double fixedAngle2 = 115;
+    public static double fixedAngle2 = 111.8;
     public static double angle3 = 240;
-    public static double fixedAngle3 = 233.8;
+    public static double fixedAngle3 = 230;
 
 
     public static class SpindexLookupValue {
