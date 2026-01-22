@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
+import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 public class ColorSensorManager {
@@ -120,21 +121,20 @@ public class ColorSensorManager {
         return false;
     }
 
-    private static char[] createInvalidResult() {
-        return new char[]{'N', 'N', 'N'};
+    private static BallColor[] createInvalidResult() {
+        return new BallColor[]{BallColor.NONE, BallColor.NONE, BallColor.NONE};
     }
 
     /**
-     * Returns 'G' for green, 'P' for purple, 'N' for none.
      * Returned order is [ top, right, left ].
      */
-    public char[] readBallColors() {
+    public BallColor[] readBallColors() {
         if (!ensureFullData(this.top, "top")
             || !ensureFullData(this.right, "right")
             || !ensureFullData(this.left, "left"))
             return createInvalidResult();
 
-        return new char[]{
+        return new BallColor[]{
                 this.top.getGreenOrPurple(),
                 this.right.getGreenOrPurple(),
                 this.left.getGreenOrPurple()
