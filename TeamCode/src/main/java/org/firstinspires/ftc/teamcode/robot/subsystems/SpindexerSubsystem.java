@@ -25,7 +25,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static boolean debug = false;
     public static boolean telemetry = true;
 
-    public static double TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX = 300; // milliseconds
+    public static double TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX = 150; // milliseconds
 
     public static double MANUAL_SPINDEXER_DEGREE_CHANGE = 0.5;
 
@@ -386,20 +386,22 @@ public class SpindexerSubsystem extends SubsystemBase {
             // pid reaches the target so we never have the walls go down at the wrong spot and jam the spindexer
             if (goingToMoveWallsDownButHaventMovedThemDownYet && // if we want to set walls down
                     desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
-                    pidEnabled && atTargetYaw()
+                    pidEnabled
             ) {
-                goingToMoveWallsDownButHaventMovedThemDownYet = false;
-
-                if (goingToMoveWallsDownTimerStarted &&
-                        goingToMoveWallsDownTimer.milliseconds() > TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX) {
-                    intakeWallPosition = INTAKE_WALL_DOWN;
-                    goingToMoveWallsDownButHaventMovedThemDownYet = false;
+                if (atTargetYaw()) {
+                    if (goingToMoveWallsDownTimerStarted &&
+                            goingToMoveWallsDownTimer.milliseconds() > TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX) {
+                        intakeWallPosition = INTAKE_WALL_DOWN;
+                        goingToMoveWallsDownButHaventMovedThemDownYet = false;
+                    } else if (!goingToMoveWallsDownTimerStarted) {
+                        goingToMoveWallsDownButHaventMovedThemDownYet = true;
+                        goingToMoveWallsDownTimerStarted = true;
+                        goingToMoveWallsDownTimer.reset();
+                    }
                 } else {
-                    goingToMoveWallsDownTimerStarted = true;
-                    goingToMoveWallsDownTimer.reset();
+                    goingToMoveWallsDownButHaventMovedThemDownYet = true;
+                    goingToMoveWallsDownTimerStarted = false;
                 }
-            } else {
-                goingToMoveWallsDownTimerStarted = true;
             }
 
             this.hardware.spindexerIntakeWallServo.setPosition(intakeWallPosition);
