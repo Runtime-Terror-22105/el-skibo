@@ -1,50 +1,27 @@
 package org.firstinspires.ftc.teamcode.robot.hardware.sensors;
 
-import android.graphics.Color;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.broadcom.BatchColorSensor;
-import com.qualcomm.hardware.broadcom.BroadcomColorSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.util.TypeConversion;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.nio.ByteOrder;
-import java.util.Arrays;
+import org.firstinspires.ftc.teamcode.util.BallColor;
 
 @Config
 public class TerrorColorSensor implements NormalizedColorSensor {
     public static double MAX_DIST = 50;
 
     private final RevColorSensorV3 sensor;
-    public enum side {
-        LEFT,
-        TOP,
-        RIGHT
-    }
-    public side position;
+    private final BatchColorSensor reading = new BatchColorSensor();
 
-    private BatchColorSensor reading = new BatchColorSensor();
-
-    public TerrorColorSensor(@NonNull RevColorSensorV3 sensor)
-    {
-
+    public TerrorColorSensor(@NonNull RevColorSensorV3 sensor) {
         this.sensor = sensor;
-        if (this.sensor.getDeviceName() == "topSensor"){
-            this.position = side.TOP;
-        }
-        else if (this.sensor.getDeviceName() == "rightSensor"){
-            this.position = side.RIGHT;
-        }
-        else if (this.sensor.getDeviceName() == "leftSensor"){
-            this.position = side.LEFT;
-        }
     }
 
     public void reset() {
@@ -55,41 +32,39 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         reading.read(sensor);
     }
 
-    /**
-    * returns if the color sensor sees this as G,P,orN(none)
-     */
-    public double getRed(){
+    public boolean hasFullData() {
+        return reading.hasFullData();
+    }
+
+    public double getRed() {
         return reading.red();
     }
 
-    public double getGreen(){
+    public double getGreen() {
         return reading.green();
     }
 
-    public double getBlue(){
+    public double getBlue() {
         return reading.blue();
     }
 
-    public double getDist(DistanceUnit unit){
-//        return sensor.getDistance(unit);
+    public double getDist(DistanceUnit unit) {
         return unit.fromUnit(DistanceUnit.INCH, reading.distance());
     }
 
-    public char getGreenOrPurple() {
-
-        double[]rgb= {getRed(),getGreen(),getBlue()};
-        Log.d("Color-sensor",String.valueOf(getDist(DistanceUnit.MM))+" "+String.valueOf(getGreen()));
-        if(getDist(DistanceUnit.MM) >= MAX_DIST){
-            return 'N';
+    public BallColor getBallColor() {
+        double r = getRed();
+        double g = getGreen();
+        double b = getBlue();
+        Log.d("Color-sensor", getDist(DistanceUnit.MM) + " " + g);
+        if (getDist(DistanceUnit.MM) >= MAX_DIST) {
+            return BallColor.NONE;
+        } else if (b > g && b > r) {
+            return BallColor.PURPLE;
+        } else if (g > b && g > r) {
+            return BallColor.GREEN;
         }
-        else if(rgb[2]>rgb[1] && rgb[2]>rgb[0]){
-            return 'P';
-        } else if (rgb[1]>rgb[2]&&rgb[1]>rgb[0]) {
-            return 'G';
-        }
-
-
-        return 'N';
+        return BallColor.NONE;
     }
 
     public NormalizedRGBA getNormalizedColors() {
