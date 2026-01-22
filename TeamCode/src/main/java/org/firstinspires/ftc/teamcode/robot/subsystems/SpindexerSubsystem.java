@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
@@ -23,6 +24,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static boolean debug = false;
     public static boolean telemetry = true;
+
+    public static double TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX = 300; // milliseconds
 
     public static double MANUAL_SPINDEXER_DEGREE_CHANGE = 0.5;
 
@@ -58,6 +61,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     private double homedSpindexerOffset;
 
     private boolean goingToMoveWallsDownButHaventMovedThemDownYet;
+    private ElapsedTime goingToMoveWallsDownTimer = new ElapsedTime();
+    private boolean goingToMoveWallsDownTimerStarted = false;
     public boolean overrideMaxPower;
 
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
@@ -169,10 +174,12 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void setWallDown() {
         this.goingToMoveWallsDownButHaventMovedThemDownYet = true;
+        this.goingToMoveWallsDownTimerStarted = false;
     }
 
     public void setWallUp() {
         this.goingToMoveWallsDownButHaventMovedThemDownYet = false;
+        this.goingToMoveWallsDownTimerStarted = false;
         this.intakeWallPosition = INTAKE_WALL_UP;
     }
 
@@ -381,8 +388,18 @@ public class SpindexerSubsystem extends SubsystemBase {
                     desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
                     pidEnabled && atTargetYaw()
             ) {
-                intakeWallPosition = INTAKE_WALL_DOWN;
                 goingToMoveWallsDownButHaventMovedThemDownYet = false;
+
+                if (goingToMoveWallsDownTimerStarted &&
+                        goingToMoveWallsDownTimer.milliseconds() > TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX) {
+                    intakeWallPosition = INTAKE_WALL_DOWN;
+                    goingToMoveWallsDownButHaventMovedThemDownYet = false;
+                } else {
+                    goingToMoveWallsDownTimerStarted = true;
+                    goingToMoveWallsDownTimer.reset();
+                }
+            } else {
+                goingToMoveWallsDownTimerStarted = true;
             }
 
             this.hardware.spindexerIntakeWallServo.setPosition(intakeWallPosition);
