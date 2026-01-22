@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
@@ -35,13 +34,13 @@ public class ColorSensorTest extends LinearOpMode {
             telemetry.addData("color green", right.getGreen());
             telemetry.addData("color blue", right.getBlue());
 
-            telemetry.addData("right sensor color", right.getGreenOrPurple());
+            telemetry.addData("right sensor color", right.getBallColor());
 
 //            NormalizedRGBA left = left.getNormalizedColors();
-            telemetry.addData("left sensor color", left.getGreenOrPurple());
+            telemetry.addData("left sensor color", left.getBallColor());
 
 //            NormalizedRGBA top = top.getNormalizedColors();
-            telemetry.addData("top sensor color", top.getGreenOrPurple());
+            telemetry.addData("top sensor color", top.getBallColor());
 
             telemetry.addData("distance", right.getDist(DistanceUnit.MM));
             telemetry.addData("distance", left.getDist(DistanceUnit.MM));

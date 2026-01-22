@@ -135,9 +135,9 @@ public class ColorSensorManager {
             return createInvalidResult();
 
         return new BallColor[]{
-                this.top.getGreenOrPurple(),
-                this.right.getGreenOrPurple(),
-                this.left.getGreenOrPurple()
+                this.top.getBallColor(),
+                this.right.getBallColor(),
+                this.left.getBallColor()
         };
     }
 }
