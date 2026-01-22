@@ -37,9 +37,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                     robot.spindexer.setPidEnabled(false);
                     robot.spindexer.setSpindexerPower(SPINDEX_TRANSFER_POWER);
                 }),
-                new WaitCommand(SPINDEX_TRANSFER_TIME).deadlineWith(
-                        new SwitchSpeedWhileShooting(robot.spindexer, 1.0, Math.toRadians(ANGLE_THRESHOLD_SPEED_CHANGE))
-                ),
+                new WaitCommand(SPINDEX_TRANSFER_TIME),
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
                 new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
 
