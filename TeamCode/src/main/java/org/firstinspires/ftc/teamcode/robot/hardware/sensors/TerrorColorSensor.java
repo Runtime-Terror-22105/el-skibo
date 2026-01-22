@@ -18,12 +18,6 @@ public class TerrorColorSensor implements NormalizedColorSensor {
     public static double MAX_DIST = 50;
 
     private final RevColorSensorV3 sensor;
-    public enum side {
-        LEFT,
-        TOP,
-        RIGHT
-    }
-
     private final BatchColorSensor reading = new BatchColorSensor();
 
     public TerrorColorSensor(@NonNull RevColorSensorV3 sensor) {
@@ -42,40 +36,34 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         return reading.hasFullData();
     }
 
-    public double getRed(){
+    public double getRed() {
         return reading.red();
     }
 
-    public double getGreen(){
+    public double getGreen() {
         return reading.green();
     }
 
-    public double getBlue(){
+    public double getBlue() {
         return reading.blue();
     }
 
-    public double getDist(DistanceUnit unit){
-//        return sensor.getDistance(unit);
+    public double getDist(DistanceUnit unit) {
         return unit.fromUnit(DistanceUnit.INCH, reading.distance());
     }
 
-    /**
-     * Returns 'G' for green, 'P' for purple, 'N' for none
-     */
-    public BallColor getGreenOrPurple() {
-
-        double[]rgb= {getRed(),getGreen(),getBlue()};
-        Log.d("Color-sensor",String.valueOf(getDist(DistanceUnit.MM))+" "+String.valueOf(getGreen()));
-        if(getDist(DistanceUnit.MM) >= MAX_DIST){
+    public BallColor getBallColor() {
+        double r = getRed();
+        double g = getGreen();
+        double b = getBlue();
+        Log.d("Color-sensor", getDist(DistanceUnit.MM) + " " + g);
+        if (getDist(DistanceUnit.MM) >= MAX_DIST) {
             return BallColor.NONE;
-        }
-        else if(rgb[2]>rgb[1] && rgb[2]>rgb[0]){
+        } else if (b > g && b > r) {
             return BallColor.PURPLE;
-        } else if (rgb[1]>rgb[2]&&rgb[1]>rgb[0]) {
+        } else if (g > b && g > r) {
             return BallColor.GREEN;
         }
-
-
         return BallColor.NONE;
     }
 
