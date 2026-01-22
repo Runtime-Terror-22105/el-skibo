@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -46,7 +47,15 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean shouldScanForGlyphs = false;
 
     public enum GLYPH {
-        GPP, PGP, PPG
+        GPP(BallColor.GREEN, BallColor.PURPLE, BallColor.PURPLE),
+        PGP(BallColor.PURPLE, BallColor.GREEN, BallColor.PURPLE),
+        PPG(BallColor.PURPLE, BallColor.PURPLE, BallColor.GREEN);
+
+        public final BallColor[] colors;
+
+        GLYPH(BallColor... colors) {
+            this.colors = colors;
+        }
     }
 
     public enum LiveViewSettings {OFF, FIELD}
@@ -128,19 +137,8 @@ public class CameraSubsystem extends SubsystemBase {
         return gameGlyph;
     }
 
-    public char[] getGlyphCharArray() {
-        if (gameGlyph == null) return null;
-
-        switch(gameGlyph)
-        {
-            case GPP:
-                return new char[]{'G','P','P'};
-            case PGP:
-                return new char[]{'P','G','P'};
-            case PPG:
-                return new char[]{'P','P','G'};
-        }
-        return null;
+    public BallColor[] getGlyphCharArray() {
+        return gameGlyph == null ? null : gameGlyph.colors;
     }
 
     public void setGlyph(GLYPH glyph) {
