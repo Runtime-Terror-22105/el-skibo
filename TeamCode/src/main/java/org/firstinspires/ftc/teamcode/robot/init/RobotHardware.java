@@ -64,16 +64,7 @@ public class RobotHardware {
     public TerrorServo spindexerTransferRampServo; // todo -- in position: 0, out position: 0.3
     public TerrorAnalogEncoder spindexerEncoder;
     public TerrorEncoder spindexerMotorEncoder;
-
-    /*
-             top (the one that shoots)
-        left      right
-     */
-    private int colorSensorIndex;
-    private TerrorColorSensor[] colorSensors;
-    public TerrorColorSensor topSensor;
-    public TerrorColorSensor leftSensor;
-    public TerrorColorSensor rightSensor;
+    public ColorSensorManager colorSensors;
 
     // Intake
     public TerrorMotorNormal intake;
@@ -95,8 +86,6 @@ public class RobotHardware {
     // Other
     public HardwareMap hwMap;
     private final TerrorPublisher publisher = new TerrorPublisher();
-
-    private boolean enableColorSensor = true;
 
     // Voltage monitoring
     public double nominalVoltage = 12.0;
@@ -184,22 +173,12 @@ public class RobotHardware {
         this.lights = new TerrorLight(hwMap.get(Servo.class, "lights"));
         this.publisher.subscribe(11, lights);
 
+        this.colorSensors = new ColorSensorManager(hwMap,
+                "leftSensor",
+                "topSensor",
+                "rightSensor"
+        );
 
-        this.topSensor = new TerrorColorSensor(
-                hwMap.get(RevColorSensorV3.class, "topSensor")
-        );
-        this.leftSensor = new TerrorColorSensor(
-                hwMap.get(RevColorSensorV3.class, "leftSensor")
-        );
-        this.rightSensor = new TerrorColorSensor(
-                hwMap.get(RevColorSensorV3.class, "rightSensor")
-        );
-        this.colorSensorIndex = 0;
-        this.colorSensors = new TerrorColorSensor[]{
-                this.leftSensor,
-                this.topSensor,
-                this.rightSensor
-        };
         this.spindexerIntakeWallServo = new TerrorServo(hwMap, "spindexerIntakeWall");
         this.spindexerTransferRampServo = new TerrorServo(hwMap, "spindexerTransferRamp");
         this.publisher.subscribe(10, spindexerIntakeWallServo, spindexerTransferRampServo);
@@ -239,9 +218,6 @@ public class RobotHardware {
         this.initImu();
 
         this.initialVoltage = getCurrentVoltage();
-
-        // Other Sensors
-        this.updateAllColorSensors();
     }
 
     public double getCurrentVoltage() {
@@ -258,43 +234,11 @@ public class RobotHardware {
         return nominalVoltage / getCurrentVoltage();
     }
 
-    private void updateColorSensors() {
-        // Update one color sensor per call to spread out the I2C load
-        this.colorSensors[this.colorSensorIndex].update();
-        this.colorSensorIndex = (this.colorSensorIndex + 1) % this.colorSensors.length;
-    }
-
-    private void updateAllColorSensors() {
-        for (TerrorColorSensor sensor : this.colorSensors) {
-            sensor.update();
-        }
-    }
-
-    public void setEnableColorSensor(boolean enable) {
-        if (this.enableColorSensor != enable) {
-            this.enableColorSensor = enable;
-            if (enable) {
-                // If enabling, read all color sensors immediately
-                this.updateAllColorSensors();
-            } else {
-                // TODO: If disabling, invalidate all color sensors
-                //  rn we cant do this since other code assumes color sensor data is always valid
-//                for (TerrorColorSensor sensor : this.colorSensors) {
-//                    sensor.reset();
-//                }
-            }
-        }
-    }
-
     public void write() {
         Profiler.push("publisher");
         this.publisher.write();
         Profiler.pop();
-        if (this.enableColorSensor) {
-            Profiler.push("colorSensors");
-            this.updateColorSensors();
-            Profiler.pop();
-        }
+        this.colorSensors.update();
     }
 
     private void initLynx(LynxModule.BulkCachingMode bulkCachingMode) {

@@ -9,7 +9,6 @@ import com.seattlesolvers.solverslib.util.MathUtils;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
@@ -41,7 +40,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (225D/32D);
 
     public double spindexerPower = 0.0;
-    public TerrorColorSensor[] sensors;
 
     public static double READY_POSITION = 0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
@@ -63,7 +61,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
         this.hardware = hardware;
-        this.sensors = new TerrorColorSensor[]{hardware.rightSensor, hardware.topSensor, hardware.leftSensor};
         this.homedSpindexerOffset = 0;
         this.desiredAngle = getPosition();
         this.yawPid.setTolerance(yawPidTolerance);
@@ -184,9 +181,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
     }
 
-
     public char[] getBallPositions() {
-        return new char[]{hardware.topSensor.getGreenOrPurple(), hardware.rightSensor.getGreenOrPurple(), hardware.leftSensor.getGreenOrPurple()};
+        return hardware.colorSensors.readBallColors();
     }
 
     public double selectColor(char color) {

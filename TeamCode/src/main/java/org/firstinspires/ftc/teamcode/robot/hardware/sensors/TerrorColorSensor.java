@@ -1,22 +1,16 @@
 package org.firstinspires.ftc.teamcode.robot.hardware.sensors;
 
-import android.graphics.Color;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.broadcom.BatchColorSensor;
-import com.qualcomm.hardware.broadcom.BroadcomColorSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.util.TypeConversion;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.nio.ByteOrder;
-import java.util.Arrays;
 
 @Config
 public class TerrorColorSensor implements NormalizedColorSensor {
@@ -28,23 +22,11 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         TOP,
         RIGHT
     }
-    public side position;
 
-    private BatchColorSensor reading = new BatchColorSensor();
+    private final BatchColorSensor reading = new BatchColorSensor();
 
-    public TerrorColorSensor(@NonNull RevColorSensorV3 sensor)
-    {
-
+    public TerrorColorSensor(@NonNull RevColorSensorV3 sensor) {
         this.sensor = sensor;
-        if (this.sensor.getDeviceName() == "topSensor"){
-            this.position = side.TOP;
-        }
-        else if (this.sensor.getDeviceName() == "rightSensor"){
-            this.position = side.RIGHT;
-        }
-        else if (this.sensor.getDeviceName() == "leftSensor"){
-            this.position = side.LEFT;
-        }
     }
 
     public void reset() {
@@ -55,9 +37,10 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         reading.read(sensor);
     }
 
-    /**
-    * returns if the color sensor sees this as G,P,orN(none)
-     */
+    public boolean hasFullData() {
+        return reading.hasFullData();
+    }
+
     public double getRed(){
         return reading.red();
     }
@@ -75,6 +58,9 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         return unit.fromUnit(DistanceUnit.INCH, reading.distance());
     }
 
+    /**
+     * Returns 'G' for green, 'P' for purple, 'N' for none
+     */
     public char getGreenOrPurple() {
 
         double[]rgb= {getRed(),getGreen(),getBlue()};
