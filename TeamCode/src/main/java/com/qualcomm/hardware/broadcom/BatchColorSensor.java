@@ -1,7 +1,5 @@
 package com.qualcomm.hardware.broadcom;
 
-import android.graphics.Color;
-
 import com.qualcomm.hardware.rev.RevColorSensorUtil;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.util.Range;
@@ -14,12 +12,14 @@ import java.util.Arrays;
  * @author lunbun
  */
 public class BatchColorSensor {
-    public boolean hasData = false;
+    private boolean hasDistanceData = false;
+    private boolean hasColorData = false;
     private int red = 0, green = 0, blue = 0;
     private double distance = Double.MAX_VALUE;
 
     public void reset() {
-        hasData = false;
+        hasDistanceData = false;
+        hasColorData = false;
         red = 0;
         green = 0;
         blue = 0;
@@ -53,34 +53,53 @@ public class BatchColorSensor {
 //            int min = 0;
 //            int max = 255;
 //            argb = Color.argb(Range.clip((int)(a * scale), min, max), Range.clip((int)(r * scale), min, max), Range.clip((int)(g * scale), min, max), Range.clip((int)(b * scale), min, max));
+            hasColorData = true;
         }
 
-        hasData = true;
+        hasDistanceData = true;
     }
 
-    private void assertHasData() {
-        if (!hasData) {
+    private void assertHasDistanceData() {
+        if (!hasDistanceData) {
             throw new IllegalStateException("No color sensor data available. Did you forget to call update()?");
         }
     }
 
+    private void assertHasColorData() {
+        if (!hasColorData) {
+            throw new IllegalStateException("No color sensor data available. Did you forget to call update()?");
+        }
+    }
+
+    public boolean hasDistanceData() {
+        return hasDistanceData;
+    }
+
+    public boolean hasColorData() {
+        return hasColorData;
+    }
+
+    public boolean hasFullData() {
+        return hasColorData && hasDistanceData;
+    }
+
     public int red() {
-        assertHasData();
+        assertHasColorData();
         return red;
     }
 
     public int green() {
-        assertHasData();
+        assertHasColorData();
         return green;
     }
 
     public int blue() {
-        assertHasData();
+        assertHasColorData();
         return blue;
     }
 
     public double distance() {
-        assertHasData();
+        assertHasDistanceData();
         return distance;
     }
 }

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 @TeleOp
@@ -21,26 +22,30 @@ public class ColorSensorTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive())
         {
-            hardware.rightSensor.update();
-            hardware.leftSensor.update();
-            hardware.topSensor.update();
+            TerrorColorSensor left = hardware.colorSensors.getLeftUnsafe();
+            TerrorColorSensor right = hardware.colorSensors.getRightUnsafe();
+            TerrorColorSensor top = hardware.colorSensors.getTopUnsafe();
+            
+            right.update();
+            left.update();
+            top.update();
 
-//            NormalizedRGBA right = hardware.rightSensor.getNormalizedColors();
-            telemetry.addData("color red", hardware.rightSensor.getRed());
-            telemetry.addData("color green", hardware.rightSensor.getGreen());
-            telemetry.addData("color blue", hardware.rightSensor.getBlue());
+//            NormalizedRGBA right = right.getNormalizedColors();
+            telemetry.addData("color red", right.getRed());
+            telemetry.addData("color green", right.getGreen());
+            telemetry.addData("color blue", right.getBlue());
 
-            telemetry.addData("right sensor color", hardware.rightSensor.getGreenOrPurple());
+            telemetry.addData("right sensor color", right.getGreenOrPurple());
 
-//            NormalizedRGBA left = hardware.leftSensor.getNormalizedColors();
-            telemetry.addData("left sensor color", hardware.leftSensor.getGreenOrPurple());
+//            NormalizedRGBA left = left.getNormalizedColors();
+            telemetry.addData("left sensor color", left.getGreenOrPurple());
 
-//            NormalizedRGBA top = hardware.topSensor.getNormalizedColors();
-            telemetry.addData("top sensor color", hardware.topSensor.getGreenOrPurple());
+//            NormalizedRGBA top = top.getNormalizedColors();
+            telemetry.addData("top sensor color", top.getGreenOrPurple());
 
-            telemetry.addData("distance", hardware.rightSensor.getDist(DistanceUnit.MM));
-            telemetry.addData("distance", hardware.leftSensor.getDist(DistanceUnit.MM));
-            telemetry.addData("distance", hardware.topSensor.getDist(DistanceUnit.MM));
+            telemetry.addData("distance", right.getDist(DistanceUnit.MM));
+            telemetry.addData("distance", left.getDist(DistanceUnit.MM));
+            telemetry.addData("distance", top.getDist(DistanceUnit.MM));
             telemetry.update();
         }
     }
