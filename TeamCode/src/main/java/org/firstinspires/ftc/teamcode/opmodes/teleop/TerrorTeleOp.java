@@ -44,6 +44,8 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+import org.firstinspires.ftc.teamcode.util.ArrayUtil;
+import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 import java.util.List;
@@ -144,10 +146,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
 
-        Trigger threeBallsAreInside = new Trigger(() -> {
-            final char[] balls = robot.spindexer.getBallPositions();
-            return balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N';
-        });
+        Trigger threeBallsAreInside = new Trigger(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE));
 
         Trigger botInTapeZone = new Trigger(()-> robot.isInTapeZone() && robot.getShootInTapeZone());
 
