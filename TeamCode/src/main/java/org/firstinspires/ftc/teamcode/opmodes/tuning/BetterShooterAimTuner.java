@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
+import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -213,8 +214,8 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 robot.telemetry.addData("Distance", Math.sqrt(Math.pow(robot.follower.getPose().getX() - robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY() - robot.shooter.goalPosLookupTable.get().y, 2)));
 
                 robot.telemetry.addData("Goal Yaw", robot.shooter.goalTurretAngle);
-                robot.telemetry.addData("Goal Turret Pos w/out offset", robot.shooter.goalTurretPos);
-                robot.telemetry.addData("Goal Turret Pos w/ offset", robot.shooter.goalTurretPos + robot.shooter.turretOffset);
+                robot.telemetry.addData("Goal Turret Pos w/out offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.goalTurretAngle));
+                robot.telemetry.addData("Goal Turret Pos w/ offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.goalTurretAngle) + robot.shooter.turretOffset);
 
                 robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
                 robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));

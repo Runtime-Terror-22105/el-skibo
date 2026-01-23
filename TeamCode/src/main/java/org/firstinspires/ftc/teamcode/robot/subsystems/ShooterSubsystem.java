@@ -51,7 +51,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalVelocity; //flywheel - rpm
     public double goalTurretAngle; //turret - rad
 
-    public double goalTurretPos; //turret - servo pos
     public double goalPitchPos; //hood - servo pos
 
     public double turretOffset = 0.0; //turret manual offset- servo pos
@@ -118,8 +117,7 @@ public class ShooterSubsystem extends SubsystemBase {
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         // also currently only updates when in the tape zone or every 10 loops to reduce wrtes
         if (isAutoTurretOn && (loopCount == 0 || robot.isInTapeZone())) {
-            this.goalTurretAngle = this.findYawAngle(goalPos);
-            this.goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
+            this.setTurretAngle(this.findYawAngle(goalPos));
         }
 
 
@@ -149,6 +147,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if (debug) Log.i("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
         if (debug) Log.i("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
+    }
+
+    public void setTurretAngle(double angleRad) {
+        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad));
     }
 
 
@@ -214,11 +216,10 @@ public class ShooterSubsystem extends SubsystemBase {
         finalVelocity = newVelocity;
         finalLaunchAngle = newLaunchAngle;
 
-        this.goalTurretAngle = this.findYawAngle(goalPos);
-        this.goalTurretAngle+=turretOffsetAngle;
-        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, this.goalTurretAngle));
-        this.goalTurretPos= turretAngleToServoPos(this.goalTurretAngle);
-
+        double ang = this.findYawAngle(goalPos);
+        ang += turretOffsetAngle;
+        ang = Math.max(turretLowerBound, Math.min(turretUpperBound, ang));
+        this.setTurretAngle(ang);
 
         if (this.isAutoVelOn) {
             this.setSpeed(this.velToRPM(finalVelocity));
@@ -259,8 +260,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.goalTurretAngle = this.findYawAngle(goalPos);
-        this.goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
+        this.setTurretAngle(this.findYawAngle(goalPos));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {
@@ -272,8 +272,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.goalTurretAngle = this.findYawAngle(goalPos);
-        this.goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
+        this.setTurretAngle(this.findYawAngle(goalPos));
     }
 
 
@@ -295,8 +294,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if (debug) Log.d("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
 
 
-        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, turretYaw));
-        this.goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
+        this.setTurretAngle(turretYaw);
     }
 
 
@@ -410,8 +408,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
             //turret
             Profiler.push("turret");
-            hardware.turretYawLeft.setPosition(this.goalTurretPos + this.turretOffset);
-            hardware.turretYawRight.setPosition(this.goalTurretPos + this.turretOffset);
+            double goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
+            hardware.turretYawLeft.setPosition(goalTurretPos + this.turretOffset);
+            hardware.turretYawRight.setPosition(goalTurretPos + this.turretOffset);
             Profiler.pop();
         }
     }
