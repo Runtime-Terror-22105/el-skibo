@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
-    public static int RAMP_DELAY = 200;  // milliseconds
-    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 650;
+    public static int RAMP_DELAY = 0;  // milliseconds
+    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 50;
     public static long SPINDEXER_TIMEOUT = 600L;
 
     public PrepareShootCommand(Robot robot) {

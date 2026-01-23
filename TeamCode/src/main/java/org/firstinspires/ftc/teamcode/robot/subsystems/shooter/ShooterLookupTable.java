@@ -5,12 +5,13 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 
+import org.firstinspires.ftc.teamcode.math.LinearInterpLUT;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 
 @Config
 public class ShooterLookupTable {
-    private static InterpLUT FAR_VELOCITY_LUT; // in/s
-    private static InterpLUT HOOD_LUT;
+    private static LinearInterpLUT FAR_VELOCITY_LUT; // in/s
+    private static LinearInterpLUT HOOD_LUT;
 
     public static boolean debug = false;
 
@@ -54,32 +55,8 @@ public class ShooterLookupTable {
             new LookupValue(124, 860),
             new LookupValue(134, 900), // this point actuallly untestested casu eim going home
 
-
-
-
-
-
-
-
-            // NEW VALUES
-//            new LookupValue(39.16, 605),
-//            new LookupValue(50.07, 620),
-//            new LookupValue(64.2, 665),
-//            new LookupValue(80.5, 715),
-
-//            new LookupValue(120.6, 810),
-//            new LookupValue(129.5, 850),
-
-            // OLD VALUES
-//            new LookupValue(20.4, 580),
-//            new LookupValue(39.502, 610),
-//            new LookupValue(54.99, 660),
-//            new LookupValue(62.7, 665),
-//            new LookupValue(83.3, 700),
-//            new LookupValue(87.56152811761086, 720),
-            
             // other endpoint (prevent crashing)
-            new LookupValue(250, 700)
+            new LookupValue(250, 900)
 
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
@@ -126,8 +103,8 @@ public class ShooterLookupTable {
     public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
         if (debug) Log.i("ShooterLookupTable", "distance to goal" +distanceToGoalIn);
         // todo: temporarily putting this here so we can dashboard
-        FAR_VELOCITY_LUT = new InterpLUT();
-        HOOD_LUT = new InterpLUT();
+        FAR_VELOCITY_LUT = new LinearInterpLUT();
+        HOOD_LUT = new LinearInterpLUT();
         for (LookupValue dataPoint : VEL_DATA_POINTS) {
             FAR_VELOCITY_LUT.add(dataPoint.distance, dataPoint.speed);
         }

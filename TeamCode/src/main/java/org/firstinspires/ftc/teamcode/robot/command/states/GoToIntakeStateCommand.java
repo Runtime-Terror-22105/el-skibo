@@ -14,10 +14,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
 public class GoToIntakeStateCommand extends SequentialCommandGroup {
     public GoToIntakeStateCommand(Robot robot) {
-
         super(
                 new ParallelCommandGroup(
-                        new LogCatCommand("intake testing", "starting"),
                         new InstantCommand(() -> robot.robotState = RobotState.INTAKING),
                         new LogCatCommand("intake testing", "just set state"),
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),

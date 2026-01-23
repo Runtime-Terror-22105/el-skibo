@@ -16,16 +16,20 @@ public class SpindexerEncoderLUT {
     private final Robot robot;
 
     public static boolean debug;
-    public static double angle1 = 0;
-    public static double fixedAngle1 = 0;
-    public static double angle2 = 120;
-    public static double fixedAngle2 = 111.8;
-    public static double angle3 = 240;
-    public static double fixedAngle3 = 230;
+    public static int angle1 = 0;
+    public static double fixedAngle1 = 3;
+    public static int angle2 = 120;
+    public static double fixedAngle2 = 118;
+    public static int angle3 = 240;
+    public static double fixedAngle3 = 236;
+
+    public static double fixedReady1 = 19.2;
+    public static double fixedReady2 = 136.97;
+    public static double fixedReady3 = 255.39;
 
 
     public static class SpindexLookupValue {
-        public double targetAngleDeg;
+        public int targetAngleDeg;
         public double targetAngleRad;
         public double correctedAngleDeg;
         public double correctedAngleRad;
@@ -34,7 +38,7 @@ public class SpindexerEncoderLUT {
 
         }
 
-        public SpindexLookupValue(double targetAngleDeg, double correctedAngleDeg) {
+        public SpindexLookupValue(int targetAngleDeg, double correctedAngleDeg) {
             this.targetAngleDeg = targetAngleDeg;
             this.targetAngleRad = Math.toRadians(targetAngleDeg);
             this.correctedAngleDeg = correctedAngleDeg;
@@ -45,7 +49,7 @@ public class SpindexerEncoderLUT {
             SpindexLookupValue retval = new SpindexLookupValue();
             retval.targetAngleRad = targetAngleRad;
             retval.correctedAngleRad = correctedAngleRad;
-            retval.targetAngleDeg = Math.toDegrees(targetAngleRad);
+            retval.targetAngleDeg = (int) Math.toDegrees(targetAngleRad);
             retval.correctedAngleDeg = Math.toDegrees(correctedAngleRad);
             return retval;
         }
@@ -53,17 +57,17 @@ public class SpindexerEncoderLUT {
 
 
 
-    public static SpindexLookupValue[] DATA_POINTS = new SpindexLookupValue[]{
-
-            new SpindexLookupValue(angle1, fixedAngle1),
-            new SpindexLookupValue(angle2, fixedAngle2),
-            new SpindexLookupValue(angle3, fixedAngle3),
-
-            new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), 21.7-2.3),
-            new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 137-2.3),
-            new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 244.9-2.3),
-
-    };
+//    public static SpindexLookupValue[] DATA_POINTS = new SpindexLookupValue[]{
+//
+//            new SpindexLookupValue(angle1, fixedAngle1),
+//            new SpindexLookupValue(angle2, fixedAngle2),
+//            new SpindexLookupValue(angle3, fixedAngle3),
+//
+//            new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), 21.7-2.3),
+//            new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 137-2.3),
+//            new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), 244.9-2.3),
+//
+//    };
     public SpindexerEncoderLUT(Robot robot){
         this.robot = robot;
 
@@ -71,6 +75,20 @@ public class SpindexerEncoderLUT {
     }
 
     public SpindexLookupValue get(double angle){
+
+        SpindexLookupValue[] DATA_POINTS = new SpindexLookupValue[]{
+
+                new SpindexLookupValue(angle1, fixedAngle1),
+                new SpindexLookupValue(angle2, fixedAngle2),
+                new SpindexLookupValue(angle3, fixedAngle3),
+
+                new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), fixedReady1),
+                new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady2),
+                new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady3),
+
+        };
+
+
         /*If you pass in a double data type, it assumes rad */
         angle = MathUtils.normalizeRadians(angle, true);
         for (SpindexLookupValue data : DATA_POINTS) {
