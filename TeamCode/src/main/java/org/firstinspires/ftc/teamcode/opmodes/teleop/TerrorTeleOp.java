@@ -162,6 +162,13 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 new InstantCommand(() -> {} ),
                 () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER
         ));
+        // todo: test the following
+        // this allows that if we press intaking while shooting still, we'll go to intaking the moment we go to resting
+        intakeButton.whileActiveContinuous(new ConditionalCommand(
+                new GoToIntakeStateCommand(robot),
+                new InstantCommand(() -> {} ),
+                () ->  robot.robotState != INTAKING && robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER
+        ));
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
                 new InstantCommand(() -> {} ),

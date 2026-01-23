@@ -23,7 +23,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
     public static double ANGLE_THRESHOLD_SPEED_CHANGE = 210;
     //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
     public static double SPINDEX_TRANSFER_POWER = -1;
-    public static int SPINDEX_TRANSFER_TIME = 2000;  // milliseconds
+    public static int SPINDEX_TRANSFER_TIME = 1700;  // milliseconds
 
     private final Robot robot;
 
