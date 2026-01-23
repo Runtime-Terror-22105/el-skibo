@@ -10,8 +10,8 @@ public class ToggleAutoTurretCommand extends InstantCommand {
     public ToggleAutoTurretCommand(Robot robot, boolean on, double newPosRad){
         super( () -> {
             if (!on){
-            robot.shooter.isAutoTurretOn = false;
-            robot.shooter.goalTurretPos = ShooterSubsystem.turretAngleToServoPos(newPosRad);
+                robot.shooter.isAutoTurretOn = false;
+                robot.shooter.setTurretAngle(newPosRad);
             }
             else robot.shooter.isAutoTurretOn = true;
         });

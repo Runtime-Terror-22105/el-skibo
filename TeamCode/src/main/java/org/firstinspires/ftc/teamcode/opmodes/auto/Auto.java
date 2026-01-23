@@ -379,13 +379,7 @@ public abstract class Auto extends LinearOpMode {
 
             CommandScheduler.getInstance().run();
 
-            hardware.write();
-
-            long time = System.nanoTime();
-            long dt = time - lastLoop;
-            lastLoop = time;
-            robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
-            robot.telemetry.update();
+            robot.write();
         }
 
         // we're going to see the wrong one
@@ -403,6 +397,7 @@ public abstract class Auto extends LinearOpMode {
 
         waitForStart();
         robot.shooter.isAutoVelOn = true;
+        robot.shooter.isAutoAimOn = true;
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 shootPreloadCommand,
