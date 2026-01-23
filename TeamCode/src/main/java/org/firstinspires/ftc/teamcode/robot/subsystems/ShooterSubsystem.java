@@ -45,7 +45,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public double shooterPower = 0.0; //flywheel - motor power
 
     public static double turretPosAt180 = 0.49; //pos pointed directly towards the back
-    public static double posChange90 = 0.41; //servo pos change that rotates turret 90 deg
+    public static double posChange90 = 0.38; //servo pos change that rotates turret 90 deg
 
     public double goalPitch; //hood - rad
     public double goalVelocity; //flywheel - rpm
