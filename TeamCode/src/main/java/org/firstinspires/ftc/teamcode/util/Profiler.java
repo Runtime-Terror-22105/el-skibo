@@ -9,7 +9,7 @@ public final class Profiler {
     private static Profiler INSTANCE;
 
     public static void init() {
-        INSTANCE = new Profiler();
+        /*INSTANCE = new Profiler();*/
     }
 
     private static class ProfilePoint {
