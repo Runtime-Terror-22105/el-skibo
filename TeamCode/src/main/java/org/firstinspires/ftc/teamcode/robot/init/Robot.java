@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl;
+import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
@@ -52,11 +52,15 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public CameraSubsystem camera;
     public HangSubsystem hang;
     public IntakeSubsystem intake;
-    public LightControl lightControl;
+    public LightControl2 lightControl;
 
     public static boolean USE_SOTM = false;
     public Pose2d goalPos;
     private boolean autoSort;
+
+
+    // Camera stuff TODO
+//    public TerrorCameraVisionPortal camera;
 
     // Other misc public objects
     public FtcDashboard dashboard;
@@ -84,7 +88,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(this);
         this.hang = new HangSubsystem(hardware);
-        this.lightControl = new LightControl(hardware,this);
+        this.lightControl = new LightControl2(hardware,this);
 
         // Other
         this.setAutoSort(false);

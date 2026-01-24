@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 import static org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.DEFAULT_SPEED;
-import static org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem.VelocityUnit.INCHES_PER_SEC;
 
 import android.util.Log;
 
@@ -214,21 +213,25 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 robot.telemetry.addData("Goal Position", robot.shooter.goalPosLookupTable.get());
                 robot.telemetry.addData("Distance", Math.sqrt(Math.pow(robot.follower.getPose().getX() - robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY() - robot.shooter.goalPosLookupTable.get().y, 2)));
 
-                robot.telemetry.addData("Goal Yaw", robot.shooter.getTurretAngle());
-                robot.telemetry.addData("Goal Turret Pos", robot.shooter.getTurretServoPos());
+                robot.telemetry.addData("Goal Yaw", robot.shooter.goalTurretAngle);
+                robot.telemetry.addData("Goal Turret Pos w/out offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.goalTurretAngle));
+                robot.telemetry.addData("Goal Turret Pos w/ offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.goalTurretAngle) + robot.shooter.turretOffset);
 
-                robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity(INCHES_PER_SEC));
-                robot.telemetry.addData("Goal Velocity rpm", robot.shooter.getGoalVelocity());
-                robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocity());
-                robot.telemetry.addData("Current velocity in/sec", robot.shooter.getVelocity(INCHES_PER_SEC));
+                robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
+                robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
+                robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocityRpm());
+                robot.telemetry.addData("Current velocity in/sec", robot.shooter.getVelocityRpm() / 6.469);
 
-                robot.telemetry.addData("Goal Pitch", robot.shooter.getHoodAngle());
-                robot.telemetry.addData("Goal Hood Pos", robot.shooter.getHoodServoPos());
+                robot.telemetry.addData("Goal Pitch", robot.shooter.goalPitch);
+                robot.telemetry.addData("Goal Hood Pos", robot.shooter.goalPitchPos);
             }
 
             robot.telemetry.update();
         }
+
         blackboard.put(AUTO_ENDING_DATA_KEY, null);
+
+
     }
 
 }

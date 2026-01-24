@@ -116,7 +116,8 @@ public class CameraSubsystem extends SubsystemBase {
                 .setSuppressCalibrationWarnings(false)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS)
+//                    .setLensIntrinsics() // TODO: placeholder to remind us to calibrate the camera
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
@@ -169,6 +170,7 @@ public class CameraSubsystem extends SubsystemBase {
 //            gain.setGain(GAIN);
 //        } catch (IllegalStateException e) {
 //            // there's an error where it says that you cannot set controls until camera starts streaming
+//            // todo handle ths properly and don't just do a try-catch
 //            Log.w("CameraSubsystem", e);
 //        }
 
@@ -212,7 +214,7 @@ public class CameraSubsystem extends SubsystemBase {
         Pose cameraFieldPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI);
 //        FtcDashDrawing.drawDot(cameraFieldPose, "#0000FF");
 
-        double turretAngle = robot.shooter.getTurretAngle();
+        double turretAngle = robot.shooter.getGoalTurretYaw();
         double cameraRobotHeading = cameraFieldPose.getHeading() - turretAngle;
         double pinpointRobotHeading = robot.follower.poseTracker.getPose().getHeading();
 

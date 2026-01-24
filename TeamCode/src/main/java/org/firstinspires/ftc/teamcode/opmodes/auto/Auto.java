@@ -103,9 +103,6 @@ public abstract class Auto extends LinearOpMode {
     private Command parkCommand;
     double turretAngleForMotif;
 
-    private boolean hasFinished = false;
-    private long duration = 0;
-    private long startTime = 0;
     private long lastLoop = System.nanoTime();
 
     protected Auto(Team team) {
@@ -341,8 +338,7 @@ public abstract class Auto extends LinearOpMode {
 
         parkCommand = new SequentialCommandGroup(
                 new GoToRestingStateCommand(robot),
-                new FollowPathCommand(robot.follower, parkPath, false),
-                new InstantCommand(() -> hasFinished = true)
+                new FollowPathCommand(robot.follower, parkPath, false)
         );
     }
 
@@ -384,7 +380,6 @@ public abstract class Auto extends LinearOpMode {
             CommandScheduler.getInstance().run();
 
             robot.write();
-            robot.telemetry.update();
         }
 
         // we're going to see the wrong one
@@ -403,7 +398,6 @@ public abstract class Auto extends LinearOpMode {
         waitForStart();
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
-        startTime = System.currentTimeMillis();
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 shootPreloadCommand,
@@ -452,11 +446,6 @@ public abstract class Auto extends LinearOpMode {
             long dt = time - lastLoop;
             lastLoop = time;
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
-            if (!hasFinished) {
-                duration = System.currentTimeMillis() - startTime;
-            }
-            robot.telemetry.addData("Auto Time (s)", String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000.0));
-            robot.telemetry.addData("Auto Duration (s)", String.format("%.2f", duration / 1000.0));
             robot.telemetry.update();
             Profiler.pop();
 

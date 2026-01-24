@@ -37,7 +37,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                     robot.shooter.isAutoHoodOn = hoodAngle == null;
                     if(hoodAngle != null)
                     {
-                        robot.shooter.setHoodAngle(hoodAngle);
+                        robot.shooter.goalPitch = hoodAngle;
                     }
                 }),
                 new ParallelCommandGroup(
