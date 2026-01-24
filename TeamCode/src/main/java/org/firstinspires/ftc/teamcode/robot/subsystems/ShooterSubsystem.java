@@ -50,8 +50,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalVelocity; //flywheel - rpm
     public double goalTurretAngle; //turret - rad
 
-    public double goalPitchPos; //hood - servo pos
-
     public double turretOffset = 0.0; //turret manual offset- servo pos
 
     public GoalPosLookupTable goalPosLookupTable;
@@ -73,15 +71,15 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoHoodOn;
     public boolean isAutoTurretOn;
     private final Robot robot;
-    public static class ShooterValues{
+
+    public static class ShooterValues {
         public double velocity;
         public double rad;
+
         public ShooterValues(double v, double r){
             this.velocity = v;
             this.rad = r;
         }
-
-
     }
 
     public ShooterSubsystem(RobotHardware hardware, Robot robot) {
@@ -102,6 +100,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public static double turretAngleToServoPos(double angleRad) {
         return Algebra.mapRange(angleRad, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+    }
+
+    public static double hoodAngleToServoPos(double angleRad) {
+        return Algebra.mapRange(angleRad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+    }
+
+    public void setTurretAngle(double angleRad) {
+        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad));
+    }
+
+    public void setHoodAngle(double angleRad) {
+        this.goalPitch = Math.max(hoodAngleMin, Math.min(hoodAngleMax, angleRad));
     }
 
     public void doAutoShoot(){
@@ -139,21 +149,12 @@ public class ShooterSubsystem extends SubsystemBase {
             this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
         }
         if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
-            this.goalPitch = math.rad;
-            this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+            this.setHoodAngle(math.rad);
         }
         if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
 
         if (debug) Log.i("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
         if (debug) Log.i("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
-    }
-
-    public void setTurretAngle(double angleRad) {
-        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad));
-    }
-
-    public static double hoodAngleToServoPos(double angleRad) {
-        return Algebra.mapRange(angleRad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
     }
 
 
@@ -231,8 +232,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
-            this.goalPitch = finalLaunchAngle;
-            this.goalPitchPos = Algebra.mapRange(finalLaunchAngle, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+            this.setHoodAngle(finalLaunchAngle);
         }
 
     }
@@ -250,9 +250,8 @@ public class ShooterSubsystem extends SubsystemBase {
         double verDist = goalHeight - robotHeight; // delta y at the goal
         double theta = Math.atan(((2*h)/horDist) *
                 (1 + Math.sqrt(1 - (verDist/h)))); //in radians, from math
-        this.goalPitch = theta;
-        this.goalPitchPos = Algebra.mapRange(theta, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-        if (debug) Log.d("ShooterSubsystem", "goal hood pos" + this.goalPitchPos);
+        this.setHoodAngle(theta);
+        if (debug) Log.d("ShooterSubsystem", "goal hood pos" + hoodAngleToServoPos(this.goalPitch));
     }
 
     /** lets you set a velocity and angle manually*/
@@ -260,21 +259,16 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = false;
         this.setSpeed(this.velToRPM(velocity));
 
-        this.goalPitch = pitch;
-        this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-
+        this.setHoodAngle(pitch);
         this.setTurretAngle(this.findYawAngle(goalPos));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {
+        this.isAutoAimOn = false;
         Pose2d goalPos = this.goalPosLookupTable.get();
 
-        this.isAutoAimOn = false;
         this.setSpeed(this.velToRPM(velocity));
-
-        this.goalPitch = pitch;
-        this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-
+        this.setHoodAngle(pitch);
         this.setTurretAngle(this.findYawAngle(goalPos));
     }
 
@@ -398,7 +392,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // shooter pitch
             Profiler.push("pitch");
-            hardware.shooterPitch.setPosition(this.goalPitchPos);
+            hardware.shooterPitch.setPosition(hoodAngleToServoPos(this.goalPitch));
             Profiler.pop();
 
             // flywheel pids
