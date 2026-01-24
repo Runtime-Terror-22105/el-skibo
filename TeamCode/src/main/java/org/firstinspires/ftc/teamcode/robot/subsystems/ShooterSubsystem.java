@@ -59,10 +59,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public GoalPosLookupTable goalPosLookupTable;
 
     // No angle limit for turret, but we have servo positions limits
-    public static double turretLowerBound = Math.toDegrees(0);
-    public static double turretUpperBound = Math.toDegrees(360);
-    public static double turretServoLowerBound = 0.0;
-    public static double turretServoUpperBound = 1.0;
+    public static double turretLowerBound = Math.toRadians(0);
+    public static double turretUpperBound = Math.toRadians(360);
+    public static double turretServoLowerBound = 0.05;
+    public static double turretServoUpperBound = 0.95;
 
     public static double hoodPosMax = 0.7; //maximum position the servo can go to
     public static double hoodPosMin = 0.15; //min position the servo can go to
@@ -106,7 +106,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public static double turretAngleToServoPos(double angleRad) {
-        double unboundedServo = Algebra.mapRange(angleRad, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+        double unboundedServo = Algebra.mapRange(angleRad,
+                Math.toRadians(90), Math.toRadians(270),
+                turretPosAt180-posChange90, turretPosAt180+posChange90
+        );
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 
