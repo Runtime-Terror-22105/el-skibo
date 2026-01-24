@@ -217,9 +217,9 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 robot.telemetry.addData("Goal Turret Pos", ShooterSubsystem.turretAngleToServoPos(robot.shooter.getTurretAngle()));;
 
                 robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
-                robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
-                robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocityRpm());
-                robot.telemetry.addData("Current velocity in/sec", robot.shooter.getVelocityRpm() / 6.469);
+                robot.telemetry.addData("Goal Velocity rpm", robot.shooter.getGoalVelocity());
+                robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocity());
+                robot.telemetry.addData("Current velocity in/sec", robot.shooter.getVelocity() / 6.469);
 
                 robot.telemetry.addData("Goal Pitch", robot.shooter.getHoodAngle());
                 robot.telemetry.addData("Goal Hood Pos", ShooterSubsystem.hoodAngleToServoPos(robot.shooter.getHoodAngle()));

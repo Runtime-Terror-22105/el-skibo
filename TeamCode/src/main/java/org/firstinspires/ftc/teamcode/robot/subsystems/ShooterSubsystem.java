@@ -21,54 +21,50 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+    public static boolean DEBUG = false;
+    public static boolean USE_TELEMETRY = true;
 
-    private double loopCount = 0;
+    public static double ENCODER_TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
-    // in loops, how often to update the turret position servo when outside of the shooting zone
-    public static double TURRET_UPDATE_FREQUENCY = 10;
+    public static double turretPosAt180 = 0.49; // pos pointed directly towards the back
+    public static double posChange90 = 0.38; // servo pos change that rotates turret 90 deg
+    public static double turretLowerBound = Math.PI/2; // currently 90 deg, var in rad
+    public static double turretUpperBound = 3*Math.PI/2; // currently 270 deg, var in rad
 
-    private final RobotHardware hardware;
+    public static double TURRET_UPDATE_FREQUENCY = 10; // in loops, how often to update the turret position servo outside shooting zone
 
-    public static boolean debug = false;
-    public static boolean telemetry = true;
-    public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
-
-    // TODO: tune velocity pid coefficients + tolerance
-    public static PidfController.PidfCoefficients shooterPIDCoeffecients =
-            new PidfController.PidfCoefficients(0.0005, 0.0, 0.0, 0.000185, 0);
-    public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
-
-    // the current pid + speed
-    public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
-    public double shooterPower = 0.0; //flywheel - motor power
-
-    public static double turretPosAt180 = 0.49; //pos pointed directly towards the back
-    public static double posChange90 = 0.38; //servo pos change that rotates turret 90 deg
-
-    private double goalVelocity; //flywheel - rpm
-    private double hoodPitch; //hood - rad
-    private double turretAngle; //turret - rad
-
-    public GoalPosLookupTable goalPosLookupTable;
-
-    public static double turretLowerBound = Math.PI/2; //currently 90 deg, var in rad
-    public static double turretUpperBound = 3*Math.PI/2; //currently 270 deg, var in rad
-
-    public static double hoodPosMax = 0.7; //maximum position the servo can go to
-    public static double hoodPosMin = 0.15; //min position the servo can go to
-    public static double hoodAngleMax = 0.919427826056; //radian measure of hood at max pos
-    public static double hoodAngleMin = 0.632748891943; //radian measure of hood at min pos
-    public static double robotHeight = 14.0; //in
+    public static double hoodPosMax = 0.7; // maximum position the servo can go to
+    public static double hoodPosMin = 0.15; // min position the servo can go to
+    public static double hoodAngleMax = 0.919427826056; // radian measure of hood at max pos
+    public static double hoodAngleMin = 0.632748891943; // radian measure of hood at min pos
+    public static double robotHeight = 14.0; // in
 
     public static double g = 386.08858267717; //in per sec^2
     public static double goalHeight = 40.0; //doesnt change no matter alliance color
     public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
 
+
+    private final RobotHardware hardware;
+    private final Robot robot;
+
+    public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
+    public static PidfController.PidfCoefficients shooterPIDCoeffecients =
+            new PidfController.PidfCoefficients(0.0005, 0.0, 0.0, 0.000185, 0);
+    public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
+
+    private double loopCount = 0;
+
+    private double goalVelocity; // flywheel - rpm
+    private double hoodPitch; // hood - rad
+    private double turretAngle; // turret - rad
+
+    public GoalPosLookupTable goalPosLookupTable;
+
+    // params to control auto shooting
     public boolean isAutoAimOn;
     public boolean isAutoVelOn;
     public boolean isAutoHoodOn;
     public boolean isAutoTurretOn;
-    private final Robot robot;
 
     public static class ShooterValues {
         public double velocity;
@@ -96,63 +92,121 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoTurretOn = true;
     }
 
+    // conversion functions
+
+    /**
+     * Convert turret angle in radians to servo position
+     * @param angleRad Angle in radians
+     * @return Servo position (0 to 1)
+     */
     public static double turretAngleToServoPos(double angleRad) {
         return Algebra.mapRange(angleRad, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
     }
 
+    /**
+     * Convert hood angle in radians to servo position
+     * @param angleRad Angle in radians
+     * @return Servo position (0 to 1)
+     */
     public static double hoodAngleToServoPos(double angleRad) {
         return Algebra.mapRange(angleRad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
     }
 
+    /**
+     * Get hood angle in radians, controls the angle of the shot
+     * @return Hood angle in radians
+     */
     public double getHoodAngle() {
         return this.hoodPitch;
     }
 
+    /**
+     * Get hood servo position (0 to 1)
+     * @return Hood servo position (0 to 1)
+     */
     public double getHoodServoPos() {
         return hoodAngleToServoPos(this.getHoodAngle());
     }
 
+    /**
+     * Set hood angle in radians, controls the angle of the shot
+     * @param angleRad Hood angle in radians
+     */
     public void setHoodAngle(double angleRad) {
         this.hoodPitch = Math.max(hoodAngleMin, Math.min(hoodAngleMax, angleRad));
     }
 
+    /**
+     * Get goal flywheel velocity in RPM
+     * @return
+     */
     public double getGoalVelocity() {
-        /* RPM */
         return this.goalVelocity;
     }
 
+    /**
+     * Set goal flywheel velocity in RPM
+     * Mostly use {@link #setSpeed(Double goal)} instead for better error handling
+     * @param rpm Goal velocity in RPM
+     */
     public void setGoalVelocity(double rpm) {
         this.goalVelocity = rpm;
     }
 
+    /**
+     * Get turret angle in radians
+     * @return Turret angle in radians
+     */
     public double getTurretAngle() {
         return this.turretAngle;
     }
 
+    /**
+     * Set turret angle in radians
+     * @param angleRad Turret angle in radians
+     */
     public void setTurretAngle(double angleRad) {
         this.turretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad));
     }
 
+    /**
+     * Set goal flywheel velocity in RPM
+     * @param goal Goal velocity in RPM
+     */
     public void setSpeed(Double goal) {
         /* updates goalVelocity */
         //goal should be in RPM
-        if (debug) Log.d("ShooterSubsystem", "setSpeed (rpm): " + goal);
+        if (DEBUG) Log.d("ShooterSubsystem", "setSpeed (rpm): " + goal);
         if (goal != null)
             this.goalVelocity = goal;
     }
 
-    public double getVelocity() {
+    /**
+     * Get current flywheel velocity in ticks/sec
+     * @return Current flywheel velocity in ticks/sec
+     */
+    private double getVelocityTicks() {
         /*ENCODER VELOCITY IN TICKS*/
         return this.hardware.shooterEncoder.getVelocity();
     }
 
-    public double getVelocityRpm() {
-        /*ENCODER VELOCITY IN RPM*/
-        return ticksToRpm(getVelocity());
+    /**
+     * Get current flywheel velocity in RPM
+     * <p>Note: this is the current velocity, not the goal velocity.
+     * For that, use {@link #getGoalVelocity()}</p>
+     * @return Current flywheel velocity in ticks/sec
+     */
+    public double getVelocity() {
+        return ticksToRpm(getVelocityTicks());
     }
 
-    public double ticksToRpm(double ticksPerSec) {
-        return ticksPerSec * 60.0 / TICKS_PER_REV;
+    /**
+     * Convert ticks/sec to rpm
+     * @param ticksPerSec Velocity in ticks/sec
+     * @return Velocity in RPM
+     */
+    private static double ticksToRpm(double ticksPerSec) {
+        return ticksPerSec * 60.0 / ENCODER_TICKS_PER_REV;
     }
 
     /**
@@ -160,12 +214,12 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocity Velocity in in/sec
      * @return Velocity in RPM
      */
-    public static double velToRPM(double velocity){
+    private static double velToRPM(double velocity){
         return velocity * 6.469;
     }
 
     public void doAutoShoot(){
-        if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
+        if (DEBUG) Log.d("ShooterSubsystem", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
         Pose botPosTemp = this.robot.follower.getPose();
@@ -180,31 +234,23 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
 
-        ShooterValues math;
-//        if(usingHardCodedShooterTable)
-//        {
-//            calcVelocity = HardCodedLookup.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
-//        }
-//        else{
-//            math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
-//        }
-        math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
+        ShooterValues math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
         //calcVelcoity - in/sec
 
-        if (telemetry) Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", math.velocity);
+        if (USE_TELEMETRY) Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", math.velocity);
 
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
         if (this.isAutoVelOn) {
-            this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
+            this.setSpeed(velToRPM(math.velocity)); // todo: add back
         }
         if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
             this.setHoodAngle(math.rad);
         }
-        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.getHoodAngle());
+        if (USE_TELEMETRY) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.getHoodAngle());
 
-        if (debug) Log.i("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
-        if (debug) Log.i("ShooterSubsystem", "Calculated hood pitch (rad)" + this.getHoodAngle());
+        if (DEBUG) Log.i("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
+        if (DEBUG) Log.i("ShooterSubsystem", "Calculated hood pitch (rad)" + this.getHoodAngle());
     }
 
 
@@ -231,10 +277,10 @@ public class ShooterSubsystem extends SubsystemBase {
         double angleToGoal1=Math.atan2(goalPos.y-botPos.y,goalPos.x-botPos.x);
         double robotHeading=botPos.heading;
 
-        if (telemetry) robot.telemetry.addData("Angle", Math.toDegrees(angleToGoal1));
-        if (telemetry) robot.telemetry.addData("heading current", Math.toDegrees(robotHeading));
-        if (telemetry) robot.telemetry.addData("distance to goal",distanceToGoal);
-        if (telemetry) robot.telemetry.addData("magnitude",robotVelMagnitude);
+        if (USE_TELEMETRY) robot.telemetry.addData("Angle", Math.toDegrees(angleToGoal1));
+        if (USE_TELEMETRY) robot.telemetry.addData("heading current", Math.toDegrees(robotHeading));
+        if (USE_TELEMETRY) robot.telemetry.addData("distance to goal",distanceToGoal);
+        if (USE_TELEMETRY) robot.telemetry.addData("magnitude",robotVelMagnitude);
         robot.telemetry.update();
 
 
@@ -290,7 +336,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void calcHoodPod(Pose2d botPos, Pose2d goalPos, double arcHeight) {
         // note: arcHeight is usually set to the apexHeight variable, which is currently 60
-        if (debug) Log.d("ShooterSubsystem", "running hood math");
+        if (DEBUG) Log.d("ShooterSubsystem", "running hood math");
 
         double h = arcHeight-robotHeight; // the delta y at the apex
 
@@ -301,7 +347,7 @@ public class ShooterSubsystem extends SubsystemBase {
         double theta = Math.atan(((2*h)/horDist) *
                 (1 + Math.sqrt(1 - (verDist/h)))); //in radians, from math
         this.setHoodAngle(theta);
-        if (debug) Log.d("ShooterSubsystem", "goal hood pos" + this.getHoodServoPos());
+        if (DEBUG) Log.d("ShooterSubsystem", "goal hood pos" + this.getHoodServoPos());
     }
 
     /** lets you set a velocity and angle manually*/
@@ -335,10 +381,10 @@ public class ShooterSubsystem extends SubsystemBase {
         if (this.isAutoHoodOn) {
             calcHoodPod(botPos, goalPos, apexHeight);
         }
-        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.getHoodAngle());
+        if (USE_TELEMETRY) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.getHoodAngle());
 
-        if (debug) Log.d("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
-        if (debug) Log.d("ShooterSubsystem", "Calculated hood pitch (rad)" + this.getHoodAngle());
+        if (DEBUG) Log.d("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
+        if (DEBUG) Log.d("ShooterSubsystem", "Calculated hood pitch (rad)" + this.getHoodAngle());
 
 
         this.setTurretAngle(turretYaw);
@@ -355,7 +401,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
          double botHeading = robot.follower.getHeading();
 
-        if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
+        if (USE_TELEMETRY) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
 
 
         // note: this is 0 to 360 instead of -180 to 180 for convenience below
@@ -363,15 +409,15 @@ public class ShooterSubsystem extends SubsystemBase {
          return angleTurret;
     }
 
-    public void updateShooter() {
-        if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", this.getVelocityRpm());
-        if (telemetry) Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
+    public double updateShooter() {
+        if (USE_TELEMETRY) Robot.debugTelemetry.addData("Shooter RPM", this.getVelocity());
+        if (USE_TELEMETRY) Robot.debugTelemetry.addData("Shooter in/s", this.getVelocity() / 6.469);
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
 
         double ff = this.hardware.getVoltageScale() * getGoalVelocity();
         this.shooterPID.setTargetPosition(getGoalVelocity());
-        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), ff);
+        return this.shooterPID.calculatePower(this.getVelocity(), ff);
     }
 
     @Override
@@ -401,7 +447,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // flywheel pids
             Profiler.push("flywheel");
-            this.updateShooter();
+            double shooterPower = this.updateShooter();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
             hardware.shooterLeft.setPower(shooterPower);
             hardware.shooterPitch.setPosition(this.getHoodServoPos());
