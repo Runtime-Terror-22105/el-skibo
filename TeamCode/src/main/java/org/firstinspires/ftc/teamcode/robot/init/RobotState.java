@@ -19,9 +19,7 @@ public enum RobotState {
     SHOOTING(new StateTag[] {INTAKE_DOWN, INTAKE_REVERSE, FLYWHEEL_ON}),
     CLIMBING(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
     DONE_CLIMB(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
-
-    TRANSFER(new StateTag[] {}),
-    NOT_READY(new StateTag[]{});
+    TRANSFER(new StateTag[] {});
 
     private final StateTag[] tags;
     RobotState(StateTag[] tags){ this.tags = tags;}
