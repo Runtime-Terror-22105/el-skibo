@@ -14,21 +14,9 @@ public class LightControl extends SubsystemBase {
     private final Robot robot;
     public static boolean debug = true;
 
-    private boolean isManualLighting = false;
-
-    public void setIsManualLighting(boolean state)
-    {
-        this.isManualLighting = state;
-    }
-
     public void setManualLightColor(TerrorLight.LightColors color)
     {
         hardware.lights.setColor(color);
-    }
-
-    public boolean getIsManualLighting()
-    {
-        return isManualLighting;
     }
 
     public LightControl(RobotHardware hardware, Robot robot) {
@@ -41,9 +29,6 @@ public class LightControl extends SubsystemBase {
     public void periodic()
     {
         try (Profiler.Scope p = Profiler.enter("LightControl2")) {
-            if (isManualLighting) {
-                return;
-            }
             if (debug) {
                 robot.telemetry.addData("State for the lights", robot.getState());
             }
@@ -56,22 +41,16 @@ public class LightControl extends SubsystemBase {
                     hardware.lights.setColor(TerrorLight.LightColors.BLUE);
                     break;
 
-                //i might be misunderstanding
-//           case FULL:
-//                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
-//                break;
-
-                case NOT_READY:
-                    hardware.lights.setColor(TerrorLight.LightColors.RED);
-                    break;
-
                 case TRANSFER:
                     hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
                     break;
 
                 case READY_TO_SHOOT:
-                    hardware.lights.setColor(TerrorLight.LightColors.GREEN);
-
+                    if (robot.shooter.isTurretInDeadzone()) {
+                        hardware.lights.setColor(TerrorLight.LightColors.RED);
+                    } else {
+                        hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+                    }
                     break;
 
                 case SHOOTING:
@@ -84,10 +63,8 @@ public class LightControl extends SubsystemBase {
                 case DONE_CLIMB:
                     break;
 
-
                 default:
                     hardware.lights.setColor(TerrorLight.LightColors.PINK);
-
                     break;
             }
         }

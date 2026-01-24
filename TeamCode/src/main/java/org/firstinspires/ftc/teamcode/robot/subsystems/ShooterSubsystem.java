@@ -67,6 +67,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoHoodOn;
     public boolean isAutoTurretOn;
 
+    // turret deadzone flag
+    private boolean turretIsInDeadzone;
+
     public static class ShooterValues {
         public double velocity;
         public double rad;
@@ -120,6 +123,39 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * Convert ticks/sec to rpm
+     * @param ticksPerSec Velocity in ticks/sec
+     * @return Velocity in RPM
+     */
+    private static double ticksToRpm(double ticksPerSec) {
+        return ticksPerSec * 60.0 / ENCODER_TICKS_PER_REV;
+    }
+
+    /**
+     * Convert inches/sec to rpm
+     * @param velocity Velocity in in/sec
+     * @return Velocity in RPM
+     */
+    private static double inPerSecToRPM(double velocity){
+        return velocity * IN_PER_SEC_TO_RPM;
+    }
+
+    /**
+     * Convert rpm to inches/sec
+     * @param velocity Velocity in in/sec
+     * @return Velocity in RPM
+     */
+    private static double rpmToInPerSec(double velocity) {
+        return velocity / IN_PER_SEC_TO_RPM;
+    }
+
+    // getter and setter functions
+
+    public boolean isTurretInDeadzone() {
+        return this.turretIsInDeadzone;
+    }
+
+    /**
      * Get hood angle in radians, controls the angle of the shot
      * @return Hood angle in radians
      */
@@ -145,7 +181,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * Get goal flywheel velocity in RPM
-     * @return
+     * @return Goal velocity in RPM
      */
     public double getGoalVelocity() {
         return this.goalVelocity;
@@ -236,32 +272,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
 
-    /**
-     * Convert ticks/sec to rpm
-     * @param ticksPerSec Velocity in ticks/sec
-     * @return Velocity in RPM
-     */
-    private static double ticksToRpm(double ticksPerSec) {
-        return ticksPerSec * 60.0 / ENCODER_TICKS_PER_REV;
-    }
-
-    /**
-     * Convert inches/sec to rpm
-     * @param velocity Velocity in in/sec
-     * @return Velocity in RPM
-     */
-    private static double inPerSecToRPM(double velocity){
-        return velocity * IN_PER_SEC_TO_RPM;
-    }
-
-    /**
-     * Convert rpm to inches/sec
-     * @param velocity Velocity in in/sec
-     * @return Velocity in RPM
-     */
-    private static double rpmToInPerSec(double velocity) {
-        return velocity / IN_PER_SEC_TO_RPM;
-    }
+    // auto shooting functions
 
     public void doAutoShoot(){
         if (DEBUG) Log.d("ShooterSubsystem", "Doing autoshoot!");
@@ -378,7 +389,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
-
     public void calcHoodPod(Pose2d botPos, Pose2d goalPos, double arcHeight) {
         // note: arcHeight is usually set to the apexHeight variable, which is currently 60
         if (DEBUG) Log.d("ShooterSubsystem", "running hood math");
@@ -398,7 +408,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /** lets you set a velocity and angle manually*/
     public void manualAimGoalPos(double velocity, double pitch, Pose2d goalPos) {
         this.isAutoAimOn = false;
-        this.setSpeed(this.inPerSecToRPM(velocity));
+        this.setSpeed(inPerSecToRPM(velocity));
 
         this.setHoodAngle(pitch);
         this.setTurretAngle(this.calculateTurretAngle(goalPos));
@@ -408,7 +418,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = false;
         Pose2d goalPos = this.goalPosLookupTable.get();
 
-        this.setSpeed(this.inPerSecToRPM(velocity));
+        this.setSpeed(inPerSecToRPM(velocity));
         this.setHoodAngle(pitch);
         this.setTurretAngle(this.calculateTurretAngle(goalPos));
     }
@@ -435,7 +445,6 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setTurretAngle(turretYaw);
     }
 
-
     private double calculateTurretAngle(Pose2d goalPos){
         double x = goalPos.x - robot.follower.getPose().getX();
         double y = goalPos.y - robot.follower.getPose().getY();
@@ -446,7 +455,9 @@ public class ShooterSubsystem extends SubsystemBase {
         if (USE_TELEMETRY) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
 
         // note: this is 0 to 360 instead of -180 to 180 for convenience below
-        return Angle.normalize(absoluteGoalAngle - botHeading);
+        double angle = Angle.normalize(absoluteGoalAngle - botHeading);
+        this.turretIsInDeadzone = angle > turretUpperBound || angle < turretLowerBound;
+        return angle;
     }
 
     public double updateShooter() {
@@ -468,8 +479,6 @@ public class ShooterSubsystem extends SubsystemBase {
                 hardware.shooterRight.setPower(0);
                 return;
             }
-
-
 
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
