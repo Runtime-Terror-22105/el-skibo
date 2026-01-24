@@ -109,8 +109,10 @@ public abstract class Auto extends LinearOpMode {
         this.team = team;
         if (team == Team.BLUE) {
             robot.goalPos = FieldConstants.BLUE_GOAL_POS;
+            robot.color = Team.BLUE;
         } else {
             robot.goalPos = FieldConstants.RED_GOAL_POS;
+            robot.color = Team.RED;
         }
     }
 
