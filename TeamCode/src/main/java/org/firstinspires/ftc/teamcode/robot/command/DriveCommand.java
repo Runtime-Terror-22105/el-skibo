@@ -48,11 +48,6 @@ public class DriveCommand extends CommandBase {
         double left_y = -y.get();
         double right_x = -turn.get();
         robot.follower.setTeleOpDrive(left_y, left_x, right_x * rotationMultiplier);
-//        robot.drivetrain.move(
-//                direction,
-//                rotation,
-//                driveSpeed
-//        );
     }
 
     @Override
