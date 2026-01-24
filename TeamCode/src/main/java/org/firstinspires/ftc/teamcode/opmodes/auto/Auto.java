@@ -376,6 +376,7 @@ public abstract class Auto extends LinearOpMode {
         waitForStart();
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
+        robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
