@@ -487,7 +487,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // shooter pitch
             Profiler.push("pitch");
-            hardware.shooterPitch.setPosition(hoodAngleToServoPos(this.getHoodAngle()));
+            hardware.shooterPitch.setPosition(this.getHoodServoPos());
             Profiler.pop();
 
             // flywheel pids
@@ -495,7 +495,7 @@ public class ShooterSubsystem extends SubsystemBase {
             double shooterPower = this.updateShooter();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
             hardware.shooterLeft.setPower(shooterPower);
-            hardware.shooterPitch.setPosition(this.getHoodServoPos());
+            hardware.shooterRight.setPower(shooterPower);
             Profiler.pop();
 
             //turret
