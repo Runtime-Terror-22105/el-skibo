@@ -287,7 +287,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
         if (this.isAutoVelOn) {
-            this.setSpeed(inPerSecToRPM(math.velocity)); // todo: add back
+            this.setSpeed(inPerSecToRPM(math.velocity));
         }
         if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
             this.setHoodAngle(math.rad);
