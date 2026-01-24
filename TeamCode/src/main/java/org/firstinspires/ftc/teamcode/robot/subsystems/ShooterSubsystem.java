@@ -25,6 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static boolean USE_TELEMETRY = true;
 
     public static double ENCODER_TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
+    private static final double IN_PER_SEC_TO_RPM = 6.469;
 
     public static double turretPosAt180 = 0.49; // pos pointed directly towards the back
     public static double posChange90 = 0.38; // servo pos change that rotates turret 90 deg
@@ -74,6 +75,12 @@ public class ShooterSubsystem extends SubsystemBase {
             this.velocity = v;
             this.rad = r;
         }
+    }
+
+    public enum VelocityUnit {
+        RPM,
+        TICKS_PER_SEC,
+        INCHES_PER_SEC
     }
 
     public ShooterSubsystem(RobotHardware hardware, Robot robot) {
@@ -144,6 +151,19 @@ public class ShooterSubsystem extends SubsystemBase {
         return this.goalVelocity;
     }
 
+    public double getGoalVelocity(VelocityUnit unit) throws IllegalArgumentException {
+        switch (unit) {
+            case TICKS_PER_SEC:
+                return this.goalVelocity * ENCODER_TICKS_PER_REV / 60.0;
+            case RPM:
+                return this.goalVelocity;
+            case INCHES_PER_SEC:
+                return rpmToInPerSec(this.goalVelocity);
+            default:
+                throw new IllegalArgumentException("Unsupported velocity unit: " + unit);
+        }
+    }
+
     /**
      * Set goal flywheel velocity in RPM
      * Mostly use {@link #setSpeed(Double goal)} instead for better error handling
@@ -159,6 +179,10 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double getTurretAngle() {
         return this.turretAngle;
+    }
+
+    public double getTurretServoPos() {
+        return turretAngleToServoPos(this.getTurretAngle());
     }
 
     /**
@@ -182,22 +206,34 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Get current flywheel velocity in ticks/sec
-     * @return Current flywheel velocity in ticks/sec
-     */
-    private double getVelocityTicks() {
-        /*ENCODER VELOCITY IN TICKS*/
-        return this.hardware.shooterEncoder.getVelocity();
-    }
-
-    /**
      * Get current flywheel velocity in RPM
      * <p>Note: this is the current velocity, not the goal velocity.
      * For that, use {@link #getGoalVelocity()}</p>
      * @return Current flywheel velocity in ticks/sec
      */
     public double getVelocity() {
-        return ticksToRpm(getVelocityTicks());
+        return this.getVelocity(VelocityUnit.RPM);
+    }
+
+    /**
+     * Get current flywheel velocity in a specified unit
+     * <p>Note: this is the current velocity, not the goal velocity.
+     * For that, use {@link #getGoalVelocity()}</p>
+     * @param unit Desired velocity unit
+     * @return Current flywheel velocity in specified unit
+     */
+    public double getVelocity(VelocityUnit unit) throws IllegalArgumentException {
+        double velocityTicks = this.hardware.shooterEncoder.getVelocity();
+        switch (unit) {
+            case TICKS_PER_SEC:
+                return velocityTicks;
+            case RPM:
+                return ticksToRpm(velocityTicks);
+            case INCHES_PER_SEC:
+                return rpmToInPerSec(ticksToRpm(velocityTicks));
+            default:
+                throw new IllegalArgumentException("Unsupported velocity unit: " + unit);
+        }
     }
 
     /**
@@ -214,8 +250,17 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocity Velocity in in/sec
      * @return Velocity in RPM
      */
-    private static double velToRPM(double velocity){
-        return velocity * 6.469;
+    private static double inPerSecToRPM(double velocity){
+        return velocity * IN_PER_SEC_TO_RPM;
+    }
+
+    /**
+     * Convert rpm to inches/sec
+     * @param velocity Velocity in in/sec
+     * @return Velocity in RPM
+     */
+    private static double rpmToInPerSec(double velocity) {
+        return velocity / IN_PER_SEC_TO_RPM;
     }
 
     public void doAutoShoot(){
@@ -242,7 +287,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
         if (this.isAutoVelOn) {
-            this.setSpeed(velToRPM(math.velocity)); // todo: add back
+            this.setSpeed(inPerSecToRPM(math.velocity)); // todo: add back
         }
         if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
             this.setHoodAngle(math.rad);
@@ -322,7 +367,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setTurretAngle(ang);
 
         if (this.isAutoVelOn) {
-            this.setSpeed(this.velToRPM(finalVelocity));
+            this.setSpeed(inPerSecToRPM(finalVelocity));
         }
 
 
@@ -353,7 +398,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /** lets you set a velocity and angle manually*/
     public void manualAimGoalPos(double velocity, double pitch, Pose2d goalPos) {
         this.isAutoAimOn = false;
-        this.setSpeed(this.velToRPM(velocity));
+        this.setSpeed(this.inPerSecToRPM(velocity));
 
         this.setHoodAngle(pitch);
         this.setTurretAngle(this.findYawAngle(goalPos));
@@ -363,7 +408,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = false;
         Pose2d goalPos = this.goalPosLookupTable.get();
 
-        this.setSpeed(this.velToRPM(velocity));
+        this.setSpeed(this.inPerSecToRPM(velocity));
         this.setHoodAngle(pitch);
         this.setTurretAngle(this.findYawAngle(goalPos));
     }
@@ -376,7 +421,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Pose2d goalPos = this.goalPosLookupTable.get();
 
         this.isAutoAimOn = false;
-        this.setSpeed(this.velToRPM(velocity));
+        this.setSpeed(this.inPerSecToRPM(velocity));
 
         if (this.isAutoHoodOn) {
             calcHoodPod(botPos, goalPos, apexHeight);
