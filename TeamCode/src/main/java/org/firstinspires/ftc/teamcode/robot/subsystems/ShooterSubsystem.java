@@ -49,8 +49,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private double hoodPitch; //hood - rad
     private double turretAngle; //turret - rad
 
-    public double turretOffset = 0.0; //turret manual offset- servo pos
-
     public GoalPosLookupTable goalPosLookupTable;
 
     public static double turretLowerBound = Math.PI/2; //currently 90 deg, var in rad
@@ -376,10 +374,6 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), ff);
     }
 
-    public void addTurretOffset(double change){
-        this.turretOffset += change;
-    }
-
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("ShooterSubsystem")) {
@@ -416,8 +410,8 @@ public class ShooterSubsystem extends SubsystemBase {
             //turret
             Profiler.push("turret");
             double goalTurretPos = turretAngleToServoPos(this.getTurretAngle());
-            hardware.turretYawLeft.setPosition(goalTurretPos + this.turretOffset);
-            hardware.turretYawRight.setPosition(goalTurretPos + this.turretOffset);
+            hardware.turretYawLeft.setPosition(goalTurretPos);
+            hardware.turretYawRight.setPosition(goalTurretPos);
             Profiler.pop();
         }
     }
