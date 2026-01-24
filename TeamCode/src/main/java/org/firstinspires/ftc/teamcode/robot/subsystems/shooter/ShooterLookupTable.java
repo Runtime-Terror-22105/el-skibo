@@ -103,6 +103,7 @@ public class ShooterLookupTable {
 
     public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
         if (debug) Log.i("ShooterLookupTable", "distance to goal" +distanceToGoalIn);
+        // todo: temporarily putting this here so we can dashboard
         FAR_VELOCITY_LUT = new LinearInterpLUT();
         HOOD_LUT = new LinearInterpLUT();
         for (LookupValue dataPoint : VEL_DATA_POINTS) {

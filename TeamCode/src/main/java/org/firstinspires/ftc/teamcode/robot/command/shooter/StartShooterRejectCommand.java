@@ -11,6 +11,7 @@ public class StartShooterRejectCommand extends InstantCommand {
 
     }
     public void reject(){
-        // todo: implement this command
+        shooter.goalPitch = 0.95;
+        shooter.setSpeed(1.0);
     }
 }
