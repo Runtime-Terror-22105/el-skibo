@@ -42,7 +42,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                     }
                 }),
                 new ParallelCommandGroup(
-                    new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+//                    new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                    new SetIntakeSpeedCommand(robot.intake, 0.0),
                     new SetSpindexerWallDown(robot.spindexer, false),
                     new SetShooterRPMCommand(robot.shooter, rpm)
                 ),

@@ -89,6 +89,10 @@ public class Pose2d {
             this.y -= other.y;
     }
 
+    public Pose2d mirror() {
+        return new Pose2d(this.toPedro().mirror());
+    }
+
     @NonNull
     @Override
     public String toString() {
