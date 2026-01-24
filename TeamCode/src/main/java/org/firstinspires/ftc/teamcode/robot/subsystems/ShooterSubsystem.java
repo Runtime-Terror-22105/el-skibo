@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -57,8 +58,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public GoalPosLookupTable goalPosLookupTable;
 
-    public static double turretLowerBound = Math.PI/2; //currently 90 deg, var in rad
-    public static double turretUpperBound = 3*Math.PI/2; //currently 270 deg, var in rad
+    // No angle limit for turret, but we have servo positions limits
+    public static double turretLowerBound = Math.toRadians(0);
+    public static double turretUpperBound = Math.toRadians(360);
+    public static double turretServoLowerBound = 0.05;
+    public static double turretServoUpperBound = 0.95;
 
     public static double hoodPosMax = 0.7; //maximum position the servo can go to
     public static double hoodPosMin = 0.15; //min position the servo can go to
@@ -102,7 +106,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public static double turretAngleToServoPos(double angleRad) {
-        return Algebra.mapRange(angleRad, turretLowerBound, turretUpperBound, turretPosAt180-posChange90, turretPosAt180+posChange90);
+        double unboundedServo = Algebra.mapRangeNoClamp(angleRad,
+                Math.toRadians(90), Math.toRadians(270),
+                turretPosAt180-posChange90, turretPosAt180+posChange90
+        );
+        return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 
     public void doAutoShoot(){
