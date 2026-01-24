@@ -106,7 +106,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public static double turretAngleToServoPos(double angleRad) {
-        double unboundedServo = Algebra.mapRange(angleRad,
+        double unboundedServo = Algebra.mapRangeNoClamp(angleRad,
                 Math.toRadians(90), Math.toRadians(270),
                 turretPosAt180-posChange90, turretPosAt180+posChange90
         );
