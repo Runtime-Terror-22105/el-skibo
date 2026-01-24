@@ -63,7 +63,7 @@ public abstract class Auto extends LinearOpMode {
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(225));
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(50, 94, Math.toRadians(45));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(40, 104, Math.toRadians(45));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 114.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
@@ -357,7 +357,7 @@ public abstract class Auto extends LinearOpMode {
         robot.init(hardware, telemetry);
         robot.camera.stopScanningForGlyphs();
 
-        this.turretAngleForMotif = Team.BLUE.equals(team) ? ShooterSubsystem.turretLowerBound : ShooterSubsystem.turretUpperBound;
+        this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
         robot.goalPos = team.getGoalPos();
         robot.follower.setStartingPose(team.getStartPosNear().toPedro());
 
