@@ -62,9 +62,9 @@ public abstract class Auto extends LinearOpMode {
 
     public static double MAX_POWER = 1.0;
 
-    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(225));
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(50, 94, Math.toRadians(45));
-    public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 114.644, Math.toRadians(315));
+    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 93, Math.toRadians(225));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 95, Math.toRadians(45));
+    public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
@@ -75,8 +75,6 @@ public abstract class Auto extends LinearOpMode {
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
-
-    public static Pose2d PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 400;
@@ -94,13 +92,11 @@ public abstract class Auto extends LinearOpMode {
     private PathChain prepareIntake1Path, intake1Path, shoot1Path;
     private PathChain prepareIntake2Path, intake2Path, shoot2Path;
     private PathChain prepareIntake3Path, intake3Path, shoot3Path;
-    private PathChain parkPath;
 
     private Command shootPreloadCommand;
     private Command intake1Command, shoot1Command;
     private Command intake2Command, shoot2Command;
     private Command intake3Command, shoot3Command;
-    private Command parkCommand;
     double turretAngleForMotif;
 
     private boolean hasFinished = false;
@@ -132,7 +128,6 @@ public abstract class Auto extends LinearOpMode {
         Pose prepareIntake3Pose = PREPARE_INTAKE_3_POSE.toPedro();
         Pose intake3Control = new Pose(56.751, 45.668);
         Pose intake3Pose = INTAKE_3_POSE.toPedro();
-        Pose parkPose = PARK_POSE.toPedro();
 
         if (mirror) {
             shootPreloadPose = shootPreloadPose.mirror();
@@ -148,7 +143,6 @@ public abstract class Auto extends LinearOpMode {
             prepareIntake3Pose = prepareIntake3Pose.mirror();
             intake3Control = intake3Control.mirror();
             intake3Pose = intake3Pose.mirror();
-            parkPose = parkPose.mirror();
         }
 
         Follower follower = robot.follower;
@@ -179,14 +173,7 @@ public abstract class Auto extends LinearOpMode {
                 .addPath(
                         new BezierLine(intake1Pose, shootEdgePose)
                 )
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(0.4, 1.0,
-                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), shootEdgePose.getHeading(), 0.4, 0.8)
-                                )
-                        )
-                )
+                .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
@@ -249,14 +236,6 @@ public abstract class Auto extends LinearOpMode {
                 )
                 .setTangentHeadingInterpolation()
                 .setReversed()
-                .build();
-
-        parkPath = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(shootLastPose, parkPose)
-                )
-                .setLinearHeadingInterpolation(shootLastPose.getHeading(), parkPose.getHeading())
                 .build();
     }
 
@@ -338,12 +317,6 @@ public abstract class Auto extends LinearOpMode {
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
-
-        parkCommand = new SequentialCommandGroup(
-                new GoToRestingStateCommand(robot),
-                new FollowPathCommand(robot.follower, parkPath, false),
-                new InstantCommand(() -> hasFinished = true)
-        );
     }
 
     public void runOpMode() {
@@ -357,7 +330,7 @@ public abstract class Auto extends LinearOpMode {
         robot.init(hardware, telemetry);
         robot.camera.stopScanningForGlyphs();
 
-        this.turretAngleForMotif = Team.BLUE.equals(team) ? ShooterSubsystem.turretLowerBound : ShooterSubsystem.turretUpperBound;
+        this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
         robot.goalPos = team.getGoalPos();
         robot.follower.setStartingPose(team.getStartPosNear().toPedro());
 
@@ -374,7 +347,7 @@ public abstract class Auto extends LinearOpMode {
         // we can't spin shooter in init bc it's illegal
         robot.shooter.isAutoVelOn = false;
         robot.shooter.setSpeed(0D);
-        CommandScheduler.getInstance().schedule(new GoToRestingStateCommand(robot));
+//        CommandScheduler.getInstance().schedule(new GoToRestingStateCommand(robot));
         CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
@@ -403,6 +376,7 @@ public abstract class Auto extends LinearOpMode {
         waitForStart();
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
+        robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
@@ -411,14 +385,14 @@ public abstract class Auto extends LinearOpMode {
                         new SequentialCommandGroup(
                                 intake1Command, shoot1Command,
                                 intake2Command, shoot2Command,
-                                intake3Command, shoot3Command,
-                                parkCommand
+                                intake3Command, shoot3Command
                         ),
                         new SequentialCommandGroup(
                                 new GoToRestingStateCommand(robot)
                         ),
                         () -> !stopAfterPreload
-                )
+                ),
+                new InstantCommand(() -> hasFinished = true)
         ));
 
         lastLoop = System.nanoTime();

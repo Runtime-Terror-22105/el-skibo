@@ -8,7 +8,6 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -77,6 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoVelOn;
     public boolean isAutoHoodOn;
     public boolean isAutoTurretOn;
+    public boolean alwaysUpdateTurret = false;
     private final Robot robot;
     public static class ShooterValues{
         public double velocity;
@@ -124,7 +124,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         // also currently only updates when in the tape zone or every 10 loops to reduce wrtes
-        if (isAutoTurretOn && (loopCount == 0 || robot.isInTapeZone())) {
+        if (isAutoTurretOn && (alwaysUpdateTurret || loopCount == 0 || robot.isInTapeZone())) {
             this.setTurretAngle(this.findYawAngle(goalPos));
         }
 
