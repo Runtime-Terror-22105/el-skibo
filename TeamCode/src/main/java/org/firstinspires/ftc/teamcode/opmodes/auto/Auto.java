@@ -63,7 +63,7 @@ public abstract class Auto extends LinearOpMode {
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(225));
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(40, 104, Math.toRadians(45));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(40, 94, Math.toRadians(45));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 114.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
@@ -179,14 +179,7 @@ public abstract class Auto extends LinearOpMode {
                 .addPath(
                         new BezierLine(intake1Pose, shootEdgePose)
                 )
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(0.4, 1.0,
-                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), shootEdgePose.getHeading(), 0.4, 0.8)
-                                )
-                        )
-                )
+                .setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
