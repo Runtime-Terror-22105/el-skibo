@@ -19,6 +19,7 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
@@ -28,6 +29,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
+import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ToggleAutoTurretCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
@@ -77,7 +79,7 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
     public static int PRE_INTAKE_DELAY = 0;
-    public static int INTAKE_DELAY = 400;
+    public static int INTAKE_DELAY = 600;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
@@ -243,14 +245,8 @@ public abstract class Auto extends LinearOpMode {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot),
-                        new FollowPathCommand(robot.follower, shootPreloadPath, true),
-                        new ConditionalCommand(
-                                new ToggleAutoTurretCommand(robot, false, turretAngleForMotif),
-                                new InstantCommand(() -> {}),
-                                () -> robot.camera.gameGlyph != null // this checs if the init thing wored
-                        )
+                        new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
-                new ToggleAutoTurretCommand(robot, true),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
@@ -265,7 +261,7 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake1Path, true),
-                new WaitCommand(INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
         );
         shoot1Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
@@ -369,8 +365,6 @@ public abstract class Auto extends LinearOpMode {
             } else {
                 robot.camera.setGlyph(blueMotifMap.get(robot.camera.gameGlyph));
             }
-        } else {
-            robot.camera.startScanningForGlyphs();
         }
 
         waitForStart();
@@ -379,6 +373,7 @@ public abstract class Auto extends LinearOpMode {
         robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
 
+        CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, true));
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 shootPreloadCommand,
                 new ConditionalCommand(
