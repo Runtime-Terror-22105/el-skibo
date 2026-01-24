@@ -5,14 +5,12 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
@@ -63,7 +61,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     private boolean goingToMoveWallsDownButHaventMovedThemDownYet;
     private ElapsedTime goingToMoveWallsDownTimer = new ElapsedTime();
     private boolean goingToMoveWallsDownTimerStarted = false;
-    public boolean overrideMaxPower;
 
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
         this.robot = robot;
@@ -92,18 +89,11 @@ public class SpindexerSubsystem extends SubsystemBase {
         return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
     }
 
-    // TODO: restore this eventually
-//    public double getPosition() {
-////        return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
-//    }
-
-
     public double getTargetYaw() {
         return desiredAngle;
     }
 
     public boolean atTargetYaw() {
-        // TODO: potentially beware of angle wrapping here
         return this.yawPid.atTargetPosition(getPositionRaw(), true);
     }
 
@@ -126,8 +116,6 @@ public class SpindexerSubsystem extends SubsystemBase {
      * @param angle The angle to go to, in radians.
      */
     public void goToAngle120(double angle) {
-//        this.desiredAngle = angle;
-        // TODO restore this function later once spindexer is no longer cooked
         double currAngle = getPositionRaw();
         double bestAngle = currAngle;
         double bestError = Double.POSITIVE_INFINITY;
@@ -200,13 +188,10 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     /**
-     * <p>PLEASE DO NOT USE THIS WILLY NILLY!!!
-     * you gotta use the command because it only can do the senses when the balls get aligned</p>
-     *
      * Newsort returns a boolean indicating whether or not the motif was detected.
      * If it was detected, it returns true (99.99% of cases)
      * */
-    public boolean newSort()
+    public boolean sortBalls()
     {
         BallColor[] balls = getBallPositions();
         BallColor[] glyphArr = robot.camera.getGlyphCharArray();
@@ -276,57 +261,6 @@ public class SpindexerSubsystem extends SubsystemBase {
         return true;
     }
 
-    public void sortBalls() {
-        Log.d("SpindexerSubsystem", "des ang before sort "+ this.desiredAngle);
-        Log.d("SpindexerSubsystem", "des ang before sort deg "+ this.desiredAngle * (180D/Math.PI));
-        this.goToAngle120(0);
-        Log.d("SpindexerSubsystem", "des ang aft 0 "+ this.desiredAngle);
-        int fullCount = 0;
-        double greenPos = 0.0;
-        int greenCount = 0;
-        int purpleCount = 0;
-        for (BallColor ball : this.getBallPositions()) {
-            Log.d("ball-thing", String.valueOf(ball.toChar()));
-            if (!BallColor.NONE.equals(ball)) {
-                fullCount += 1;
-                if (!BallColor.GREEN.equals(ball)) {
-                    greenCount += 1;
-                    greenPos = this.selectColor(BallColor.GREEN);
-                } else {
-                    purpleCount += 1;
-                }
-
-            }
-        }
-        Log.d("SpindexerSubsystem", "purple count" + purpleCount);
-        Log.d("SpindexerSubsystem", "green count" + greenCount);
-        Log.d("SpindexerSubsystem", "full count" + fullCount);
-        Log.d("SpindexerSubsystem", "greenPos" + greenPos);
-
-        if (purpleCount == 2 && greenCount == 1) {
-            if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
-                double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
-                Log.d("SpindexerSubsystem", "glyph gpp normalized error" + normalizedError);
-                this.rotate(normalizedError);
-
-            } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
-                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
-                Log.d("SpindexerSubsystem", "glyph pgp normalized error" + normalizedError);
-                this.rotate(normalizedError);
-
-            } else {
-                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
-                Log.d("SpindexerSubsystem", "glyph ppg normalized error" + normalizedError);
-                this.rotate(normalizedError);
-            }
-        } else {
-            Log.d("SpindexerSubsystem", "not enough balls to run logic ready pos:" + READY_POSITION);
-            this.rotate(READY_POSITION);
-        }
-        Log.d("SpindexerSubsystem", "des ang after sort"+this.desiredAngle);
-
-    }
-
     /**
      * <p>Directly sets the angle of the spindexer.</p>
      * <p>This is deprecated, and only exists for the tuning files.
@@ -345,7 +279,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void setPidEnabled(boolean enabled) {
         spindexerPower = 0.0;
         pidEnabled = enabled;
-        overrideMaxPower = false;
     }
 
     public void updateSpindexer() {
@@ -375,7 +308,6 @@ public class SpindexerSubsystem extends SubsystemBase {
             if (debug) Log.d("SpindexerSubsystem", "max power: " + maxPower);
             if (debug) Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
             double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
-            if (this.overrideMaxPower)  clampedPower = spindexerPower;
             this.hardware.spindexerRotate.setPower(clampedPower);
     //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
 

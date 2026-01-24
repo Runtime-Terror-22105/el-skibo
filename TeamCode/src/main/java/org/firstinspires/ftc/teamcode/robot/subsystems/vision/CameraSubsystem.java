@@ -116,8 +116,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setSuppressCalibrationWarnings(false)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-//                    .setLensIntrinsics() // TODO: placeholder to remind us to calibrate the camera
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS)
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
@@ -170,7 +169,6 @@ public class CameraSubsystem extends SubsystemBase {
 //            gain.setGain(GAIN);
 //        } catch (IllegalStateException e) {
 //            // there's an error where it says that you cannot set controls until camera starts streaming
-//            // todo handle ths properly and don't just do a try-catch
 //            Log.w("CameraSubsystem", e);
 //        }
 
