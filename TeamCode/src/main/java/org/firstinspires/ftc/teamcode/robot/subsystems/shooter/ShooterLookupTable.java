@@ -72,6 +72,7 @@ public class ShooterLookupTable {
             new HoodLookupValue(70.7, 0.8),
             new HoodLookupValue(77.8, 0.82),
             new HoodLookupValue(84.1, 0.85),
+            new HoodLookupValue(94.1, 0.91),
 
 
 
