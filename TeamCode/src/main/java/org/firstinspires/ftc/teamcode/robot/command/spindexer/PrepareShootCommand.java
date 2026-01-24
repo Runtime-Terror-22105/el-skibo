@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
+import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
@@ -41,7 +42,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                     }
                 }),
                 new ParallelCommandGroup(
-                    new SetIntakeSpeedCommand(robot.intake, 0),
+                    new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
                     new SetSpindexerWallDown(robot.spindexer, false),
                     new SetShooterRPMCommand(robot.shooter, rpm)
                 ),
@@ -61,6 +62,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new SetSpindexerRampActive(robot.spindexer, true),
                 new WaitCommand(RAMP_DELAY), // todo: adjust this delay based on how long it takes for ramp to drop
                 new LogCatCommand("PrepareShootCommand", "Phase 4 done", Log.INFO),
+                new SetIntakeSpeedCommand(robot.intake, 0),
                 new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT)
         );
     }
