@@ -7,7 +7,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -46,9 +45,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretPosAt180 = 0.49; //pos pointed directly towards the back
     public static double posChange90 = 0.38; //servo pos change that rotates turret 90 deg
 
-    public double goalPitch; //hood - rad
     public double goalVelocity; //flywheel - rpm
-    public double goalTurretAngle; //turret - rad
+    public double hoodPitch; //hood - rad
+    public double turretAngle; //turret - rad
 
     public double turretOffset = 0.0; //turret manual offset- servo pos
 
@@ -107,11 +106,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setTurretAngle(double angleRad) {
-        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad));
+        this.turretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad));
     }
 
     public void setHoodAngle(double angleRad) {
-        this.goalPitch = Math.max(hoodAngleMin, Math.min(hoodAngleMax, angleRad));
+        this.hoodPitch = Math.max(hoodAngleMin, Math.min(hoodAngleMax, angleRad));
     }
 
     public void doAutoShoot(){
@@ -151,10 +150,10 @@ public class ShooterSubsystem extends SubsystemBase {
         if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
             this.setHoodAngle(math.rad);
         }
-        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
+        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.hoodPitch);
 
         if (debug) Log.i("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
-        if (debug) Log.i("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
+        if (debug) Log.i("ShooterSubsystem", "Calculated hood pitch (rad)" + this.hoodPitch);
     }
 
 
@@ -251,7 +250,7 @@ public class ShooterSubsystem extends SubsystemBase {
         double theta = Math.atan(((2*h)/horDist) *
                 (1 + Math.sqrt(1 - (verDist/h)))); //in radians, from math
         this.setHoodAngle(theta);
-        if (debug) Log.d("ShooterSubsystem", "goal hood pos" + hoodAngleToServoPos(this.goalPitch));
+        if (debug) Log.d("ShooterSubsystem", "goal hood pos" + hoodAngleToServoPos(this.hoodPitch));
     }
 
     /** lets you set a velocity and angle manually*/
@@ -285,10 +284,10 @@ public class ShooterSubsystem extends SubsystemBase {
         if (this.isAutoHoodOn) {
             calcHoodPod(botPos, goalPos, apexHeight);
         }
-        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
+        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.hoodPitch);
 
         if (debug) Log.d("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
-        if (debug) Log.d("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
+        if (debug) Log.d("ShooterSubsystem", "Calculated hood pitch (rad)" + this.hoodPitch);
 
 
         this.setTurretAngle(turretYaw);
@@ -367,7 +366,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double getGoalTurretYaw() {
-        return this.goalTurretAngle;
+        return this.turretAngle;
     }
 
     @Override
@@ -392,7 +391,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // shooter pitch
             Profiler.push("pitch");
-            hardware.shooterPitch.setPosition(hoodAngleToServoPos(this.goalPitch));
+            hardware.shooterPitch.setPosition(hoodAngleToServoPos(this.hoodPitch));
             Profiler.pop();
 
             // flywheel pids
@@ -405,7 +404,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             //turret
             Profiler.push("turret");
-            double goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
+            double goalTurretPos = turretAngleToServoPos(this.turretAngle);
             hardware.turretYawLeft.setPosition(goalTurretPos + this.turretOffset);
             hardware.turretYawRight.setPosition(goalTurretPos + this.turretOffset);
             Profiler.pop();
