@@ -42,6 +42,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
@@ -176,7 +177,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(
-                new SetIntakeSpeedCommand(robot.intake, -1.0),
+                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING //robot.robotState != FULL
         ));
