@@ -32,7 +32,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public static boolean debug = false;
     public static boolean telemetry = true;
-    public static boolean usingHardCodedShooterTable = false;
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
@@ -151,6 +150,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void setTurretAngle(double angleRad) {
         this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad));
+    }
+
+    public static double hoodAngleToServoPos(double angleRad) {
+        return Algebra.mapRange(angleRad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
     }
 
 
