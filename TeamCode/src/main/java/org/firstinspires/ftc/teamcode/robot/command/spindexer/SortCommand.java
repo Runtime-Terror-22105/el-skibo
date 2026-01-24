@@ -18,7 +18,7 @@ public class SortCommand extends SequentialCommandGroup {
                 new InstantCommand(()->robot.spindexer.goToNearestSide()),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(alignTimeMS),
                 new WaitUntilCommand(() -> robot.camera.getGlyph() != null).withTimeout(WAiT_TiMEOUT_MOTiF),
-                new InstantCommand(()->robot.spindexer.newSort())
+                new InstantCommand(()->robot.spindexer.sortBalls())
         );
     }
 
