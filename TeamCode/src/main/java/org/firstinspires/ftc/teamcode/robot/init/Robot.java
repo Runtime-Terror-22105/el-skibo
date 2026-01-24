@@ -58,10 +58,6 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public Pose2d goalPos;
     private boolean autoSort;
 
-
-    // Camera stuff TODO
-//    public TerrorCameraVisionPortal camera;
-
     // Other misc public objects
     public FtcDashboard dashboard;
     public MultipleTelemetry telemetry;

@@ -89,18 +89,11 @@ public class SpindexerSubsystem extends SubsystemBase {
         return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
     }
 
-    // TODO: restore this eventually
-//    public double getPosition() {
-////        return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
-//    }
-
-
     public double getTargetYaw() {
         return desiredAngle;
     }
 
     public boolean atTargetYaw() {
-        // TODO: potentially beware of angle wrapping here
         return this.yawPid.atTargetPosition(getPositionRaw(), true);
     }
 
@@ -123,8 +116,6 @@ public class SpindexerSubsystem extends SubsystemBase {
      * @param angle The angle to go to, in radians.
      */
     public void goToAngle120(double angle) {
-//        this.desiredAngle = angle;
-        // TODO restore this function later once spindexer is no longer cooked
         double currAngle = getPositionRaw();
         double bestAngle = currAngle;
         double bestError = Double.POSITIVE_INFINITY;
