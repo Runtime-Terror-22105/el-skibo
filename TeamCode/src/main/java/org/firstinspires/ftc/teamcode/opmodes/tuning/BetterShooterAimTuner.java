@@ -213,17 +213,17 @@ public class BetterShooterAimTuner extends LinearOpMode {
                 robot.telemetry.addData("Goal Position", robot.shooter.goalPosLookupTable.get());
                 robot.telemetry.addData("Distance", Math.sqrt(Math.pow(robot.follower.getPose().getX() - robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY() - robot.shooter.goalPosLookupTable.get().y, 2)));
 
-                robot.telemetry.addData("Goal Yaw", robot.shooter.goalTurretAngle);
-                robot.telemetry.addData("Goal Turret Pos w/out offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.goalTurretAngle));
-                robot.telemetry.addData("Goal Turret Pos w/ offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.goalTurretAngle) + robot.shooter.turretOffset);
+                robot.telemetry.addData("Goal Yaw", robot.shooter.turretAngle);
+                robot.telemetry.addData("Goal Turret Pos w/out offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.turretAngle));
+                robot.telemetry.addData("Goal Turret Pos w/ offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.turretAngle) + robot.shooter.turretOffset);
 
                 robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
                 robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
                 robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocityRpm());
                 robot.telemetry.addData("Current velocity in/sec", robot.shooter.getVelocityRpm() / 6.469);
 
-                robot.telemetry.addData("Goal Pitch", robot.shooter.goalPitch);
-                robot.telemetry.addData("Goal Hood Pos", ShooterSubsystem.hoodAngleToServoPos(robot.shooter.goalPitch));
+                robot.telemetry.addData("Goal Pitch", robot.shooter.hoodPitch);
+                robot.telemetry.addData("Goal Hood Pos", ShooterSubsystem.hoodAngleToServoPos(robot.shooter.hoodPitch));
             }
 
             robot.telemetry.update();
