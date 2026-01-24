@@ -347,7 +347,7 @@ public abstract class Auto extends LinearOpMode {
         // we can't spin shooter in init bc it's illegal
         robot.shooter.isAutoVelOn = false;
         robot.shooter.setSpeed(0D);
-        CommandScheduler.getInstance().schedule(new GoToRestingStateCommand(robot));
+//        CommandScheduler.getInstance().schedule(new GoToRestingStateCommand(robot));
         CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
