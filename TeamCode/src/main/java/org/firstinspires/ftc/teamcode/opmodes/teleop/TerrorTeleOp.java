@@ -59,15 +59,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     private final Robot robot = new Robot();
 
     public Team color;
-    public static ShootingMethod shootingMethod = ShootingMethod.SHOOT_3_BALLS;
 
     private long lastLoop = System.nanoTime();
-
-    public enum ShootingMethod{
-        SHOOT_3_BALLS,
-        SHIMMY_SHOOT,
-        PAUSE_SHOOT
-    }
 
 
     public void setTeam(Team color) {
@@ -196,49 +189,18 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //
 //        manualSpindexRight.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
 
-        if (shootingMethod == ShootingMethod.SHOOT_3_BALLS){
-            shoot3button.whenPressed(new ConditionalCommand(
-                    new ConditionalCommand( // if we already did the transfer, just shoot immediately
-                            new ShootThreeBallsCommand(robot),
-                            new SequentialCommandGroup(
-                                    new PrepareShootCommand(robot),
-                                    new ShootThreeBallsCommand(robot)
-                            ),
-                            () -> robot.robotState == READY_TO_SHOOT
-                    ),
-                    new InstantCommand(() -> {} ),
-                    () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
-            ));
-        }
-        else if (shootingMethod == ShootingMethod.SHIMMY_SHOOT) {
-            shoot3button.whenPressed(new ConditionalCommand(
-                    new ConditionalCommand( // if we already did the transfer, just shoot immediately
-                            new ShimmyShoot3Ball(robot),
-                            new SequentialCommandGroup(
-                                    new PrepareShootCommand(robot),
-                                    new ShimmyShoot3Ball(robot)
-                            ),
-                            () -> robot.robotState == READY_TO_SHOOT
-                    ),
-                    new InstantCommand(() -> {} ),
-                    () -> robot.robotState != SHOOTING
-            ));
-        }
-        else{
-            shoot3button.whenPressed(new ConditionalCommand(
-                    new ConditionalCommand( // if we already did the transfer, just shoot immediately
-                            new ShootThreeBallsCommand(robot),
-                            new SequentialCommandGroup(
-                                    new PrepareShootCommand(robot),
-                                    new ShootThreeBallsCommand(robot)
-                            ),
-                            () -> robot.robotState == READY_TO_SHOOT
-                    ),
-                    new InstantCommand(() -> {} ),
-                    () -> robot.robotState != SHOOTING
-            ));
-        }
-
+        shoot3button.whenPressed(new ConditionalCommand(
+                new ConditionalCommand( // if we already did the transfer, just shoot immediately
+                        new ShootThreeBallsCommand(robot),
+                        new SequentialCommandGroup(
+                                new PrepareShootCommand(robot),
+                                new ShootThreeBallsCommand(robot)
+                        ),
+                        () -> robot.robotState == READY_TO_SHOOT
+                ),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
+        ));
 
         shoot1button.whenPressed(new ConditionalCommand(
                 new PrepareShootCommand(robot),
