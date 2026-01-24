@@ -275,7 +275,7 @@ public class ShooterSubsystem extends SubsystemBase {
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         // also currently only updates when in the tape zone or every 10 loops to reduce wrtes
         if (isAutoTurretOn && (loopCount == 0 || robot.isInTapeZone())) {
-            this.setTurretAngle(this.findYawAngle(goalPos));
+            this.setTurretAngle(this.calculateTurretAngle(goalPos));
         }
 
 
@@ -361,7 +361,7 @@ public class ShooterSubsystem extends SubsystemBase {
         finalVelocity = newVelocity;
         finalLaunchAngle = newLaunchAngle;
 
-        double ang = this.findYawAngle(goalPos);
+        double ang = this.calculateTurretAngle(goalPos);
         ang += turretOffsetAngle;
         ang = Math.max(turretLowerBound, Math.min(turretUpperBound, ang));
         this.setTurretAngle(ang);
@@ -401,7 +401,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setSpeed(this.inPerSecToRPM(velocity));
 
         this.setHoodAngle(pitch);
-        this.setTurretAngle(this.findYawAngle(goalPos));
+        this.setTurretAngle(this.calculateTurretAngle(goalPos));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {
@@ -410,7 +410,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         this.setSpeed(this.inPerSecToRPM(velocity));
         this.setHoodAngle(pitch);
-        this.setTurretAngle(this.findYawAngle(goalPos));
+        this.setTurretAngle(this.calculateTurretAngle(goalPos));
     }
 
 
@@ -421,7 +421,7 @@ public class ShooterSubsystem extends SubsystemBase {
         Pose2d goalPos = this.goalPosLookupTable.get();
 
         this.isAutoAimOn = false;
-        this.setSpeed(this.inPerSecToRPM(velocity));
+        this.setSpeed(inPerSecToRPM(velocity));
 
         if (this.isAutoHoodOn) {
             calcHoodPod(botPos, goalPos, apexHeight);
@@ -436,27 +436,22 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
 
-    private double findYawAngle(Pose2d goalPos){
-         /** all in rad **/
-         double x = goalPos.x - robot.follower.getPose().getX();
-         double y = goalPos.y - robot.follower.getPose().getY();
-         double angle = Math.atan2(y,x);
+    private double calculateTurretAngle(Pose2d goalPos){
+        double x = goalPos.x - robot.follower.getPose().getX();
+        double y = goalPos.y - robot.follower.getPose().getY();
+        double absoluteGoalAngle = Math.atan2(y,x);
 
-         double absoluteGoalAngle = angle;
-
-         double botHeading = robot.follower.getHeading();
+        double botHeading = robot.follower.getHeading();
 
         if (USE_TELEMETRY) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
 
-
         // note: this is 0 to 360 instead of -180 to 180 for convenience below
-         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
-         return angleTurret;
+        return Angle.normalize(absoluteGoalAngle - botHeading);
     }
 
     public double updateShooter() {
         if (USE_TELEMETRY) Robot.debugTelemetry.addData("Shooter RPM", this.getVelocity());
-        if (USE_TELEMETRY) Robot.debugTelemetry.addData("Shooter in/s", this.getVelocity() / 6.469);
+        if (USE_TELEMETRY) Robot.debugTelemetry.addData("Shooter in/s", this.getVelocity(VelocityUnit.INCHES_PER_SEC));
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
 
