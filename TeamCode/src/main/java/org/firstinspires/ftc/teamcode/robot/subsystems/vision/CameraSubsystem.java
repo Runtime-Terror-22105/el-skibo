@@ -214,7 +214,7 @@ public class CameraSubsystem extends SubsystemBase {
         Pose cameraFieldPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI);
 //        FtcDashDrawing.drawDot(cameraFieldPose, "#0000FF");
 
-        double turretAngle = robot.shooter.getGoalTurretYaw();
+        double turretAngle = robot.shooter.getTurretAngle();
         double cameraRobotHeading = cameraFieldPose.getHeading() - turretAngle;
         double pinpointRobotHeading = robot.follower.poseTracker.getPose().getHeading();
 

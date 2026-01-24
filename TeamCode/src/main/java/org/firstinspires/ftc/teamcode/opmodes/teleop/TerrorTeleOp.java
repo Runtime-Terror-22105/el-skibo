@@ -247,6 +247,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         ));
 
         rejectButton.whenPressed(new ConditionalCommand(
+                // todo: startshooterrejectcommand is unfinished
                 new StartShooterRejectCommand(robot.shooter),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING //robot.robotState == FULL
