@@ -62,8 +62,8 @@ public abstract class Auto extends LinearOpMode {
 
     public static double MAX_POWER = 1.0;
 
-    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(225));
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(40, 94, Math.toRadians(45));
+    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 100, Math.toRadians(225));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 100, Math.toRadians(45));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 114.644, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
