@@ -88,9 +88,9 @@ public class ShooterAimingTuner extends LinearOpMode {
 
             robot.telemetry.addData("Goal Yaw", robot.shooter.getTurretAngle());
             robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
-            robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
+            robot.telemetry.addData("Goal Velocity rpm", robot.shooter.getGoalVelocity());
             robot.telemetry.addData("Goal Pitch", robot.shooter.getHoodAngle());
-            robot.telemetry.addData("Current velocity rpm",robot.shooter.getVelocityRpm());
+            robot.telemetry.addData("Current velocity rpm",robot.shooter.getVelocity());
             robot.telemetry.update();
 
         }

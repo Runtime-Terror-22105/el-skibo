@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
-import static org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem.TICKS_PER_REV;
+import static org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem.ENCODER_TICKS_PER_REV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -61,8 +61,8 @@ public class MotorServoTest extends LinearOpMode {
                 telemetry.addData("Current velocity (ticks/sec)", shooterEncoder.getVelocity());
 
                 // I'm pretty sure we're using this motor? https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
-                telemetry.addData("Current velocity (rpm)", shooterEncoder.getVelocity() * 60 / TICKS_PER_REV); // 145.1 ticks per revolution
-                maxvel=Math.max(maxvel,shooterEncoder.getVelocity() * 60 / TICKS_PER_REV);
+                telemetry.addData("Current velocity (rpm)", shooterEncoder.getVelocity() * 60 / ENCODER_TICKS_PER_REV); // 145.1 ticks per revolution
+                maxvel=Math.max(maxvel,shooterEncoder.getVelocity() * 60 / ENCODER_TICKS_PER_REV);
                 telemetry.addData("Max Velocity(rpm)", maxvel); // 145.1 ticks per revolution
                 telemetry.addData("Current (amps)", ((DcMotorEx) hardwareMap.get(DcMotor.class, motorName)).getCurrent(CurrentUnit.AMPS));
                 telemetry.update();
