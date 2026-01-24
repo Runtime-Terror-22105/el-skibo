@@ -10,6 +10,7 @@ import com.seattlesolvers.solverslib.geometry.Vector2d;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.apache.commons.math3.analysis.function.Acos;
+import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.InterpLUTSafe;
@@ -97,26 +98,24 @@ public class GoalPosLookupTable {
 
     public Pose2d get(){
         updateDataPoints();
+        if (debug) Log.d("GoalPosLookupTable", "our team"+robot.color);
 
         double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
-        Pose2d newGoalPos = robot.goalPos.copy();
-        if (robot.color == Team.RED){
-            if (change < 0){
-                newGoalPos.y -= Math.abs(change);
-            } else if(change > 0){
-                newGoalPos.x -= Math.abs(change);
+        Pose2d newGoalPos = FieldConstants.RED_GOAL_POS.copy();
 
-            }
-        }
-        else{
-            if (change > 0){
-                newGoalPos.y -= Math.abs(change);
-            } else if(change < 0){
-                newGoalPos.x += Math.abs(change);
-
-            }
+        if (change < 0){
+            newGoalPos.y -= Math.abs(change);
+        } else if(change > 0){
+            newGoalPos.x -= Math.abs(change);
 
         }
+        if (robot.color == Team.BLUE){
+            if (debug) Log.d("GoalPosLookupTable", "before mirror"+newGoalPos);
+
+            newGoalPos = newGoalPos.mirror();
+        }
+
+
 
 
         if (debug) Log.d("GoalPosLookupTable", "old goal pos" + robot.goalPos);
