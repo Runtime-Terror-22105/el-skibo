@@ -10,8 +10,8 @@ public class FieldConstants {
     public static Pose2d BLUE_GOAL_POS = new Pose2d(0, 142, 0.0);
     public static Pose2d RED_GOAL_POS = new Pose2d(144, 142, 0.0);
 
-    public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-135));
-    public static Pose2d RED_START_POS_NEAR = new Pose2d(124, 123, Math.toRadians(315));
+    public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-127.7));
+    public static Pose2d RED_START_POS_NEAR = new Pose2d(124, 123, Math.toRadians(307.7));
     public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 0, 1D/2D*Math.PI);
     public static Pose2d RED_START_POS_FAR = new Pose2d(96, 0, 1D/2D*Math.PI);
 
