@@ -36,8 +36,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
-    public static double MAX_POWER_14V = 0.75;
-    public static double MAX_POWER_12V = 0.75;
+    public static double MAX_POWER_14V = 1.0;
+    public static double MAX_POWER_12V = 1.0;
 
     public double intakeWallPosition = INTAKE_WALL_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
