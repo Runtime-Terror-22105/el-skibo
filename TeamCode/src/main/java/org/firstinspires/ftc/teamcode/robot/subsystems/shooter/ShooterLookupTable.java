@@ -57,7 +57,7 @@ public class ShooterLookupTable {
             new LookupValue(134, 950), // this point actuallly untestested casu eim going home
 
             // other endpoint (prevent crashing)
-            new LookupValue(250, 900)
+            new LookupValue(250, 950)
 
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
