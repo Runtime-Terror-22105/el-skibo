@@ -100,15 +100,24 @@ public class GoalPosLookupTable {
 
         double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
         Pose2d newGoalPos = robot.goalPos.copy();
-        if (change < 0){
-            newGoalPos.y -= Math.abs(change);
-        } else if(change > 0){
-            if (robot.color == Team.BLUE) {
-                newGoalPos.x += Math.abs(change);
-            } else {
+        if (robot.color == Team.RED){
+            if (change < 0){
+                newGoalPos.y -= Math.abs(change);
+            } else if(change > 0){
                 newGoalPos.x -= Math.abs(change);
+
             }
         }
+        else{
+            if (change > 0){
+                newGoalPos.y -= Math.abs(change);
+            } else if(change < 0){
+                newGoalPos.x += Math.abs(change);
+
+            }
+
+        }
+
 
         if (debug) Log.d("GoalPosLookupTable", "old goal pos" + robot.goalPos);
         if (debug) Log.d("GoalPosLookupTable", "new goal pos " + newGoalPos);
