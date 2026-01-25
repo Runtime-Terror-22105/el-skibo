@@ -77,6 +77,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoHoodOn;
     public boolean isAutoTurretOn;
     public boolean alwaysUpdateTurret = false;
+
+    public boolean turretInDeadzone = false;
     private final Robot robot;
     public static class ShooterValues{
         public double velocity;
@@ -103,6 +105,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoVelOn = true;
         this.isAutoHoodOn = true;
         this.isAutoTurretOn = true;
+        this.turretInDeadzone = false;
     }
 
     public static double turretAngleToServoPos(double angleRad) {
@@ -416,9 +419,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
             //turret
             Profiler.push("turret");
-            double goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
-            hardware.turretYawLeft.setPosition(goalTurretPos + this.turretOffset);
-            hardware.turretYawRight.setPosition(goalTurretPos + this.turretOffset);
+            double goalTurretPos = turretAngleToServoPos(this.goalTurretAngle) + this.turretOffset;
+            this.turretInDeadzone = (goalTurretPos <= turretServoLowerBound) || (goalTurretPos >= turretServoUpperBound);
+            hardware.turretYawLeft.setPosition(goalTurretPos);
+            hardware.turretYawRight.setPosition(goalTurretPos);
             Profiler.pop();
         }
     }

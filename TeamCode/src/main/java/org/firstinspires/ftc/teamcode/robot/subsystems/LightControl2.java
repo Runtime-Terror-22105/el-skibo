@@ -77,7 +77,8 @@ public class LightControl2 extends SubsystemBase {
                     break;
 
                 case READY_TO_SHOOT:
-                    hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+                    if (robot.shooter.turretInDeadzone) hardware.lights.setColor(TerrorLight.LightColors.RED);
+                    else hardware.lights.setColor(TerrorLight.LightColors.GREEN);
 
                     break;
 
