@@ -155,6 +155,16 @@ public abstract class Auto extends LinearOpMode {
         return builder.build();
     }
 
+    private PathChain createLinePath(PathChain prevPath, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        Pose startPose = prevPath.endPoint();
+
+        // we do this bc we want to use the calculated heading in the path rather than the heading we had set in the path (i.e. for tangential)
+        startPose.setHeading(prevPath.getFinalHeadingGoal());
+
+        // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
+        return createLinePath(new Pose2d(startPose).mirror(mirror), endPoseIn, false, tangentialHeading, reversed);
+    }
+
     private PathChain createCurvePath(Pose2d startPoseIn, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading) {
         Pose startPose = startPoseIn.toPedro();
         Pose controlPose = controlPoseIn.toPedro();
@@ -217,18 +227,18 @@ public abstract class Auto extends LinearOpMode {
         Follower follower = robot.follower;
         shootPreloadPath = createLinePath(startPose, SHOOT_PRELOAD_POSE, mirror, false, false);
 
-        prepareIntake1Path = createLinePath(SHOOT_PRELOAD_POSE, PREPARE_INTAKE_2_POSE, mirror, false, false);
-        intake1Path = createLinePath(PREPARE_INTAKE_2_POSE, INTAKE_2_POSE, mirror, false, false);
-        shoot1Path = createLinePath(INTAKE_2_POSE, SHOOT_EDGE_POSE, mirror, true, true);
+        prepareIntake1Path = createLinePath(shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
+        intake1Path = createLinePath(prepareIntake1Path, INTAKE_2_POSE, mirror, false, false);
+        shoot1Path = createLinePath(intake1Path, SHOOT_EDGE_POSE, mirror, true, true);
 
-        prepareGatePath = createLinePath(SHOOT_EDGE_POSE, BEFORE_GATE, mirror, false, false);
-        hitGatePath = createLinePath(BEFORE_GATE, AFTER_GATE, mirror, false, false);
-        gateToShootPath = createLinePath(AFTER_GATE, SHOOT_EDGE_POSE, mirror, true, true);
+        prepareGatePath = createLinePath(shoot1Path, BEFORE_GATE, mirror, false, false);
+        hitGatePath = createLinePath(prepareGatePath, AFTER_GATE, mirror, false, false);
+        gateToShootPath = createLinePath(hitGatePath, SHOOT_EDGE_POSE, mirror, true, true);
 
 //        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
-        prepareIntake2Path = createLinePath(SHOOT_EDGE_POSE, PREPARE_INTAKE_1_POSE, mirror, false, false);
-        intake2Path = createLinePath(PREPARE_INTAKE_1_POSE, INTAKE_1_POSE, mirror, false, false);
-        shoot2Path = createLinePath(INTAKE_1_POSE, SHOOT_EDGE_POSE, mirror, true, true);
+        prepareIntake2Path = createLinePath(gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
+        intake2Path = createLinePath(prepareIntake2Path, INTAKE_1_POSE, mirror, false, false);
+        shoot2Path = createLinePath(intake2Path, SHOOT_EDGE_POSE, mirror, true, true);
 
         prepareIntake3Path = follower
                 .pathBuilder()
