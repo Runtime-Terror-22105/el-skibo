@@ -20,8 +20,10 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
     public static int RAMP_DELAY = 0;  // milliseconds
-    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 50;
-    public static long SPINDEXER_TIMEOUT = 600L;
+    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 100;
+    public static long SPINDEXER_TIMEOUT = 1000L; //600 if not sorting, longer if we are
+    //someone code that pls
+
 
     public PrepareShootCommand(Robot robot) {
         this(robot, null, null);
@@ -42,8 +44,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                     }
                 }),
                 new ParallelCommandGroup(
-//                    new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
-                    new SetIntakeSpeedCommand(robot.intake, 0.0),
+                    new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                    new SetIntakeSpeedCommand(robot.intake, 0.9),
                     new SetSpindexerWallDown(robot.spindexer, false),
                     new SetShooterRPMCommand(robot.shooter, rpm)
                 ),
