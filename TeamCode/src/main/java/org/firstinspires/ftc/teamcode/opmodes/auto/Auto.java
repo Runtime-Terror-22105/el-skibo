@@ -71,7 +71,7 @@ public abstract class Auto extends LinearOpMode {
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
-//    public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
+    public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(56.751, 69.765, 0);
@@ -80,8 +80,8 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
-    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 54.692, 146.621);
-    public static Pose2d AFTER_GATE = new Pose2d(13.228, 58.574, 135.9946);
+    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 54.692, Math.toRadians(146.621));
+    public static Pose2d AFTER_GATE = new Pose2d(13.228, 58.574, Math.toRadians(135.9946));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
@@ -106,6 +106,7 @@ public abstract class Auto extends LinearOpMode {
     private Command intake2Command, shoot2Command;
     private Command intake3Command, shoot3Command;
 
+    private PathChain pushGatePath;
     private PathChain prepareGatePath;
     private PathChain hitGatePath;
     private PathChain gateToShootPath;
@@ -229,7 +230,8 @@ public abstract class Auto extends LinearOpMode {
 
         prepareIntake1Path = createLinePath(shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
         intake1Path = createLinePath(prepareIntake1Path, INTAKE_2_POSE, mirror, false, false);
-        shoot1Path = createLinePath(intake1Path, SHOOT_EDGE_POSE, mirror, true, true);
+        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
+        shoot1Path = createLinePath(pushGatePath, SHOOT_EDGE_POSE, mirror, true, true);
 
         prepareGatePath = createLinePath(shoot1Path, BEFORE_GATE, mirror, false, false);
         hitGatePath = createLinePath(prepareGatePath, AFTER_GATE, mirror, false, false);
@@ -295,7 +297,8 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake1Path, true),
-                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
+                new FollowPathCommand(robot.follower, pushGatePath, true)
         );
         shoot1Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
