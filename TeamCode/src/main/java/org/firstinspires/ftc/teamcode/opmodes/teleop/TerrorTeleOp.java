@@ -97,9 +97,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         Object spindexerPosition = blackboard.getOrDefault(SPINDEXER_POSITION_KEY, null);
         Log.i("Auto", "Ending position after auto " + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
         if (motif != null) {
-            robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
-            robot.camera.stopScanningForGlyphs();
-            blackboard.put(MOTIF_DATA_KEY, null);
+            //robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
+            //robot.camera.stopScanningForGlyphs();
+            //blackboard.put(MOTIF_DATA_KEY, null);
         } else {
             robot.camera.startScanningForGlyphs();
         }
