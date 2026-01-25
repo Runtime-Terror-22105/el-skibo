@@ -104,18 +104,17 @@ public class GoalPosLookupTable {
         updateDataPoints();
         if (debug) Log.d("GoalPosLookupTable", "our team"+robot.color);
 
-        double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
+//        double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
         Pose2d newGoalPos = FieldConstants.RED_GOAL_POS.copy();
 
-        if (change < 0){
-            newGoalPos.y -= Math.abs(change);
-        } else if(change > 0){
-            newGoalPos.x -= Math.abs(change);
+//        if (change < 0){
+//            newGoalPos.y -= Math.abs(change);
+//        } else if(change > 0){
+//            newGoalPos.x -= Math.abs(change);
+//        }
 
-        }
-        if (robot.color == Team.BLUE){
+        if (robot.color == Team.BLUE) {
             if (debug) Log.d("GoalPosLookupTable", "before mirror"+newGoalPos);
-
             newGoalPos = newGoalPos.mirror();
         }
 

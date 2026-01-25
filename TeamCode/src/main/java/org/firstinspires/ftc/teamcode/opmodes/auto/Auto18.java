@@ -10,6 +10,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -38,7 +39,6 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import java.util.HashMap;
@@ -47,10 +47,9 @@ import java.util.Map;
 
 // todo order: 2, gate, gate, 3, 1
 @Config
-public abstract class Auto extends LinearOpMode {
-    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
-    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
-
+public abstract class Auto18 extends LinearOpMode {
+    public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
+    public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
     static {
         blueMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.PGP);
         blueMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.GPP);
@@ -61,7 +60,7 @@ public abstract class Auto extends LinearOpMode {
         redMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.PPG);
     }
 
-    public static long TIME_UNTIL_START_SCANNING_GLYPHS = 200;
+    public static long HITTING_GATE_TIMEOUT = 2000;
 
     public static boolean stopAfterPreload = false;
 
@@ -76,13 +75,14 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE = new Pose2d(20, 62, Math.toRadians(180));
+    public static Pose2d INTAKE_2_CONTROL = new Pose2d(56.751, 69.765, 0);
+    public static Pose2d INTAKE_2_POSE = new Pose2d(28, 62, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
-    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 54.692, 146.621);
-    public static Pose2d AFTER_GATE = new Pose2d(13.228, 58.574, 135.9946);
+    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 61, Math.toRadians(146.621));
+    public static Pose2d AFTER_GATE = new Pose2d(11, 61, Math.toRadians(135.9946));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
@@ -103,8 +103,15 @@ public abstract class Auto extends LinearOpMode {
 
     private Command shootPreloadCommand;
     private Command intake1Command, shoot1Command;
+    private Command intakeGateCommand, shootGateCommand;
     private Command intake2Command, shoot2Command;
     private Command intake3Command, shoot3Command;
+
+    //    private PathChain pushGatePath;
+    private PathChain prepareGatePath;
+    private PathChain hitGatePath;
+    private PathChain gateToShootPath;
+
     double turretAngleForMotif;
 
     private boolean hasFinished = false;
@@ -112,7 +119,7 @@ public abstract class Auto extends LinearOpMode {
     private long startTime = 0;
     private long lastLoop = System.nanoTime();
 
-    protected Auto(Team team) {
+    protected Auto18(Team team) {
 
         this.team = team;
         if (team == Team.BLUE) {
@@ -124,12 +131,90 @@ public abstract class Auto extends LinearOpMode {
         }
     }
 
+    private PathChain createLinePath(Pose2d startPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        Pose startPose = startPoseIn.toPedro();
+        Pose endPose = endPoseIn.toPedro();
+        if (mirror) {
+            startPose = startPose.mirror();
+            endPose = endPose.mirror();
+        }
+
+        PathBuilder builder = robot.follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(startPose, endPose)
+                );
+
+        if (tangentialHeading) {
+            builder = builder.setTangentHeadingInterpolation();
+        } else {
+            builder = builder.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading());
+        }
+
+        if (reversed) {
+            builder = builder.setReversed();
+        }
+        return builder.build();
+    }
+
+    private PathChain createLinePath(PathChain prevPath, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        Pose startPose = prevPath.endPoint();
+
+        // we do this bc we want to use the calculated heading in the path rather than the heading we had set in the path (i.e. for tangential)
+        startPose = startPose.setHeading(prevPath.getFinalHeadingGoal());
+
+        // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
+        return createLinePath(new Pose2d(startPose).mirror(mirror), endPoseIn, mirror, tangentialHeading, reversed);
+    }
+
+    private PathChain createCurvePath(PathChain prevPath, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        Pose startPose = prevPath.endPoint();
+
+        // we do this bc we want to use the calculated heading in the path rather than the heading we had set in the path (i.e. for tangential)
+        startPose = startPose.setHeading(prevPath.getFinalHeadingGoal());
+
+        // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
+        return createCurvePath(new Pose2d(startPose).mirror(mirror), controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
+    }
+
+    private PathChain createCurvePath(Pose2d startPoseIn, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        Pose startPose = startPoseIn.toPedro();
+        Pose controlPose = controlPoseIn.toPedro();
+        Pose endPose = endPoseIn.toPedro();
+        if (mirror) {
+            startPose = startPose.mirror();
+            controlPose = controlPose.mirror();
+            endPose = endPose.mirror();
+        }
+
+        PathBuilder builder = robot.follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                startPose,
+                                controlPose,
+                                endPose
+                        )
+                );
+
+        if (tangentialHeading) {
+            builder = builder.setTangentHeadingInterpolation();
+        } else {
+            builder = builder.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading());
+        }
+
+        if (reversed) {
+            builder = builder.setReversed();
+        }
+        return builder.build();
+    }
+
     private void buildPaths(Pose2d startPose, boolean mirror) {
         Pose shootPreloadPose = SHOOT_PRELOAD_POSE.toPedro();
         Pose prepareIntake1Pose = PREPARE_INTAKE_1_POSE.toPedro();
         Pose intake1Pose = INTAKE_1_POSE.toPedro();
         Pose pushGateControl = new Pose(44.87356321839081, 72.82758620689656);
-        Pose pushGatePose = PUSH_GATE_POSE.toPedro();
+//        Pose pushGatePose = PUSH_GATE_POSE.toPedro();
         Pose shootEdgePose = SHOOT_EDGE_POSE.toPedro();
         Pose shootLastPose = SHOOT_LAST_POSE.toPedro();
         Pose prepareIntake2Pose = PREPARE_INTAKE_2_POSE.toPedro();
@@ -144,7 +229,7 @@ public abstract class Auto extends LinearOpMode {
             prepareIntake1Pose = prepareIntake1Pose.mirror();
             intake1Pose = intake1Pose.mirror();
             pushGateControl = pushGateControl.mirror();
-            pushGatePose = pushGatePose.mirror();
+//            pushGatePose = pushGatePose.mirror();
             shootEdgePose = shootEdgePose.mirror();
             shootLastPose = shootLastPose.mirror();
             prepareIntake2Pose = prepareIntake2Pose.mirror();
@@ -156,63 +241,21 @@ public abstract class Auto extends LinearOpMode {
         }
 
         Follower follower = robot.follower;
-        shootPreloadPath = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(startPose.toPedro(), shootPreloadPose)
-                )
-                .setLinearHeadingInterpolation(startPose.heading, shootPreloadPose.getHeading())
-                .build();
+        shootPreloadPath = createLinePath(startPose, SHOOT_PRELOAD_POSE, mirror, false, false);
 
-        prepareIntake1Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(shootPreloadPose, prepareIntake1Pose)
-                )
-                .setLinearHeadingInterpolation(shootPreloadPose.getHeading(), prepareIntake1Pose.getHeading())
-                .build();
-        intake1Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(prepareIntake1Pose, intake1Pose)
-                )
-                .setLinearHeadingInterpolation(prepareIntake1Pose.getHeading(), intake1Pose.getHeading())
-                .build();
-        shoot1Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(intake1Pose, shootEdgePose)
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
+        prepareIntake1Path = createLinePath(shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
+        intake1Path = createCurvePath(prepareIntake1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false);
+//        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
+        shoot1Path = createLinePath(prepareIntake1Path, SHOOT_EDGE_POSE, mirror, true, true);
 
-        prepareIntake2Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                shootEdgePose,
-                                intake2Control,
-                                prepareIntake2Pose
-                        )
-                )
-                .setLinearHeadingInterpolation(shoot1Path.getFinalHeadingGoal(), prepareIntake2Pose.getHeading())
-                .build();
-        intake2Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(prepareIntake2Pose, intake2Pose)
-                )
-                .setLinearHeadingInterpolation(prepareIntake2Pose.getHeading(), intake2Pose.getHeading())
-                .build();
-        shoot2Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(intake2Pose, shootEdgePose)
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
-                .build();
+        prepareGatePath = createLinePath(shoot1Path, BEFORE_GATE, mirror, false, false);
+        hitGatePath = createLinePath(prepareGatePath, AFTER_GATE, mirror, false, false);
+        gateToShootPath = createLinePath(hitGatePath, SHOOT_EDGE_POSE, mirror, true, true);
+
+//        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
+        prepareIntake2Path = createLinePath(gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
+        intake2Path = createLinePath(prepareIntake2Path, INTAKE_1_POSE, mirror, false, false);
+        shoot2Path = createLinePath(intake2Path, SHOOT_EDGE_POSE, mirror, true, true);
 
         prepareIntake3Path = follower
                 .pathBuilder()
@@ -269,6 +312,7 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake1Path, true),
+//                new FollowPathCommand(robot.follower, pushGatePath, true)
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
         );
         shoot1Command = new SequentialCommandGroup(
@@ -294,6 +338,30 @@ public abstract class Auto extends LinearOpMode {
         shoot2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot2Path, true),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
+                ),
+                new WaitCommand(PRE_SHOOT_DELAY),
+                new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitCommand(SHOOT_DELAY)
+        );
+
+        intakeGateCommand = new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, prepareGatePath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitCommand(PRE_INTAKE_DELAY),
+                new ParallelRaceGroup(
+                        new FollowPathCommand(robot.follower, hitGatePath, true),
+                        new WaitCommand(HITTING_GATE_TIMEOUT),
+                        new WaitForIntakeCommand(robot)
+                ),
+                new WaitCommand(INTAKE_DELAY)
+        );
+        shootGateCommand = new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, gateToShootPath, true),
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
@@ -387,6 +455,8 @@ public abstract class Auto extends LinearOpMode {
                 new ConditionalCommand(
                         new SequentialCommandGroup(
                                 intake1Command, shoot1Command,
+                                intakeGateCommand, shootGateCommand,
+                                intakeGateCommand, shootGateCommand,
                                 intake2Command, shoot2Command,
                                 intake3Command, shoot3Command
                         ),

@@ -30,8 +30,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double MANUAL_SPINDEXER_DEGREE_CHANGE = 0.5;
 
-    public static double INTAKE_WALL_DOWN = 0.67;
-    public static double INTAKE_WALL_UP = 0;
+    public static double INTAKE_WALL_DOWN = 0.8;
+    public static double INTAKE_WALL_UP = 0.1;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
