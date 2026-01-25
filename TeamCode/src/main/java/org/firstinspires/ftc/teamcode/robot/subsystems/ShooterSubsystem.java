@@ -61,8 +61,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // No angle limit for turret, but we have servo positions limits
     public static double turretLowerBound = Math.toRadians(0);
     public static double turretUpperBound = Math.toRadians(360);
-    public static double turretServoLowerBound = 0.05;
-    public static double turretServoUpperBound = 0.95;
+    public static double turretServoLowerBound = 0.0;
+    public static double turretServoUpperBound = 1;
 
     public static double hoodPosMax = 0.7; //maximum position the servo can go to
     public static double hoodPosMin = 0.15; //min position the servo can go to
@@ -78,6 +78,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoHoodOn;
     public boolean isAutoTurretOn;
     public boolean alwaysUpdateTurret = false;
+
+    public boolean turretInDeadzone = false;
     private final Robot robot;
     public static class ShooterValues{
         public double velocity;
@@ -107,6 +109,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoVelOn = true;
         this.isAutoHoodOn = true;
         this.isAutoTurretOn = true;
+        this.turretInDeadzone = false;
     }
 
     public static double turretAngleToServoPos(double angleRad) {
@@ -420,9 +423,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
             //turret
             Profiler.push("turret");
-            double goalTurretPos = turretAngleToServoPos(this.goalTurretAngle);
-            hardware.turretYawLeft.setPosition(goalTurretPos + this.turretOffset);
-            hardware.turretYawRight.setPosition(goalTurretPos + this.turretOffset);
+            double goalTurretPos = turretAngleToServoPos(this.goalTurretAngle) + this.turretOffset;
+            this.turretInDeadzone = (goalTurretPos <= turretServoLowerBound) || (goalTurretPos >= turretServoUpperBound);
+            hardware.turretYawLeft.setPosition(goalTurretPos);
+            hardware.turretYawRight.setPosition(goalTurretPos);
             Profiler.pop();
         }
     }
