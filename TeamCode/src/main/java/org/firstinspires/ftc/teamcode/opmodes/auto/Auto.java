@@ -452,7 +452,6 @@ public abstract class Auto extends LinearOpMode {
                                 intake1Command, shoot1Command,
                                 intakeGateCommand, shootGateCommand,
                                 intakeGateCommand, shootGateCommand,
-                                intakeGateCommand, shootGateCommand,
                                 intake2Command, shoot2Command,
                                 intake3Command, shoot3Command
                         ),
