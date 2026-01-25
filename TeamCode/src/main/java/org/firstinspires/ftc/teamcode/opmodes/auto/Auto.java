@@ -20,6 +20,7 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
@@ -59,7 +60,7 @@ public abstract class Auto extends LinearOpMode {
         redMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.PPG);
     }
 
-    public static long TIME_UNTIL_START_SCANNING_GLYPHS = 200;
+    public static long HITTING_GATE_TIMEOUT = 2000;
 
     public static boolean stopAfterPreload = false;
 
@@ -80,8 +81,8 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
-    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 57, Math.toRadians(146.621));
-    public static Pose2d AFTER_GATE = new Pose2d(13.228, 61, Math.toRadians(135.9946));
+    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 61, Math.toRadians(146.621));
+    public static Pose2d AFTER_GATE = new Pose2d(11, 61, Math.toRadians(135.9946));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
@@ -106,7 +107,7 @@ public abstract class Auto extends LinearOpMode {
     private Command intake2Command, shoot2Command;
     private Command intake3Command, shoot3Command;
 
-    private PathChain pushGatePath;
+//    private PathChain pushGatePath;
     private PathChain prepareGatePath;
     private PathChain hitGatePath;
     private PathChain gateToShootPath;
@@ -160,7 +161,7 @@ public abstract class Auto extends LinearOpMode {
         Pose startPose = prevPath.endPoint();
 
         // we do this bc we want to use the calculated heading in the path rather than the heading we had set in the path (i.e. for tangential)
-        startPose.setHeading(prevPath.getFinalHeadingGoal());
+        startPose = startPose.setHeading(prevPath.getFinalHeadingGoal());
 
         // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
         return createLinePath(new Pose2d(startPose).mirror(mirror), endPoseIn, mirror, tangentialHeading, reversed);
@@ -170,7 +171,7 @@ public abstract class Auto extends LinearOpMode {
         Pose startPose = prevPath.endPoint();
 
         // we do this bc we want to use the calculated heading in the path rather than the heading we had set in the path (i.e. for tangential)
-        startPose.setHeading(prevPath.getFinalHeadingGoal());
+        startPose = startPose.setHeading(prevPath.getFinalHeadingGoal());
 
         // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
         return createCurvePath(new Pose2d(startPose).mirror(mirror), controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
@@ -244,8 +245,8 @@ public abstract class Auto extends LinearOpMode {
 
         prepareIntake1Path = createLinePath(shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
         intake1Path = createCurvePath(prepareIntake1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false);
-        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
-        shoot1Path = createLinePath(pushGatePath, SHOOT_EDGE_POSE, mirror, true, true);
+//        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
+        shoot1Path = createLinePath(prepareIntake1Path, SHOOT_EDGE_POSE, mirror, true, true);
 
         prepareGatePath = createLinePath(shoot1Path, BEFORE_GATE, mirror, false, false);
         hitGatePath = createLinePath(prepareGatePath, AFTER_GATE, mirror, false, false);
@@ -311,8 +312,8 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake1Path, true),
-                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
-                new FollowPathCommand(robot.follower, pushGatePath, true)
+//                new FollowPathCommand(robot.follower, pushGatePath, true)
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
         );
         shoot1Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
@@ -351,7 +352,11 @@ public abstract class Auto extends LinearOpMode {
                         new GoToIntakeStateCommand(robot)
                 ),
                 new WaitCommand(PRE_INTAKE_DELAY),
-                new FollowPathCommand(robot.follower, hitGatePath, true),
+                new ParallelRaceGroup(
+                        new FollowPathCommand(robot.follower, hitGatePath, true),
+                        new WaitCommand(HITTING_GATE_TIMEOUT),
+                        new WaitForIntakeCommand(robot)
+                ),
                 new WaitCommand(INTAKE_DELAY)
         );
         shootGateCommand = new SequentialCommandGroup(
