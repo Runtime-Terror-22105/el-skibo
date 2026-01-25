@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
+    public static long TIME_BEFORE_REVERSE_INTAKE = 150;
     public static long REVERSE_INTAKE_TIME_MS = 150;
     public static int RAMP_DELAY = 0;  // milliseconds
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 100;
@@ -45,6 +46,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         robot.shooter.goalPitch = hoodAngle;
                     }
                 }),
+                new WaitCommand(TIME_BEFORE_REVERSE_INTAKE),
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
                 new WaitCommand(REVERSE_INTAKE_TIME_MS),
                 new ParallelCommandGroup(

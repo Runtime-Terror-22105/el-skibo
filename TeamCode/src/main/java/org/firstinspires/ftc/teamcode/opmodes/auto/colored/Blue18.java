@@ -4,12 +4,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.opmodes.auto.NearSide21;
+import org.firstinspires.ftc.teamcode.opmodes.auto.Auto18;
 
 @Config
-@Autonomous(name="Blue 21", group="Leave Auto")
-public class Blue21 extends NearSide21 {
-    public Blue21(){
+@Autonomous(name="Blue 18", group="Leave Auto")
+public class Blue18 extends Auto18 {
+    public Blue18(){
         super(Team.BLUE);
     }
 }
