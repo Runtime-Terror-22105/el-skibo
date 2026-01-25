@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class IntakeSubsystem extends SubsystemBase {
-    public static double DEFAULT_SPEED = 0.9;
+    public static double DEFAULT_SPEED = 1.0;
     public static double REVERSE_SPEED = -0.5;
 
     public static boolean debug = false;

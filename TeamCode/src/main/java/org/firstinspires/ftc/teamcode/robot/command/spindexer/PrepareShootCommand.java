@@ -9,6 +9,7 @@ import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
+    public static long REVERSE_INTAKE_TIME_MS = 150;
     public static int RAMP_DELAY = 0;  // milliseconds
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 100;
     public static long SPINDEXER_TIMEOUT = 1000L; //600 if not sorting, longer if we are
@@ -43,9 +45,10 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         robot.shooter.goalPitch = hoodAngle;
                     }
                 }),
+                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                new WaitCommand(REVERSE_INTAKE_TIME_MS),
                 new ParallelCommandGroup(
-                    new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
-                    new SetIntakeSpeedCommand(robot.intake, 0.9),
+                    new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                     new SetSpindexerWallDown(robot.spindexer, false),
                     new SetShooterRPMCommand(robot.shooter, rpm)
                 ),
