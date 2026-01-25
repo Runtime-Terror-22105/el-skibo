@@ -44,6 +44,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import java.util.HashMap;
 import java.util.Map;
 
+
+// todo order: 2, gate, gate, 3, 1
 @Config
 public abstract class Auto extends LinearOpMode {
     public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
@@ -77,6 +79,9 @@ public abstract class Auto extends LinearOpMode {
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
+
+    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 54.692, 146.621);
+    public static Pose2d AFTER_GATE = new Pose2d(13.228, 58.574, 135.9946);
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;

@@ -52,7 +52,6 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 import java.util.List;
 
 @Config
-
 public abstract class TerrorTeleOp extends LinearOpMode {
     public static boolean LOG_MOTOR_CURRENT = false;
 
@@ -340,6 +339,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                     Math.pow(robot.follower.getPose().getY()-robot.goalPos.y, 2));
             robot.telemetry.addData("Distance (in)", dist);
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
+            robot.telemetry.addData("Robot position", robot.follower.getPose().toString());
             robot.telemetry.update();
             Profiler.pop();
 
