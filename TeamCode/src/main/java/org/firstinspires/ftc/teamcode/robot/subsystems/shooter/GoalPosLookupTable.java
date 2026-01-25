@@ -67,9 +67,6 @@ public class GoalPosLookupTable {
     };
 
     private static void updateDataPoints() {
-        DATA_POINTS[0].pointChange = -Y_OFFSET;
-        DATA_POINTS[1].pointChange = 0;
-        DATA_POINTS[2].pointChange = X_OFFSET;
 
         GOAL_CHANGE_LUT = new InterpLUTSafe();
         for (GoalLookupValue dataPoint : DATA_POINTS) {
