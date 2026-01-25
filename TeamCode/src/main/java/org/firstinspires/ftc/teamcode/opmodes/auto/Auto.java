@@ -75,13 +75,13 @@ public abstract class Auto extends LinearOpMode {
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(56.751, 69.765, 0);
-    public static Pose2d INTAKE_2_POSE = new Pose2d(20, 62, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(28, 62, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
-    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 54.692, Math.toRadians(146.621));
-    public static Pose2d AFTER_GATE = new Pose2d(13.228, 58.574, Math.toRadians(135.9946));
+    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 55.692, Math.toRadians(146.621));
+    public static Pose2d AFTER_GATE = new Pose2d(13.228, 59.574, Math.toRadians(135.9946));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
@@ -163,10 +163,20 @@ public abstract class Auto extends LinearOpMode {
         startPose.setHeading(prevPath.getFinalHeadingGoal());
 
         // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
-        return createLinePath(new Pose2d(startPose).mirror(mirror), endPoseIn, false, tangentialHeading, reversed);
+        return createLinePath(new Pose2d(startPose).mirror(mirror), endPoseIn, mirror, tangentialHeading, reversed);
     }
 
-    private PathChain createCurvePath(Pose2d startPoseIn, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading) {
+    private PathChain createCurvePath(PathChain prevPath, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        Pose startPose = prevPath.endPoint();
+
+        // we do this bc we want to use the calculated heading in the path rather than the heading we had set in the path (i.e. for tangential)
+        startPose.setHeading(prevPath.getFinalHeadingGoal());
+
+        // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
+        return createCurvePath(new Pose2d(startPose).mirror(mirror), controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
+    }
+
+    private PathChain createCurvePath(Pose2d startPoseIn, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
         Pose startPose = startPoseIn.toPedro();
         Pose controlPose = controlPoseIn.toPedro();
         Pose endPose = endPoseIn.toPedro();
@@ -190,6 +200,10 @@ public abstract class Auto extends LinearOpMode {
             builder = builder.setTangentHeadingInterpolation();
         } else {
             builder = builder.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading());
+        }
+
+        if (reversed) {
+            builder = builder.setReversed();
         }
         return builder.build();
     }
@@ -229,7 +243,7 @@ public abstract class Auto extends LinearOpMode {
         shootPreloadPath = createLinePath(startPose, SHOOT_PRELOAD_POSE, mirror, false, false);
 
         prepareIntake1Path = createLinePath(shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
-        intake1Path = createLinePath(prepareIntake1Path, INTAKE_2_POSE, mirror, false, false);
+        intake1Path = createCurvePath(prepareIntake1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false);
         pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
         shoot1Path = createLinePath(pushGatePath, SHOOT_EDGE_POSE, mirror, true, true);
 
