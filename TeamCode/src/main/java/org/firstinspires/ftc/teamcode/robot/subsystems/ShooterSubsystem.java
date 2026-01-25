@@ -54,7 +54,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double goalPitchPos; //hood - servo pos
 
-    public double turretOffset = -0.04; //turret manual offset- servo pos
+    public double turretOffset; //turret manual offset- servo pos
 
     public GoalPosLookupTable goalPosLookupTable;
 
@@ -100,9 +100,12 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPID.setTargetPosition(0.0);
 
         this.goalPosLookupTable = new GoalPosLookupTable(this.robot);
-        if (robot.color == Team.RED){
-            this.turretOffset = -this.turretOffset;
+        if (this.robot.color == Team.BLUE){
+            this.turretOffset = -0.04;
         }
+
+
+
 
         //currently doesnt control anything in this class, just for keeping track
         this.isAutoAimOn = true;
@@ -126,7 +129,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         Pose botPosTemp = this.robot.follower.getPose();
         Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
-        Pose2d goalPos = this.goalPosLookupTable.get();
+        Pose2d goalPos = this.robot.goalPos;
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
