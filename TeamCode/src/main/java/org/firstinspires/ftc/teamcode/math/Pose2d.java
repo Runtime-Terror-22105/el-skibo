@@ -93,6 +93,11 @@ public class Pose2d {
         return new Pose2d(this.toPedro().mirror());
     }
 
+    public Pose2d mirror(boolean mirror) {
+        if (mirror) return new Pose2d(this.toPedro().mirror());
+        return this.copy();
+    }
+
     @NonNull
     @Override
     public String toString() {
