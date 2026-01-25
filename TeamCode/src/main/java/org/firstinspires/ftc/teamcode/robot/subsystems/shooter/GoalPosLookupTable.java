@@ -45,7 +45,7 @@ public class GoalPosLookupTable {
             //Currently these are just guesses
             new GoalLookupValue(0.233, -12),
             new GoalLookupValue(0.29, -8),
-            new GoalLookupValue(0.806, -7),
+            new GoalLookupValue(0.806, 7),
             new GoalLookupValue(0.91, 12),
             new GoalLookupValue(1.1, 10),
 

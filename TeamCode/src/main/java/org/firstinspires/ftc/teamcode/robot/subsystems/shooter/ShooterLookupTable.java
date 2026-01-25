@@ -42,14 +42,14 @@ public class ShooterLookupTable {
 
             //NEW NEW VALUES (SERENA JAN 14)
             new LookupValue(38.5, 600),
-            new LookupValue(42.4, 615),
-            new LookupValue(48.7, 620),
-            new LookupValue(56.5, 630),
-            new LookupValue(63.5, 630),
-            new LookupValue(70.7, 655),
+            new LookupValue(42.4, 605),
+            new LookupValue(48.7, 615),
+            new LookupValue(56.5, 625),
+            new LookupValue(63.5, 625),
+            new LookupValue(70.7, 645),
             new LookupValue(77.8, 665),
             new LookupValue(84.1, 690),
-            new LookupValue(94.1, 750),
+            new LookupValue(94.1, 740),
             new LookupValue(100, 780),
 
             //far

@@ -8,6 +8,7 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -53,7 +54,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double goalPitchPos; //hood - servo pos
 
-    public double turretOffset = 0.0; //turret manual offset- servo pos
+    public double turretOffset = -0.04; //turret manual offset- servo pos
 
     public GoalPosLookupTable goalPosLookupTable;
 
@@ -97,6 +98,9 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPID.setTargetPosition(0.0);
 
         this.goalPosLookupTable = new GoalPosLookupTable(this.robot);
+        if (robot.color == Team.RED){
+            this.turretOffset = -this.turretOffset;
+        }
 
         //currently doesnt control anything in this class, just for keeping track
         this.isAutoAimOn = true;
@@ -195,7 +199,7 @@ public class ShooterSubsystem extends SubsystemBase {
         ShooterValues math = ShooterLookupTable.get(botPos.toPedro().distanceFrom(goalPos.toPedro()));
         double finalVelocity = math.velocity;
         double finalLaunchAngle =math.rad;
-        double turretOffsetAngle = 0.0;
+        double turretOffsetAngle = -0.04;
 
         double robotVelAngle = robotVelocity.getTheta();
         double theta = Angle.normalize(robotVelAngle - angleToGoal1);
