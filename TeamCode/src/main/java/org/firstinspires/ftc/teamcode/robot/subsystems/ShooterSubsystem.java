@@ -330,7 +330,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // note: this is 0 to 360 instead of -180 to 180 for convenience below
          double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
-         return angleTurret;
+        Log.d("ShooterSubsystem", "turret angle (deg): " + Math.toDegrees(angleTurret));
+        return angleTurret;
     }
 
 
