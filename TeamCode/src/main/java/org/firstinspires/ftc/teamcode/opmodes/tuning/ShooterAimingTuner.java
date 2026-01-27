@@ -14,6 +14,7 @@ import android.util.Log;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
@@ -72,6 +73,7 @@ public abstract class ShooterAimingTuner extends LinearOpMode {
     public static boolean autoHood  = true;
     public static boolean tuneGoalPos = false;
     public static double goalPosOffset = 0;
+    public static boolean testingAutoShoot = false;
 
     private long lastLoop = System.nanoTime();
 
@@ -91,7 +93,7 @@ public abstract class ShooterAimingTuner extends LinearOpMode {
         }
         robot.color = color;
     }
-    public ShooterAimingTuner(Team color){
+    public ShooterAimingTuner(){
         if (blueSide){
             this.setTeam(Team.BLUE);
         }
@@ -249,6 +251,7 @@ public abstract class ShooterAimingTuner extends LinearOpMode {
         );
 
         lastLoop = System.nanoTime();
+        this.robot.shooter.isAutoAimOn = false;
 
         while (opModeIsActive()) {
             Profiler.start();
@@ -261,10 +264,28 @@ public abstract class ShooterAimingTuner extends LinearOpMode {
             }
             Profiler.pop();
 
-//            char[] balls = robot.spindexer.getBallPositions();
-//            if (balls[0] != 'N' && balls[1] != 'N' && balls[2] != 'N') {
-//                CommandScheduler.getInstance().schedule(new GoToFullStateCommand(robot));
-//            }
+            if (!testingAutoShoot) {
+                if (!tuneGoalPos) {
+                    robot.shooter.manualAim(velocity, hoodAngle, turretPos);
+                }
+                else{
+                    Pose2d goalPos = robot.goalPos.copy();
+                    if(goalPosOffset > 0) {
+                        if (robot.color == Team.BLUE) {
+                            goalPos.x += Math.abs(goalPosOffset);
+                        } else {
+                            goalPos.x -= Math.abs(goalPosOffset);
+                        }
+                    }
+                    else if (goalPosOffset < 0){
+                        goalPos.y += goalPosOffset;
+                    }
+                    robot.shooter.manualAimGoalPos(velocity, hoodAngle, goalPos);
+                }
+
+            } else {
+                robot.shooter.isAutoAimOn = true;
+            }
 
             Profiler.push("commands");
             CommandScheduler.getInstance().run();
