@@ -17,7 +17,7 @@ public class TerrorLight implements TerrorWritingDevice{
         // RED to VIOLET goes through all the hues of colors (todo: maybe interpolate this in future)
         // VIOLET to WHITE is just all white
         OFF(0.0),
-        RED(0.277),
+        RED(0.29),
         ORANGE(0.333),
         YELLOW(0.388),
         SAGE(0.444),
