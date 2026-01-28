@@ -45,6 +45,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
@@ -53,9 +54,9 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 import java.util.List;
 
-@Config
 @TeleOp(name="ShooterAimTuner", group="Tuning")
-public abstract class ShooterAimingTuner extends LinearOpMode {
+@Config
+public class ShooterAimingTuner extends LinearOpMode {
     public static boolean LOG_MOTOR_CURRENT = false;
 
     private final RobotHardware hardware = new RobotHardware();
@@ -102,14 +103,18 @@ public abstract class ShooterAimingTuner extends LinearOpMode {
         }
 
     }
-
+    @Override
     public void runOpMode() {
         Profiler.init();
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, telemetry);
-
-        robot.follower.setStartingPose(color.getStartPosNear().toPedro());
+        if (robot.color == Team.BLUE){
+            robot.follower.setStartingPose((FieldConstants.BLUE_START_POS_NEAR).toPedro());
+        }
+        else{
+            robot.follower.setStartingPose((FieldConstants.RED_START_POS_NEAR).toPedro());
+        }
 
 
         waitForStart();
@@ -252,6 +257,7 @@ public abstract class ShooterAimingTuner extends LinearOpMode {
 
         lastLoop = System.nanoTime();
         this.robot.shooter.isAutoAimOn = false;
+        this.robot.shooter.isAutoTurretOn = false;
 
         while (opModeIsActive()) {
             Profiler.start();
@@ -300,6 +306,22 @@ public abstract class ShooterAimingTuner extends LinearOpMode {
             long time = System.nanoTime();
             long dt = time - lastLoop;
             lastLoop = time;
+
+            robot.telemetry.addData("Robot Position", robot.follower.getPose());
+            robot.telemetry.addData("Goal Position", robot.shooter.goalPosLookupTable.get());
+            robot.telemetry.addData("Distance", Math.sqrt(Math.pow(robot.follower.getPose().getX() - robot.shooter.goalPosLookupTable.get().x, 2) + Math.pow(robot.follower.getPose().getY() - robot.shooter.goalPosLookupTable.get().y, 2)));
+
+            robot.telemetry.addData("Goal Yaw", robot.shooter.goalTurretAngle);
+            robot.telemetry.addData("Goal Turret Pos w/out offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.goalTurretAngle));
+            robot.telemetry.addData("Goal Turret Pos w/ offset", ShooterSubsystem.turretAngleToServoPos(robot.shooter.goalTurretAngle) + robot.shooter.turretOffset);
+
+            robot.telemetry.addData("Goal Velocity in/sec", robot.shooter.getGoalVelocity());
+            robot.telemetry.addData("Goal Velocity rpm", robot.shooter.velToRPM(robot.shooter.getGoalVelocity()));
+            robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocityRpm());
+            robot.telemetry.addData("Current velocity in/sec", robot.shooter.getVelocityRpm() / 6.469);
+
+            robot.telemetry.addData("Goal Pitch", robot.shooter.goalPitch);
+            robot.telemetry.addData("Goal Hood Pos", robot.shooter.goalPitchPos);
 
             if (LOG_MOTOR_CURRENT) {
                 double flc = hardware.motorFrontLeft.getCurrent(CurrentUnit.AMPS);
