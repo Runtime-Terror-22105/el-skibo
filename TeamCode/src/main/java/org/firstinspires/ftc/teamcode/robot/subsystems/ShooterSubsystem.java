@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+    public static boolean USE_SOTM = false;
 
     private double loopCount = 0;
 
@@ -330,7 +331,7 @@ public class ShooterSubsystem extends SubsystemBase {
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
             if (robot.goalPos != null && isAutoAimOn) {
-                this.doAutoShoot(Robot.USE_SOTM);
+                this.doAutoShoot(USE_SOTM);
             }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
             Profiler.pop();
