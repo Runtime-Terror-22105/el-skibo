@@ -115,6 +115,26 @@ public class FtcDashDrawing {
         packet.fieldOverlay().strokePolyline(ftcPoints[0], ftcPoints[1]);
     }
 
+    /**
+     * Draws a ray from the robot pose in the direction it is facing
+     * until it intersects the edge of the FTC field.
+     *
+     * @param pose  Robot pose (any coordinate system)
+     * @param color Stroke color (e.g. "#00FF00")
+     */
+    public static void drawHeadingRay(Pose pose, String color) {
+        maybeInitFieldPacket();
+
+        Pose start = pose.getAsCoordinateSystem(FTCCoordinates.INSTANCE);
+        Pose end   = raycastToFieldEdge(pose);
+
+        packet.fieldOverlay().setStroke(color);
+        packet.fieldOverlay().strokeLine(
+                start.getX(), start.getY(),
+                end.getX(),   end.getY()
+        );
+    }
+
     public static boolean sendPacket() {
         if (packet != null) {
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
@@ -139,5 +159,52 @@ public class FtcDashDrawing {
 
     public static void drawPath(Canvas c, double[][] points) {
         c.strokePolyline(points[0], points[1]);
+    }
+
+    private static Pose raycastToFieldEdge(Pose pose) {
+        pose = pose.getAsCoordinateSystem(FTCCoordinates.INSTANCE);
+
+        double x = pose.getX();
+        double y = pose.getY();
+
+        Vector dir = pose.getHeadingAsUnitVector();
+        double dx = dir.getXComponent();
+        double dy = dir.getYComponent();
+
+        double minT = Double.POSITIVE_INFINITY;
+        double hitX = x;
+        double hitY = y;
+
+        // Vertical walls
+        if (dx != 0) {
+            for (double wallX : new double[]{0, 144}) {
+                double t = (wallX - x) / dx;
+                if (t > 0) {
+                    double yHit = y + t * dy;
+                    if (yHit >= 0 && yHit <= 144 && t < minT) {
+                        minT = t;
+                        hitX = wallX;
+                        hitY = yHit;
+                    }
+                }
+            }
+        }
+
+        // Horizontal walls
+        if (dy != 0) {
+            for (double wallY : new double[]{0, 144}) {
+                double t = (wallY - y) / dy;
+                if (t > 0) {
+                    double xHit = x + t * dx;
+                    if (xHit >= 0 && xHit <= 144 && t < minT) {
+                        minT = t;
+                        hitX = xHit;
+                        hitY = wallY;
+                    }
+                }
+            }
+        }
+
+        return new Pose(hitX, hitY, pose.getHeading());
     }
 }

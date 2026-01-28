@@ -40,40 +40,27 @@ public class ShooterLookupTable {
             // endpoint (prevent crashing)
             new LookupValue(0, 590),
 
-            //NEW NEW VALUES (SERENA JAN 14)
-            new LookupValue(38.5, 605+1.5),
-            new LookupValue(42.4, 610+1.5),
-            new LookupValue(48.7, 620+1.5),
-            new LookupValue(56.5, 630+1.5),
-            new LookupValue(63.5, 630+1.5),
-            new LookupValue(70.7, 650+1.5),
-            new LookupValue(77.8, 670+1.5),
-            new LookupValue(84.1, 690),
-            new LookupValue(94.1, 740),
-            new LookupValue(100, 780),
-
-            //far
-            new LookupValue(124, 900),
-            new LookupValue(134, 950), // this point actuallly untestested casu eim going home
-
+            new LookupValue(33.0, 600),
+            new LookupValue(51.1, 635),
+            new LookupValue(60.9, 660),
+            new LookupValue(71.0, 710),
+            new LookupValue(80.2, 730),
+            new LookupValue(92.5, 790),
+            new LookupValue(107.2, 840),
+            new LookupValue(123.5, 900),
+            new LookupValue(0134, 960),
             // other endpoint (prevent crashing)
-            new LookupValue(250, 950)
+            new LookupValue(250, 960)
 
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
             new HoodLookupValue(0, 0.7),
 
-
-            //NEW NEW VALUES (SERENA JAN 14)
-            new HoodLookupValue(38.5, 0.7),
-            new HoodLookupValue(48.7, 0.72),
-            new HoodLookupValue(56.5, 0.75),
-            new HoodLookupValue(63.4, 0.77),
-            new HoodLookupValue(70.7, 0.8),
-            new HoodLookupValue(77.8, 0.82),
-            new HoodLookupValue(84.1, 0.85),
-            new HoodLookupValue(94.1, 0.91),
-
+            new HoodLookupValue(33.0, 0.7),
+            new HoodLookupValue(51.1, 0.77),
+            new HoodLookupValue(60.9, 0.83),
+            new HoodLookupValue(71.0, 0.87),
+            new HoodLookupValue(80.2, 0.91),
 
 
             // new vals
