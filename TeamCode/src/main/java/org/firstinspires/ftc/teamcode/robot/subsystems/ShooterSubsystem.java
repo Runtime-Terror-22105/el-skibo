@@ -128,6 +128,8 @@ public class ShooterSubsystem extends SubsystemBase {
         Pose2d botPos = new Pose2d(this.robot.follower.getPose());
         Pose2d goalPos = this.goalPosLookupTable.get();
         double distToGoal = botPos.toPedro().distanceFrom(goalPos.toPedro());
+        FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
+
 
         if (useVelocityCompensation) {
             double flightTime = FlightTimeLookupTable.get(distToGoal);
@@ -136,8 +138,6 @@ public class ShooterSubsystem extends SubsystemBase {
             if (debug) Log.d("ShooterSubsystem", "Adjusted goal pos for velocity: " + goalAdjAmt);
             FtcDashDrawing.drawDot(goalPos.toPedro(), "#0000FF");
         }
-
-        FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         // also currently only updates when in the tape zone or every 10 loops to reduce wrtes
