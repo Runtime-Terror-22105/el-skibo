@@ -46,7 +46,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public double shooterPower = 0.0; //flywheel - motor power
 
     public static double turretPosAt180 = 0.49; //pos pointed directly towards the back
-    public static double posChange90 = 0.38; //servo pos change that rotates turret 90 deg
+    public static double posChange90 = 0.425; //servo pos change that rotates turret 90 deg
 
     public double goalPitch; //hood - rad
     public double goalVelocity; //flywheel - rpm
@@ -316,21 +316,25 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
     private double findYawAngle(Pose2d goalPos){
-         /** all in rad **/
-         double x = goalPos.x - robot.follower.getPose().getX();
-         double y = goalPos.y - robot.follower.getPose().getY();
-         double angle = Math.atan2(y,x);
+        /** all in rad **/
+        double x = goalPos.x - robot.follower.getPose().getX();
+        double y = goalPos.y - robot.follower.getPose().getY();
+        double angle = Math.atan2(y,x);
 
-         double absoluteGoalAngle = angle;
+        double absoluteGoalAngle = angle;
 
-         double botHeading = robot.follower.getHeading();
+        double botHeading = robot.follower.getHeading();
 
         if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
 
 
         // note: this is 0 to 360 instead of -180 to 180 for convenience below
-         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
+        double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
         Log.d("ShooterSubsystem", "turret angle (deg): " + Math.toDegrees(angleTurret));
+
+        Pose turretPose = new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading() + angleTurret);
+        FtcDashDrawing.drawRobot(turretPose, "#FFFFFF");
+        FtcDashDrawing.drawHeadingRay(turretPose, "FFFFFF");
         return angleTurret;
     }
 
