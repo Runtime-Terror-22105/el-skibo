@@ -135,6 +135,8 @@ public class ShooterSubsystem extends SubsystemBase {
             double flightTime = FlightTimeLookupTable.get(distToGoal);
             Vector goalAdjAmt = robot.follower.getVelocity().times(flightTime);
             goalPos.minus(goalAdjAmt);
+            distToGoal = botPos.toPedro().distanceFrom(goalPos.toPedro());
+
             if (debug) Log.d("ShooterSubsystem", "Adjusted goal pos for velocity: " + goalAdjAmt);
             FtcDashDrawing.drawDot(goalPos.toPedro(), "#0000FF");
         }
