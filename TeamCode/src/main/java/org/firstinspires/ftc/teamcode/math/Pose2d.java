@@ -90,9 +90,12 @@ public class Pose2d {
             this.y -= other.y;
     }
 
-    public void minus(@NonNull Vector other) {
-        this.x -= other.getXComponent();
-        this.y -= other.getYComponent();
+    public static Pose2d minus(@NonNull Pose2d pose, @NonNull Vector vector) {
+        return new Pose2d(
+                pose.x - vector.getXComponent(),
+                pose.y - vector.getYComponent(),
+                pose.heading
+        );
     }
 
     public Pose2d mirror() {
