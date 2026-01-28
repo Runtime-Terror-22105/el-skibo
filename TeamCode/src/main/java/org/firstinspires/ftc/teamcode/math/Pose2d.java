@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.math;
 import androidx.annotation.NonNull;
 
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -87,6 +88,11 @@ public class Pose2d {
     public void minus(@NonNull Coordinate other) {
             this.x -= other.x;
             this.y -= other.y;
+    }
+
+    public void minus(@NonNull Vector other) {
+        this.x -= other.getXComponent();
+        this.y -= other.getYComponent();
     }
 
     public Pose2d mirror() {
