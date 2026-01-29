@@ -244,8 +244,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private double findYawAngle(Pose2d goalPos){
         /** all in rad **/
         double botHeading = robot.follower.getHeading();
-        double x = goalPos.x - robot.follower.getPose().getX()+turretOffsetX*Math.cos(botHeading)-turretOffsetY*Math.sin(botHeading);
-        double y = goalPos.y - robot.follower.getPose().getY()+turretOffsetX*Math.sin(botHeading)+turretOffsetY*Math.cos(botHeading);;
+        double x = goalPos.x - (robot.follower.getPose().getX()+turretOffsetX*Math.cos(botHeading)-turretOffsetY*Math.sin(botHeading));
+        double y = goalPos.y - (robot.follower.getPose().getY()+turretOffsetX*Math.sin(botHeading)+turretOffsetY*Math.cos(botHeading));
         double angle = Math.atan2(y,x);
 
         double absoluteGoalAngle = angle;
