@@ -58,7 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double goalPitchPos; //hood - servo pos
 
-    public static double turretOffset = -0.04; //turret manual offset- servo pos
+    public static double turretOffset = 0.0; //turret manual offset- servo pos
 
     public GoalPosLookupTable goalPosLookupTable;
 
