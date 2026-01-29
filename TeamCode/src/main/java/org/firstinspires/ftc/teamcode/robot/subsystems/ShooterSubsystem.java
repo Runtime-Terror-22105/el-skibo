@@ -27,6 +27,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double loopCount = 0;
 
+    public static double turretOffsetX=0.0;
+    public static double turretOffsetY=0.0;
+
     // in loops, how often to update the turret position servo when outside of the shooting zone
     public static double TURRET_UPDATE_FREQUENCY = 10;
 
@@ -240,13 +243,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double findYawAngle(Pose2d goalPos){
         /** all in rad **/
-        double x = goalPos.x - robot.follower.getPose().getX();
-        double y = goalPos.y - robot.follower.getPose().getY();
+        double botHeading = robot.follower.getHeading();
+        double x = goalPos.x - robot.follower.getPose().getX()+turretOffsetX*Math.cos(botHeading)-turretOffsetY*Math.sin(botHeading);
+        double y = goalPos.y - robot.follower.getPose().getY()+turretOffsetX*Math.sin(botHeading)+turretOffsetY*Math.cos(botHeading);;
         double angle = Math.atan2(y,x);
 
         double absoluteGoalAngle = angle;
 
-        double botHeading = robot.follower.getHeading();
+
 
         if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
 
