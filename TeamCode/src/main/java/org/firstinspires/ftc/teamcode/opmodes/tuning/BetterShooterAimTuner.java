@@ -35,6 +35,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
+import org.opencv.core.Mat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,6 +60,8 @@ public class BetterShooterAimTuner extends LinearOpMode {
     public static double goalPosOffset = 0;
 
     public static boolean testingAutoShoot = false;
+
+
 
     public static String OUTPUT_FILE = "shooter_tuning_data.csv";
 
