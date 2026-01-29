@@ -34,7 +34,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     public static boolean disableRelocalization = false;
     public static Coordinate cameraToTurretCenterOffset = new Coordinate(4.7, 2.2);
-    public static Coordinate turretToRobotCenterOffset = new Coordinate(-2.2, 0);
+    public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.614, 0);
 
     public static double CONVERGENCE_RATE = 0.1;
     public static double VELOCITY_THRESHOLD = 5.0; // inches per second
