@@ -68,12 +68,11 @@ public abstract class AutoSpam extends LinearOpMode {
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 93, Math.toRadians(225));
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 95, Math.toRadians(45));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(55, 93, Math.toRadians(45));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
-    public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(56.751, 69.765, 0);
@@ -82,6 +81,7 @@ public abstract class AutoSpam extends LinearOpMode {
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
+    public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 61, Math.toRadians(180));
     public static Pose2d BEFORE_GATE = new Pose2d(22.542, 61, Math.toRadians(146.621));
     public static Pose2d AFTER_GATE = new Pose2d(11, 61, Math.toRadians(135.9946));
 
@@ -211,31 +211,15 @@ public abstract class AutoSpam extends LinearOpMode {
     }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
-        Pose shootPreloadPose = SHOOT_PRELOAD_POSE.toPedro();
-        Pose prepareIntake1Pose = PREPARE_INTAKE_1_POSE.toPedro();
-        Pose intake1Pose = INTAKE_1_POSE.toPedro();
-        Pose pushGateControl = new Pose(44.87356321839081, 72.82758620689656);
-//        Pose pushGatePose = PUSH_GATE_POSE.toPedro();
         Pose shootEdgePose = SHOOT_EDGE_POSE.toPedro();
         Pose shootLastPose = SHOOT_LAST_POSE.toPedro();
-        Pose prepareIntake2Pose = PREPARE_INTAKE_2_POSE.toPedro();
-        Pose intake2Control = new Pose(56.751, 69.765);
-        Pose intake2Pose = INTAKE_2_POSE.toPedro();
         Pose prepareIntake3Pose = PREPARE_INTAKE_3_POSE.toPedro();
         Pose intake3Control = new Pose(56.751, 45.668);
         Pose intake3Pose = INTAKE_3_POSE.toPedro();
 
         if (mirror) {
-            shootPreloadPose = shootPreloadPose.mirror();
-            prepareIntake1Pose = prepareIntake1Pose.mirror();
-            intake1Pose = intake1Pose.mirror();
-            pushGateControl = pushGateControl.mirror();
-//            pushGatePose = pushGatePose.mirror();
             shootEdgePose = shootEdgePose.mirror();
             shootLastPose = shootLastPose.mirror();
-            prepareIntake2Pose = prepareIntake2Pose.mirror();
-            intake2Control = intake2Control.mirror();
-            intake2Pose = intake2Pose.mirror();
             prepareIntake3Pose = prepareIntake3Pose.mirror();
             intake3Control = intake3Control.mirror();
             intake3Pose = intake3Pose.mirror();
@@ -249,9 +233,10 @@ public abstract class AutoSpam extends LinearOpMode {
 //        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
         shoot1Path = createLinePath(prepareIntake1Path, SHOOT_EDGE_POSE, mirror, true, true);
 
-        prepareGatePath = createLinePath(shoot1Path, BEFORE_GATE, mirror, false, false);
+        // TODO: for the second gate intake, this heading will not be correct
+        prepareGatePath = createCurvePath(shoot1Path, GATE_CONTROL_POSE, BEFORE_GATE, mirror, false, false);
         hitGatePath = createLinePath(prepareGatePath, AFTER_GATE, mirror, false, false);
-        gateToShootPath = createLinePath(hitGatePath, SHOOT_EDGE_POSE, mirror, true, true);
+        gateToShootPath = createCurvePath(hitGatePath, GATE_CONTROL_POSE, SHOOT_EDGE_POSE, mirror, true, true);
 
 //        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
         prepareIntake2Path = createLinePath(gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
