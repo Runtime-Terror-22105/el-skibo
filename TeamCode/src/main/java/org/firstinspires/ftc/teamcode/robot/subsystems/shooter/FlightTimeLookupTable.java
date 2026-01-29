@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.math.InterpLUTSafe;
 
 /**
@@ -47,8 +49,11 @@ public class FlightTimeLookupTable {
     static {
         for (int i = 0; i < DATA_POINTS.length; i++) {
             FLIGHT_TIME_LUT.add(DATA_POINTS[i].distance, DATA_POINTS[i].timeMs);
+            Log.i("FlightTimeLookUpTable", "point added");
         }
+        FLIGHT_TIME_LUT.createLUT();
     }
+
 
     /**
      * Get estimated flight time (ms) for a given distance (in).
@@ -56,6 +61,7 @@ public class FlightTimeLookupTable {
      * @return Estimated flight time in milliseconds
      */
     public static double get(double distance) {
+
         return FLIGHT_TIME_LUT.get(distance);
     }
 }
