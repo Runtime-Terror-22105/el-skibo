@@ -259,6 +259,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // note: this is 0 to 360 instead of -180 to 180 for convenience below
         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
         Log.d("ShooterSubsystem", "turret angle (deg): " + Math.toDegrees(angleTurret));
+        Log.d("ShooterSubsystem", "calculated servo pos: " + turretAngleToServoPos(angleTurret));
 
         Pose turretPose = new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY(), robot.follower.getPose().getHeading() + angleTurret);
         FtcDashDrawing.drawRobot(turretPose, "#FFFFFF");
