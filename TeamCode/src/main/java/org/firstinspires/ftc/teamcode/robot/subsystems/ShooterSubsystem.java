@@ -8,6 +8,7 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -23,11 +24,11 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
-    public static boolean USE_SOTM = false;
+    public static boolean USE_SOTM = true;
 
     private double loopCount = 0;
 
-    public static double turretOffsetX=0.0;
+    public static double turretOffsetX=-1.614;
     public static double turretOffsetY=0.0;
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
@@ -58,7 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double goalPitchPos; //hood - servo pos
 
-    public static double turretOffset = -0.04; //turret manual offset- servo pos
+    public static double turretOffset = 0.00; //turret manual offset- servo pos
 
     public GoalPosLookupTable goalPosLookupTable;
 
@@ -323,6 +324,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+//
+//        if (robot.color == Team.BLUE){
+//            turretOffset = -0.04;
+//        }
+//        else{
+//            turretOffset = 0.04;
+//        }
+
         try (Profiler.Scope p = Profiler.enter("ShooterSubsystem")) {
             if (robot.hang.isPtoEngaged()) {
                 hardware.shooterLeft.setPower(0);
