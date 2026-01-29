@@ -28,7 +28,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double loopCount = 0;
 
-    public static double turretOffsetX=-1.614;
+    public static double turretOffsetX=1.614;
     public static double turretOffsetY=0.0;
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
