@@ -49,8 +49,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterPower = 0.0; //flywheel - motor power
 
-    public static double turretPosAt180 = 0.49; //pos pointed directly towards the back
-    public static double posChange90 = 0.425; //servo pos change that rotates turret 90 deg
+    public static double turretPosAt180 = 0.48; //pos pointed directly towards the back
+    public static double posChange90 = 0.40; //servo pos change that rotates turret 90 deg
 
     public double goalPitch; //hood - rad
     public double goalVelocity; //flywheel - rpm
@@ -58,7 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double goalPitchPos; //hood - servo pos
 
-    public double turretOffset; //turret manual offset- servo pos
+    public static double turretOffset = -0.04; //turret manual offset- servo pos
 
     public GoalPosLookupTable goalPosLookupTable;
 
