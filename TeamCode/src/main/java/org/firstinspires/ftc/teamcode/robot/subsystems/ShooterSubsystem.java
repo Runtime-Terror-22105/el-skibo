@@ -11,6 +11,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
+import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.FlightTimeLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
@@ -28,8 +30,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double loopCount = 0;
 
-    public static double turretOffsetX=1.614;
-    public static double turretOffsetY=0.0;
+    public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
     public static double TURRET_UPDATE_FREQUENCY = 10;
@@ -50,8 +51,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public double shooterPower = 0.0; //flywheel - motor power
 
-    public static double turretPosAt180 = 0.48; //pos pointed directly towards the back
-    public static double posChange90 = 0.40; //servo pos change that rotates turret 90 deg
+    public static double turretPosAt180 = 0.46; //pos pointed directly towards the back
+    public static double posChange90 = 0.4; //servo pos change that rotates turret 90 deg
 
     public double goalPitch; //hood - rad
     public double goalVelocity; //flywheel - rpm
@@ -244,15 +245,19 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double findYawAngle(Pose2d goalPos){
         /** all in rad **/
-        double botHeading = robot.follower.getHeading();
-        double x = goalPos.x - (robot.follower.getPose().getX()+turretOffsetX*Math.cos(botHeading)-turretOffsetY*Math.sin(botHeading));
-        double y = goalPos.y - (robot.follower.getPose().getY()+turretOffsetX*Math.sin(botHeading)+turretOffsetY*Math.cos(botHeading));
-        double angle = Math.atan2(y,x);
+        Pose robotCenter = robot.follower.getPose();
+        Pose robotVector = new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0)
+                .rotate(robotCenter.getHeading(), false);
+        Pose turretCenter = robotCenter.plus(robotVector);
+        double dx = goalPos.x - turretCenter.getX();
+        double dy = goalPos.y - turretCenter.getY();
+        double angle = Math.atan2(dy, dx);
 
         double absoluteGoalAngle = angle;
 
 
 
+        double botHeading = robot.follower.getPose().getHeading();
         if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
 
 

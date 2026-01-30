@@ -60,7 +60,7 @@ public class TerrorServo implements TerrorWritingDevice {
      */
     synchronized public void setPwmRange(double usPulseLower, double usPulseHigher) {
         int portNumber = servo.getPortNumber();
-        PwmControl.PwmRange customRange = new PwmControl.PwmRange(500, 2500);  // Adjust based on servo specs
+        PwmControl.PwmRange customRange = new PwmControl.PwmRange(usPulseLower, usPulseHigher);  // Adjust based on servo specs
 
         ServoControllerEx servoController = (ServoControllerEx) servo.getController();
         servoController.setServoPwmRange(portNumber, customRange);
