@@ -142,8 +142,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
 
-        //GamepadButton adjustSpindexerLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
-        //GamepadButton adjustSpindexerRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
+        GamepadButton adjustTurretLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
+        GamepadButton adjustTurretRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
 
         GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
 
@@ -189,13 +189,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState == RESTING || robot.robotState == INTAKING
         ));
 
-        manualSpindexLeft.whileHeld(new ChangeSpindexerYawCommand(robot.spindexer,Math.toRadians(-SpindexerSubsystem.MANUAL_SPINDEXER_DEGREE_CHANGE)));
+        manualSpindexLeft.whileHeld(new AdjustTurretOffsetCommand(robot, true));
 
-        manualSpindexRight.whileHeld(new ChangeSpindexerYawCommand(robot.spindexer,Math.toRadians(SpindexerSubsystem.MANUAL_SPINDEXER_DEGREE_CHANGE)));
+        manualSpindexRight.whileHeld(new AdjustTurretOffsetCommand(robot, false));
 
-//        manualSpindexLeft.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
-//
-//        manualSpindexRight.whenReleased(()->{robot.spindexer.setSpindexerPower(0);});
+
 
         if (shootingMethod == ShootingMethod.SHOOT_3_BALLS){
             shoot3button.whenPressed(new ConditionalCommand(
