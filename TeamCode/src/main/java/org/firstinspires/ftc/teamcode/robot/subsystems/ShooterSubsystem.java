@@ -37,10 +37,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
             new PidfController.PidfCoefficients(0.0005, 0.000005, 0.0, 0.000185, 0);
+    public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
-    public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
-    public double shooterPower = 0.0; //flywheel - motor power
 
     public GoalPosLookupTable goalPosLookupTable;
 
@@ -311,7 +310,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return velocity * 6.469;
     }
 
-    public void updateShooter() {
+    public double updateShooter() {
         if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", this.getVelocityRpm());
         if (telemetry) Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
@@ -319,7 +318,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         double ff = this.hardware.getVoltageScale() * getGoalVelocity();
         this.shooterPID.setTargetPosition(getGoalVelocity());
-        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), ff);
+        return this.shooterPID.calculatePower(this.getVelocityRpm(), ff);
     }
 
     public void addTurretOffset(double change){
@@ -364,7 +363,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // flywheel pids
             Profiler.push("flywheel");
-            this.updateShooter();
+            double shooterPower = this.updateShooter();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
             hardware.shooterLeft.setPower(shooterPower);
             hardware.shooterRight.setPower(shooterPower);
