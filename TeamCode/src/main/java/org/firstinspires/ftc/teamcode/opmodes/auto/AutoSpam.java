@@ -122,93 +122,9 @@ public abstract class AutoSpam extends LinearOpMode {
     private long lastLoop = System.nanoTime();
 
     protected AutoSpam(Team team) {
-
         this.team = team;
-        if (team == Team.BLUE) {
-            robot.goalPos = FieldConstants.BLUE_GOAL_POS;
-            robot.color = Team.BLUE;
-        } else {
-            robot.goalPos = FieldConstants.RED_GOAL_POS;
-            robot.color = Team.RED;
-        }
-    }
-
-    private PathChain createLinePath(Pose2d startPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
-        Pose startPose = startPoseIn.toPedro();
-        Pose endPose = endPoseIn.toPedro();
-        if (mirror) {
-            startPose = startPose.mirror();
-            endPose = endPose.mirror();
-        }
-
-        PathBuilder builder = robot.follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(startPose, endPose)
-                );
-
-        if (tangentialHeading) {
-            builder = builder.setTangentHeadingInterpolation();
-        } else {
-            builder = builder.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading());
-        }
-
-        if (reversed) {
-            builder = builder.setReversed();
-        }
-        return builder.build();
-    }
-
-    private PathChain createLinePath(PathChain prevPath, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
-        Pose startPose = prevPath.endPoint();
-
-        // we do this bc we want to use the calculated heading in the path rather than the heading we had set in the path (i.e. for tangential)
-        startPose = startPose.setHeading(prevPath.getFinalHeadingGoal());
-
-        // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
-        return createLinePath(new Pose2d(startPose).mirror(mirror), endPoseIn, mirror, tangentialHeading, reversed);
-    }
-
-    private PathChain createCurvePath(PathChain prevPath, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
-        Pose startPose = prevPath.endPoint();
-
-        // we do this bc we want to use the calculated heading in the path rather than the heading we had set in the path (i.e. for tangential)
-        startPose = startPose.setHeading(prevPath.getFinalHeadingGoal());
-
-        // if mirroring, we need to mirror the start pose back to original side first, since prevPath was already mirrored and createLinePath will mirror it again
-        return createCurvePath(new Pose2d(startPose).mirror(mirror), controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
-    }
-
-    private PathChain createCurvePath(Pose2d startPoseIn, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
-        Pose startPose = startPoseIn.toPedro();
-        Pose controlPose = controlPoseIn.toPedro();
-        Pose endPose = endPoseIn.toPedro();
-        if (mirror) {
-            startPose = startPose.mirror();
-            controlPose = controlPose.mirror();
-            endPose = endPose.mirror();
-        }
-
-        PathBuilder builder = robot.follower
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                startPose,
-                                controlPose,
-                                endPose
-                        )
-                );
-
-        if (tangentialHeading) {
-            builder = builder.setTangentHeadingInterpolation();
-        } else {
-            builder = builder.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading());
-        }
-
-        if (reversed) {
-            builder = builder.setReversed();
-        }
-        return builder.build();
+        robot.goalPos = team.getGoalPos();
+        robot.color = team;
     }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
@@ -227,22 +143,22 @@ public abstract class AutoSpam extends LinearOpMode {
         }
 
         Follower follower = robot.follower;
-        shootPreloadPath = createLinePath(startPose, SHOOT_PRELOAD_POSE, mirror, false, false);
+        shootPreloadPath = PathUtil.createLinePath(robot, startPose, SHOOT_PRELOAD_POSE, mirror, false, false);
 
-        prepareIntake1Path = createLinePath(shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
-        intake1Path = createCurvePath(prepareIntake1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false);
+        prepareIntake1Path = PathUtil.createLinePath(robot, shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
+        intake1Path = PathUtil.createCurvePath(robot, prepareIntake1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false);
 //        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
-        shoot1Path = createLinePath(prepareIntake1Path, SHOOT_EDGE_POSE, mirror, true, true);
+        shoot1Path = PathUtil.createLinePath(robot, prepareIntake1Path, SHOOT_EDGE_POSE, mirror, true, true);
 
         // TODO: for the second gate intake, this heading will not be correct
-        prepareGatePath = createCurvePath(shoot1Path, GATE_CONTROL_POSE, BEFORE_GATE, mirror, false, false);
-        hitGatePath = createLinePath(prepareGatePath, AFTER_GATE, mirror, false, false);
-        gateToShootPath = createCurvePath(hitGatePath, GATE_CONTROL_POSE, SHOOT_EDGE_POSE, mirror, true, true);
+        prepareGatePath = PathUtil.createCurvePath(robot, shoot1Path, GATE_CONTROL_POSE, BEFORE_GATE, mirror, false, false);
+        hitGatePath = PathUtil.createLinePath(robot, prepareGatePath, AFTER_GATE, mirror, false, false);
+        gateToShootPath = PathUtil.createCurvePath(robot, hitGatePath, GATE_CONTROL_POSE, SHOOT_EDGE_POSE, mirror, true, true);
 
 //        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
-        prepareIntake2Path = createLinePath(gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
-        intake2Path = createLinePath(prepareIntake2Path, INTAKE_1_POSE, mirror, false, false);
-        shoot2Path = createLinePath(intake2Path, SHOOT_EDGE_POSE, mirror, true, true);
+        prepareIntake2Path = PathUtil.createLinePath(robot, gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
+        intake2Path = PathUtil.createLinePath(robot, prepareIntake2Path, INTAKE_1_POSE, mirror, false, false);
+        shoot2Path = PathUtil.createLinePath(robot, intake2Path, SHOOT_EDGE_POSE, mirror, true, true);
 
         prepareIntake3Path = follower
                 .pathBuilder()
