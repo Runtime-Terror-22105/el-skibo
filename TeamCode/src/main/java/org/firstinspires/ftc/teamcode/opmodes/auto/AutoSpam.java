@@ -20,6 +20,7 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -76,14 +77,14 @@ public abstract class AutoSpam extends LinearOpMode {
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(53, 62, 0);
-    public static Pose2d INTAKE_2_POSE = new Pose2d(28, 62, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(23, 62, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 61, Math.toRadians(180));
-    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 61.8, Math.toRadians(155));
-    public static Pose2d AFTER_GATE = new Pose2d(11, 61.8, Math.toRadians(155));
+    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 62.2, Math.toRadians(155));
+    public static Pose2d AFTER_GATE = new Pose2d(11, 62.2, Math.toRadians(155));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
@@ -158,7 +159,7 @@ public abstract class AutoSpam extends LinearOpMode {
 //        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
         prepareIntake2Path = PathUtil.createLinePath(robot, gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
         intake2Path = PathUtil.createLinePath(robot, prepareIntake2Path, INTAKE_1_POSE, mirror, false, false);
-        shoot2Path = PathUtil.createLinePath(robot, intake2Path, SHOOT_EDGE_POSE, mirror, true, true);
+        shoot2Path = PathUtil.createLinePath(robot, intake2Path, SHOOT_LAST_POSE, mirror, true, true);
 
         prepareIntake3Path = follower
                 .pathBuilder()
@@ -257,10 +258,9 @@ public abstract class AutoSpam extends LinearOpMode {
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new ParallelRaceGroup(
                         new FollowPathCommand(robot.follower, hitGatePath, true),
-                        new WaitCommand(HITTING_GATE_TIMEOUT),
-                        new WaitForIntakeCommand(robot)
+                        new WaitCommand(HITTING_GATE_TIMEOUT)
                 ),
-                new WaitCommand(GATE_INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
         shootGateCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
@@ -315,7 +315,7 @@ public abstract class AutoSpam extends LinearOpMode {
 
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
         // todo do the rules require that we do ths after init?
-        robot.setAutoSort(true);
+        robot.setAutoSort(false);
 
         robot.camera.startScanningForGlyphs();
 
