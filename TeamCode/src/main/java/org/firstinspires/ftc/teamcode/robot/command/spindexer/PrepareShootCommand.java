@@ -12,7 +12,6 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterRPMCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
