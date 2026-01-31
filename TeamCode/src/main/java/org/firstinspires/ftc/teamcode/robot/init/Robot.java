@@ -50,7 +50,6 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public static double ROBOT_TOLERANCE_X = 5.0; // a buffer for x direction
     public static double ROBOT_TOLERANCE_Y = 5.0;
     public final PolygonZone robotZone = new PolygonZone(ROBOT_WIDTH + ROBOT_TOLERANCE_X, ROBOT_LENGTH + ROBOT_TOLERANCE_Y);
-    public int debugLight = 0;
 
 
     public CameraSubsystem camera;
