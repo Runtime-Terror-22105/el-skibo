@@ -371,7 +371,7 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
                 auto.spikeIntake(2), auto.spikeShoot(2),
                 auto.intakeGate(), auto.shootGate(),
                 auto.intakeGate(), auto.shootGate(),
-                auto.spikeIntake(1), auto.spikeShoot(1)
+                auto.spikeIntake(1), auto.spikeShoot(1, true)
         ));
 
         lastLoop = System.nanoTime();
