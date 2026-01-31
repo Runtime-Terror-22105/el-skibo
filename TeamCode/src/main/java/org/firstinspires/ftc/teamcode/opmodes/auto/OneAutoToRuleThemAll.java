@@ -324,16 +324,16 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
 
         this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
 
+        // TODO: the autobuildder class currently does not handle the init logic
+        // and assumes starting near side at the moment for preload
         AutoBuilder auto = new AutoBuilder(robot, this.team, AutoBuilder.StartingConfiguration.NEAR);
-        auto
+        SequentialCommandGroup commands = auto
                 .preload()
                 .spike2()
                 .gate()
                 .gate()
                 .parkNear()
                 .build();
-        buildPaths(team.getStartPosNear(), Team.RED.equals(team));
-        buildCommands();
         robot.follower.setMaxPower(MAX_POWER);
 
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
@@ -354,6 +354,23 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
             CommandScheduler.getInstance().run();
 
             robot.write();
+
+            // Three Autos for the Cadding-kings under the sky,
+            // Seven for the code-lords in their halls of stone,
+            // Nine for Building Men doomed to die,
+            // One for the Wire Lord on his wiring throne,
+            // In the Land of Winecreek where the Terrors lie.
+            // One Auto to rule them all, One Auto to find them,
+            // One Auto to bring them all and in the darkness bind them
+            // In the Land of Winecreek where the Terrors lie.
+            robot.telemetry.addLine("Three Autos for the Cadding-kings under the sky,");
+            robot.telemetry.addLine("Seven for the code-lords in their halls of stone,");
+            robot.telemetry.addLine("Nine for Building Men doomed to die,");
+            robot.telemetry.addLine("One for the Wire Lord on his wiring throne,");
+            robot.telemetry.addLine("In the Land of Winecreek where the Terrors lie.");
+            robot.telemetry.addLine("One Auto to rule them all, One Auto to find them,");
+            robot.telemetry.addLine("One Auto to bring them all and in the darkness bind them");
+            robot.telemetry.addLine("In the Land of Winecreek where the Terrors lie.");
             robot.telemetry.update();
         }
 
