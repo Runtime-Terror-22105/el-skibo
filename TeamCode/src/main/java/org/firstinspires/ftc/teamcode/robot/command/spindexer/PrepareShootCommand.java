@@ -24,15 +24,15 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long REVERSE_INTAKE_TIME_MS = 150;
     public static int RAMP_DELAY = 0;  // milliseconds
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 100;
-    public static long SPINDEXER_TIMEOUT = 600L; //600 if not sorting, longer if we are
-    //someone code that pls
-
+    public static long SPINDEXER_TIMEOUT = 600L;
 
     public PrepareShootCommand(Robot robot) {
-        this(robot, null, null);
+        this(robot, null, null, true);
     }
-
-    public PrepareShootCommand(Robot robot, Double hoodAngle, Double rpm) {
+    public PrepareShootCommand(Robot robot, boolean reverseIntake) {
+        this(robot, null, null, reverseIntake);
+    }
+    public PrepareShootCommand(Robot robot, Double hoodAngle, Double rpm, boolean reverseIntake) {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.TRANSFER),
                 new LogCatCommand("PrepareShootCommand", "Beginning prepare shoot", Log.INFO),
@@ -46,9 +46,12 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         robot.shooter.goalPitch = hoodAngle;
                     }
                 }),
-                new WaitCommand(TIME_BEFORE_REVERSE_INTAKE),
-                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
-                new WaitCommand(REVERSE_INTAKE_TIME_MS),
+                new ConditionalCommand(new SequentialCommandGroup(
+                        new WaitCommand(TIME_BEFORE_REVERSE_INTAKE),
+                        new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                        new WaitCommand(REVERSE_INTAKE_TIME_MS)),
+                        new InstantCommand(() -> {}), () -> reverseIntake),
+
                 new ParallelCommandGroup(
                     new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                     new SetSpindexerWallDown(robot.spindexer, false),
