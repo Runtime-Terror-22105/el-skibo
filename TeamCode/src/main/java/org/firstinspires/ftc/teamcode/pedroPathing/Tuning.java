@@ -92,23 +92,25 @@ public class Tuning extends SelectableOpMode {
 
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        Drawing.init();
+//        Drawing.init();
     }
 
     @Override
     public void onLog(List<String> lines) {}
 
     public static void drawOnlyCurrent() {
-        try {
-            Drawing.drawRobot(follower.getPose());
-            Drawing.sendPacket();
-        } catch (Exception e) {
-            throw new RuntimeException("Drawing failed " + e);
-        }
+        FtcDashDrawing.drawDebug(follower);
+//
+//        try {
+//            FtcDashDrawing.drawRobot(follower.getPose());
+//            FtcDashDrawing.sendPacket();
+//        } catch (Exception e) {
+//            throw new RuntimeException("Drawing failed " + e);
+//        }
     }
 
     public static void draw() {
-        Drawing.drawDebug(follower);
+        FtcDashDrawing.drawDebug(follower);
     }
 
     /** This creates a full stop of the robot by setting the drive motors to run at 0 power. */
