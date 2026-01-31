@@ -355,6 +355,7 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
 
             robot.write();
 
+            // region poem
             // Three Autos for the Cadding-kings under the sky,
             // Seven for the code-lords in their halls of stone,
             // Nine for Building Men doomed to die,
@@ -372,6 +373,7 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
             robot.telemetry.addLine("One Auto to bring them all and in the darkness bind them");
             robot.telemetry.addLine("In the Land of Winecreek where the Terrors lie.");
             robot.telemetry.update();
+            // endregion poem
         }
 
         // we're going to see the wrong one
