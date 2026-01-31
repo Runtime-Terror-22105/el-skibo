@@ -45,9 +45,9 @@ public class GoalPosLookupTable {
 
 
             new GoalLookupValue(0.3, 0),
-            new GoalLookupValue(0.6, 5),
-            new GoalLookupValue(0.85, 12),
-            new GoalLookupValue(0.92, 10),
+            new GoalLookupValue(0.6, 3),
+            new GoalLookupValue(0.85, 5),
+            new GoalLookupValue(0.92, 7),
             new GoalLookupValue(1.13, 10),
             //Currently these are just guesses
 //            new GoalLookupValue(0.233, -12),
@@ -104,14 +104,14 @@ public class GoalPosLookupTable {
         updateDataPoints();
         if (debug) Log.d("GoalPosLookupTable", "our team"+robot.color);
 
-//        double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
+        double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
         Pose2d newGoalPos = FieldConstants.RED_GOAL_POS.copy();
 
-//        if (change < 0){
-//            newGoalPos.y -= Math.abs(change);
-//        } else if(change > 0){
-//            newGoalPos.x -= Math.abs(change);
-//        }
+        if (change < 0){
+            newGoalPos.y -= Math.abs(change);
+        } else if(change > 0){
+            newGoalPos.x -= Math.abs(change);
+        }
 
         if (robot.color == Team.BLUE) {
             if (debug) Log.d("GoalPosLookupTable", "before mirror"+newGoalPos);
