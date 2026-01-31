@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
-import static org.firstinspires.ftc.teamcode.opmodes.auto.Auto.SHOOT_PRELOAD_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
