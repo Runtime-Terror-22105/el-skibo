@@ -40,12 +40,12 @@ public class ShooterLookupTable {
             // endpoint (prevent crashing)
             new LookupValue(0, 590),
 
-            new LookupValue(33.0, 600),
-            new LookupValue(51.1, 635),
-            new LookupValue(60.9, 660),
-            new LookupValue(71.0, 720),
+            new LookupValue(33.0, 590),
+            new LookupValue(51.1, 625),
+            new LookupValue(60.9, 640),
+            new LookupValue(71.0, 710),
             new LookupValue(80.2, 730),
-            new LookupValue(92.5, 760),
+            new LookupValue(92.5, 755),
             new LookupValue(107.2, 800),
             new LookupValue(123.5, 900),
             new LookupValue(134.9, 960),

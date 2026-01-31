@@ -24,7 +24,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long REVERSE_INTAKE_TIME_MS = 150;
     public static int RAMP_DELAY = 0;  // milliseconds
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 100;
-    public static long SPINDEXER_TIMEOUT = 1000L; //600 if not sorting, longer if we are
+    public static long SPINDEXER_TIMEOUT = 600L; //600 if not sorting, longer if we are
     //someone code that pls
 
 
