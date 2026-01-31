@@ -29,30 +29,29 @@ public class PrepareShootCommand extends SequentialCommandGroup {
 
 
     public PrepareShootCommand(Robot robot) {
-        this(robot, null, null);
+        this(robot, false);
     }
 
-    public PrepareShootCommand(Robot robot, Double hoodAngle, Double rpm) {
+    public PrepareShootCommand(Robot robot, boolean doReverseIntake) {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.TRANSFER),
                 new LogCatCommand("PrepareShootCommand", "Beginning prepare shoot", Log.INFO),
 
                 // Phase 1: ???
-                new InstantCommand(() -> robot.shooter.isAutoVelOn = rpm == null),
-                new InstantCommand(() -> {
-                    robot.shooter.isAutoHoodOn = hoodAngle == null;
-                    if(hoodAngle != null)
-                    {
-                        robot.shooter.goalPitch = hoodAngle;
-                    }
-                }),
-                new WaitCommand(TIME_BEFORE_REVERSE_INTAKE),
-                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
-                new WaitCommand(REVERSE_INTAKE_TIME_MS),
+                new InstantCommand(() -> robot.shooter.isAutoVelOn = true),
+                new InstantCommand(() -> robot.shooter.isAutoHoodOn = true),
+                new ConditionalCommand(
+                        new SequentialCommandGroup(
+                            new WaitCommand(TIME_BEFORE_REVERSE_INTAKE),
+                            new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                            new WaitCommand(REVERSE_INTAKE_TIME_MS)
+                        ),
+                        new InstantCommand(() -> {}),
+                        () -> doReverseIntake
+                ),
                 new ParallelCommandGroup(
                     new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
-                    new SetSpindexerWallDown(robot.spindexer, false),
-                    new SetShooterRPMCommand(robot.shooter, rpm)
+                    new SetSpindexerWallDown(robot.spindexer, false)
                 ),
                 new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW), // todo: adjust this delay based on how long it takes for these two servos
                 new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO),
