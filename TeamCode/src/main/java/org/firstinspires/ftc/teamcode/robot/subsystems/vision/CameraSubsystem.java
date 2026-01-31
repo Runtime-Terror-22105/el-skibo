@@ -198,7 +198,7 @@ public class CameraSubsystem extends SubsystemBase {
             robot.telemetry.addData("Localization Tag", localizationTag);
             if (localizationTag != null && localizationTag.robotPose != null
                     && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
-                handleLocalizationDetection(localizationTag);
+//                handleLocalizationDetection(localizationTag);
             }
 
             if (debugLastDetection != null) {
