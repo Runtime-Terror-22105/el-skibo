@@ -62,7 +62,7 @@ public abstract class AutoSpam extends LinearOpMode {
         redMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.PPG);
     }
 
-    public static long HITTING_GATE_TIMEOUT = 1700;
+    public static long HITTING_GATE_TIMEOUT = 1300;
 
     public static boolean stopAfterPreload = false;
 
@@ -76,8 +76,8 @@ public abstract class AutoSpam extends LinearOpMode {
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
-    public static Pose2d INTAKE_2_CONTROL = new Pose2d(53, 62, 0);
-    public static Pose2d INTAKE_2_POSE = new Pose2d(23, 62, Math.toRadians(180));
+    public static Pose2d INTAKE_2_CONTROL = new Pose2d(58, 58, 0);
+    public static Pose2d INTAKE_2_POSE = new Pose2d(20, 60, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
