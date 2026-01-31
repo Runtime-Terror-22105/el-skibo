@@ -28,41 +28,36 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class ShooterSubsystem extends SubsystemBase {
     public static boolean USE_SOTM = true;
 
-    private double loopCount = 0;
-
-    public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
-
-    // in loops, how often to update the turret position servo when outside of the shooting zone
-    public static double TURRET_UPDATE_FREQUENCY = 10;
-
-    private final RobotHardware hardware;
 
     public static boolean debug = false;
     public static boolean telemetry = true;
-    public static boolean usingHardCodedShooterTable = false;
+
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
             new PidfController.PidfCoefficients(0.0005, 0.000005, 0.0, 0.000185, 0);
+    public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
-    // the current pid + speed
-    public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
-    public double shooterPower = 0.0; //flywheel - motor power
 
-    public static double turretPosAt180 = 0.48; //pos pointed directly towards the back
-    public static double posChange90 = 0.4; //servo pos change that rotates turret 90 deg
+    public GoalPosLookupTable goalPosLookupTable;
 
+    // what the shooter should be at
     public double goalPitch; //hood - rad
     public double goalVelocity; //flywheel - rpm
     public double goalTurretAngle; //turret - rad
+    public double goalPitchPos; //hood - servo pos todo: remove, only have goalPitch
 
-    public double goalPitchPos; //hood - servo pos
-
+    // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
+    public static double turretPosAt180 = 0.48; //pos pointed directly towards the back
+    public static double posChange90 = 0.4; //servo pos change that rotates turret 90 deg
+    public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
-    public GoalPosLookupTable goalPosLookupTable;
+    // in loops, how often to update the turret position servo when outside of the shooting zone
+    public static double TURRET_UPDATE_FREQUENCY = 10;
+    private double loopCount = 0;
 
     // No angle limit for turret, but we have servo positions limits
     public static double turretLowerBound = Math.toRadians(0);
@@ -70,32 +65,38 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretServoLowerBound = 0.0;
     public static double turretServoUpperBound = 1;
 
+    // hood limits
     public static double hoodPosMax = 0.7; //maximum position the servo can go to
     public static double hoodPosMin = 0.15; //min position the servo can go to
     public static double hoodAngleMax = 0.919427826056; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.632748891943; //radian measure of hood at min pos
+
+    // vars for calculating shot (unused currently, todo: remove later)
     public static double robotHeight = 14.0; //in
     public static double g = 386.08858267717; //in per sec^2
     public static double goalHeight = 40.0; //doesnt change no matter alliance color
     public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
 
+    private final RobotHardware hardware;
+    private final Robot robot;
+
+    // flags for autoshoot
     public boolean isAutoAimOn;
     public boolean isAutoVelOn;
     public boolean isAutoHoodOn;
     public boolean isAutoTurretOn;
     public boolean alwaysUpdateTurret = false;
 
+    // flag used for lighting feedback for driver
     public boolean turretInDeadzone = false;
-    private final Robot robot;
-    public static class ShooterValues{
+
+    public static class ShooterValues {
         public double velocity;
         public double rad;
         public ShooterValues(double v, double r){
             this.velocity = v;
             this.rad = r;
         }
-
-
     }
 
     public ShooterSubsystem(RobotHardware hardware, Robot robot) {
@@ -309,7 +310,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return velocity * 6.469;
     }
 
-    public void updateShooter() {
+    public double updateShooter() {
         if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", this.getVelocityRpm());
         if (telemetry) Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
@@ -317,7 +318,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         double ff = this.hardware.getVoltageScale() * getGoalVelocity();
         this.shooterPID.setTargetPosition(getGoalVelocity());
-        this.shooterPower = this.shooterPID.calculatePower(this.getVelocityRpm(), ff);
+        return this.shooterPID.calculatePower(this.getVelocityRpm(), ff);
     }
 
     public void addTurretOffset(double change){
@@ -362,7 +363,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // flywheel pids
             Profiler.push("flywheel");
-            this.updateShooter();
+            double shooterPower = this.updateShooter();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
             hardware.shooterLeft.setPower(shooterPower);
             hardware.shooterRight.setPower(shooterPower);
