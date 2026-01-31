@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import kotlin.NotImplementedError;
 
+@Config
 public class AutoBuilder {
     public boolean finished;
 
