@@ -252,7 +252,7 @@ public abstract class Auto extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new PrepareShootCommand(robot),
+                        new PrepareShootCommand(robot, false),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
@@ -274,7 +274,7 @@ public abstract class Auto extends LinearOpMode {
         shoot1Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot1Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
@@ -294,7 +294,7 @@ public abstract class Auto extends LinearOpMode {
         shoot2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot2Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
@@ -314,7 +314,7 @@ public abstract class Auto extends LinearOpMode {
         shoot3Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shoot3Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
