@@ -73,6 +73,7 @@ public abstract class AutoSpam extends LinearOpMode {
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
+    public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
@@ -157,8 +158,8 @@ public abstract class AutoSpam extends LinearOpMode {
         gateToShootPath = PathUtil.createLinePath(robot, hitGatePath, SHOOT_EDGE_POSE, mirror, true, true);
 
 //        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
-        prepareIntake2Path = PathUtil.createLinePath(robot, gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
-        intake2Path = PathUtil.createLinePath(robot, prepareIntake2Path, INTAKE_1_POSE, mirror, false, false);
+//        prepareIntake2Path = PathUtil.createLinePath(robot, gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
+        intake2Path = PathUtil.createCurvePath(robot, gateToShootPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false);
         shoot2Path = PathUtil.createLinePath(robot, intake2Path, SHOOT_LAST_POSE, mirror, true, true);
 
         prepareIntake3Path = follower
@@ -232,11 +233,11 @@ public abstract class AutoSpam extends LinearOpMode {
 
         intake2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, prepareIntake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new FollowPathCommand(robot.follower, intake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new WaitCommand(PRE_INTAKE_DELAY),
-                new FollowPathCommand(robot.follower, intake2Path, true),
+//                new WaitCommand(PRE_INTAKE_DELAY),
+//                new FollowPathCommand(robot.follower, intake2Path, true),
                 new WaitCommand(INTAKE_DELAY)
         );
         shoot2Command = new SequentialCommandGroup(
