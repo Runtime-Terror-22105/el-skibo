@@ -64,8 +64,6 @@ public abstract class AutoSpam extends LinearOpMode {
         redMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.PPG);
     }
 
-    public static long HITTING_GATE_TIMEOUT = 1300;
-
     public static boolean stopAfterPreload = false;
 
     public static double MAX_POWER = 1.0;
@@ -101,7 +99,7 @@ public abstract class AutoSpam extends LinearOpMode {
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
-    public static int GATE_INTAKE_DELAY = 2000;
+    public static int GATE_INTAKE_DELAY = 1500;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
@@ -142,6 +140,7 @@ public abstract class AutoSpam extends LinearOpMode {
     }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
+        Pose shootPreloadPose = SHOOT_PRELOAD_POSE.toPedro();
         Pose shootEdgePose = SHOOT_EDGE_POSE.toPedro();
         Pose shootLastPose = SHOOT_LAST_POSE.toPedro();
         Pose prepareIntake3Pose = PREPARE_INTAKE_3_POSE.toPedro();
@@ -149,6 +148,7 @@ public abstract class AutoSpam extends LinearOpMode {
         Pose intake3Pose = INTAKE_3_POSE.toPedro();
 
         if (mirror) {
+            shootPreloadPose = shootPreloadPose.mirror();
             shootEdgePose = shootEdgePose.mirror();
             shootLastPose = shootLastPose.mirror();
             prepareIntake3Pose = prepareIntake3Pose.mirror();
@@ -157,7 +157,7 @@ public abstract class AutoSpam extends LinearOpMode {
         }
 
         Follower follower = robot.follower;
-        shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, SHOOT_PRELOAD_POSE, mirror, false, false)
+        shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, new Pose2d(shootPreloadPose), false, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .setNoDeceleration()
                 .build();
