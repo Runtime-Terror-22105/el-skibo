@@ -152,8 +152,8 @@ public abstract class AutoSpam extends LinearOpMode {
         shoot1Path = PathUtil.createLinePath(robot, intake1Path, SHOOT_EDGE_POSE, mirror, true, true);
 
         // TODO: for the second gate intake, this heading will not be correct
-        prepareGatePath = PathUtil.createCurvePath(robot, shoot1Path, GATE_CONTROL_POSE, BEFORE_GATE, mirror, false, false);
-        hitGatePath = PathUtil.createLinePath(robot, prepareGatePath, AFTER_GATE, mirror, false, false);
+//        prepareGatePath = PathUtil.createCurvePath(robot, shoot1Path, GATE_CONTROL_POSE, BEFORE_GATE, mirror, false, false);
+        hitGatePath = PathUtil.createCurvePath(robot, shoot1Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
         gateToShootPath = PathUtil.createLinePath(robot, hitGatePath, SHOOT_EDGE_POSE, mirror, true, true);
 
 //        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
@@ -252,14 +252,14 @@ public abstract class AutoSpam extends LinearOpMode {
 
         intakeGateCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, prepareGatePath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new FollowPathCommand(robot.follower, hitGatePath, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new WaitCommand(PRE_INTAKE_DELAY),
-                new ParallelRaceGroup(
-                        new FollowPathCommand(robot.follower, hitGatePath, true),
-                        new WaitCommand(HITTING_GATE_TIMEOUT)
-                ),
+//                new WaitCommand(PRE_INTAKE_DELAY),
+//                new ParallelRaceGroup(
+//                        new FollowPathCommand(robot.follower, hitGatePath, true),
+//                        new WaitCommand(HITTING_GATE_TIMEOUT)
+//                ),
                 new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
         shootGateCommand = new SequentialCommandGroup(
