@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.pedropathing.follower.Follower;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
@@ -13,6 +14,8 @@ import java.util.List;
 import kotlin.NotImplementedError;
 
 public class AutoBuilder {
+    public boolean finished;
+
     /**
      * Starting configurations for the robot.
      */
@@ -45,6 +48,14 @@ public class AutoBuilder {
         this.follower.setStartingPose(startPose.toPedro());
         robot.goalPos = team.getGoalPos();
         autoMoves = new ArrayList<>();
+    }
+
+    public boolean hasFinished() {
+        return this.finished;
+    }
+
+    public void setFinished() {
+        this.finished = true;
     }
 
     private static Pose2d getStartPose(Team team, StartingConfiguration initial) {
@@ -137,6 +148,7 @@ public class AutoBuilder {
                     break;
             }
         }
-        return new SequentialCommandGroup();
+        commands.addCommands(new InstantCommand(this::setFinished));
+        return commands;
     }
 }

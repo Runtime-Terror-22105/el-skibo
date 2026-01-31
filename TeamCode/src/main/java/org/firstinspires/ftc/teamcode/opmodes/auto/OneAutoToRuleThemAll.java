@@ -394,14 +394,7 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
         startTime = System.currentTimeMillis();
 
         CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, true));
-        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-                shootPreloadCommand,
-                intake1Command, shoot1Command,
-                intakeGateCommand, shootGateCommand,
-                intakeGateCommand, shootGateCommand,
-                intake2Command, shoot2Command,
-                new InstantCommand(() -> hasFinished = true)
-        ));
+        CommandScheduler.getInstance().schedule(commands);
 
         lastLoop = System.nanoTime();
 
@@ -426,7 +419,7 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
             long dt = time - lastLoop;
             lastLoop = time;
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
-            if (!hasFinished) {
+            if (!auto.hasFinished()) {
                 duration = System.currentTimeMillis() - startTime;
             }
             robot.telemetry.addData("Auto Time (s)", String.format("%.2f", (System.currentTimeMillis() - startTime) / 1000.0));
