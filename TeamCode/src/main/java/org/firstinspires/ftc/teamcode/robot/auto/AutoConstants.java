@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.paths.PathConstraints;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 /**
  * Contains constants for auto positions on the field to reduce repetition between auto files.
@@ -32,10 +34,20 @@ public class AutoConstants {
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
-    public static int GATE_INTAKE_DELAY = 1500;
+    public static int GATE_INTAKE_TIMEOUT = 1500;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
 
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 0.8;
+
+    public static PathConstraints RELAXED_CONSTRAINTS;
+    static {
+        RELAXED_CONSTRAINTS = Constants.pathConstraints.copy();
+        RELAXED_CONSTRAINTS.setTValueConstraint(0.93);
+        RELAXED_CONSTRAINTS.setVelocityConstraint(10);
+        RELAXED_CONSTRAINTS.setTranslationalConstraint(5);
+        RELAXED_CONSTRAINTS.setHeadingConstraint(0.07);
+        RELAXED_CONSTRAINTS.setTimeoutConstraint(0);
+    }
 }

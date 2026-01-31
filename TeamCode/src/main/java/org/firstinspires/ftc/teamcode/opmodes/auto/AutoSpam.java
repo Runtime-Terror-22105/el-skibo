@@ -5,7 +5,7 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL;
@@ -17,6 +17,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PR
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
@@ -29,7 +30,6 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
-import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,7 +44,6 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.auto.PathUtil;
@@ -82,16 +81,6 @@ public abstract class AutoSpam extends LinearOpMode {
     public static boolean stopAfterPreload = false;
 
     public static double MAX_POWER = 1.0;
-
-    public static PathConstraints RELAXED_CONSTRAINTS;
-    static {
-        RELAXED_CONSTRAINTS = Constants.pathConstraints.copy();
-        RELAXED_CONSTRAINTS.setTValueConstraint(0.93);
-        RELAXED_CONSTRAINTS.setVelocityConstraint(10);
-        RELAXED_CONSTRAINTS.setTranslationalConstraint(5);
-        RELAXED_CONSTRAINTS.setHeadingConstraint(0.07);
-        RELAXED_CONSTRAINTS.setTimeoutConstraint(0);
-    }
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -276,7 +265,7 @@ public abstract class AutoSpam extends LinearOpMode {
 //                        new FollowPathCommand(robot.follower, hitGatePath, true),
 //                        new WaitCommand(HITTING_GATE_TIMEOUT)
 //                ),
-                new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_TIMEOUT)
         );
         shootGateCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
