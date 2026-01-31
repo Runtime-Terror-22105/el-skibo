@@ -99,11 +99,36 @@ public final class PathUtil {
         return addPathBuilderCurve(robot, new Pose2d(startPose).mirror(mirror), controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
     }
 
+
     public static PathChain createCurvePath(Robot robot, Pose2d startPoseIn, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
         return addPathBuilderCurve(robot, startPoseIn, controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed).build();
     }
 
     public static PathChain createCurvePath(Robot robot, PathChain prevPath, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
         return addPathBuilderCurve(robot, prevPath, controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed).build();
+    }
+
+    public static PathBuilder addPathBuilderLine(Robot robot, Pose2d startPose, PathChain prevPath, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        if (prevPath == null) {
+            return addPathBuilderLine(robot, startPose, endPoseIn, mirror, tangentialHeading, reversed);
+        } else {
+            return addPathBuilderLine(robot, prevPath, endPoseIn, mirror, tangentialHeading, reversed);
+        }
+    }
+
+    public static PathBuilder addPathBuilderCurve(Robot robot, Pose2d startPose, PathChain prevPath, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        if (prevPath == null) {
+            return addPathBuilderCurve(robot, startPose, controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
+        } else {
+            return addPathBuilderCurve(robot, prevPath, controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
+        }
+    }
+
+    public static PathChain createCurvePath(Robot robot, Pose2d startPose, PathChain prevPath, Pose2d controlPoseIn, Pose2d endPoseIn, boolean mirror, boolean tangentialHeading, boolean reversed) {
+        if (prevPath == null) {
+            return createCurvePath(robot, startPose, controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
+        } else {
+            return createCurvePath(robot, prevPath, controlPoseIn, endPoseIn, mirror, tangentialHeading, reversed);
+        }
     }
 }
