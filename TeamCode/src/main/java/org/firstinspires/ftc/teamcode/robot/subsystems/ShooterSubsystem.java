@@ -8,20 +8,18 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.FlightTimeLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
@@ -36,7 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
-            new PidfController.PidfCoefficients(0, 0, 0, 0.000185, 0);
+            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000185, 0);
 //            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000185, 0);
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
