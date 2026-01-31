@@ -306,13 +306,6 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
         // TODO: the autobuildder class currently does not handle the init logic
         // and assumes starting near side at the moment for preload
         AutoBuilder auto = new AutoBuilder(robot, this.team, AutoBuilder.StartingConfiguration.NEAR);
-        SequentialCommandGroup commands = auto
-                .preload()
-                .spike2()
-                .gate()
-                .gate()
-                .parkNear()
-                .build();
         robot.follower.setMaxPower(MAX_POWER);
 
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
@@ -373,7 +366,13 @@ public class OneAutoToRuleThemAll extends LinearOpMode {
         startTime = System.currentTimeMillis();
 
         CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, true));
-        CommandScheduler.getInstance().schedule(commands);
+        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+                auto.shootPreload(),
+                auto.spikeIntake(2), auto.spikeShoot(2),
+                auto.intakeGate(), auto.shootGate(),
+                auto.intakeGate(), auto.shootGate(),
+                auto.spikeIntake(1), auto.spikeShoot(1)
+        ));
 
         lastLoop = System.nanoTime();
 
