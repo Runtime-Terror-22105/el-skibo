@@ -354,8 +354,16 @@ public class ShooterSubsystem extends SubsystemBase {
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
             if (robot.goalPos != null && isAutoAimOn) {
-                Pose botPos = this.autoShootPoseOverride != null ? this.autoShootPoseOverride : this.robot.follower.getPose();
-                this.doAutoShoot(botPos, USE_SOTM);
+                Pose robotPos;
+                boolean useSotm;
+                if (this.autoShootPoseOverride != null) {
+                    robotPos = this.autoShootPoseOverride;
+                    useSotm = false;
+                } else {
+                    robotPos = this.robot.follower.getPose();
+                    useSotm = USE_SOTM;
+                }
+                this.doAutoShoot(robotPos, useSotm);
             }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
             Profiler.pop();
