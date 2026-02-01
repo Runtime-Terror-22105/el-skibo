@@ -86,6 +86,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAutoTurretOn;
     public boolean alwaysUpdateTurret = false;
 
+    // If this is set, the robot will use this pose instead of the follower pose for auto-shoot
+    // calculations. If null, the follower pose is used.
+    //
+    // This is useful during auto to avoid dynamically updating the shooter while the robot moves.
+    public Pose autoShootPoseOverride = null;
+
     // flag used for lighting feedback for driver
     public boolean turretInDeadzone = false;
 
@@ -348,7 +354,8 @@ public class ShooterSubsystem extends SubsystemBase {
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
             if (robot.goalPos != null && isAutoAimOn) {
-                this.doAutoShoot(this.robot.follower.getPose(), USE_SOTM);
+                Pose botPos = this.autoShootPoseOverride != null ? this.autoShootPoseOverride : this.robot.follower.getPose();
+                this.doAutoShoot(botPos, USE_SOTM);
             }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
             Profiler.pop();
