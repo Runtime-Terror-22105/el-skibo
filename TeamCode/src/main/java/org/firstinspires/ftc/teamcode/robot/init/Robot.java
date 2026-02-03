@@ -127,8 +127,13 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         return robotState;
     }
 
-    public void setAutoSort(boolean autoSort) {
+    public void setAutoSort(boolean autoSort, boolean inferMissingColor) {
         this.autoSort = autoSort;
+        this.spindexer.inferMissingColorToSort = inferMissingColor;
+    }
+
+    public void setAutoSort(boolean autoSort) {
+        this.setAutoSort(autoSort, false);
     }
 
     public void toggleAutoSort() {
