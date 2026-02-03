@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 @Config
 public class SpindexerSubsystem extends SubsystemBase {
 
+    public boolean inferMissingColorToSort = true;
+
     private final RobotHardware hardware;
     private final Robot robot;
 
@@ -214,6 +216,21 @@ public class SpindexerSubsystem extends SubsystemBase {
         if (glyphArr == null) { return false; }
 
         Log.d("SpindexerSubsystem", "sorting with the following balls: " + balls[0] + ","+balls[1]+","+balls[2]);
+
+        // todo: test if this works and isn't sus
+        // we assume there are always 2 purples and 1 green, so even if one is none, we can infer what it is
+        // if there's two purples and one none, we can infer the none is green
+        // if there's one purple and one green, we can infer the none is purple
+        if (inferMissingColorToSort && ArrayUtil.count(balls, BallColor.NONE) == 1) {
+            if (ArrayUtil.count(balls, BallColor.PURPLE) == 2) {
+                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
+                balls[noneIndex] = BallColor.GREEN;
+            } else if (ArrayUtil.count(balls, BallColor.PURPLE) == 1 &&
+                    ArrayUtil.count(balls, BallColor.GREEN) == 1) {
+                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
+                balls[noneIndex] = BallColor.PURPLE;
+            }
+        }
 
         if (ArrayUtil.contains(balls, BallColor.NONE) ||
                 !ArrayUtil.contains(balls, BallColor.GREEN) ||
