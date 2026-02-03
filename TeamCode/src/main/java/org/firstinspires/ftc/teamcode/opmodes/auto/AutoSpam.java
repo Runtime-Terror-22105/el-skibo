@@ -157,7 +157,7 @@ public abstract class AutoSpam extends LinearOpMode {
         }
 
         Follower follower = robot.follower;
-        shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, new Pose2d(shootPreloadPose), false, false, false)
+        shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, new Pose2d(shootLastPose), false, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .setNoDeceleration()
                 .build();
@@ -167,7 +167,7 @@ public abstract class AutoSpam extends LinearOpMode {
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
 //        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
-        shoot1Path = PathUtil.addPathBuilderLine(robot, intake1Path, SHOOT_EDGE_POSE, mirror, true, true)
+        shoot1Path = PathUtil.addPathBuilderLine(robot, intake1Path, SHOOT_EDGE_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .setNoDeceleration()
                 .build();
