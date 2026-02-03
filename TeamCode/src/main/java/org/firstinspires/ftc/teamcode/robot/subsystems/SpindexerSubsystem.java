@@ -209,6 +209,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public boolean newSort()
     {
         BallColor[] balls = getBallPositions();
+        Log.d("SpindexerSubsystem", "balls" + balls[0].toChar() + balls[1].toChar() +balls[2].toChar());
         BallColor[] glyphArr = robot.camera.getGlyphCharArray();
         if (glyphArr == null) { return false; }
 
