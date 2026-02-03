@@ -212,6 +212,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         BallColor[] glyphArr = robot.camera.getGlyphCharArray();
         if (glyphArr == null) { return false; }
 
+        Log.d("SpindexerSubsystem", "sorting with the following balls: " + balls[0] + ","+balls[1]+","+balls[2]);
+
         if (ArrayUtil.contains(balls, BallColor.NONE) ||
                 !ArrayUtil.contains(balls, BallColor.GREEN) ||
                 !ArrayUtil.contains(balls, BallColor.PURPLE))

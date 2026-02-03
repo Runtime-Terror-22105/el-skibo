@@ -11,6 +11,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
@@ -39,6 +40,7 @@ import org.firstinspires.ftc.teamcode.robot.prompts.DetailedOptionPrompt;
 import kotlin.NotImplementedError;
 
 @Config
+@Disabled
 @Autonomous(name = "Build-A-Bear Auto", group = "Auto")
 public class CustomizableAuto extends LinearOpMode {
     private boolean mirror;

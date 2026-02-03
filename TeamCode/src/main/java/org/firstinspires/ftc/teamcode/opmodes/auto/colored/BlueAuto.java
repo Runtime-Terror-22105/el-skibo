@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto;
 
 @Config
-@Autonomous(name="Blue Side Auto", group="Auto")
+@Autonomous(name="12 Sorted Blue", group="Auto Sorted 12")
 public class BlueAuto extends Auto {
     public BlueAuto() {
         super(Team.BLUE);

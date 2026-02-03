@@ -19,7 +19,6 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
-import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
@@ -38,9 +37,9 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+import org.firstinspires.ftc.teamcode.util.Profiler;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -344,7 +343,7 @@ public abstract class Auto extends LinearOpMode {
 
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
         // todo do the rules require that we do ths after init?
-        robot.setAutoSort(false);
+        robot.setAutoSort(true);
 
         robot.camera.startScanningForGlyphs();
 
