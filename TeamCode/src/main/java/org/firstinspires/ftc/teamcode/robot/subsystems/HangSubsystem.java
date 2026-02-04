@@ -33,26 +33,14 @@ public class HangSubsystem extends SubsystemBase {
     public static double HANG_DOWN_POWER = -0.7;
     public static double HANG_ANGLE_TWO_DEGREES = 60.0;
 
-    public static double PTO_ENGAGED_POSITION = 0.58;
-    public static double PTO_DISENGAGED_POSITION = 0.35;
-
     public static boolean debug = true;
 
     private final RobotHardware hardware;
 
-    private boolean ptoEngaged = false;
     private Position position = Position.FULL_90;
 
     public HangSubsystem(RobotHardware hardware) {
         this.hardware = hardware;
-    }
-
-    public boolean isPtoEngaged() {
-        return ptoEngaged;
-    }
-
-    public void setPTOState(boolean state) {
-        ptoEngaged = state;
     }
 
     public void setPosition(Position position) {
@@ -62,10 +50,6 @@ public class HangSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("HangSubsystem")) {
-            hardware.spindexerPTO.setPosition(ptoEngaged ? PTO_ENGAGED_POSITION : PTO_DISENGAGED_POSITION);
-
-            if (!ptoEngaged) return;
-
             double pitch = hardware.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
             if (debug) {
                 Robot.debugTelemetry.addData("Robot Pitch", pitch);
