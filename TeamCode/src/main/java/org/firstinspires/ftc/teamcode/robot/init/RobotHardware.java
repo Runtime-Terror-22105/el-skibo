@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
+import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
@@ -67,8 +68,8 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorServo hangLeft;
-    public TerrorServo hangRight;
+    public TerrorCRServo hangLeft;
+    public TerrorCRServo hangRight;
 
     // Camera
     public int cameraMonitorViewId;
@@ -206,8 +207,8 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.hangLeft = new TerrorServo(hwMap, "hangLeft");
-        this.hangRight = new TerrorServo(hwMap, "hangRight");
+        this.hangLeft = new TerrorCRServo(hwMap, "hangLeft", 0.005, 1);
+        this.hangRight = new TerrorCRServo(hwMap, "hangRight", 0.005, 1);
         this.publisher.subscribe(10, hangLeft, hangRight);
 
         // Other things
