@@ -386,10 +386,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
-            if (robot.hang.isPtoEngaged()) {
-                return;
-            }
-
             this.updateSpindexer();
             double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
             if (debug) Log.d("SpindexerSubsystem", "max power: " + maxPower);
