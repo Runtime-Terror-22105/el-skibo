@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 @Config
 public class SortCommand extends SequentialCommandGroup {
 
-    public static long alignTimeMS = 100;
+    public static long alignTimeMS = 2000;
     public static long WAiT_TiMEOUT_MOTiF = 1500;
 
     public SortCommand(Robot robot){
@@ -21,6 +21,4 @@ public class SortCommand extends SequentialCommandGroup {
                 new InstantCommand(()->robot.spindexer.newSort())
         );
     }
-
-
 }
