@@ -208,6 +208,8 @@ public class RobotHardware {
 
         this.hangLeft = new TerrorCRServo(hwMap, "hangLeft", 0.005, 1);
         this.hangRight = new TerrorCRServo(hwMap, "hangRight", 0.005, 1);
+        this.hangLeft.setDirection(REVERSE);
+        this.hangRight.setDirection(FORWARD);
         this.publisher.subscribe(10, hangLeft, hangRight);
 
         // Other things
