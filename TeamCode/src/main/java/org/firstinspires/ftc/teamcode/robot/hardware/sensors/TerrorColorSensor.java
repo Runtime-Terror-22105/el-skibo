@@ -57,7 +57,7 @@ public class TerrorColorSensor implements NormalizedColorSensor {
         double g = getGreen();
         double b = getBlue();
         Log.d("Color-sensor", getDist(DistanceUnit.MM) + " " + g);
-        if ( r < 100 && g < 100 && b < 100) {
+        if (getDist(DistanceUnit.MM) > MAX_DIST) {
             return BallColor.NONE;
         } else if (b > g && b > r) {
             return BallColor.PURPLE;

@@ -21,6 +21,4 @@ public class SortCommand extends SequentialCommandGroup {
                 new InstantCommand(()->robot.spindexer.newSort())
         );
     }
-
-
 }
