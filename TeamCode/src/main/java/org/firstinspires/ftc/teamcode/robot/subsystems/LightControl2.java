@@ -1,18 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.init.RobotState;
-import org.firstinspires.ftc.teamcode.robot.init.StateTag;
 import org.firstinspires.ftc.teamcode.util.Profiler;
-
-import java.util.HashMap;
-import java.util.Map;
 
 //im aware i can just call this lightsubsystem but calling it a whole subsystem is kinda doin too much
 public class LightControl2 extends SubsystemBase {
@@ -86,10 +79,10 @@ public class LightControl2 extends SubsystemBase {
                     hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
                     break;
 
-                case CLIMBING:
+                case HANGING_90:
                     break;
 
-                case DONE_CLIMB:
+                case HANGING_FINAL:
                     break;
 
 

@@ -35,6 +35,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.AdjustTurretOffsetCo
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.StartShooterRejectCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToHang90StateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -139,7 +140,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        botInTapeZone.whenActive(new InstantCommand()->);
 
         // todo: implement hang later
-        hangButton.whenPressed(() -> {});
+        hangButton.whenPressed(new GoToHang90StateCommand(robot.hang));
 
         intakeButton.whenActive(new ConditionalCommand(
                 new GoToIntakeStateCommand(robot),
