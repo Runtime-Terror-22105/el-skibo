@@ -48,6 +48,9 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public abstract class TerrorTeleOp extends LinearOpMode {
+    // todo: delete this once hang is tested
+    public static double MANUAL_HANG_SPEED = 0.5;
+
     public static boolean LOG_MOTOR_CURRENT = false;
 
     private final RobotHardware hardware = new RobotHardware();
@@ -128,10 +131,13 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
 
-        GamepadButton adjustTurretLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
-        GamepadButton adjustTurretRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
+//        GamepadButton adjustTurretLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
+//        GamepadButton adjustTurretRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
 
-        GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
+//        GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
+        GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
+        GamepadButton hangManualUpButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
+        GamepadButton hangManualDownButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
 
         Trigger threeBallsAreInside = new Trigger(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE));
 
@@ -208,6 +214,22 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
 
+        hangManualUpButton.whenPressed(() -> {
+            hardware.hangLeft.setPower(MANUAL_HANG_SPEED);
+            hardware.hangRight.setPower(MANUAL_HANG_SPEED);
+        });
+        hangManualUpButton.whenReleased(() -> {
+            hardware.hangLeft.setPower(0);
+            hardware.hangRight.setPower(0);
+        });
+        hangManualDownButton.whenPressed(() -> {
+            hardware.hangLeft.setPower(-MANUAL_HANG_SPEED);
+            hardware.hangRight.setPower(-MANUAL_HANG_SPEED);
+        });
+        hangManualDownButton.whenReleased(() -> {
+            hardware.hangLeft.setPower(0);
+            hardware.hangRight.setPower(0);
+        });
         //adjustSpindexerLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
         //adjustSpindexerRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
 
