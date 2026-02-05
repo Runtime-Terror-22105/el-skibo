@@ -64,6 +64,8 @@ public abstract class Auto extends LinearOpMode {
 
     public static boolean stopAfterPreload = false;
 
+    public static double AMOUNT_TO_TURN_FOR_MOTIF_DEG = 30;
+
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 93, Math.toRadians(225));
@@ -333,7 +335,7 @@ public abstract class Auto extends LinearOpMode {
         robot.init(hardware, telemetry);
         robot.camera.stopScanningForGlyphs();
 
-        this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
+        this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(AMOUNT_TO_TURN_FOR_MOTIF_DEG);
         robot.goalPos = team.getGoalPos();
         robot.follower.setStartingPose(team.getStartPosNear().toPedro());
 
