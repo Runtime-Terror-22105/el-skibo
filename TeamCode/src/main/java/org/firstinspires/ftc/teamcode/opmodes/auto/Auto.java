@@ -64,7 +64,7 @@ public abstract class Auto extends LinearOpMode {
 
     public static boolean stopAfterPreload = false;
 
-    public static double AMOUNT_TO_TURN_FOR_MOTIF_DEG = 30;
+    public static double AMOUNT_TO_TURN_FOR_MOTIF_DEG = 50;
 
     public static double MAX_POWER = 1.0;
 

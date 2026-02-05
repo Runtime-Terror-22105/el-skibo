@@ -6,12 +6,8 @@ import android.util.Size;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
@@ -26,7 +22,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
@@ -42,7 +37,8 @@ public class CameraSubsystem extends SubsystemBase {
     public static long EXPOSURE_MICROSECONDS = 200;
     public static int GAIN = 255;
 
-    private AprilTagProcessorDash aTagProcessor;
+//    private AprilTagProcessorDash aTagProcessor;
+    private AprilTagProcessor aTagProcessor;
 
     private boolean shouldScanForGlyphs = false;
 
@@ -82,7 +78,8 @@ public class CameraSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
-        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
+        this.aTagProcessor = createAprilTagProcessor();
+//        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)

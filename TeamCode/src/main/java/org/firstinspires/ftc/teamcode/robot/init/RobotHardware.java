@@ -149,8 +149,7 @@ public class RobotHardware {
         this.shooterEncoder.setDirection(TerrorEncoder.Direction.FORWARD);// TODO: figure out which motor has the encoder
         this.publisher.subscribe(5, shooterLeft, shooterRight);
 
-        // TODO: figure out shooter motor directions
-        this.shooterLeft.setDirection(FORWARD);
+        this.shooterLeft.setDirection(REVERSE);
         this.shooterRight.setDirection(FORWARD);
 //        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
