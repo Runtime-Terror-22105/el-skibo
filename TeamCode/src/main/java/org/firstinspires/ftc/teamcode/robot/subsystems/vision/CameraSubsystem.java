@@ -10,6 +10,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
@@ -68,6 +70,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     private Pose debugLastDetection = null; // for debug only
     private long debugDetectionTime = 0; // for debug only
+
+    private Integer[] obeliskpair = {0,0};
+
+    private Team team;
+
+    private boolean isAuto = false;
 
     public CameraSubsystem() {
         this.vPortalField = null;
@@ -143,6 +151,35 @@ public class CameraSubsystem extends SubsystemBase {
         Log.i("CameraSubsystem", "Found glyph " + gameGlyph);
     }
 
+    public void setTeam(Team team)
+    {
+        this.team = team;
+    }
+
+    public void setObeliskPairInAuto(Integer[] pair)
+    {
+        switch(team)
+        {
+            case RED:
+                gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(pair)));
+                break;
+
+            case BLUE:
+                gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(pair)));
+                break;
+
+            default:
+                Log.d("CameraSubsystem", "Can't do this, team unknown!");
+                break;
+        }
+
+    }
+
+    public void setIsInAuto(boolean state)
+    {
+        this.isAuto = state;
+    }
+
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("CameraSubsystem")) {
@@ -176,16 +213,27 @@ public class CameraSubsystem extends SubsystemBase {
             Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
             //should only ever be the blue or red goal which is 20 and 24 respectively
             AprilTagDetection localizationTag = null;
+            int obeliskIndex = 0;
 
             for (AprilTagDetection tag : detections) {
                 if (tag.id >= 21 && tag.id <= 23) {
-                    GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
-                    this.gameGlyph = glyphhh;
-                    robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
-                    Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
+                    obeliskpair[obeliskIndex] = tag.id;
+                    obeliskIndex++;
+                    if(!isAuto)
+                    {
+                        GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
+                        this.gameGlyph = glyphhh;
+                        robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
+                        Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
+                    }
+//
                 } else {
                     localizationTag = tag;
                 }
+            }
+            if(isAuto) {
+                Arrays.sort(obeliskpair);
+                setObeliskPairInAuto(obeliskpair);
             }
             Log.d(TAG, "Glyph: " + gameGlyph);
             Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
