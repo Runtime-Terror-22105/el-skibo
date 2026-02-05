@@ -96,10 +96,10 @@ public class LightControl extends SubsystemBase {
                 }
                 break;
 
-            case CLIMBING:
+            case HANGING_90:
                 break;
 
-            case DONE_CLIMB:
+            case HANGING_FINAL:
                 break;
 
 
