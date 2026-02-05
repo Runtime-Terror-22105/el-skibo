@@ -29,7 +29,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.StartShooterRejectCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.ChangeSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
