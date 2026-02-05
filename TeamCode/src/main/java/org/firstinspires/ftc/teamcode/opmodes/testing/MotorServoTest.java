@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -27,6 +28,9 @@ public class MotorServoTest extends LinearOpMode {
     public static String motorName2 = "";
     public static double motorPower2 = 0D;
 
+    public static String motorName3 = "";
+    public static double motorPower3 = 0D;
+
     public static boolean showEncoderOutput = true;
 
 
@@ -39,6 +43,15 @@ public class MotorServoTest extends LinearOpMode {
     public static double servoPosition2 = 0D;
 
     public static boolean useExtendedPwmRange = false;
+
+
+    // cr servo stuff
+    public static String crServoName = "";
+    public static double crServoPower = 0D;
+
+    public static String crServoName2 = "";
+    public static double crServoPower2 = 0D;
+
 
     @Override
     public void runOpMode() {
@@ -56,6 +69,10 @@ public class MotorServoTest extends LinearOpMode {
                 hardwareMap.get(DcMotor.class, motorName2).setPower(motorPower2);
             }
 
+            if (!motorName3.isEmpty()) {
+                hardwareMap.get(DcMotor.class, motorName3).setPower(motorPower3);
+            }
+
             if (showEncoderOutput && !motorName.isEmpty()) {
                 TerrorEncoder shooterEncoder = new TerrorEncoder(new TerrorMotorNormal(hardwareMap, "shooterLeft", 0.05, 1.0));
                 telemetry.addData("Current velocity (ticks/sec)", shooterEncoder.getVelocity());
@@ -68,6 +85,15 @@ public class MotorServoTest extends LinearOpMode {
                 telemetry.update();
             }
 
+
+            // cr servo stuff
+            if (!crServoName.isEmpty()) {
+                hardwareMap.get(CRServo.class, crServoName).setPower(crServoPower);
+            }
+
+            if (!crServoName2.isEmpty()) {
+                hardwareMap.get(CRServo.class, crServoName2).setPower(crServoPower2);
+            }
 
 
             // servo stuff
