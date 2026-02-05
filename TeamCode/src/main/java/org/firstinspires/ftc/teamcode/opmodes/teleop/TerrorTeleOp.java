@@ -33,7 +33,6 @@ import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.AdjustTurretOffsetCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.StartShooterRejectCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.ChangeHangStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -123,7 +122,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
         Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
-        GamepadButton rejectButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
         GamepadButton restingButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
 
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
@@ -202,12 +200,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 new PrepareShootCommand(robot),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING
-        ));
-
-        rejectButton.whenPressed(new ConditionalCommand(
-                new StartShooterRejectCommand(robot.shooter),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState == FULL
         ));
 
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
