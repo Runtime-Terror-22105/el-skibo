@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
+import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 import org.firstinspires.ftc.teamcode.util.Profiler;
@@ -68,8 +69,8 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorServo hangLeft;
-    public TerrorServo hangRight;
+    public TerrorSwyftCRServo hangLeft;
+    public TerrorSwyftCRServo hangRight;
 
     // Camera
     public int cameraMonitorViewId;
@@ -206,11 +207,10 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.hangLeft = new TerrorServo(hwMap, "hangLeft", 0.005);
-        this.hangRight = new TerrorServo(hwMap, "hangRight", 0.005);
-
-        // hangLeft is negative
-        // hangRight is positive
+        this.hangLeft = new TerrorSwyftCRServo(hwMap, "hangLeft");
+        this.hangRight = new TerrorSwyftCRServo(hwMap, "hangRight");
+        this.hangLeft.setDirection(TerrorSwyftCRServo.Direction.REVERSE);
+        this.hangRight.setDirection(TerrorSwyftCRServo.Direction.FORWARD);
         this.publisher.subscribe(10, hangLeft, hangRight);
 
         // Other things

@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootComman
 import org.firstinspires.ftc.teamcode.robot.command.states.ChangeHangStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
+import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
@@ -269,11 +270,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             CommandScheduler.getInstance().run();
 
             if (hangManualUpButton.get()) {
-                hardware.hangLeft.servo.setPosition(-1.0);
-                hardware.hangRight.servo.setPosition(1.0);
+                hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.FORWARD);
+                hardware.hangRight.setPower(TerrorSwyftCRServo.Power.FORWARD);
             } else if (hangManualDownButton.get()) {
-                hardware.hangLeft.servo.setPosition(1.0);
-                hardware.hangRight.servo.setPosition(-1.0);
+                hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.REVERSE);
+                hardware.hangRight.setPower(TerrorSwyftCRServo.Power.REVERSE);
             } else {
                 hardware.hangLeft.setPwmEnable(false);
                 hardware.hangRight.setPwmEnable(false);
