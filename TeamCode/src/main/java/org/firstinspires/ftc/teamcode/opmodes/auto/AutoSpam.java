@@ -91,7 +91,7 @@ public abstract class AutoSpam extends LinearOpMode {
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
-    public static int GATE_INTAKE_DELAY = 2500;
+    public static int GATE_INTAKE_DELAY = 1500;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
