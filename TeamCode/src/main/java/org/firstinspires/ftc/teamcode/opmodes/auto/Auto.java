@@ -66,6 +66,7 @@ public abstract class Auto extends LinearOpMode {
 
     public static double AMOUNT_TO_TURN_FOR_MOTIF_DEG = 50;
 
+    public static double SPINDEXER_SORTED_POWER = 0.5;
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 93, Math.toRadians(225));
@@ -257,7 +258,7 @@ public abstract class Auto extends LinearOpMode {
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShootThreeBallsCommand(robot, SPINDEXER_SORTED_POWER),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
                 new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
                 new WaitCommand(SHOOT_DELAY)
@@ -278,7 +279,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShootThreeBallsCommand(robot, SPINDEXER_SORTED_POWER),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -298,7 +299,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShootThreeBallsCommand(robot, SPINDEXER_SORTED_POWER),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -318,7 +319,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShootThreeBallsCommand(robot, SPINDEXER_SORTED_POWER),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
