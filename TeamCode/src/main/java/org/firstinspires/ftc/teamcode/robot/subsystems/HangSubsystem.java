@@ -49,8 +49,8 @@ public class HangSubsystem extends SubsystemBase {
                     servoPower = -SERVO_POWER;
                 }
 
-                robot.hardware.hangLeft.setPower(servoPower);
-                robot.hardware.hangRight.setPower(servoPower);
+//                robot.hardware.hangLeft.setPower(servoPower);
+//                robot.hardware.hangRight.setPower(servoPower);
             }
 
         }

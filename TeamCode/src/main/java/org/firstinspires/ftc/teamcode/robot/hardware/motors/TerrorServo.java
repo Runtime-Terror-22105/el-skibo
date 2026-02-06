@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorWritingDevice;
 
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.TerrorWritingDevice;
  * when the difference from the last set position exceeds a defined tolerance.
  */
 public class TerrorServo implements TerrorWritingDevice {
-    private final Servo servo;  // The underlying PhotonServo instance
+    public final Servo servo;  // The underlying PhotonServo instance
     private double servoPosition;     // Current position of the servo
     private double lastPosition;      // Last set position to prevent unnecessary updates
     private final double tolerance; // Small tolerance to avoid float comparison issues
@@ -88,6 +89,15 @@ public class TerrorServo implements TerrorWritingDevice {
      */
     synchronized public void setDirection(Servo.Direction direction) {
         this.servo.setDirection(direction);
+    }
+
+    synchronized public void setPwmEnable(boolean enabled) {
+        this.lastPosition = -100;
+        if (enabled) {
+            ((ServoImplEx) this.servo).setPwmEnable();
+        } else {
+            ((ServoImplEx) this.servo).setPwmDisable();
+        }
     }
 
     /**
