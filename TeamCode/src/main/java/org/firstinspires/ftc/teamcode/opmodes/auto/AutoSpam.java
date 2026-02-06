@@ -111,13 +111,13 @@ public abstract class AutoSpam extends LinearOpMode {
     private final Team team;
 
     private PathChain shootPreloadPath;
-    private PathChain prepareIntake1Path, intake1Path, shoot1Path;
-    private PathChain prepareIntake2Path, intake2Path, shoot2Path;
+    private PathChain intake1Path, shoot1Path;
+    private PathChain intake2Path, shoot2Path;
 
     private Command shootPreloadCommand;
     private Command intake1Command, shoot1Command;
-    private Command intakeGateCommand, shootGateCommand;
     private Command intake2Command, shoot2Command;
+    private Command intakeGateCommand, shootGateCommand;
 
     private PathChain hitGatePath;
     private PathChain gateToShootPath;
@@ -152,39 +152,30 @@ public abstract class AutoSpam extends LinearOpMode {
             intake3Pose = intake3Pose.mirror();
         }
 
-        Follower follower = robot.follower;
-        shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, new Pose2d(shootLastPose), false, false, false)
+        shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, new Pose2d(shootPreloadPose), false, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
                 .build();
 
-//        prepareIntake1Path = PathUtil.createLinePath(robot, shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
-        intake1Path = PathUtil.addPathBuilderCurve(robot, shootPreloadPath, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
+        intake1Path = PathUtil.addPathBuilderCurve(robot, shootPreloadPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-//        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
-        shoot1Path = PathUtil.addPathBuilderLine(robot, intake1Path, SHOOT_EDGE_POSE, mirror, false, false)
+        shoot1Path = PathUtil.addPathBuilderLine(robot, intake1Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
                 .build();
 
-        // TODO: for the second gate intake, this heading will not be correct
-//        prepareGatePath = PathUtil.createCurvePath(robot, shoot1Path, GATE_CONTROL_POSE, BEFORE_GATE, mirror, false, false);
-        hitGatePath = PathUtil.createCurvePath(robot, shoot1Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
-        gateToShootPath = PathUtil.addPathBuilderLine(robot, hitGatePath, SHOOT_EDGE_POSE, mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
-                .build();
-
-//        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
-//        prepareIntake2Path = PathUtil.createLinePath(robot, gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
-        intake2Path = PathUtil.addPathBuilderCurve(robot, gateToShootPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
+        intake2Path = PathUtil.addPathBuilderCurve(robot, shoot1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         shoot2Path = PathUtil.addPathBuilderLine(robot, intake2Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
                 .build();
+
+        // TODO: for the second gate intake, this heading will not be correct
+        hitGatePath = PathUtil.createCurvePath(robot, shoot2Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
+        gateToShootPath = PathUtil.addPathBuilderLine(robot, hitGatePath, SHOOT_EDGE_POSE, mirror, true, true)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+
     }
 
     private void buildCommands() {
@@ -205,9 +196,6 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, intake1Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-//                new WaitCommand(PRE_INTAKE_DELAY),
-//                new FollowPathCommand(robot.follower, intake1Path, true),
-//                new FollowPathCommand(robot.follower, pushGatePath, true)
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
         );
         shoot1Command = new SequentialCommandGroup(
@@ -226,8 +214,6 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, intake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-//                new WaitCommand(PRE_INTAKE_DELAY),
-//                new FollowPathCommand(robot.follower, intake2Path, true),
                 new WaitCommand(INTAKE_DELAY)
         );
         shoot2Command = new SequentialCommandGroup(
@@ -246,11 +232,6 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, hitGatePath, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-//                new WaitCommand(PRE_INTAKE_DELAY),
-//                new ParallelRaceGroup(
-//                        new FollowPathCommand(robot.follower, hitGatePath, true),
-//                        new WaitCommand(HITTING_GATE_TIMEOUT)
-//                ),
                 new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
         shootGateCommand = new SequentialCommandGroup(
@@ -328,8 +309,8 @@ public abstract class AutoSpam extends LinearOpMode {
                 shootPreloadCommand,
                 new ConditionalCommand(
                         new SequentialCommandGroup(
-                                intake2Command, shoot2Command,
                                 intake1Command, shoot1Command,
+                                intake2Command, shoot2Command,
                                 intakeGateCommand, shootGateCommand,
                                 intakeGateCommand, shootGateCommand
                         ),
