@@ -87,7 +87,7 @@ public abstract class AutoSpam extends LinearOpMode {
 
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 61, Math.toRadians(180));
     public static Pose2d BEFORE_GATE = new Pose2d(22.542, 62.2, Math.toRadians(157));
-    public static Pose2d AFTER_GATE = new Pose2d(7, 63, Math.toRadians(157));
+    public static Pose2d AFTER_GATE = new Pose2d(9, 63, Math.toRadians(162));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
