@@ -113,16 +113,12 @@ public abstract class AutoSpam extends LinearOpMode {
     private PathChain shootPreloadPath;
     private PathChain prepareIntake1Path, intake1Path, shoot1Path;
     private PathChain prepareIntake2Path, intake2Path, shoot2Path;
-    private PathChain prepareIntake3Path, intake3Path, shoot3Path;
 
     private Command shootPreloadCommand;
     private Command intake1Command, shoot1Command;
     private Command intakeGateCommand, shootGateCommand;
     private Command intake2Command, shoot2Command;
-    private Command intake3Command, shoot3Command;
 
-    //    private PathChain pushGatePath;
-    private PathChain prepareGatePath;
     private PathChain hitGatePath;
     private PathChain gateToShootPath;
 
@@ -188,40 +184,6 @@ public abstract class AutoSpam extends LinearOpMode {
         shoot2Path = PathUtil.addPathBuilderLine(robot, intake2Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .setNoDeceleration()
-                .build();
-
-        prepareIntake3Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                shootEdgePose,
-                                intake3Control,
-                                prepareIntake3Pose
-                        )
-                )
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(0.4, 1.0,
-                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), prepareIntake3Pose.getHeading(), 0.4, 0.7)
-                                )
-                        )
-                )
-                .build();
-        intake3Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(prepareIntake3Pose, intake3Pose)
-                )
-                .setLinearHeadingInterpolation(prepareIntake3Pose.getHeading(), intake3Pose.getHeading())
-                .build();
-        shoot3Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(intake3Pose, shootLastPose)
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
                 .build();
     }
 
@@ -301,26 +263,6 @@ public abstract class AutoSpam extends LinearOpMode {
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
-
-        intake3Command = new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, prepareIntake3Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
-                        new GoToIntakeStateCommand(robot)
-                ),
-                new WaitCommand(PRE_INTAKE_DELAY),
-                new FollowPathCommand(robot.follower, intake3Path, true),
-                new WaitCommand(INTAKE_DELAY)
-        );
-        shoot3Command = new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, shoot3Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
-                ),
-                new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
-                new WaitCommand(SHOOT_DELAY)
-        );
     }
 
     public void runOpMode() {
@@ -390,8 +332,6 @@ public abstract class AutoSpam extends LinearOpMode {
                                 intake1Command, shoot1Command,
                                 intakeGateCommand, shootGateCommand,
                                 intakeGateCommand, shootGateCommand
-//                                intakeGateCommand, shootGateCommand,
-
                         ),
                         new SequentialCommandGroup(
                                 new GoToRestingStateCommand(robot)
