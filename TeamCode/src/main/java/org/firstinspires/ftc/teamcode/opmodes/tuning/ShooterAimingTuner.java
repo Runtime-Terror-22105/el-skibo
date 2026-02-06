@@ -205,11 +205,11 @@ public class ShooterAimingTuner extends LinearOpMode {
                 () -> robot.robotState != SHOOTING
         ));
 
-        rejectButton.whenPressed(new ConditionalCommand(
-                new StartShooterRejectCommand(robot.shooter),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState == FULL
-        ));
+//        rejectButton.whenPressed(new ConditionalCommand(
+//                new StartShooterRejectCommand(robot.shooter),
+//                new InstantCommand(() -> {} ),
+//                () -> robot.robotState != SHOOTING //robot.robotState == FULL
+//        ));
 
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
