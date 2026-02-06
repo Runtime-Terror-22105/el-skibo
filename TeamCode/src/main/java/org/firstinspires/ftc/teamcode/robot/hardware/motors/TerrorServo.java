@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.robot.hardware.TerrorWritingDevice;
  * when the difference from the last set position exceeds a defined tolerance.
  */
 public class TerrorServo implements TerrorWritingDevice {
-    public final Servo servo;  // The underlying PhotonServo instance
+    private final Servo servo;  // The underlying PhotonServo instance
     private double servoPosition;     // Current position of the servo
     private double lastPosition;      // Last set position to prevent unnecessary updates
     private final double tolerance; // Small tolerance to avoid float comparison issues
