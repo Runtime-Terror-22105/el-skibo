@@ -68,8 +68,8 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorCRServo hangLeft;
-    public TerrorCRServo hangRight;
+    public TerrorServo hangLeft;
+    public TerrorServo hangRight;
 
     // Camera
     public int cameraMonitorViewId;
@@ -206,10 +206,11 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.hangLeft = new TerrorCRServo(hwMap, "hangLeft", 0.005, 1);
-        this.hangRight = new TerrorCRServo(hwMap, "hangRight", 0.005, 1);
-        this.hangLeft.setDirection(REVERSE);
-        this.hangRight.setDirection(FORWARD);
+        this.hangLeft = new TerrorServo(hwMap, "hangLeft", 0.005);
+        this.hangRight = new TerrorServo(hwMap, "hangRight", 0.005);
+
+        // hangLeft is negative
+        // hangRight is positive
         this.publisher.subscribe(10, hangLeft, hangRight);
 
         // Other things

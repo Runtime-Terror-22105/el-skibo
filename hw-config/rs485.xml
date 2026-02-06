@@ -12,10 +12,10 @@
         <ServoHub name="Servo Hub 3" port="3">
             <Servo name="spindexerTransferRamp" port="0" />
             <Servo name="spindexerIntakeWall" port="1" />
-            <ContinuousRotationServo name="hangLeft" port="2" />
+            <Servo name="hangLeft" port="2" />
             <Servo name="turretYawLeft" port="3" />
             <Servo name="turretYawRight" port="4" />
-            <ContinuousRotationServo name="hangRight" port="5" />
+            <Servo name="hangRight" port="5" />
         </ServoHub>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="motorFrontLeft" port="0" />

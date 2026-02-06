@@ -206,22 +206,23 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
 
-        hangManualUpButton.whenPressed(() -> {
-            hardware.hangLeft.setPower(MANUAL_HANG_SPEED);
-            hardware.hangRight.setPower(MANUAL_HANG_SPEED);
-        });
-        hangManualUpButton.whenReleased(() -> {
-            hardware.hangLeft.setPower(0);
-            hardware.hangRight.setPower(0);
-        });
-        hangManualDownButton.whenPressed(() -> {
-            hardware.hangLeft.setPower(-MANUAL_HANG_SPEED);
-            hardware.hangRight.setPower(-MANUAL_HANG_SPEED);
-        });
-        hangManualDownButton.whenReleased(() -> {
-            hardware.hangLeft.setPower(0);
-            hardware.hangRight.setPower(0);
-        });
+//        double hangPos = 0.0;
+//        hangManualUpButton.whenPressed(() -> {
+//            hardware.hangLeft.setPosition(-1.0);
+//            hardware.hangRight.setPosition(1.0);
+//        });
+//        hangManualUpButton.whenReleased(() -> {
+//            hardware.hangLeft.setPosition(0);
+//            hardware.hangRight.setPosition(0);
+//        });
+//        hangManualDownButton.whenPressed(() -> {
+//            hardware.hangLeft.setPosition(1.0);
+//            hardware.hangRight.setPosition(-1.0);
+//        });
+//        hangManualDownButton.whenReleased(() -> {
+//            hardware.hangLeft.setPosition(0);
+//            hardware.hangRight.setPosition(0);
+//        });
         //adjustSpindexerLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
         //adjustSpindexerRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
 
@@ -266,6 +267,17 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
             Profiler.push("commands");
             CommandScheduler.getInstance().run();
+
+            if (hangManualUpButton.get()) {
+                hardware.hangLeft.servo.setPosition(-1.0);
+                hardware.hangRight.servo.setPosition(1.0);
+            } else if (hangManualDownButton.get()) {
+                hardware.hangLeft.servo.setPosition(1.0);
+                hardware.hangRight.servo.setPosition(-1.0);
+            } else {
+                hardware.hangLeft.setPwmEnable(false);
+                hardware.hangRight.setPwmEnable(false);
+            }
             Profiler.pop();
 
             Profiler.push("hwWrite");
