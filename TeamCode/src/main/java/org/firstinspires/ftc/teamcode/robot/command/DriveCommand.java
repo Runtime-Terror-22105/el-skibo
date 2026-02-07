@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.command;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
@@ -45,6 +47,7 @@ public class DriveCommand extends CommandBase {
         double left_y = -y.get();
         double right_x = -turn.get();
 
+        Log.d("DriveCommand", Boolean.toString(robot.drive.slowSpeed));
         if (robot.drive.slowSpeed) {
             left_x *= SLOW_SPEED_TRANSLATIONAL;
             left_y *= SLOW_SPEED_TRANSLATIONAL;
