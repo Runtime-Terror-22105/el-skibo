@@ -33,5 +33,9 @@ public enum RobotState {
         List<StateTag> list = Arrays.asList(tag);
         return list.contains(tag);
     }
+
+    public boolean isHang() {
+        return checkTag(CLIMB);
+    }
 }
 

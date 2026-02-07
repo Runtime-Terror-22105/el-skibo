@@ -344,7 +344,7 @@ public class ShooterSubsystem extends SubsystemBase {
 //        }
 
         try (Profiler.Scope p = Profiler.enter("ShooterSubsystem")) {
-            if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
+            if (robot.robotState.isHang()) {
                 hardware.shooterLeft.setPower(0);
                 hardware.shooterRight.setPower(0);
                 return;
