@@ -71,7 +71,7 @@ public class CameraSubsystem extends SubsystemBase {
     private Pose debugLastDetection = null; // for debug only
     private long debugDetectionTime = 0; // for debug only
 
-    private Integer[] obeliskpair = {0,0};
+    private AprilTagDetection[] obeliskpair = {null,null};
 
     private Team team;
 
@@ -130,6 +130,17 @@ public class CameraSubsystem extends SubsystemBase {
         return processor;
     }
 
+    public void setGlyphByNormal(AprilTagDetection tag)
+    {
+        Log.d(TAG,"skibidi yaw:"+tag.ftcPose.yaw);
+        Log.d(TAG,"skibidi pitch:"+tag.ftcPose.pitch);
+        Log.d(TAG,"skibidi bearing:"+tag.ftcPose.bearing);
+        Log.d(TAG,"skibidi elevation:"+tag.ftcPose.elevation);
+        Log.d(TAG,"skibidi range:"+tag.ftcPose.range);
+        Log.d(TAG,"skibidi roll:"+tag.ftcPose.roll);
+//        Log.d(TAG,
+    }
+
     public void stopScanningForGlyphs() {
         this.shouldScanForGlyphs = false;
     }
@@ -156,19 +167,21 @@ public class CameraSubsystem extends SubsystemBase {
         this.team = team;
     }
 
-    public void setObeliskPairInAuto(Integer[] pair)
+    public void setObeliskPairInAuto(AprilTagDetection[] pair)
     {
-        Log.d(TAG,"redpair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(pair))));
-        Log.d(TAG,"bluepair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(pair))));
+        Integer[] tags = {pair[0].id,pair[1].id};
+        Arrays.sort(tags);
+//        Log.d(TAG,"redpair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(tags))));
+//        Log.d(TAG,"bluepair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(tags))));
         switch(team)
         {
             case RED:
-                gameGlyph = VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(pair)));
+                gameGlyph = VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(tags)));
 //                gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(pair)));
                 break;
 
             case BLUE:
-                gameGlyph = VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(pair)));
+                gameGlyph = VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(tags)));
                 break;
 
             default:
@@ -220,7 +233,7 @@ public class CameraSubsystem extends SubsystemBase {
 
             for (AprilTagDetection tag : detections) {
                 if (tag.id >= 21 && tag.id <= 23) {
-                    obeliskpair[obeliskIndex] = tag.id;
+                    obeliskpair[obeliskIndex] = tag;
                     obeliskIndex++;
                     if(!isAuto)
                     {
@@ -235,9 +248,16 @@ public class CameraSubsystem extends SubsystemBase {
                 }
             }
             if(isAuto) {
-                Arrays.sort(obeliskpair);
-                Log.d(TAG, "obeliskpair: " + Arrays.toString(obeliskpair));
-                setObeliskPairInAuto(obeliskpair);
+                if(obeliskIndex==1)
+                {
+                    setGlyphByNormal(obeliskpair[0]);
+                }
+                else if(obeliskIndex==2)
+                {
+//                    Arrays.sort(obeliskpair);
+                    Log.d(TAG, "obeliskpair: " + Arrays.toString(obeliskpair));
+                    setObeliskPairInAuto(obeliskpair);
+                }
             }
             Log.d(TAG, "Glyph: " + gameGlyph);
             Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
