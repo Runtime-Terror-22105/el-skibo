@@ -81,8 +81,7 @@ public class GoalPosLookupTable {
     }
 
     // Note: Returned angle is returned as if the robot color is always blue.
-    private double calcAngleWithWall(){
-        Pose robotPose = robot.follower.getPose();
+    private double calcAngleWithWall(Pose robotPose){
         if (Team.RED.equals(robot.color)) {
             robotPose = robotPose.mirror();
         }
@@ -100,11 +99,11 @@ public class GoalPosLookupTable {
         return angle;
     }
 
-    public Pose2d get(){
+    public Pose2d getForPose(Pose robotPose){
         updateDataPoints();
         if (debug) Log.d("GoalPosLookupTable", "our team"+robot.color);
 
-        double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall());
+        double change = GOAL_CHANGE_LUT.get(this.calcAngleWithWall(robotPose));
         Pose2d newGoalPos = FieldConstants.RED_GOAL_POS.copy();
 
         if (change < 0){
@@ -125,5 +124,9 @@ public class GoalPosLookupTable {
         if (debug) Log.d("GoalPosLookupTable", "new goal pos " + newGoalPos);
         return newGoalPos;
 
+    }
+
+    public Pose2d get() {
+        return this.getForPose(this.robot.follower.getPose());
     }
 }
