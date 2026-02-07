@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterPoseOverrideCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ToggleAutoTurretCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
@@ -254,6 +255,7 @@ public abstract class Auto extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
+                        new SetShooterPoseOverrideCommand(robot.shooter, shootPreloadPath.endPose()),
                         new PrepareShootCommand(robot, false),
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
@@ -269,6 +271,7 @@ public abstract class Auto extends LinearOpMode {
                         new FollowPathCommand(robot.follower, prepareIntake1Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, shoot1Path.endPose()),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake1Path, true),
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
@@ -289,6 +292,7 @@ public abstract class Auto extends LinearOpMode {
                         new FollowPathCommand(robot.follower, prepareIntake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, shoot2Path.endPose()),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake2Path, true),
                 new WaitCommand(INTAKE_DELAY)
@@ -309,6 +313,7 @@ public abstract class Auto extends LinearOpMode {
                         new FollowPathCommand(robot.follower, prepareIntake3Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, shoot3Path.endPose()),
                 new WaitCommand(PRE_INTAKE_DELAY),
                 new FollowPathCommand(robot.follower, intake3Path, true),
                 new WaitCommand(INTAKE_DELAY)

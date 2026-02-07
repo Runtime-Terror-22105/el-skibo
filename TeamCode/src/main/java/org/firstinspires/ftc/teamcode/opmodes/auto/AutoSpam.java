@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.SetShooterPoseOverrideCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ToggleAutoTurretCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
@@ -179,6 +180,7 @@ public abstract class AutoSpam extends LinearOpMode {
     private void buildCommands() {
         shootPreloadCommand = new SequentialCommandGroup(
                 new ParallelCommandGroup(
+                        new SetShooterPoseOverrideCommand(robot.shooter, shootPreloadPath.endPose()),
                         new PrepareShootCommand(robot),
                         new FollowPathCommand(robot.follower, shootPreloadPath, false)
                 ),
@@ -194,6 +196,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, intake1Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, shoot1Path.endPose()),
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
         );
         shoot1Command = new SequentialCommandGroup(
@@ -212,7 +215,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, intake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new WaitCommand(INTAKE_DELAY),
+                new SetShooterPoseOverrideCommand(robot.shooter, shoot2Path.endPose()),
                 new FollowPathCommand(robot.follower, pushGateIntake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING)
         );
         shoot2Command = new SequentialCommandGroup(
@@ -231,6 +234,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, hitGate1Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, gateToShootPath.endPose()),
                 new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
         shootGate1Command = new SequentialCommandGroup(
