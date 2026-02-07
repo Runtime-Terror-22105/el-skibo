@@ -5,11 +5,7 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -27,7 +23,6 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
@@ -85,13 +80,14 @@ public abstract class AutoSpam extends LinearOpMode {
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(58, 58, 0);
     public static Pose2d INTAKE_2_POSE = new Pose2d(20, 60, Math.toRadians(180));
+    public static Pose2d PUSH_GATE_POSE = new Pose2d(14, 70, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 61, Math.toRadians(180));
     public static Pose2d BEFORE_GATE = new Pose2d(22.542, 62.2, Math.toRadians(157));
-    public static Pose2d AFTER_GATE = new Pose2d(9, 62.2, Math.toRadians(155));
+    public static Pose2d AFTER_GATE = new Pose2d(9, 63, Math.toRadians(162));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
@@ -107,20 +103,17 @@ public abstract class AutoSpam extends LinearOpMode {
     private final Team team;
 
     private PathChain shootPreloadPath;
-    private PathChain prepareIntake1Path, intake1Path, shoot1Path;
-    private PathChain prepareIntake2Path, intake2Path, shoot2Path;
-    private PathChain prepareIntake3Path, intake3Path, shoot3Path;
+    private PathChain intake1Path, shoot1Path;
+    private PathChain intake2Path, shoot2Path;
+    private PathChain pushGateIntake2Path;
+    private PathChain hitGate1Path, gateToShoot1Path;
+    private PathChain hitGate2Path, gateToShoot2Path;
 
     private Command shootPreloadCommand;
     private Command intake1Command, shoot1Command;
-    private Command intakeGateCommand, shootGateCommand;
     private Command intake2Command, shoot2Command;
-    private Command intake3Command, shoot3Command;
-
-    //    private PathChain pushGatePath;
-    private PathChain prepareGatePath;
-    private PathChain hitGatePath;
-    private PathChain gateToShootPath;
+    private Command intakeGate1Command, shootGate1Command;
+    private Command intakeGate2Command, shootGate2Command;
 
     double turretAngleForMotif;
 
@@ -152,72 +145,34 @@ public abstract class AutoSpam extends LinearOpMode {
             intake3Pose = intake3Pose.mirror();
         }
 
-        Follower follower = robot.follower;
-        shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, new Pose2d(shootLastPose), false, false, false)
+        shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, new Pose2d(shootPreloadPose), false, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
                 .build();
 
-//        prepareIntake1Path = PathUtil.createLinePath(robot, shootPreloadPath, PREPARE_INTAKE_2_POSE, mirror, false, false);
-        intake1Path = PathUtil.addPathBuilderCurve(robot, shootPreloadPath, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
+        intake1Path = PathUtil.addPathBuilderCurve(robot, shootPreloadPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-//        pushGatePath = createLinePath(intake1Path, PUSH_GATE_POSE, mirror, false, false);
-        shoot1Path = PathUtil.addPathBuilderLine(robot, intake1Path, SHOOT_EDGE_POSE, mirror, false, false)
+        shoot1Path = PathUtil.addPathBuilderLine(robot, intake1Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
                 .build();
 
-        // TODO: for the second gate intake, this heading will not be correct
-//        prepareGatePath = PathUtil.createCurvePath(robot, shoot1Path, GATE_CONTROL_POSE, BEFORE_GATE, mirror, false, false);
-        hitGatePath = PathUtil.createCurvePath(robot, shoot1Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
-        gateToShootPath = PathUtil.addPathBuilderLine(robot, hitGatePath, SHOOT_EDGE_POSE, mirror, false, false)
+        intake2Path = PathUtil.addPathBuilderCurve(robot, shoot1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        pushGateIntake2Path = PathUtil.addPathBuilderLine(robot, intake2Path, PUSH_GATE_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
+                .build();
+        shoot2Path = PathUtil.addPathBuilderLine(robot, pushGateIntake2Path, SHOOT_EDGE_POSE, mirror, true, true)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
 
-//        prepareIntake2Path = createCurvePath(SHOOT_EDGE_POSE, INTAKE_2_CONTROL, PREPARE_INTAKE_2_POSE, mirror, false);
-//        prepareIntake2Path = PathUtil.createLinePath(robot, gateToShootPath, PREPARE_INTAKE_1_POSE, mirror, false, false);
-        intake2Path = PathUtil.addPathBuilderCurve(robot, gateToShootPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
+        hitGate1Path = PathUtil.createCurvePath(robot, shoot2Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
+        gateToShoot1Path = PathUtil.addPathBuilderLine(robot, hitGate1Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        shoot2Path = PathUtil.addPathBuilderLine(robot, intake2Path, SHOOT_EDGE_POSE, mirror, true, true)
+        hitGate2Path = PathUtil.createCurvePath(robot, gateToShoot1Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
+        gateToShoot2Path = PathUtil.addPathBuilderLine(robot, hitGate2Path, SHOOT_LAST_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
-                .build();
-
-        prepareIntake3Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                shootEdgePose,
-                                intake3Control,
-                                prepareIntake3Pose
-                        )
-                )
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(0.4, 1.0,
-                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), prepareIntake3Pose.getHeading(), 0.4, 0.7)
-                                )
-                        )
-                )
-                .build();
-        intake3Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(prepareIntake3Pose, intake3Pose)
-                )
-                .setLinearHeadingInterpolation(prepareIntake3Pose.getHeading(), intake3Pose.getHeading())
-                .build();
-        shoot3Path = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(intake3Pose, shootLastPose)
-                )
-                .setTangentHeadingInterpolation()
-                .setReversed()
                 .build();
     }
 
@@ -239,9 +194,6 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, intake1Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-//                new WaitCommand(PRE_INTAKE_DELAY),
-//                new FollowPathCommand(robot.follower, intake1Path, true),
-//                new FollowPathCommand(robot.follower, pushGatePath, true)
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
         );
         shoot1Command = new SequentialCommandGroup(
@@ -260,9 +212,8 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, intake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-//                new WaitCommand(PRE_INTAKE_DELAY),
-//                new FollowPathCommand(robot.follower, intake2Path, true),
-                new WaitCommand(INTAKE_DELAY)
+                new WaitCommand(INTAKE_DELAY),
+                new FollowPathCommand(robot.follower, pushGateIntake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING)
         );
         shoot2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
@@ -275,21 +226,16 @@ public abstract class AutoSpam extends LinearOpMode {
                 new WaitCommand(SHOOT_DELAY)
         );
 
-        intakeGateCommand = new SequentialCommandGroup(
+        intakeGate1Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, hitGatePath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new FollowPathCommand(robot.follower, hitGate1Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-//                new WaitCommand(PRE_INTAKE_DELAY),
-//                new ParallelRaceGroup(
-//                        new FollowPathCommand(robot.follower, hitGatePath, true),
-//                        new WaitCommand(HITTING_GATE_TIMEOUT)
-//                ),
                 new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
-        shootGateCommand = new SequentialCommandGroup(
+        shootGate1Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, gateToShootPath, false),
+                        new FollowPathCommand(robot.follower, gateToShoot1Path, false),
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, true))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
@@ -298,19 +244,17 @@ public abstract class AutoSpam extends LinearOpMode {
                 new WaitCommand(SHOOT_DELAY)
         );
 
-        intake3Command = new SequentialCommandGroup(
+        intakeGate2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, prepareIntake3Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new FollowPathCommand(robot.follower, hitGate2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new WaitCommand(PRE_INTAKE_DELAY),
-                new FollowPathCommand(robot.follower, intake3Path, true),
-                new WaitCommand(INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
-        shoot3Command = new SequentialCommandGroup(
+        shootGate2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, shoot3Path, true),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
+                        new FollowPathCommand(robot.follower, gateToShoot2Path, false),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, true))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
@@ -347,11 +291,38 @@ public abstract class AutoSpam extends LinearOpMode {
         // we can't spin shooter in init bc it's illegal
         robot.shooter.isAutoVelOn = false;
         robot.shooter.setSpeed(0D);
+//        CommandScheduler.getInstance().schedule(new GoToRestingStateCommand(robot));
+        CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
+        while (opModeInInit()) {
+            Profiler.start();
+
+            for (LynxModule hub : hardware.allHubs) {
+                hub.clearBulkCache();
+            }
+
+            CommandScheduler.getInstance().run();
+
+            robot.write();
+            robot.telemetry.update();
+
+            Profiler.end();
+            Profiler.sendFlamegraph(robot.telemetry);
+        }
+
+        // we're going to see the wrong one
+        if (robot.camera.gameGlyph != null) {
+            robot.camera.stopScanningForGlyphs();
+            robot.shooter.isAutoTurretOn = true;
+            if (Team.RED.equals(team)) {
+                robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
+            } else {
+                robot.camera.setGlyph(blueMotifMap.get(robot.camera.gameGlyph));
+            }
+        }
 
         waitForStart();
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
-        robot.shooter.isAutoTurretOn = true;
         robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
 
@@ -360,12 +331,10 @@ public abstract class AutoSpam extends LinearOpMode {
                 shootPreloadCommand,
                 new ConditionalCommand(
                         new SequentialCommandGroup(
-                                intake2Command, shoot2Command,
                                 intake1Command, shoot1Command,
-                                intakeGateCommand, shootGateCommand,
-                                intakeGateCommand, shootGateCommand
-//                                intakeGateCommand, shootGateCommand,
-
+                                intake2Command, shoot2Command,
+                                intakeGate1Command, shootGate1Command,
+                                intakeGate2Command, shootGate2Command
                         ),
                         new SequentialCommandGroup(
                                 new GoToRestingStateCommand(robot)
@@ -401,7 +370,9 @@ public abstract class AutoSpam extends LinearOpMode {
             Profiler.pop();
 
             Profiler.push("debug");
+            Profiler.push("draw");
             FtcDashDrawing.drawDebug(robot.follower);
+            Profiler.pop();
             long time = System.nanoTime();
             long dt = time - lastLoop;
             lastLoop = time;
