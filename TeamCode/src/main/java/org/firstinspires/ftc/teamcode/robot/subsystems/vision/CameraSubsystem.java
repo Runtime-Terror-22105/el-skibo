@@ -158,6 +158,8 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setObeliskPairInAuto(Integer[] pair)
     {
+        Log.d(TAG,"redpair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(pair))));
+        Log.d(TAG,"bluepair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(pair))));
         switch(team)
         {
             case RED:
@@ -234,6 +236,7 @@ public class CameraSubsystem extends SubsystemBase {
             }
             if(isAuto) {
                 Arrays.sort(obeliskpair);
+                Log.d(TAG, "obeliskpair: " + Arrays.toString(obeliskpair));
                 setObeliskPairInAuto(obeliskpair);
             }
             Log.d(TAG, "Glyph: " + gameGlyph);
