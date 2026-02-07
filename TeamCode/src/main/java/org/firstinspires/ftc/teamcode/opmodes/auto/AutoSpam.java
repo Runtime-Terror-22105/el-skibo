@@ -20,6 +20,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
+import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -129,6 +130,10 @@ public abstract class AutoSpam extends LinearOpMode {
         robot.color = team;
     }
 
+    private void disableShooterOverride() {
+        robot.shooter.autoShootPoseOverride = null;
+    }
+
     private void buildPaths(Pose2d startPose, boolean mirror) {
         Pose shootPreloadPose = SHOOT_PRELOAD_POSE.toPedro();
         Pose shootEdgePose = SHOOT_EDGE_POSE.toPedro();
@@ -148,6 +153,7 @@ public abstract class AutoSpam extends LinearOpMode {
 
         shootPreloadPath = PathUtil.addPathBuilderLine(robot, startPose, new Pose2d(shootPreloadPose), false, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .addParametricCallback(0.5, this::disableShooterOverride)
                 .build();
 
         intake1Path = PathUtil.addPathBuilderCurve(robot, shootPreloadPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
@@ -155,6 +161,7 @@ public abstract class AutoSpam extends LinearOpMode {
                 .build();
         shoot1Path = PathUtil.addPathBuilderLine(robot, intake1Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .addParametricCallback(0.5, this::disableShooterOverride)
                 .build();
 
         intake2Path = PathUtil.addPathBuilderCurve(robot, shoot1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
@@ -165,15 +172,18 @@ public abstract class AutoSpam extends LinearOpMode {
                 .build();
         shoot2Path = PathUtil.addPathBuilderLine(robot, pushGateIntake2Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .addParametricCallback(0.5, this::disableShooterOverride)
                 .build();
 
         hitGate1Path = PathUtil.createCurvePath(robot, shoot2Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
         gateToShoot1Path = PathUtil.addPathBuilderLine(robot, hitGate1Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .addParametricCallback(0.5, this::disableShooterOverride)
                 .build();
         hitGate2Path = PathUtil.createCurvePath(robot, gateToShoot1Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
         gateToShoot2Path = PathUtil.addPathBuilderLine(robot, hitGate2Path, SHOOT_LAST_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .addParametricCallback(0.5, this::disableShooterOverride)
                 .build();
     }
 
@@ -281,7 +291,7 @@ public abstract class AutoSpam extends LinearOpMode {
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
 
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         robot.camera.stopScanningForGlyphs();
 
         this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);

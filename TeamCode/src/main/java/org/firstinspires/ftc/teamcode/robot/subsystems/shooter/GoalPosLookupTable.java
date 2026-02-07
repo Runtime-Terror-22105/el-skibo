@@ -3,13 +3,9 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.VectorCalculator;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
-import com.seattlesolvers.solverslib.geometry.Vector2d;
-import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.apache.commons.math3.analysis.function.Acos;
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Angle;
