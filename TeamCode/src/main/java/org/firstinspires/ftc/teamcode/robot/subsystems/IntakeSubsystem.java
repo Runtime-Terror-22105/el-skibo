@@ -35,7 +35,8 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("IntakeSubsystem")) {
-            if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
+            if (robot.robotState.isHang()) {
+                robot.hardware.colorSensors.setUpdatePeriod(100);
                 robot.hardware.intake.setPower(0);
                 return;
             }

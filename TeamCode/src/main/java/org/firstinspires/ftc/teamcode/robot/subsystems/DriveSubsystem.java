@@ -15,7 +15,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
+        if (robot.robotState.isHang()) {
             robot.hardware.motorFrontLeft.setPower(0);
             robot.hardware.motorFrontRight.setPower(0);
             robot.hardware.motorRearLeft.setPower(0);
