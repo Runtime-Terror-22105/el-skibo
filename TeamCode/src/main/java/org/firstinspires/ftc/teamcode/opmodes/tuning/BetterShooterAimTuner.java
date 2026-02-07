@@ -68,7 +68,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         robot.shooter.isAutoAimOn = false;
         if (blueSide) {
             robot.goalPos = FieldConstants.BLUE_GOAL_POS;

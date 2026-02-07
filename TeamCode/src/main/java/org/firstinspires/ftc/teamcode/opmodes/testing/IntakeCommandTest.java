@@ -27,7 +27,7 @@ public class IntakeCommandTest extends LinearOpMode {
 
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
 
         waitForStart();
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);

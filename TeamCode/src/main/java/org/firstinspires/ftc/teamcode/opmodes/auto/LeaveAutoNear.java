@@ -108,7 +108,7 @@ public class LeaveAutoNear extends LinearOpMode {
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
 
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         robot.goalPos = team.getGoalPos();
         robot.follower.setStartingPose(team.getStartPosNear().toPedro());
 

@@ -22,7 +22,7 @@ public class SpindexTuner extends LinearOpMode {
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         waitForStart();
 
         while (opModeIsActive()) {
