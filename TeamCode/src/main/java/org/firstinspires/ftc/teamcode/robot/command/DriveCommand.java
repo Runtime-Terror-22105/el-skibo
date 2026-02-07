@@ -11,8 +11,9 @@ import java.util.function.Supplier;
 @Config
 public class DriveCommand extends CommandBase {
 
-    private static final double SLOW_SPEED_TRANSLATIONAL = 0.7;
-    private static final double SLOW_SPEED_ROTATION = 0.9;
+    public static double SLOW_SPEED_TRANSLATIONAL = 0.7;
+    public static double SLOW_SPEED_ROTATION = 0.9;
+
     public static double ROTATION_MULTIPLIER_14V = 0.4315;
     public static double ROTATION_MULTIPLIER_12V = 0.515;
 
