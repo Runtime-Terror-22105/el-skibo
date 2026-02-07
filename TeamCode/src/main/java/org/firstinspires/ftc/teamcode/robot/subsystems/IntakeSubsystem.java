@@ -35,6 +35,11 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("IntakeSubsystem")) {
+            if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
+                robot.hardware.intake.setPower(0);
+                return;
+            }
+
             // When not intaking, increase the update period to reduce I2C load
             robot.hardware.colorSensors.setUpdatePeriod(RobotState.INTAKING.equals(robot.robotState) ? 1 : 5);
             robot.hardware.intake.setPower(this.targetSpeed);
