@@ -40,6 +40,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
@@ -270,9 +271,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             CommandScheduler.getInstance().run();
 
             if (hangManualUpButton.get()) {
+                robot.robotState = RobotState.HANGING_FINAL;
                 hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.FORWARD);
                 hardware.hangRight.setPower(TerrorSwyftCRServo.Power.FORWARD);
             } else if (hangManualDownButton.get()) {
+                robot.robotState = RobotState.HANGING_FINAL;
                 hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.REVERSE);
                 hardware.hangRight.setPower(TerrorSwyftCRServo.Power.REVERSE);
             } else {
