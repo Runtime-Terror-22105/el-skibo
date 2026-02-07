@@ -42,7 +42,6 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
@@ -78,7 +77,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public void runOpMode() {
         Profiler.init();
 
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+//        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         robot.init(hardware, this);
 
         this.setTeam(color);
@@ -91,7 +91,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             //robot.camera.stopScanningForGlyphs();
             //blackboard.put(MOTIF_DATA_KEY, null);
         } else {
-            robot.camera.startScanningForGlyphs();
+//            robot.camera.startScanningForGlyphs();
         }
         if (autoEnd != null) {
             robot.follower.setStartingPose((Pose) autoEnd);
@@ -238,9 +238,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton motifPPGButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
 
 
-        motifPGPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PGP ));
-        motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
-        motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
+//        motifPGPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PGP ));
+//        motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
+//        motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
 
         //homing command executing here
 
