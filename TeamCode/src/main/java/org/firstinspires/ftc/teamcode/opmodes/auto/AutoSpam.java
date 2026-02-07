@@ -307,47 +307,18 @@ public abstract class AutoSpam extends LinearOpMode {
         robot.setAutoSort(false);
         robot.shooter.sotmOverride = false;
 
-        robot.camera.startScanningForGlyphs();
-
         // we can't spin shooter in init bc it's illegal
         robot.shooter.isAutoVelOn = false;
         robot.shooter.setSpeed(0D);
-//        CommandScheduler.getInstance().schedule(new GoToRestingStateCommand(robot));
-        CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
-        while (opModeInInit()) {
-            Profiler.start();
-
-            for (LynxModule hub : hardware.allHubs) {
-                hub.clearBulkCache();
-            }
-
-            CommandScheduler.getInstance().run();
-
-            robot.write();
-            robot.telemetry.update();
-
-            Profiler.end();
-            Profiler.sendFlamegraph(robot.telemetry);
-        }
-
-        // we're going to see the wrong one
-        if (robot.camera.gameGlyph != null) {
-            robot.camera.stopScanningForGlyphs();
-            robot.shooter.isAutoTurretOn = true;
-            if (Team.RED.equals(team)) {
-                robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
-            } else {
-                robot.camera.setGlyph(blueMotifMap.get(robot.camera.gameGlyph));
-            }
-        }
 
         waitForStart();
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
+        robot.shooter.isAutoTurretOn = true;
         robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
 
-        CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, true));
+//        CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, true));
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 shootPreloadCommand,
                 new ConditionalCommand(
