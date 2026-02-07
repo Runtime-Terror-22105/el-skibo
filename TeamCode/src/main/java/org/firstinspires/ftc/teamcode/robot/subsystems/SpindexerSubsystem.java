@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
@@ -386,6 +387,11 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
+            if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
+                hardware.spindexerRotate.setPower(0);
+                return;
+            }
+
             this.updateSpindexer();
             double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
             if (debug) Log.d("SpindexerSubsystem", "max power: " + maxPower);
