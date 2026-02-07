@@ -69,14 +69,14 @@ public abstract class Auto extends LinearOpMode {
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
 
     public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
-    public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
+    public static Pose2d INTAKE_1_POSE = new Pose2d(22, 85.149, Math.toRadians(180));
     public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE = new Pose2d(20, 62, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(17, 62, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(17, 39, Math.toRadians(180));
 
     public static Pose2d BEFORE_GATE = new Pose2d(22.542, 54.692, 146.621);
     public static Pose2d AFTER_GATE = new Pose2d(13.228, 58.574, 135.9946);
