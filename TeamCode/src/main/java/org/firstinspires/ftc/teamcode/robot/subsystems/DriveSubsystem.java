@@ -24,7 +24,7 @@ public class DriveSubsystem extends SubsystemBase {
             robot.hardware.motorRearLeft.setPower(0);
             robot.hardware.motorRearRight.setPower(0);
 
-            Log.d(TAG, "Currently hanging!");
+            Log.d(TAG, "Currently hanging! State: " + robot.robotState);
             return;
         }
 
