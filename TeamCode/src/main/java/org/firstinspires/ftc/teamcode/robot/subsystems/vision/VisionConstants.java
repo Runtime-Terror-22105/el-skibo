@@ -23,14 +23,6 @@ public class VisionConstants {
             put(23,CameraSubsystem.GLYPH.PPG);
         }};
 
-        //if you see two pairs at the start of the game, it's always one of these cases
-
-//        public static Map<Integer[], Integer> BlueObeliskPairs = new HashMap<Integer[], Integer>() {{
-//            put(new Integer[]{21,22}, 21);
-//            put(new Integer[]{22,23}, 22);
-//            put(new Integer[]{21,23},23);
-//        }};
-
         public static HashMap<List<Integer>, Integer> BlueObeliskPairs = new HashMap<List<Integer>, Integer>() {{
             put(Collections.unmodifiableList(Arrays.asList(21, 22)), 21);
             put(Collections.unmodifiableList(Arrays.asList(22, 23)), 22);
@@ -42,6 +34,23 @@ public class VisionConstants {
             put(Collections.unmodifiableList(Arrays.asList(22, 23)), 23);
             put(Collections.unmodifiableList(Arrays.asList(21, 22)), 22);
         }};
+
+        public static HashMap<Integer,CameraSubsystem.GLYPH> RedIndividualPairs = new HashMap<Integer,CameraSubsystem.GLYPH>(){
+            {
+                put(22,CameraSubsystem.GLYPH.GPP);
+                put(23,CameraSubsystem.GLYPH.PGP);
+                put(21,CameraSubsystem.GLYPH.PPG);
+            }
+        };
+
+        public static HashMap<Integer,CameraSubsystem.GLYPH> BlueIndividualPairs = new HashMap<Integer,CameraSubsystem.GLYPH>(){
+            {
+                put(21,CameraSubsystem.GLYPH.PGP);
+                put(22,CameraSubsystem.GLYPH.PPG);
+                put(23,CameraSubsystem.GLYPH.GPP);
+            }
+        };
+
         // obelisk
         //     22 Δ 23
         //       21
