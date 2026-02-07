@@ -294,6 +294,8 @@ public abstract class AutoSpam extends LinearOpMode {
 //        CommandScheduler.getInstance().schedule(new GoToRestingStateCommand(robot));
         CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
         while (opModeInInit()) {
+            Profiler.start();
+
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
             }
@@ -302,6 +304,9 @@ public abstract class AutoSpam extends LinearOpMode {
 
             robot.write();
             robot.telemetry.update();
+
+            Profiler.end();
+            Profiler.sendFlamegraph(robot.telemetry);
         }
 
         // we're going to see the wrong one
