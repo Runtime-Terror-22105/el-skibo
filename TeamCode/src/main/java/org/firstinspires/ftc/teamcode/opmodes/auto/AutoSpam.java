@@ -370,7 +370,9 @@ public abstract class AutoSpam extends LinearOpMode {
             Profiler.pop();
 
             Profiler.push("debug");
+            Profiler.push("draw");
             FtcDashDrawing.drawDebug(robot.follower);
+            Profiler.pop();
             long time = System.nanoTime();
             long dt = time - lastLoop;
             lastLoop = time;
