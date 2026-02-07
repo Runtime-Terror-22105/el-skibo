@@ -9,7 +9,7 @@ public final class Profiler {
     private static Profiler INSTANCE;
 
     public static void init() {
-        /*INSTANCE = new Profiler();*/
+        INSTANCE = new Profiler();
     }
 
     private static class ProfilePoint {
@@ -68,6 +68,7 @@ public final class Profiler {
         }
     }
 
+    private boolean isStarted = false;
     private ProfilePoint root;
     private List<ProfilePoint> stack = new ArrayList<>();
     private List<ProfilePoint> allNodes = new ArrayList<>();
@@ -81,9 +82,11 @@ public final class Profiler {
         allNodes.clear();
         allNodes.add(root);
         root.start();
+        isStarted = true;
     }
 
     public void endInstance() {
+        isStarted = false;
         if (stack.size() != 1)
             throw new IllegalStateException("Profiler stack is not empty at endInstance.");
         root.end();
@@ -94,6 +97,8 @@ public final class Profiler {
     }
 
     public void pushInstance(String name) {
+        if (!isStarted) return;
+
         // Try to find if a child with the same name already exists
         ProfilePoint point = null;
         for (ProfilePoint child : top().children()) {
@@ -114,6 +119,8 @@ public final class Profiler {
     }
 
     public void popInstance() {
+        if (!isStarted) return;
+
         if (stack.size() <= 1)
             throw new IllegalStateException("Cannot pop root profiler node.");
         ProfilePoint point = stack.remove(stack.size() - 1);
