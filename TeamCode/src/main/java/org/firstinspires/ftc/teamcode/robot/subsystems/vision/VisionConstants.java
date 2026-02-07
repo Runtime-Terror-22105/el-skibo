@@ -13,6 +13,13 @@ public class VisionConstants {
             put(24, "REDSCORE");
         }};
 
+        //i know its better to just change tagMap but i dont want to mess with anything rn
+        public static Map<Integer, CameraSubsystem.GLYPH> glyphMap = new HashMap<Integer, CameraSubsystem.GLYPH>() {{
+            put(21, CameraSubsystem.GLYPH.GPP);
+            put(22, CameraSubsystem.GLYPH.PGP);
+            put(23,CameraSubsystem.GLYPH.PPG);
+        }};
+
         //if you see two pairs at the start of the game, it's always one of these cases
 
         public static Map<Integer[], Integer> BlueObeliskPairs = new HashMap<Integer[], Integer>() {{
