@@ -362,7 +362,7 @@ public class CustomizableAuto extends LinearOpMode {
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
 
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 

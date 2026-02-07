@@ -97,7 +97,7 @@ public class ShooterAimingTuner extends LinearOpMode {
         Profiler.init();
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         if (robot.color == Team.BLUE){
             robot.follower.setStartingPose((FieldConstants.BLUE_START_POS_NEAR).toPedro());
         }
