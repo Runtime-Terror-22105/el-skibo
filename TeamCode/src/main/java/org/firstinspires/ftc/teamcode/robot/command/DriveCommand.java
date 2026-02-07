@@ -1,22 +1,18 @@
 package org.firstinspires.ftc.teamcode.robot.command;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandBase;
-import com.seattlesolvers.solverslib.command.Subsystem;
-
-import java.util.Collections;
-import java.util.Set;
-import java.util.function.BooleanSupplier;
 
 import org.firstinspires.ftc.teamcode.math.Algebra;
-import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
+
 import java.util.function.Supplier;
 
 @Config
 public class DriveCommand extends CommandBase {
 
+    private static final double SLOW_SPEED_TRANSLATIONAL = 0.7;
+    private static final double SLOW_SPEED_ROTATION = 0.9;
     public static double ROTATION_MULTIPLIER_14V = 0.4315;
     public static double ROTATION_MULTIPLIER_12V = 0.515;
 
@@ -47,6 +43,12 @@ public class DriveCommand extends CommandBase {
         double left_x = -x.get();
         double left_y = -y.get();
         double right_x = -turn.get();
+
+        if (robot.drive.slowSpeed) {
+            left_x *= SLOW_SPEED_TRANSLATIONAL;
+            left_y *= SLOW_SPEED_TRANSLATIONAL;
+            right_x *= SLOW_SPEED_ROTATION;
+        }
         robot.follower.setTeleOpDrive(left_y, left_x, right_x * rotationMultiplier);
 //        robot.drivetrain.move(
 //                direction,
