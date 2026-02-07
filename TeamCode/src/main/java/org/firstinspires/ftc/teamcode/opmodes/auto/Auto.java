@@ -347,7 +347,7 @@ public abstract class Auto extends LinearOpMode {
 
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
         // todo do the rules require that we do ths after init?
-        robot.setAutoSort(true, true);
+        robot.setAutoSort(false, false);
         robot.camera.setIsInAuto(true); //its false by default
         robot.camera.setTeam(this.team);
         robot.camera.startScanningForGlyphs();
@@ -401,6 +401,8 @@ public abstract class Auto extends LinearOpMode {
                 ),
                 new InstantCommand(() -> hasFinished = true)
         ));
+
+//        robot.camera.stopCamera();
 
         lastLoop = System.nanoTime();
 

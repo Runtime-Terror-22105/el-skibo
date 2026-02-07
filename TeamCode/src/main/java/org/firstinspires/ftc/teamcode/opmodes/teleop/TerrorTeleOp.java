@@ -105,6 +105,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        }
 
         waitForStart();
+//        robot.camera.stopCamera();
+
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
         GamepadEx gamepad2ex = new GamepadEx(gamepad2);
 
