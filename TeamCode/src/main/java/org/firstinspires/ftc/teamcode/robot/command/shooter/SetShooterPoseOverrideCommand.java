@@ -15,6 +15,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 // """
 public class SetShooterPoseOverrideCommand extends InstantCommand {
     public SetShooterPoseOverrideCommand(ShooterSubsystem shooter, Pose robotPose) {
-        super(() -> shooter.autoShootPoseOverride = robotPose);
+//        super(() -> shooter.autoShootPoseOverride = robotPose);
     }
 }
