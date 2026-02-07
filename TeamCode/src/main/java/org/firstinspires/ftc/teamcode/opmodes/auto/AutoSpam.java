@@ -20,7 +20,6 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
-import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -82,7 +81,8 @@ public abstract class AutoSpam extends LinearOpMode {
     public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(58, 58, 0);
     public static Pose2d INTAKE_2_POSE = new Pose2d(20, 60, Math.toRadians(180));
-    public static Pose2d PUSH_GATE_POSE = new Pose2d(14, 70, Math.toRadians(180));
+    public static Pose2d PUSH_GATE_CONTROL = new Pose2d(20.8, 72.7, Math.toRadians(180));
+    public static Pose2d PUSH_GATE_POSE = new Pose2d(9, 70, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
@@ -167,7 +167,7 @@ public abstract class AutoSpam extends LinearOpMode {
         intake2Path = PathUtil.addPathBuilderCurve(robot, shoot1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
 //                .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        pushGateIntake2Path = PathUtil.addPathBuilderLine(robot, intake2Path, PUSH_GATE_POSE, mirror, false, false)
+        pushGateIntake2Path = PathUtil.addPathBuilderCurve(robot, intake2Path, PUSH_GATE_CONTROL, PUSH_GATE_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         shoot2Path = PathUtil.addPathBuilderLine(robot, pushGateIntake2Path, SHOOT_EDGE_POSE, mirror, true, true)
