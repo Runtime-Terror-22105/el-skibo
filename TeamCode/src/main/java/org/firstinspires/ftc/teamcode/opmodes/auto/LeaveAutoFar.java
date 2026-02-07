@@ -96,7 +96,7 @@ public abstract class LeaveAutoFar extends LinearOpMode {
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
 
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         robot.goalPos = team.getGoalPos();
 
         Pose2d startPos = team.getStartPosFar();

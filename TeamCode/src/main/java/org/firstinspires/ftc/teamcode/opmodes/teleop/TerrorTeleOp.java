@@ -79,7 +79,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         Profiler.init();
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
 
         this.setTeam(color);
         Object motif = blackboard.getOrDefault(MOTIF_DATA_KEY, null);

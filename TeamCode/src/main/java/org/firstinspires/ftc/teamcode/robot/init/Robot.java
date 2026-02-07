@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.skeletonarmy.marrow.zones.Point;
 import com.skeletonarmy.marrow.zones.PolygonZone;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
+import org.firstinspires.ftc.teamcode.util.FastTelemetryImpl;
 
 
 /**
@@ -30,6 +32,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     // only use for debug cus aadit says static vars are sus
     public static MultipleTelemetry debugTelemetry;
+
+    public static boolean USE_FAST_TELEMETRY = true;
 
     // States
     public RobotState robotState = RobotState.RESTING;
@@ -69,15 +73,16 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public MultipleTelemetry telemetry;
     public RobotHardware hardware;
 
-    public void init(@NonNull RobotHardware hardware, @NonNull Telemetry tele) {
+    public void init(@NonNull RobotHardware hardware, @NonNull OpMode opMode) {
         CommandScheduler.getInstance().reset();
 
         // Save local copy of RobotHardware class
         this.hardware = hardware;
 
         // Set up dashboard stuff
+        Telemetry driverHubTelemetry = USE_FAST_TELEMETRY ? new FastTelemetryImpl(opMode) : opMode.telemetry;
         this.dashboard = FtcDashboard.getInstance();
-        this.telemetry = new MultipleTelemetry(tele, dashboard.getTelemetry());
+        this.telemetry = new MultipleTelemetry(driverHubTelemetry, dashboard.getTelemetry());
         debugTelemetry = telemetry;
 
         // Initialize the drivetrain
