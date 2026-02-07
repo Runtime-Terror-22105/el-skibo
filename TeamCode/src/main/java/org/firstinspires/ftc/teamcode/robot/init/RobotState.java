@@ -30,7 +30,7 @@ public enum RobotState {
         return tags;
     }
     public boolean checkTag(StateTag tag){
-        List<StateTag> list = Arrays.asList(tag);
+        List<StateTag> list = Arrays.asList(tags);
         return list.contains(tag);
     }
 
