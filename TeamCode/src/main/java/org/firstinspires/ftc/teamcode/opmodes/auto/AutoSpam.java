@@ -132,7 +132,6 @@ public abstract class AutoSpam extends LinearOpMode {
 
     private void disableShooterOverride() {
         robot.shooter.autoShootPoseOverride = null;
-//        TelemetryImpl
     }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
@@ -292,7 +291,7 @@ public abstract class AutoSpam extends LinearOpMode {
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
 
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         robot.camera.stopScanningForGlyphs();
 
         this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
