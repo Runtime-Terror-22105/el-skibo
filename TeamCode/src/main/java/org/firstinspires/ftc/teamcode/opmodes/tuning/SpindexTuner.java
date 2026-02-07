@@ -18,12 +18,15 @@ public class SpindexTuner extends LinearOpMode {
     private final SpindexerEncoderLUT lut = new SpindexerEncoderLUT(robot);
 
     public static double GOAL_ANGLE = 0.0;
+    public static long LOOP_DELAY = 0;
 
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         robot.init(hardware, this);
         waitForStart();
+
+        long lastTime = System.currentTimeMillis();
 
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
@@ -41,10 +44,19 @@ public class SpindexTuner extends LinearOpMode {
 
             hardware.write();
 
+            try {
+                Thread.sleep(LOOP_DELAY);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
             robot.telemetry.addData("Yaw of Spindexer", GOAL_ANGLE);
             robot.telemetry.addData("Current angle (degrees)", Math.toDegrees(robot.spindexer.getPosition()));
             robot.telemetry.addData("Desired Angle (degrees)" , lut.get(robot.spindexer.desiredAngle).correctedAngleDeg);
             robot.telemetry.addData("Current power", robot.spindexer.spindexerPower);
+            long time = System.currentTimeMillis();
+            robot.telemetry.addData("Loop Time (ms)", time - lastTime);
+            lastTime = time;
             robot.telemetry.update();
 
         }

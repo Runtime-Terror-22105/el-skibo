@@ -93,12 +93,12 @@ public class CameraSubsystem extends SubsystemBase {
                 .setCamera(hardware.fieldCamera)
 //                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(1280, 800))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .addProcessor(this.aTagProcessor);
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2);
+//                .addProcessor(this.aTagProcessor);
 
         switch (liveViewSettings) {
             case FIELD:
-                vPortalFieldBuilder.enableLiveView(true);
+//                vPortalFieldBuilder.enableLiveView(true);
 //                        .setLiveViewContainerId(hardware.cameraMonitorViewId);
                 // note: to have this appear in dashboard, you need to have the pipeline implement CameraStreamSource
                 // see last year's code for reference, I'm too lazy to do this rn
@@ -108,7 +108,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         vPortalField = vPortalFieldBuilder.build();
 
-        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
+//        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
     }
 
@@ -130,6 +130,10 @@ public class CameraSubsystem extends SubsystemBase {
         return processor;
     }
 
+    public void stopCamera() {
+        vPortalField.stopStreaming();
+    }
+
     public void setGlyphByNormal(AprilTagDetection tag)
     {
         robot.telemetry.addData(TAG,"skibidi yaw:"+tag.ftcPose.yaw);
@@ -138,7 +142,7 @@ public class CameraSubsystem extends SubsystemBase {
         robot.telemetry.addData(TAG,"skibidi elevation:"+tag.ftcPose.elevation);
         robot.telemetry.addData(TAG,"skibidi range:"+tag.ftcPose.range);
         robot.telemetry.addData(TAG,"skibidi roll:"+tag.ftcPose.roll);
-//        Log.d(TAG,
+//        // Log.d(TAG,
     }
 
     public void stopScanningForGlyphs() {
@@ -159,7 +163,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setGlyph(GLYPH glyph) {
         gameGlyph = glyph;
-        Log.i("CameraSubsystem", "Found glyph " + gameGlyph);
+//        // Log.i("CameraSubsystem", "Found glyph " + gameGlyph);
     }
 
     public void setTeam(Team team)
@@ -171,8 +175,8 @@ public class CameraSubsystem extends SubsystemBase {
     {
         Integer[] tags = {pair[0].id,pair[1].id};
         Arrays.sort(tags);
-//        Log.d(TAG,"redpair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(tags))));
-//        Log.d(TAG,"bluepair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(tags))));
+//        // Log.d(TAG,"redpair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(tags))));
+//        // Log.d(TAG,"bluepair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(tags))));
         switch(team)
         {
             case RED:
@@ -185,7 +189,7 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
 
             default:
-                Log.d("CameraSubsystem", "Can't do this, team unknown!");
+                // Log.d("CameraSubsystem", "Can't do this, team unknown!");
                 break;
         }
 
@@ -221,12 +225,12 @@ public class CameraSubsystem extends SubsystemBase {
 //        } catch (IllegalStateException e) {
 //            // there's an error where it says that you cannot set controls until camera starts streaming
 //            // todo handle ths properly and don't just do a try-catch
-//            Log.w("CameraSubsystem", e);
+//            // Log.w("CameraSubsystem", e);
 //        }
 
 
             this.detections = aTagProcessor.getDetections();
-            Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
+            // Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
             //should only ever be the blue or red goal which is 20 and 24 respectively
             AprilTagDetection localizationTag = null;
             int obeliskIndex = 0;
@@ -240,7 +244,7 @@ public class CameraSubsystem extends SubsystemBase {
                         GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
                         this.gameGlyph = glyphhh;
                         robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
-                        Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
+                        // Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
                     }
 //
                 } else {
@@ -255,13 +259,13 @@ public class CameraSubsystem extends SubsystemBase {
                 else if(obeliskIndex==2)
                 {
 //                    Arrays.sort(obeliskpair);
-                    Log.d(TAG, "obeliskpair: " + Arrays.toString(obeliskpair));
+                    // Log.d(TAG, "obeliskpair: " + Arrays.toString(obeliskpair));
                     setObeliskPairInAuto(obeliskpair);
                 }
             }
-            Log.d(TAG, "Glyph: " + gameGlyph);
-            Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
-            Log.d(TAG, "Localization Tag: " + localizationTag);
+            // Log.d(TAG, "Glyph: " + gameGlyph);
+            // Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
+            // Log.d(TAG, "Localization Tag: " + localizationTag);
             robot.telemetry.addData("Glyph", gameGlyph);
             robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
             robot.telemetry.addData("Localization Tag", localizationTag);

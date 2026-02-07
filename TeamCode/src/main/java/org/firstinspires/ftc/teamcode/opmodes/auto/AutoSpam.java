@@ -297,6 +297,7 @@ public abstract class AutoSpam extends LinearOpMode {
         robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
 
+//        robot.camera.stopCamera();
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                 shootPreloadCommand,
                 new ConditionalCommand(
