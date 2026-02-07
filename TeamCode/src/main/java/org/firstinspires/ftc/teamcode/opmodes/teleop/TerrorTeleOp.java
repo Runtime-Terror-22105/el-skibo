@@ -186,8 +186,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         manualSpindexRight.whileHeld(new AdjustTurretOffsetCommand(robot, false));
 
-        slowSpeedButton.whenPressed(() -> robot.drive.setSlowSpeed(true));
-        slowSpeedButton.whenReleased(() -> robot.drive.setSlowSpeed(false));
+        slowSpeedButton.whenPressed(() -> robot.drive.setSlowSpeed(!robot.drive.slowSpeed));
+//        slowSpeedButton.whenReleased(() -> robot.drive.setSlowSpeed(false));
 
         shoot3button.whenPressed(new ConditionalCommand(
                 new ConditionalCommand( // if we already did the transfer, just shoot immediately

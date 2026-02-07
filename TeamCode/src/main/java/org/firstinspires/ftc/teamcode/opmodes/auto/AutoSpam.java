@@ -82,7 +82,7 @@ public abstract class AutoSpam extends LinearOpMode {
 
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 59.5, Math.toRadians(180));
 //    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 62.2, Math.toRadians(157));
-    public static Pose2d AFTER_GATE = new Pose2d(10, 63, Math.toRadians(167));
+    public static Pose2d AFTER_GATE = new Pose2d(12, 62, Math.toRadians(163));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
@@ -164,11 +164,15 @@ public abstract class AutoSpam extends LinearOpMode {
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
 
-        hitGate1Path = PathUtil.createCurvePath(robot, shoot2Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
+        hitGate1Path = PathUtil.addPathBuilderCurve(robot, shoot2Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false)
+                .setBrakingStrength(0.6)
+                .build();
         gateToShoot1Path = PathUtil.addPathBuilderLine(robot, hitGate1Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        hitGate2Path = PathUtil.createCurvePath(robot, gateToShoot1Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false);
+        hitGate2Path = PathUtil.addPathBuilderCurve(robot, gateToShoot1Path, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false)
+                .setBrakingStrength(0.6)
+                .build();
         gateToShoot2Path = PathUtil.addPathBuilderLine(robot, hitGate2Path, SHOOT_LAST_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
