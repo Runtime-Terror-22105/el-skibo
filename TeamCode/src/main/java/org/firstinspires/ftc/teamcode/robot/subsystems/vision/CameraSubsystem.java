@@ -132,7 +132,8 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setGlyphByNormal(AprilTagDetection tag)
     {
-        Log.d(TAG,"skibidi pose:"+tag.ftcPose);
+        Log.d(TAG,"skibidi pose:"+tag.ftcPose.toString());
+//        Log.d(TAG,
     }
 
     public void stopScanningForGlyphs() {
