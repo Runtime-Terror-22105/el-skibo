@@ -184,6 +184,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new PrepareShootCommand(robot),
                         new FollowPathCommand(robot.follower, shootPreloadPath, false)
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, null),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
@@ -204,6 +205,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, shoot1Path, false),
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot))
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, null),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
@@ -223,6 +225,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, shoot2Path, false),
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot))
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, null),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
@@ -234,7 +237,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, hitGate1Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new SetShooterPoseOverrideCommand(robot.shooter, gateToShootPath.endPose()),
+                new SetShooterPoseOverrideCommand(robot.shooter, gateToShoot1Path.endPose()),
                 new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
         shootGate1Command = new SequentialCommandGroup(
@@ -242,6 +245,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, gateToShoot1Path, false),
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, true))
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, null),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
@@ -253,6 +257,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, hitGate2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, gateToShoot2Path.endPose()),
                 new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
         shootGate2Command = new SequentialCommandGroup(
@@ -260,6 +265,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, gateToShoot2Path, false),
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, true))
                 ),
+                new SetShooterPoseOverrideCommand(robot.shooter, null),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
@@ -289,6 +295,7 @@ public abstract class AutoSpam extends LinearOpMode {
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
         // todo do the rules require that we do ths after init?
         robot.setAutoSort(false);
+        robot.shooter.sotmOverride = false;
 
         robot.camera.startScanningForGlyphs();
 
