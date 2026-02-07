@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import android.util.Log;
+
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -7,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 public class DriveSubsystem extends SubsystemBase {
+    private final String TAG = "DriveSubsystem";
     private final Robot robot;
 
     public DriveSubsystem(Robot robot) {
@@ -20,6 +23,8 @@ public class DriveSubsystem extends SubsystemBase {
             robot.hardware.motorFrontRight.setPower(0);
             robot.hardware.motorRearLeft.setPower(0);
             robot.hardware.motorRearRight.setPower(0);
+
+            Log.d(TAG, "Currently hanging!");
             return;
         }
 
