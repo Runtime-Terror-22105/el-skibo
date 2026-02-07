@@ -357,13 +357,14 @@ public class ShooterSubsystem extends SubsystemBase {
             if (robot.goalPos != null && isAutoAimOn) {
                 Pose robotPos;
                 boolean useSotm;
-                if (this.autoShootPoseOverride != null) {
-                    robotPos = this.autoShootPoseOverride;
-                    useSotm = false;
-                } else {
+//                if (this.autoShootPoseOverride != null) {
+//                    robotPos = this.autoShootPoseOverride;
+//                    useSotm = false;
+//                } else {
                     robotPos = this.robot.follower.getPose();
-                    useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
-                }
+                    useSotm = USE_SOTM;
+//                    useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
+//                }
                 this.doAutoShoot(robotPos, useSotm);
             }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
