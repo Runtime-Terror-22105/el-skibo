@@ -21,7 +21,7 @@ public class CameraTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO, RobotHardware.HardwareOptions.CAMERA);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         robot.camera.setTeam(Team.BLUE);
         robot.camera.setIsInAuto(true);
         waitForStart();
