@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSpam;
 
 @Config
-@Autonomous(name="Red Spam", group="Leave Auto")
+@Autonomous(name="Red Spam", group="15 Near Spam Auto")
 public class RedSpam extends AutoSpam {
     public RedSpam(){
         super(Team.RED);
