@@ -5,15 +5,16 @@ import android.util.Log;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
-import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 public class DriveSubsystem extends SubsystemBase {
     private final String TAG = "DriveSubsystem";
     private final Robot robot;
+    public boolean slowSpeed;
 
     public DriveSubsystem(Robot robot) {
         this.robot = robot;
+        this.slowSpeed = false;
     }
 
     @Override
@@ -34,5 +35,9 @@ public class DriveSubsystem extends SubsystemBase {
             robot.robotZone.setRotation(robot.follower.getHeading());
             robot.telemetry.addData("isInShootZone",robot.isInTapeZone());
         }
+    }
+
+    public void setSlowSpeed(boolean slowSpeed) {
+        this.slowSpeed = slowSpeed;
     }
 }

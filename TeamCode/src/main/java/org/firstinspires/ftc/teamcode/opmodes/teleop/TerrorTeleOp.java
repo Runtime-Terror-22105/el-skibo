@@ -127,6 +127,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
         Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
         GamepadButton restingButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
+        GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
         GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
@@ -185,7 +186,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         manualSpindexRight.whileHeld(new AdjustTurretOffsetCommand(robot, false));
 
-
+        slowSpeedButton.whenPressed(() -> robot.drive.setSlowSpeed(true));
+        slowSpeedButton.whenReleased(() -> robot.drive.setSlowSpeed(false));
 
         shoot3button.whenPressed(new ConditionalCommand(
                 new ConditionalCommand( // if we already did the transfer, just shoot immediately
