@@ -67,7 +67,7 @@ public abstract class Auto extends LinearOpMode {
 
     public static double AMOUNT_TO_TURN_FOR_MOTIF_DEG = 50;
 
-    public static double SPINDEXER_SORTED_POWER = 0.5;
+    public static double SPINDEXER_SORTED_POWER = 1.0;
     public static double MAX_POWER = 1.0;
 
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 93, Math.toRadians(225));
