@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.command;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
@@ -13,8 +11,9 @@ import java.util.function.Supplier;
 @Config
 public class DriveCommand extends CommandBase {
 
-    public static double SLOW_SPEED_TRANSLATIONAL = 0.7;
-    public static double SLOW_SPEED_ROTATION = 0.9;
+    public static double SLOW_SPEED_FORWARD = 0.2;
+    public static double SLOW_SPEED_STRAFE = 0.35;
+    public static double SLOW_SPEED_ROTATION = 0.5;
 
     public static double ROTATION_MULTIPLIER_14V = 0.4315;
     public static double ROTATION_MULTIPLIER_12V = 0.515;
@@ -43,14 +42,14 @@ public class DriveCommand extends CommandBase {
     public void execute() {
         //add more stuff from before i dont want to do this
         double rotationMultiplier = Algebra.mapRangeNoClamp(robot.hardware.initialVoltage, 12, 14, ROTATION_MULTIPLIER_12V, ROTATION_MULTIPLIER_14V);
-        double left_x = -x.get();
         double left_y = -y.get();
+        double left_x = -x.get();
         double right_x = -turn.get();
 
-        Log.d("DriveCommand", Boolean.toString(robot.drive.slowSpeed));
+//        Log.d("DriveCommand", Boolean.toString(robot.drive.slowSpeed));
         if (robot.drive.slowSpeed) {
-            left_x *= SLOW_SPEED_TRANSLATIONAL;
-            left_y *= SLOW_SPEED_TRANSLATIONAL;
+            left_y *= SLOW_SPEED_FORWARD;
+            left_x *= SLOW_SPEED_STRAFE;
             right_x *= SLOW_SPEED_ROTATION;
         }
         robot.follower.setTeleOpDrive(left_y, left_x, right_x * rotationMultiplier);
