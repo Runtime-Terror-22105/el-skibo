@@ -49,7 +49,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public double spindexerPower = 0.0;
 
-    public static double READY_POSITION = 0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
+//    public static double READY_POSITION = 0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
@@ -237,14 +237,12 @@ public class SpindexerSubsystem extends SubsystemBase {
                 !ArrayUtil.contains(balls, BallColor.GREEN) ||
                 !ArrayUtil.contains(balls, BallColor.PURPLE))
         {
-            this.rotate(READY_POSITION);
             Log.d("SpindexerSubsystem", "not enough balls to run logic");
             return true;
         }
 
         if(ArrayUtil.count(balls, BallColor.GREEN) != 1)
         {
-            this.rotate(READY_POSITION);
             Log.d("SpindexerSubsystem", "too many greens to run logic");
             return true;
         }
@@ -274,12 +272,11 @@ public class SpindexerSubsystem extends SubsystemBase {
         //-1 rotate forward
         //-2 rotate backward
 
-        double rotateAmount = Math.toRadians(120) + READY_POSITION;
+        double rotateAmount = Math.toRadians(120);
 
         switch(ArrayUtil.indexOf(balls, BallColor.GREEN) - ArrayUtil.indexOf(glyphArr, BallColor.GREEN))
         {
             case 0:
-                this.rotate(READY_POSITION);
                 break;
 
             case 2:
@@ -326,23 +323,20 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
-                double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians(-greenPos, false);
                 Log.d("SpindexerSubsystem", "glyph gpp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
-                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians((((2D / 3D) * Math.PI)) - greenPos, false);
                 Log.d("SpindexerSubsystem", "glyph pgp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else {
-                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians((((4D / 3D) * Math.PI)) - greenPos, false);
                 Log.d("SpindexerSubsystem", "glyph ppg normalized error" + normalizedError);
                 this.rotate(normalizedError);
             }
-        } else {
-            Log.d("SpindexerSubsystem", "not enough balls to run logic ready pos:" + READY_POSITION);
-            this.rotate(READY_POSITION);
         }
         Log.d("SpindexerSubsystem", "des ang after sort"+this.desiredAngle);
 

@@ -9,13 +9,11 @@ import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
-import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
@@ -23,7 +21,6 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long REVERSE_INTAKE_TIME_MS = 150;
     public static int RAMP_DELAY = 0;  // milliseconds
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 100;
-    public static long SPINDEXER_TIMEOUT = 600L;
 
     public PrepareShootCommand(Robot robot) {
         this(robot, false);
@@ -56,10 +53,9 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 // Phase 2/3: Sort the balls, spin to pre-transfer yaw
                 new ConditionalCommand(
                         new SortCommand(robot),
-                        new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
+                        new InstantCommand(() -> {}),
                         robot::getAutoSort
                 ),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(SPINDEXER_TIMEOUT),
                 new LogCatCommand("PrepareShootCommand", "Phase 2/3 done", Log.INFO),
 
                 // Phase 4: drop down ramp and start intake

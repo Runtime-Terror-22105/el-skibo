@@ -79,9 +79,9 @@ public class SpindexerEncoderLUT {
                 new SpindexLookupValue(angle2, fixedAngle2),
                 new SpindexLookupValue(angle3, fixedAngle3),
 
-                new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), fixedReady1),
-                new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady2),
-                new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady3),
+//                new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), fixedReady1),
+//                new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady2),
+//                new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady3),
 
         };
 
