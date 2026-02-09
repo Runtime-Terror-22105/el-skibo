@@ -130,7 +130,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
-        GamepadButton shoot1button = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
+        GamepadButton transferButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
 
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
 
@@ -202,10 +202,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
         ));
 
-        shoot1button.whenPressed(new ConditionalCommand(
+        transferButton.whenPressed(new ConditionalCommand(
                 new PrepareShootCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING
+                () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
         ));
 
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
