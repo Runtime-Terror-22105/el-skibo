@@ -136,13 +136,37 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setGlyphByNormal(AprilTagDetection tag)
     {
-        robot.telemetry.addData(TAG,"skibidi yaw:"+tag.ftcPose.yaw);
-        robot.telemetry.addData(TAG,"skibidi pitch:"+tag.ftcPose.pitch);
-        robot.telemetry.addData(TAG,"skibidi bearing:"+tag.ftcPose.bearing);
-        robot.telemetry.addData(TAG,"skibidi elevation:"+tag.ftcPose.elevation);
-        robot.telemetry.addData(TAG,"skibidi range:"+tag.ftcPose.range);
-        robot.telemetry.addData(TAG,"skibidi roll:"+tag.ftcPose.roll);
-//        // Log.d(TAG,
+        robot.telemetry.addData(TAG,"skibidi yaw:"+Math.toDegrees(tag.ftcPose.yaw));
+//        robot.telemetry.addData(TAG,"skibidi pitch:"+tag.ftcPose.pitch);
+        robot.telemetry.addData(TAG,"skibidi bearing:"+Math.toDegrees(tag.ftcPose.bearing));
+        double tagAngle = 0; //TODO: replace with whichever works
+        if(team.equals(Team.RED))
+        {
+            if(tagAngle < 0)
+            {
+                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            }
+            else
+            {
+                setGlyph(VisionConstants.APRILTAG.RedIndividualPairs.get(tag.id));
+            }
+        }
+        else if(team.equals(Team.BLUE))
+        {
+            if(tagAngle > 0)
+            {
+                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            }
+            else
+            {
+                setGlyph(VisionConstants.APRILTAG.BlueIndividualPairs.get(tag.id));
+            }
+        }
+//        robot.telemetry.addData(TAG,"skibidi elevation:"+tag.ftcPose.elevation);
+//        robot.telemetry.addData(TAG,"skibidi range:"+tag.ftcPose.range);
+//        robot.telemetry.addData(TAG,"skibidi roll:"+tag.ftcPose.roll);
+//        robot.telemetry.addData(TAG,"skibidi truth:"+tag.rawPose.R);
+//        Log.d(TAG,
     }
 
     public void stopScanningForGlyphs() {
