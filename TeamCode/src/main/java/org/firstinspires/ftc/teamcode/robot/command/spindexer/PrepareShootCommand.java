@@ -20,7 +20,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long TIME_BEFORE_REVERSE_INTAKE = 150;
     public static long REVERSE_INTAKE_TIME_MS = 150;
     public static int RAMP_DELAY = 0;  // milliseconds
-    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW = 100;
+    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING = 100;
 
     public PrepareShootCommand(Robot robot) {
         this(robot, false);
@@ -47,12 +47,14 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                     new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                     new SetSpindexerWallDown(robot.spindexer, false)
                 ),
-                new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW), // todo: adjust this delay based on how long it takes for these two servos
                 new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO),
 
                 // Phase 2/3: Sort the balls, spin to pre-transfer yaw
                 new ConditionalCommand(
-                        new SortCommand(robot),
+                        new SequentialCommandGroup(
+                                new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING), // todo: adjust this delay based on how long it takes for these two servos
+                                new SortCommand(robot)
+                        ),
                         new InstantCommand(() -> {}),
                         robot::getAutoSort
                 ),
