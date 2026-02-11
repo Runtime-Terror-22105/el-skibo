@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.BLUE_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.RED_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -115,9 +118,11 @@ public abstract class Auto extends LinearOpMode {
         if (team == Team.BLUE) {
             robot.goalPos = FieldConstants.BLUE_GOAL_POS;
             robot.color = Team.BLUE;
+            blackboard.put(TEAM_COLOR_KEY, BLUE_KEY);
         } else {
             robot.goalPos = FieldConstants.RED_GOAL_POS;
             robot.color = Team.RED;
+            blackboard.put(TEAM_COLOR_KEY, RED_KEY);
         }
     }
 

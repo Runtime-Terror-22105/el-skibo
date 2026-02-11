@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.RED_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.TELEOP_ENDING_KEY;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
@@ -58,6 +61,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
     public Team color;
 
+    public static boolean SAVE_LOCATION_TELEOP = false;
+
+
     private long lastLoop = System.nanoTime();
 
     public void setTeam(Team color) {
@@ -72,6 +78,17 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public TerrorTeleOp(Team color){
         this.color = color;
 
+
+    }
+
+    public TerrorTeleOp() {
+        if ( RED_KEY == blackboard.getOrDefault(TEAM_COLOR_KEY, null)){
+            this.color = Team.RED;
+        }
+        else{
+            this.color = Team.BLUE;
+        }
+        SAVE_LOCATION_TELEOP = true;
     }
 
     public void runOpMode() {
@@ -85,6 +102,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         Object motif = blackboard.getOrDefault(MOTIF_DATA_KEY, null);
         Object autoEnd = blackboard.getOrDefault(AUTO_ENDING_DATA_KEY, null);
         Object spindexerPosition = blackboard.getOrDefault(SPINDEXER_POSITION_KEY, null);
+        Object teleEnd =  blackboard.getOrDefault(TELEOP_ENDING_KEY, null);
         Log.i("Auto", "Ending position after auto " + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
         if (motif != null) {
             //robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
@@ -96,7 +114,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         if (autoEnd != null) {
             robot.follower.setStartingPose((Pose) autoEnd);
             blackboard.put(AUTO_ENDING_DATA_KEY, null);
-        } else {
+        } else if (teleEnd != null && SAVE_LOCATION_TELEOP){
+            robot.follower.setStartingPose((Pose) teleEnd);
+            blackboard.put(TELEOP_ENDING_KEY, null);
+        }
+        else {
             robot.follower.setStartingPose(color.getStartPosNear().toPedro());
         }
 //        if (spindexerPosition != null) {
@@ -332,7 +354,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             Profiler.end();
             Profiler.sendFlamegraph(robot.telemetry);
         }
-
+        if (SAVE_LOCATION_TELEOP){
+            blackboard.put(TELEOP_ENDING_KEY, robot.follower.getPose());
+        }
         blackboard.put(AUTO_ENDING_DATA_KEY, null);
     }
 

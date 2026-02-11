@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
@@ -121,6 +122,8 @@ public abstract class AutoSpam extends LinearOpMode {
         this.team = team;
         robot.goalPos = team.getGoalPos();
         robot.color = team;
+        blackboard.put(TEAM_COLOR_KEY, team.getBlackboardKey());
+
     }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
