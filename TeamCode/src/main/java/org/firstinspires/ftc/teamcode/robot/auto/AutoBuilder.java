@@ -43,9 +43,9 @@ import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 @Config
 public class AutoBuilder {
-    private final Pose2d startPoseBlue;
-    private final Robot robot;
-    private final boolean mirror;
+    public final Pose2d startPoseBlue;
+    public final Robot robot;
+    public final boolean mirror;
     private PathChain lastPath = null;
 
     public AutoBuilder(Robot robot, Team team, StartConfig initial) {
@@ -58,6 +58,10 @@ public class AutoBuilder {
 
     private static Pose2d getShootPose(Pose2d mainPose, boolean isLast) {
         return isLast ? SHOOT_LAST_POSE : mainPose;
+    }
+
+    public PathChain getLastPath() {
+        return lastPath;
     }
 
     private PathChain shootPreloadPath(boolean isLast) {
@@ -149,6 +153,10 @@ public class AutoBuilder {
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
+    }
+
+    public PathChain customPath(PathChain path) {
+        return this.lastPath = path;
     }
 
     public Command shootPreload(boolean isLast) {
