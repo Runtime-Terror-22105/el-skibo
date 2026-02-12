@@ -99,7 +99,11 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
     public void runOpMode() {
         Profiler.init();
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+        if (this.wantsAutoSort()) {
+            hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+        } else {
+            hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
+        }
 
         robot.init(hardware, this);
         robot.camera.stopScanningForGlyphs();
@@ -117,13 +121,14 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
         // todo do the rules require that we do ths after init?
         robot.setAutoSort(this.wantsAutoSort());
-
-        robot.camera.startScanningForGlyphs();
+        if (this.wantsAutoSort()) {
+            robot.camera.startScanningForGlyphs();
+            CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
+        }
 
         // we can't spin shooter in init bc it's illegal
         robot.shooter.isAutoVelOn = false;
         robot.shooter.setSpeed(0D);
-        CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
