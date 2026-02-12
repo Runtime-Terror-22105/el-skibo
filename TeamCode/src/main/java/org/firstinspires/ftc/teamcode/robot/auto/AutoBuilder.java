@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.BEFORE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL;
@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVET
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
@@ -130,6 +131,25 @@ public class AutoBuilder {
         return lastPath;
     }
 
+    // This is for pushing the gate after a SPIKE STRIP, not for cycling gate intake.
+    //
+    // beforePushGatePath and pushGatePath should be used together.
+    public PathChain beforePushGatePath() {
+        // TODO: i think we can combine the two paths into one PathChain
+        this.lastPath = PathUtil.addPathBuilderLine(robot, lastPath, BEFORE_PUSH_GATE_POSE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return lastPath;
+    }
+
+    // This is for pushing the gate after a SPIKE STRIP, not for cycling gate intake.
+    public PathChain pushGatePath() {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, lastPath, PUSH_GATE_POSE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return lastPath;
+    }
+
     // This is for CYCLING gate intake, not for pushing the gate after a spike strip.
     public PathChain intakeGatePath() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false)
@@ -224,6 +244,14 @@ public class AutoBuilder {
 
     public Command spikeShoot(int spikeNumber) {
         return spikeShoot(spikeNumber, false);
+    }
+
+    // For pushing the gate after a SPIKE STRIP. Not for cycling gate intake.
+    public Command pushGate() {
+        return new SequentialCommandGroup(
+            new FollowPathCommand(robot.follower, beforePushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+            new FollowPathCommand(robot.follower, pushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING)
+        );
     }
 
     public Command intakeGate() {
