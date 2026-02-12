@@ -48,26 +48,12 @@ public class AutoBuilder {
     private final boolean mirror;
     private PathChain lastPath = null;
 
-    public boolean finished;
-
     public AutoBuilder(Robot robot, Team team, StartConfig initial) {
         this.robot = robot;
         // NB: We do not mirror the start pose here because the path builder's mirror parameter
         // will handle it for us.
         this.startPoseBlue = initial.getStartPoseBlue();
         this.mirror = Team.RED.equals(team);
-
-        // Team.getStartPose will mirror the pose for us if necessary.
-        robot.follower.setStartingPose(team.getStartPose(initial).toPedro());
-        robot.goalPos = team.getGoalPos();
-    }
-
-    public boolean hasFinished() {
-        return this.finished;
-    }
-
-    public void setFinished() {
-        this.finished = true;
     }
 
     private static Pose2d getShootPose(boolean isLast) {

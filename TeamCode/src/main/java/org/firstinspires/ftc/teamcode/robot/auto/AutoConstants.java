@@ -43,6 +43,7 @@ public class AutoConstants {
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
 
+    public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 0.8;
 
     public static PathConstraints RELAXED_CONSTRAINTS;
