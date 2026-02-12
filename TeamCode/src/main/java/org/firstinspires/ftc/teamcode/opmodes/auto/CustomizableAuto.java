@@ -56,6 +56,7 @@ import kotlin.NotImplementedError;
  * See OneAutoToRuleThemAll to see the new approach using AutoBuilder, we'll rewrite this opmode to use that later
  */
 @Config
+@Disabled
 @Autonomous(name = "Build-A-Bear Auto", group = "Auto")
 @Disabled
 @Deprecated
@@ -354,7 +355,7 @@ public class CustomizableAuto extends LinearOpMode {
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
 
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 

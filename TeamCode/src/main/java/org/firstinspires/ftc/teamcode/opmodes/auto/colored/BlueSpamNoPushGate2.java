@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSpam;
+import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSpamNoPushGate2;
 
 @Config
-@Autonomous(name="Red Spam", group="15 Near Spam Auto")
-public class RedSpam extends AutoSpam {
-    public RedSpam(){
-        super(Team.RED);
+@Autonomous(name="Blue Spam No Push Gate 2", group="15 Near Spam Auto")
+public class BlueSpamNoPushGate2 extends AutoSpamNoPushGate2 {
+    public BlueSpamNoPushGate2(){
+        super(Team.BLUE);
     }
 }

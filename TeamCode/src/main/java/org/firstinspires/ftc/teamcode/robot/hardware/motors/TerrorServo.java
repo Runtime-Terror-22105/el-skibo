@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorWritingDevice;
 
@@ -88,6 +89,15 @@ public class TerrorServo implements TerrorWritingDevice {
      */
     synchronized public void setDirection(Servo.Direction direction) {
         this.servo.setDirection(direction);
+    }
+
+    synchronized public void setPwmEnable(boolean enabled) {
+        this.lastPosition = -100;
+        if (enabled) {
+            ((ServoImplEx) this.servo).setPwmEnable();
+        } else {
+            ((ServoImplEx) this.servo).setPwmDisable();
+        }
     }
 
     /**

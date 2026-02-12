@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,10 +19,11 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
+import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
+import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
-import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
@@ -69,7 +69,8 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorServo spindexerPTO;
+    public TerrorSwyftCRServo hangLeft;
+    public TerrorSwyftCRServo hangRight;
 
     // Camera
     public int cameraMonitorViewId;
@@ -129,8 +130,8 @@ public class RobotHardware {
         // Initialize the turret
         this.turretYawLeft = new TerrorServo(hwMap, "turretYawLeft", 0.001);
         this.turretYawRight = new TerrorServo(hwMap, "turretYawRight", 0.001);
-//        this.turretYawLeft.setPwmRange(500, 2500);
-//        this.turretYawRight.setPwmRange(500, 2500);
+        this.turretYawLeft.setPwmRange(500, 2500);
+        this.turretYawRight.setPwmRange(500, 2500);
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
 
 
@@ -149,8 +150,7 @@ public class RobotHardware {
         this.shooterEncoder.setDirection(TerrorEncoder.Direction.FORWARD);// TODO: figure out which motor has the encoder
         this.publisher.subscribe(5, shooterLeft, shooterRight);
 
-        // TODO: figure out shooter motor directions
-        this.shooterLeft.setDirection(FORWARD);
+        this.shooterLeft.setDirection(REVERSE);
         this.shooterRight.setDirection(FORWARD);
 //        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -207,8 +207,11 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.spindexerPTO = new TerrorServo(hwMap, "spindexerPTO");
-        this.publisher.subscribe(10, spindexerPTO);
+        this.hangLeft = new TerrorSwyftCRServo(hwMap, "hangLeft");
+        this.hangRight = new TerrorSwyftCRServo(hwMap, "hangRight");
+        this.hangLeft.setDirection(TerrorSwyftCRServo.Direction.REVERSE);
+        this.hangRight.setDirection(TerrorSwyftCRServo.Direction.FORWARD);
+        this.publisher.subscribe(10, hangLeft, hangRight);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorWritingDevice;
 
@@ -42,6 +43,10 @@ public class TerrorCRServo implements TerrorWritingDevice {
         this.servoPower = 0;
         this.lastPower = -12.345; // since it is outside of -1 to 1 range, it will force ignore cache
         this.powerScale = powerScale;
+    }
+
+    public TerrorCRServo(HardwareMap hwMap, @NonNull String name, double powerThreshold, double powerScale) {
+        this(hwMap.get(CRServo.class, name), powerThreshold, powerScale);
     }
 
     /**

@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <Robot type="FirstInspires-FTC">
-    <Webcam name="Webcam 1" serialNumber="UC762" />
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
         <LynxModule name="Expansion Hub 2" port="2">
             <goBILDA5202SeriesMotor name="shooterLeft" port="0" />
@@ -13,16 +12,17 @@
         <ServoHub name="Servo Hub 3" port="3">
             <Servo name="spindexerTransferRamp" port="0" />
             <Servo name="spindexerIntakeWall" port="1" />
+            <Servo name="hangLeft" port="2" />
             <Servo name="turretYawLeft" port="3" />
             <Servo name="turretYawRight" port="4" />
-            <Servo name="shooterHood" port="5" />
+            <Servo name="hangRight" port="5" />
         </ServoHub>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="motorFrontLeft" port="0" />
             <goBILDA5202SeriesMotor name="motorRearLeft" port="1" />
             <goBILDA5202SeriesMotor name="motorFrontRight" port="2" />
             <goBILDA5202SeriesMotor name="motorRearRight" port="3" />
-            <Servo name="spindexerPTO" port="2" />
+            <Servo name="shooterHood" port="0" />
             <Servo name="lights" port="3" />
             <AnalogInput name="spindexEncoder" port="0" />
             <RevColorSensorV3 name="rightSensor" port="0" bus="1" />
@@ -30,4 +30,5 @@
             <goBILDAPinpoint name="pinpoint" port="1" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
+    <Webcam name="Webcam 1" serialNumber="UC762" />
 </Robot>

@@ -27,7 +27,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
     private final Robot robot;
 
-    public ShootThreeBallsCommand(Robot robot) {
+    public ShootThreeBallsCommand(Robot robot, double transferPower) {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.SHOOTING),
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
@@ -36,7 +36,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                 // Phase 5: transfer balls
                 new InstantCommand(() -> {
                     robot.spindexer.setPidEnabled(false);
-                    robot.spindexer.setSpindexerPower(SPINDEX_TRANSFER_POWER);
+                    robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
                 }),
                 new WaitCommand(SPINDEX_TRANSFER_TIME),
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
@@ -52,6 +52,10 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                 new GoToRestingStateCommand(robot)
         );
         this.robot = robot;
+    }
+
+    public ShootThreeBallsCommand(Robot robot) {
+        this(robot, SPINDEX_TRANSFER_POWER);
     }
 
     @Override
