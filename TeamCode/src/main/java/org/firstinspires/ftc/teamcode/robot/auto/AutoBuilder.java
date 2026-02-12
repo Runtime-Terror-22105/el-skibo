@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
@@ -127,6 +130,21 @@ public class AutoBuilder {
         return lastPath;
     }
 
+    // This is for CYCLING gate intake, not for pushing the gate after a spike strip.
+    public PathChain intakeGatePath() {
+        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false)
+                .setBrakingStrength(0.6)
+                .build();
+        return lastPath;
+    }
+
+    public PathChain shootGatePath(boolean isLast) {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return lastPath;
+    }
+
     public Command shootPreload() {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
@@ -211,17 +229,17 @@ public class AutoBuilder {
     public Command intakeGate() {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, hitGatePath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new FollowPathCommand(robot.follower, intakeGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_TIMEOUT)
+                new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
     }
 
-    public Command shootGate() {
+    public Command shootGate(boolean isLast) {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, gateToShootPath, false),
+                        new FollowPathCommand(robot.follower, shootGatePath(isLast), false),
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, true))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
@@ -229,5 +247,9 @@ public class AutoBuilder {
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
+    }
+
+    public Command shootGate() {
+        return shootGate(false);
     }
 }
