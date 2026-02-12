@@ -6,11 +6,8 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_P
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_1_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_2_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
@@ -58,7 +55,6 @@ import kotlin.NotImplementedError;
 @Config
 @Disabled
 @Autonomous(name = "Build-A-Bear Auto", group = "Auto")
-@Disabled
 @Deprecated
 public class CustomizableAuto extends LinearOpMode {
     private boolean mirror;
@@ -306,23 +302,24 @@ public class CustomizableAuto extends LinearOpMode {
     }
 
     public Pose getPrepareIntakePose(IntakePosition intakePosition) {
-        Pose2d p;
-        switch (intakePosition) {
-            case POSITION_1:
-                p = PREPARE_INTAKE_1_POSE;
-                break;
-            case POSITION_2:
-                p = PREPARE_INTAKE_2_POSE;
-                break;
-            case POSITION_3:
-                p = PREPARE_INTAKE_3_POSE;
-                break;
-            case HUMAN_PLAYER:
-                throw new NotImplementedError("human pllayer not yet implemented");
-            default:
-                throw new IllegalArgumentException("invalid intake position");
-        }
-        return p.toPedro(mirror);
+//        Pose2d p;
+//        switch (intakePosition) {
+//            case POSITION_1:
+//                p = PREPARE_INTAKE_1_POSE;
+//                break;
+//            case POSITION_2:
+//                p = PREPARE_INTAKE_2_POSE;
+//                break;
+//            case POSITION_3:
+//                p = PREPARE_INTAKE_3_POSE;
+//                break;
+//            case HUMAN_PLAYER:
+//                throw new NotImplementedError("human pllayer not yet implemented");
+//            default:
+//                throw new IllegalArgumentException("invalid intake position");
+//        }
+//        return p.toPedro(mirror);
+        throw new NotImplementedError("prepare intake pose not yet implemented");
     }
 
     public Pose getShootingPose(ShootingPosition shootingPosition) {
