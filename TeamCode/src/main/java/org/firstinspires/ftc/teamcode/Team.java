@@ -33,4 +33,14 @@ public enum Team {
         Pose2d startPoseBlue = config.getStartPoseBlue();
         return RED.equals(this) ? startPoseBlue.mirror() : startPoseBlue;
     }
+
+    @Deprecated
+    public Pose2d getStartPosNear() {
+        return getStartPose(StartConfig.NEAR);
+    }
+
+    @Deprecated
+    public Pose2d getStartPosFar() {
+        return getStartPose(StartConfig.FAR);
+    }
 }
