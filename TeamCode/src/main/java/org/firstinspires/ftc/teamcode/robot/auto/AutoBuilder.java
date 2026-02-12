@@ -56,12 +56,12 @@ public class AutoBuilder {
         this.mirror = Team.RED.equals(team);
     }
 
-    private static Pose2d getShootPose(boolean isLast) {
-        return isLast ? SHOOT_LAST_POSE : SHOOT_EDGE_POSE;
+    private static Pose2d getShootPose(Pose2d mainPose, boolean isLast) {
+        return isLast ? SHOOT_LAST_POSE : mainPose;
     }
 
-    private PathChain shootPreloadPath() {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, SHOOT_PRELOAD_POSE, mirror, false, false)
+    private PathChain shootPreloadPath(boolean isLast) {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, getShootPose(SHOOT_PRELOAD_POSE, isLast), mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
@@ -75,7 +75,7 @@ public class AutoBuilder {
     }
 
     private PathChain shootSpike1Path(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_EDGE_POSE, isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
@@ -89,7 +89,7 @@ public class AutoBuilder {
     }
 
     private PathChain shootSpike2Path(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_EDGE_POSE, isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
@@ -111,7 +111,7 @@ public class AutoBuilder {
     }
 
     private PathChain shootSpike3Path(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_EDGE_POSE, isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
@@ -145,17 +145,17 @@ public class AutoBuilder {
     }
 
     private PathChain shootGatePath(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_EDGE_POSE, isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
-    public Command shootPreload() {
+    public Command shootPreload(boolean isLast) {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot),
-                        new FollowPathCommand(robot.follower, shootPreloadPath(), false)
+                        new FollowPathCommand(robot.follower, shootPreloadPath(isLast), false)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
@@ -163,6 +163,10 @@ public class AutoBuilder {
 //                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
                 new WaitCommand(SHOOT_DELAY)
         );
+    }
+
+    public Command shootPreload() {
+        return shootPreload(false);
     }
 
     /**
