@@ -8,15 +8,16 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_P
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -35,8 +36,6 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYa
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
-
-import kotlin.NotImplementedError;
 
 @Config
 public class AutoBuilder {
@@ -71,6 +70,13 @@ public class AutoBuilder {
         return isLast ? SHOOT_LAST_POSE : SHOOT_EDGE_POSE;
     }
 
+    public PathChain shootPreloadPath() {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, SHOOT_PRELOAD_POSE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return lastPath;
+    }
+
     public PathChain spike1IntakePath() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
@@ -81,7 +87,6 @@ public class AutoBuilder {
     public PathChain spike1ShootPath(boolean isLast) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
                 .build();
         return lastPath;
     }
@@ -96,7 +101,6 @@ public class AutoBuilder {
     public PathChain spike2ShootPath(boolean isLast) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
                 .build();
         return lastPath;
     }
@@ -119,13 +123,22 @@ public class AutoBuilder {
     public PathChain spike3ShootPath(boolean isLast) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .setNoDeceleration()
                 .build();
         return lastPath;
     }
 
-    public Command shootPreload() throws NotImplementedError {
-        throw new NotImplementedError("sorry");
+    public Command shootPreload() {
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new PrepareShootCommand(robot),
+                        new FollowPathCommand(robot.follower, shootPreloadPath(), false)
+                ),
+                new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
+                new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
+//                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
+                new WaitCommand(SHOOT_DELAY)
+        );
     }
 
     /**
