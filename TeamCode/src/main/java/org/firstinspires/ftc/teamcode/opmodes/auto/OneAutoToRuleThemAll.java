@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -54,6 +55,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         this.team = team;
         robot.goalPos = team.getGoalPos();
         robot.color = team;
+        blackboard.put(TEAM_COLOR_KEY, team.getBlackboardKey());
     }
 
     protected void showPoem() {
