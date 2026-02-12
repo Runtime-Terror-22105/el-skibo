@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.BEFORE_PUSH_GATE_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
@@ -60,42 +60,42 @@ public class AutoBuilder {
         return isLast ? SHOOT_LAST_POSE : SHOOT_EDGE_POSE;
     }
 
-    public PathChain shootPreloadPath() {
+    private PathChain shootPreloadPath() {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, SHOOT_PRELOAD_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
-    public PathChain spike1IntakePath() {
+    private PathChain intakeSpike1Path() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
-    public PathChain spike1ShootPath(boolean isLast) {
+    private PathChain shootSpike1Path(boolean isLast) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
-    public PathChain spike2IntakePath() {
+    private PathChain intakeSpike2Path() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
-    public PathChain spike2ShootPath(boolean isLast) {
+    private PathChain shootSpike2Path(boolean isLast) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
-    public PathChain spike3IntakePath() {
+    private PathChain intakeSpike3Path() {
         // it might be a little sus here that addPathBuilderCurve sets the heading interpolation to linear but we then override this
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_3_CONTROL, PREPARE_INTAKE_3_POSE, mirror, false, false)
                 .setHeadingInterpolation(
@@ -110,7 +110,7 @@ public class AutoBuilder {
         return lastPath;
     }
 
-    public PathChain spike3ShootPath(boolean isLast) {
+    private PathChain shootSpike3Path(boolean isLast) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
@@ -119,17 +119,17 @@ public class AutoBuilder {
 
     // This is for pushing the gate after a SPIKE STRIP, not for cycling gate intake.
     //
-    // beforePushGatePath and pushGatePath should be used together.
-    public PathChain beforePushGatePath() {
+    // preparePushGatePath and pushGatePath should be used together.
+    private PathChain preparePushGatePath() {
         // TODO: i think we can combine the two paths into one PathChain
-        this.lastPath = PathUtil.addPathBuilderLine(robot, lastPath, BEFORE_PUSH_GATE_POSE, mirror, false, false)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, lastPath, PREPARE_PUSH_GATE_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
     // This is for pushing the gate after a SPIKE STRIP, not for cycling gate intake.
-    public PathChain pushGatePath() {
+    private PathChain pushGatePath() {
         this.lastPath = PathUtil.addPathBuilderLine(robot, lastPath, PUSH_GATE_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
@@ -137,14 +137,14 @@ public class AutoBuilder {
     }
 
     // This is for CYCLING gate intake, not for pushing the gate after a spike strip.
-    public PathChain intakeGatePath() {
+    private PathChain intakeGatePath() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false)
                 .setBrakingStrength(0.6)
                 .build();
         return lastPath;
     }
 
-    public PathChain shootGatePath(boolean isLast) {
+    private PathChain shootGatePath(boolean isLast) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
@@ -170,17 +170,17 @@ public class AutoBuilder {
      * @param spikeNumber The spike number to intake from, where 1 is the closest to the goal and 3 is closest to the human player.
      * @return The command to intake from the specified spike.
      */
-    public Command spikeIntake(int spikeNumber) {
+    public Command intakeSpike(int spikeNumber) {
         PathChain intakePath;
         switch (spikeNumber) {
             case 1:
-                intakePath = spike1IntakePath();
+                intakePath = intakeSpike1Path();
                 break;
             case 2:
-                intakePath = spike2IntakePath();
+                intakePath = intakeSpike2Path();
                 break;
             case 3:
-                intakePath = spike3IntakePath();
+                intakePath = intakeSpike3Path();
                 break;
             default:
                 throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
@@ -200,17 +200,17 @@ public class AutoBuilder {
      * @param isLast Whether this is the last shoot command in the auto sequence.
      * @return The command to intake from the specified spike.
      */
-    public Command spikeShoot(int spikeNumber, boolean isLast) {
+    public Command shootSpike(int spikeNumber, boolean isLast) {
         PathChain shootPath;
         switch (spikeNumber) {
             case 1:
-                shootPath = spike1ShootPath(isLast);
+                shootPath = shootSpike1Path(isLast);
                 break;
             case 2:
-                shootPath = spike2ShootPath(isLast);
+                shootPath = shootSpike2Path(isLast);
                 break;
             case 3:
-                shootPath = spike3ShootPath(isLast);
+                shootPath = shootSpike3Path(isLast);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
@@ -228,14 +228,14 @@ public class AutoBuilder {
         );
     }
 
-    public Command spikeShoot(int spikeNumber) {
-        return spikeShoot(spikeNumber, false);
+    public Command shootSpike(int spikeNumber) {
+        return shootSpike(spikeNumber, false);
     }
 
     // For pushing the gate after a SPIKE STRIP. Not for cycling gate intake.
     public Command pushGate() {
         return new SequentialCommandGroup(
-            new FollowPathCommand(robot.follower, beforePushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+            new FollowPathCommand(robot.follower, preparePushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING),
             new FollowPathCommand(robot.follower, pushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING)
         );
     }
