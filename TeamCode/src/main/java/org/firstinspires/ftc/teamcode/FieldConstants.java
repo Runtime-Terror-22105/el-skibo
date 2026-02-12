@@ -10,10 +10,12 @@ public class FieldConstants {
     public static Pose2d BLUE_GOAL_POS = new Pose2d(6, 138, 0.0);
     public static Pose2d RED_GOAL_POS = new Pose2d(138, 138, 0.0);
 
+    // We do not store red start poses, as these are calculated by mirroring the blue
+    // start poses.
     public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-132));
-    public static Pose2d RED_START_POS_NEAR = BLUE_START_POS_NEAR.mirror();
+//    public static Pose2d RED_START_POS_NEAR = BLUE_START_POS_NEAR.mirror();
     public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 0, 1D / 2D * Math.PI);
-    public static Pose2d RED_START_POS_FAR = new Pose2d(96, 0, 1D / 2D * Math.PI);
+//    public static Pose2d RED_START_POS_FAR = new Pose2d(96, 0, 1D / 2D * Math.PI);
 
     public static double TILE_WIDTH = 23.6;
 

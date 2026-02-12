@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -34,34 +34,28 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootComman
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 import kotlin.NotImplementedError;
 
 @Config
 public class AutoBuilder {
-    /**
-     * Starting configurations for the robot.
-     */
-    public enum StartingConfiguration {
-        NEAR,
-        FAR
-    }
-
-    private final Pose2d startPose;
+    private final Pose2d startPoseBlue;
     private final Robot robot;
     private final boolean mirror;
     private PathChain lastPath = null;
 
     public boolean finished;
 
-    public AutoBuilder(Robot robot, Team team, StartingConfiguration initial) {
+    public AutoBuilder(Robot robot, Team team, StartConfig initial) {
         this.robot = robot;
-        this.startPose = getStartPose(team, initial);
+        // NB: We do not mirror the start pose here because the path builder's mirror parameter
+        // will handle it for us.
+        this.startPoseBlue = initial.getStartPoseBlue();
         this.mirror = Team.RED.equals(team);
 
-        robot.follower.setStartingPose(startPose.toPedro());
+        // Team.getStartPose will mirror the pose for us if necessary.
+        robot.follower.setStartingPose(team.getStartPose(initial).toPedro());
         robot.goalPos = team.getGoalPos();
     }
 
@@ -77,23 +71,15 @@ public class AutoBuilder {
         return isLast ? SHOOT_LAST_POSE : SHOOT_EDGE_POSE;
     }
 
-    private static Pose2d getStartPose(Team team, StartingConfiguration initial) {
-        if (initial == StartingConfiguration.NEAR) {
-            return team.getStartPosNear();
-        } else {
-            return team.getStartPosFar();
-        }
-    }
-
     public PathChain spike1IntakePath() {
-        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPose, lastPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
+        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_1_CONTROL, INTAKE_1_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
     public PathChain spike1ShootPath(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPose, lastPath, getShootPose(isLast), mirror, true, true)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .setNoDeceleration()
                 .build();
@@ -101,14 +87,14 @@ public class AutoBuilder {
     }
 
     public PathChain spike2IntakePath() {
-        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPose, lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
+        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
 
     public PathChain spike2ShootPath(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPose, lastPath, getShootPose(isLast), mirror, true, true)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .setNoDeceleration()
                 .build();
@@ -117,7 +103,7 @@ public class AutoBuilder {
 
     public PathChain spike3IntakePath() {
         // it might be a little sus here that addPathBuilderCurve sets the heading interpolation to linear but we then override this
-        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPose, lastPath, INTAKE_3_CONTROL, PREPARE_INTAKE_3_POSE, mirror, false, false)
+        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_3_CONTROL, PREPARE_INTAKE_3_POSE, mirror, false, false)
                 .setHeadingInterpolation(
                         HeadingInterpolator.piecewise(
                                 new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
@@ -131,7 +117,7 @@ public class AutoBuilder {
     }
 
     public PathChain spike3ShootPath(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPose, lastPath, getShootPose(isLast), mirror, true, true)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .setNoDeceleration()
                 .build();
