@@ -10,6 +10,8 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
@@ -28,8 +30,9 @@ import java.util.Map;
 
 @Config
 public abstract class OneAutoToRuleThemAll extends LinearOpMode {
-    public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
-    public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
+    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
+    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
+
     static {
         blueMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.PGP);
         blueMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.GPP);
@@ -79,16 +82,20 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
     }
 
     protected abstract StartConfig getStartConfig();
+
     protected abstract boolean wantsAutoSort();
+
     protected abstract Command createAutoCommand(AutoBuilder builder);
 
     // Optional overrides:
 
     // Called every init loop iteration
-    protected void initLoop() { }
+    protected void initLoop() {
+    }
 
     // Called every active loop iteration
-    protected void mainLoop() { }
+    protected void mainLoop() {
+    }
 
     public void runOpMode() {
         Profiler.init();
@@ -148,7 +155,12 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
 
-        CommandScheduler.getInstance().schedule(this.createAutoCommand(builder));
+        CommandScheduler.getInstance().schedule(
+                new SequentialCommandGroup(
+                        this.createAutoCommand(builder),
+                        new InstantCommand(() -> this.hasFinished = true)
+                )
+        );
 
         lastLoop = System.nanoTime();
 
