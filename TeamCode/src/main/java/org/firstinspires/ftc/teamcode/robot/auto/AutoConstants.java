@@ -27,11 +27,14 @@ public class AutoConstants {
     public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 45.668);
     public static Pose2d INTAKE_3_POSE = new Pose2d(20, 39, Math.toRadians(180));
 
+    // For pushing gate after a SPIKE STRIP.
+    public static Pose2d BEFORE_PUSH_GATE_POSE = new Pose2d(25, 65, Math.toRadians(180));
+    public static Pose2d PUSH_GATE_POSE = new Pose2d(18.5, 70, Math.toRadians(180));
+
+    // For CYCLING gate.
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 61, Math.toRadians(180));
     public static Pose2d BEFORE_GATE = new Pose2d(22.542, 62.2, Math.toRadians(157));
     public static Pose2d AFTER_GATE = new Pose2d(11, 62.2, Math.toRadians(157));
-
-    public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
 
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
