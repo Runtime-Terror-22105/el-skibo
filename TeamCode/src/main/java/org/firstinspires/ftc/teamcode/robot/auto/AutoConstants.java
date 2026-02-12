@@ -26,7 +26,7 @@ public class AutoConstants {
     public static Pose2d INTAKE_3_POSE = new Pose2d(17, 39, Math.toRadians(180));
 
     // For pushing gate after a SPIKE STRIP.
-    public static Pose2d BEFORE_PUSH_GATE_POSE = new Pose2d(25, 65, Math.toRadians(180));
+    public static Pose2d PREPARE_PUSH_GATE_POSE = new Pose2d(25, 65, Math.toRadians(180));
     public static Pose2d PUSH_GATE_POSE = new Pose2d(18.5, 70, Math.toRadians(180));
 
     // For CYCLING gate.
