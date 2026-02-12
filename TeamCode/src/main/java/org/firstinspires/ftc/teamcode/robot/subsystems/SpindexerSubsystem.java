@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
@@ -19,6 +20,8 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class SpindexerSubsystem extends SubsystemBase {
+
+    public boolean inferMissingColorToSort = true;
 
     private final RobotHardware hardware;
     private final Robot robot;
@@ -46,7 +49,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public double spindexerPower = 0.0;
 
-    public static double READY_POSITION = 0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
+//    public static double READY_POSITION = 0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
@@ -209,21 +212,37 @@ public class SpindexerSubsystem extends SubsystemBase {
     public boolean newSort()
     {
         BallColor[] balls = getBallPositions();
+        Log.d("SpindexerSubsystem", "balls" + balls[0].toChar() + balls[1].toChar() +balls[2].toChar());
         BallColor[] glyphArr = robot.camera.getGlyphCharArray();
         if (glyphArr == null) { return false; }
+
+        Log.d("SpindexerSubsystem", "sorting with the following balls: " + balls[0] + ","+balls[1]+","+balls[2]);
+
+        // todo: test if this works and isn't sus
+        // we assume there are always 2 purples and 1 green, so even if one is none, we can infer what it is
+        // if there's two purples and one none, we can infer the none is green
+        // if there's one purple and one green, we can infer the none is purple
+        if (inferMissingColorToSort && ArrayUtil.count(balls, BallColor.NONE) == 1) {
+            if (ArrayUtil.count(balls, BallColor.PURPLE) == 2) {
+                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
+                balls[noneIndex] = BallColor.GREEN;
+            } else if (ArrayUtil.count(balls, BallColor.PURPLE) == 1 &&
+                    ArrayUtil.count(balls, BallColor.GREEN) == 1) {
+                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
+                balls[noneIndex] = BallColor.PURPLE;
+            }
+        }
 
         if (ArrayUtil.contains(balls, BallColor.NONE) ||
                 !ArrayUtil.contains(balls, BallColor.GREEN) ||
                 !ArrayUtil.contains(balls, BallColor.PURPLE))
         {
-            this.rotate(READY_POSITION);
             Log.d("SpindexerSubsystem", "not enough balls to run logic");
             return true;
         }
 
         if(ArrayUtil.count(balls, BallColor.GREEN) != 1)
         {
-            this.rotate(READY_POSITION);
             Log.d("SpindexerSubsystem", "too many greens to run logic");
             return true;
         }
@@ -253,12 +272,11 @@ public class SpindexerSubsystem extends SubsystemBase {
         //-1 rotate forward
         //-2 rotate backward
 
-        double rotateAmount = Math.toRadians(120) + READY_POSITION;
+        double rotateAmount = Math.toRadians(120);
 
         switch(ArrayUtil.indexOf(balls, BallColor.GREEN) - ArrayUtil.indexOf(glyphArr, BallColor.GREEN))
         {
             case 0:
-                this.rotate(READY_POSITION);
                 break;
 
             case 2:
@@ -305,23 +323,20 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         if (purpleCount == 2 && greenCount == 1) {
             if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
-                double normalizedError = MathUtils.normalizeRadians((READY_POSITION - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians(-greenPos, false);
                 Log.d("SpindexerSubsystem", "glyph gpp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
-                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((2D / 3D) * Math.PI)) - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians((((2D / 3D) * Math.PI)) - greenPos, false);
                 Log.d("SpindexerSubsystem", "glyph pgp normalized error" + normalizedError);
                 this.rotate(normalizedError);
 
             } else {
-                double normalizedError = MathUtils.normalizeRadians(((READY_POSITION + ((4D / 3D) * Math.PI)) - greenPos), false);
+                double normalizedError = MathUtils.normalizeRadians((((4D / 3D) * Math.PI)) - greenPos, false);
                 Log.d("SpindexerSubsystem", "glyph ppg normalized error" + normalizedError);
                 this.rotate(normalizedError);
             }
-        } else {
-            Log.d("SpindexerSubsystem", "not enough balls to run logic ready pos:" + READY_POSITION);
-            this.rotate(READY_POSITION);
         }
         Log.d("SpindexerSubsystem", "des ang after sort"+this.desiredAngle);
 
@@ -366,7 +381,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
-            if (robot.hang.isPtoEngaged()) {
+            if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
+                hardware.spindexerRotate.setPower(0);
                 return;
             }
 

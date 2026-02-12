@@ -6,14 +6,11 @@ import android.util.Size;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -26,7 +23,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
@@ -42,7 +39,8 @@ public class CameraSubsystem extends SubsystemBase {
     public static long EXPOSURE_MICROSECONDS = 200;
     public static int GAIN = 255;
 
-    private AprilTagProcessorDash aTagProcessor;
+//    private AprilTagProcessorDash aTagProcessor;
+    private AprilTagProcessor aTagProcessor;
 
     private boolean shouldScanForGlyphs = false;
 
@@ -73,6 +71,12 @@ public class CameraSubsystem extends SubsystemBase {
     private Pose debugLastDetection = null; // for debug only
     private long debugDetectionTime = 0; // for debug only
 
+    private AprilTagDetection[] obeliskpair = {null,null};
+
+    private Team team;
+
+    private boolean isAuto = false;
+
     public CameraSubsystem() {
         this.vPortalField = null;
         this.shouldScanForGlyphs = true;
@@ -82,18 +86,19 @@ public class CameraSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
-        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
+        this.aTagProcessor = createAprilTagProcessor();
+//        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
         VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.fieldCamera)
 //                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(1280, 800))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .addProcessor(this.aTagProcessor);
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2);
+//                .addProcessor(this.aTagProcessor);
 
         switch (liveViewSettings) {
             case FIELD:
-                vPortalFieldBuilder.enableLiveView(true);
+//                vPortalFieldBuilder.enableLiveView(true);
 //                        .setLiveViewContainerId(hardware.cameraMonitorViewId);
                 // note: to have this appear in dashboard, you need to have the pipeline implement CameraStreamSource
                 // see last year's code for reference, I'm too lazy to do this rn
@@ -103,7 +108,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         vPortalField = vPortalFieldBuilder.build();
 
-        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
+//        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
     }
 
@@ -125,6 +130,45 @@ public class CameraSubsystem extends SubsystemBase {
         return processor;
     }
 
+    public void stopCamera() {
+        vPortalField.stopStreaming();
+    }
+
+    public void setGlyphByNormal(AprilTagDetection tag)
+    {
+        robot.telemetry.addData(TAG,"skibidi yaw:"+Math.toDegrees(tag.ftcPose.yaw));
+//        robot.telemetry.addData(TAG,"skibidi pitch:"+tag.ftcPose.pitch);
+        robot.telemetry.addData(TAG,"skibidi bearing:"+Math.toDegrees(tag.ftcPose.bearing));
+        double tagAngle = 0; //TODO: replace with whichever works
+        if(team.equals(Team.RED))
+        {
+            if(tagAngle < 0)
+            {
+                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            }
+            else
+            {
+                setGlyph(VisionConstants.APRILTAG.RedIndividualPairs.get(tag.id));
+            }
+        }
+        else if(team.equals(Team.BLUE))
+        {
+            if(tagAngle > 0)
+            {
+                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            }
+            else
+            {
+                setGlyph(VisionConstants.APRILTAG.BlueIndividualPairs.get(tag.id));
+            }
+        }
+//        robot.telemetry.addData(TAG,"skibidi elevation:"+tag.ftcPose.elevation);
+//        robot.telemetry.addData(TAG,"skibidi range:"+tag.ftcPose.range);
+//        robot.telemetry.addData(TAG,"skibidi roll:"+tag.ftcPose.roll);
+//        robot.telemetry.addData(TAG,"skibidi truth:"+tag.rawPose.R);
+//        Log.d(TAG,
+    }
+
     public void stopScanningForGlyphs() {
         this.shouldScanForGlyphs = false;
     }
@@ -143,7 +187,41 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setGlyph(GLYPH glyph) {
         gameGlyph = glyph;
-        Log.i("CameraSubsystem", "Found glyph " + gameGlyph);
+//        // Log.i("CameraSubsystem", "Found glyph " + gameGlyph);
+    }
+
+    public void setTeam(Team team)
+    {
+        this.team = team;
+    }
+
+    public void setObeliskPairInAuto(AprilTagDetection[] pair)
+    {
+        Integer[] tags = {pair[0].id,pair[1].id};
+        Arrays.sort(tags);
+//        // Log.d(TAG,"redpair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(tags))));
+//        // Log.d(TAG,"bluepair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(tags))));
+        switch(team)
+        {
+            case RED:
+                gameGlyph = VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(tags)));
+//                gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(pair)));
+                break;
+
+            case BLUE:
+                gameGlyph = VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(tags)));
+                break;
+
+            default:
+                // Log.d("CameraSubsystem", "Can't do this, team unknown!");
+                break;
+        }
+
+    }
+
+    public void setIsInAuto(boolean state)
+    {
+        this.isAuto = state;
     }
 
     @Override
@@ -171,28 +249,47 @@ public class CameraSubsystem extends SubsystemBase {
 //        } catch (IllegalStateException e) {
 //            // there's an error where it says that you cannot set controls until camera starts streaming
 //            // todo handle ths properly and don't just do a try-catch
-//            Log.w("CameraSubsystem", e);
+//            // Log.w("CameraSubsystem", e);
 //        }
 
 
             this.detections = aTagProcessor.getDetections();
-            Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
+            // Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
             //should only ever be the blue or red goal which is 20 and 24 respectively
             AprilTagDetection localizationTag = null;
+            int obeliskIndex = 0;
 
             for (AprilTagDetection tag : detections) {
                 if (tag.id >= 21 && tag.id <= 23) {
-                    GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
-                    this.gameGlyph = glyphhh;
-                    robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
-                    Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
+                    obeliskpair[obeliskIndex] = tag;
+                    obeliskIndex++;
+                    if(!isAuto)
+                    {
+                        GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
+                        this.gameGlyph = glyphhh;
+                        robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
+                        // Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
+                    }
+//
                 } else {
                     localizationTag = tag;
                 }
             }
-            Log.d(TAG, "Glyph: " + gameGlyph);
-            Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
-            Log.d(TAG, "Localization Tag: " + localizationTag);
+            if(isAuto) {
+                if(obeliskIndex==1)
+                {
+                    setGlyphByNormal(obeliskpair[0]);
+                }
+                else if(obeliskIndex==2)
+                {
+//                    Arrays.sort(obeliskpair);
+                    // Log.d(TAG, "obeliskpair: " + Arrays.toString(obeliskpair));
+                    setObeliskPairInAuto(obeliskpair);
+                }
+            }
+            // Log.d(TAG, "Glyph: " + gameGlyph);
+            // Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
+            // Log.d(TAG, "Localization Tag: " + localizationTag);
             robot.telemetry.addData("Glyph", gameGlyph);
             robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
             robot.telemetry.addData("Localization Tag", localizationTag);

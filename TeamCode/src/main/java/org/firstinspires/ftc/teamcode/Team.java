@@ -8,22 +8,26 @@ public enum Team {
     BLUE(
             () -> FieldConstants.BLUE_GOAL_POS,
             () -> FieldConstants.BLUE_START_POS_NEAR,
-            () -> FieldConstants.BLUE_START_POS_FAR
+            () -> FieldConstants.BLUE_START_POS_FAR,
+            () -> FieldConstants.BLUE_KEY
     ),
     RED(
             () -> FieldConstants.RED_GOAL_POS,
             () -> FieldConstants.RED_START_POS_NEAR,
-            () -> FieldConstants.RED_START_POS_FAR
+            () -> FieldConstants.RED_START_POS_FAR,
+            () -> FieldConstants.RED_KEY
     );
 
     private final Supplier<Pose2d> goalPos;
     private final Supplier<Pose2d> startPosNear;
     private final Supplier<Pose2d> startPosFar;
+    private final Supplier<String> blackboardKey;
 
-    Team(Supplier<Pose2d> goalPos, Supplier<Pose2d> startPosNear, Supplier<Pose2d> startPosFar) {
+    Team(Supplier<Pose2d> goalPos, Supplier<Pose2d> startPosNear, Supplier<Pose2d> startPosFar, Supplier<String> blackboardKey) {
         this.goalPos = goalPos;
         this.startPosNear = startPosNear;
         this.startPosFar = startPosFar;
+        this.blackboardKey = blackboardKey;
     }
 
     public Pose2d getGoalPos() {
@@ -37,4 +41,7 @@ public enum Team {
     public Pose2d getStartPosFar() {
         return startPosFar.get();
     }
+
+    public String getBlackboardKey(){return blackboardKey.get();}
+
 }

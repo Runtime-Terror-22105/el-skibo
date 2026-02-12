@@ -2,31 +2,11 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_TIMEOUT;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
-import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -41,10 +21,8 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.auto.PathUtil;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
@@ -58,7 +36,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 // Gate spam auto
 @Config
-public abstract class AutoSpam extends LinearOpMode {
+public abstract class AutoSpamNoPushGate2 extends LinearOpMode {
 //    public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
 //    public static Map<CameraSubsystem.GLYPH,CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
 //    static {
@@ -105,7 +83,7 @@ public abstract class AutoSpam extends LinearOpMode {
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 59.5, Math.toRadians(180));
 //    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 62.2, Math.toRadians(157));
     public static Pose2d AFTER_GATE = new Pose2d(12, 62, Math.toRadians(163));
-
+    
     public static int PRE_INTAKE_DELAY = 0;
     public static int INTAKE_DELAY = 600;
     public static int GATE_INTAKE_DELAY = 1500;
@@ -139,12 +117,10 @@ public abstract class AutoSpam extends LinearOpMode {
     private long startTime = 0;
     private long lastLoop = System.nanoTime();
 
-    protected AutoSpam(Team team) {
+    protected AutoSpamNoPushGate2(Team team) {
         this.team = team;
         robot.goalPos = team.getGoalPos();
         robot.color = team;
-        blackboard.put(TEAM_COLOR_KEY, team.getBlackboardKey());
-
     }
 
     private void buildPaths(Pose2d startPose, boolean mirror) {
@@ -178,13 +154,7 @@ public abstract class AutoSpam extends LinearOpMode {
         intake2Path = PathUtil.addPathBuilderCurve(robot, shoot1Path, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
 //                .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        beforePushGate2Path = PathUtil.addPathBuilderLine(robot, intake2Path, BEFORE_PUSH_GATE_POSE, mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
-        pushGateIntake2Path = PathUtil.addPathBuilderLine(robot, beforePushGate2Path, PUSH_GATE_POSE, mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
-        shoot2Path = PathUtil.addPathBuilderLine(robot, pushGateIntake2Path, SHOOT_EDGE_POSE, mirror, true, true)
+        shoot2Path = PathUtil.addPathBuilderLine(robot, intake2Path, SHOOT_EDGE_POSE, mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
 
@@ -238,9 +208,7 @@ public abstract class AutoSpam extends LinearOpMode {
                         new FollowPathCommand(robot.follower, intake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new WaitCommand(INTAKE_DELAY),
-                new FollowPathCommand(robot.follower, beforePushGate2Path, true, MAX_DRIVETRAIN_POWER_INTAKING),
-                new FollowPathCommand(robot.follower, pushGateIntake2Path, true, MAX_DRIVETRAIN_POWER_INTAKING)
+                new WaitCommand(INTAKE_DELAY)
         );
         shoot2Command = new SequentialCommandGroup(
                 new ParallelCommandGroup(

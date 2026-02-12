@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
+
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.MathFunctions;
-import com.seattlesolvers.solverslib.util.InterpLUT;
-import com.seattlesolvers.solverslib.util.LUT;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
-import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 
 @Config
 public class SpindexerEncoderLUT {
@@ -19,9 +16,9 @@ public class SpindexerEncoderLUT {
     public static int angle1 = 0;
     public static double fixedAngle1 = 3;
     public static int angle2 = 120;
-    public static double fixedAngle2 = 118;
+    public static double fixedAngle2 = 115;
     public static int angle3 = 240;
-    public static double fixedAngle3 = 236;
+    public static double fixedAngle3 = 233;
 
     public static double fixedReady1 = 19.2;
     public static double fixedReady2 = 136.97;
@@ -82,9 +79,9 @@ public class SpindexerEncoderLUT {
                 new SpindexLookupValue(angle2, fixedAngle2),
                 new SpindexLookupValue(angle3, fixedAngle3),
 
-                new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), fixedReady1),
-                new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady2),
-                new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady3),
+//                new SpindexLookupValue((int) (MathUtils.normalizeRadians(0 +  (SpindexerSubsystem.READY_POSITION), true)*(180D/Math.PI)), fixedReady1),
+//                new SpindexLookupValue(120 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady2),
+//                new SpindexLookupValue(240 + (int) (SpindexerSubsystem.READY_POSITION*(180D/Math.PI)), fixedReady3),
 
         };
 

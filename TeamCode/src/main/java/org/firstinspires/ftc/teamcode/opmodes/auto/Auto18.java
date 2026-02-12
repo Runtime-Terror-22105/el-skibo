@@ -391,7 +391,7 @@ public abstract class Auto18 extends LinearOpMode {
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
 
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         robot.camera.stopScanningForGlyphs();
 
         this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);

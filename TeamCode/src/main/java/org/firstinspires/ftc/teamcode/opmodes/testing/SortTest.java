@@ -28,7 +28,7 @@ public class SortTest extends LinearOpMode {
 
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
 
         waitForStart();
 

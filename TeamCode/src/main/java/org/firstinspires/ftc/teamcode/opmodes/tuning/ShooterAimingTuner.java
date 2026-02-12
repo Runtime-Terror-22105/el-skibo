@@ -1,27 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.tuning;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
-import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
-import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.TRANSFER;
 
-import android.util.Log;
-
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.FieldConstants;
-import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.*;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -35,15 +21,20 @@ import com.seattlesolvers.solverslib.command.button.Trigger;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.AdjustSpindexZeroCommand;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.FieldConstants;
+import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
+import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.ChangeSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
-import org.firstinspires.ftc.teamcode.robot.command.states.GoToClimbStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
@@ -51,8 +42,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
-
-import java.util.List;
 
 @TeleOp(name="ShooterAimTuner", group="Tuning")
 @Config
@@ -108,7 +97,7 @@ public class ShooterAimingTuner extends LinearOpMode {
         Profiler.init();
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-        robot.init(hardware, telemetry);
+        robot.init(hardware, this);
         if (robot.color == Team.BLUE){
             robot.follower.setStartingPose((FieldConstants.BLUE_START_POS_NEAR).toPedro());
         }
@@ -156,11 +145,6 @@ public class ShooterAimingTuner extends LinearOpMode {
 
 //        botInTapeZone.whenActive(new InstantCommand()->);
 
-        hangButton.whenPressed(new ConditionalCommand(
-                new GoToClimbStateCommand(robot, HangSubsystem.Position.RESTING),
-                new GoToClimbStateCommand(robot, HangSubsystem.Position.FULL_90),
-                () -> robot.hang.isPtoEngaged()
-        ));
         intakeButton.whenActive(new ConditionalCommand(
                 new GoToIntakeStateCommand(robot),
                 new InstantCommand(() -> {} ),
@@ -221,11 +205,11 @@ public class ShooterAimingTuner extends LinearOpMode {
                 () -> robot.robotState != SHOOTING
         ));
 
-        rejectButton.whenPressed(new ConditionalCommand(
-                new StartShooterRejectCommand(robot.shooter),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING //robot.robotState == FULL
-        ));
+//        rejectButton.whenPressed(new ConditionalCommand(
+//                new StartShooterRejectCommand(robot.shooter),
+//                new InstantCommand(() -> {} ),
+//                () -> robot.robotState != SHOOTING //robot.robotState == FULL
+//        ));
 
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 

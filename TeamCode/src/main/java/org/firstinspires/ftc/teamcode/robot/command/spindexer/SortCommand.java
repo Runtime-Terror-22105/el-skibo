@@ -10,17 +10,17 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 @Config
 public class SortCommand extends SequentialCommandGroup {
 
-    public static long alignTimeMS = 100;
+    public static long alignTimeMS = 2000;
     public static long WAiT_TiMEOUT_MOTiF = 1500;
+    public static long SPINDEXER_TIMEOUT = 600L;
 
     public SortCommand(Robot robot){
         super(
                 new InstantCommand(()->robot.spindexer.goToNearestSide()),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(alignTimeMS),
                 new WaitUntilCommand(() -> robot.camera.getGlyph() != null).withTimeout(WAiT_TiMEOUT_MOTiF),
-                new InstantCommand(()->robot.spindexer.newSort())
+                new InstantCommand(()->robot.spindexer.newSort()),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(SPINDEXER_TIMEOUT)
         );
     }
-
-
 }

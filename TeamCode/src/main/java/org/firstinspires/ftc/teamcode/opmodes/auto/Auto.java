@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
-import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.BLUE_KEY;
+import static org.firstinspires.ftc.teamcode.FieldConstants.RED_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
@@ -19,6 +20,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELA
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
+import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -54,32 +56,57 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.util.Profiler;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
-import java.util.HashMap;
-import java.util.Map;
 
 
 // todo order: 2, gate, gate, 3, 1
 @Config
 public abstract class Auto extends LinearOpMode {
-    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
-    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
-
-    static {
-        blueMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.PGP);
-        blueMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.GPP);
-        blueMotifMap.put(CameraSubsystem.GLYPH.GPP, CameraSubsystem.GLYPH.PPG);
-
-        redMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.GPP);
-        redMotifMap.put(CameraSubsystem.GLYPH.GPP, CameraSubsystem.GLYPH.PGP);
-        redMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.PPG);
-    }
+//    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
+//    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
+//
+//    static {
+//        blueMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.PGP);
+//        blueMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.GPP);
+//        blueMotifMap.put(CameraSubsystem.GLYPH.GPP, CameraSubsystem.GLYPH.PPG);
+//
+//        redMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.GPP);
+//        redMotifMap.put(CameraSubsystem.GLYPH.GPP, CameraSubsystem.GLYPH.PGP);
+//        redMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.PPG);
+//    }
 
     public static long TIME_UNTIL_START_SCANNING_GLYPHS = 200;
 
     public static boolean stopAfterPreload = false;
 
+    public static double AMOUNT_TO_TURN_FOR_MOTIF_DEG = 50;
+
+    public static double SPINDEXER_SORTED_POWER = 1.0;
     public static double MAX_POWER = 1.0;
+
+    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 93, Math.toRadians(225));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 95, Math.toRadians(45));
+    public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
+
+    public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
+    public static Pose2d INTAKE_1_POSE = new Pose2d(22, 85.149, Math.toRadians(180));
+    public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
+
+    public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(17, 62, Math.toRadians(180));
+
+    public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(17, 39, Math.toRadians(180));
+
+    public static Pose2d BEFORE_GATE = new Pose2d(22.542, 54.692, 146.621);
+    public static Pose2d AFTER_GATE = new Pose2d(13.228, 58.574, 135.9946);
+
+    public static int PRE_INTAKE_DELAY = 0;
+    public static int INTAKE_DELAY = 600;
+    public static int PRELOAD_PRE_SHOOT_DELAY = 250;
+    public static int PRE_SHOOT_DELAY = 0;
+    public static int SHOOT_DELAY = 0;
+
+    public static double MAX_DRIVETRAIN_POWER_INTAKING = 0.8;
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -107,9 +134,11 @@ public abstract class Auto extends LinearOpMode {
         if (team == Team.BLUE) {
             robot.goalPos = FieldConstants.BLUE_GOAL_POS;
             robot.color = Team.BLUE;
+            blackboard.put(TEAM_COLOR_KEY, BLUE_KEY);
         } else {
             robot.goalPos = FieldConstants.RED_GOAL_POS;
             robot.color = Team.RED;
+            blackboard.put(TEAM_COLOR_KEY, RED_KEY);
         }
     }
 
@@ -245,9 +274,9 @@ public abstract class Auto extends LinearOpMode {
                         new FollowPathCommand(robot.follower, shootPreloadPath, true)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShootThreeBallsCommand(robot, SPINDEXER_SORTED_POWER),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
-                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
+//                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
                 new WaitCommand(SHOOT_DELAY)
         );
 
@@ -266,7 +295,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShootThreeBallsCommand(robot, SPINDEXER_SORTED_POWER),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -286,7 +315,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShootThreeBallsCommand(robot, SPINDEXER_SORTED_POWER),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -306,7 +335,7 @@ public abstract class Auto extends LinearOpMode {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, false))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
+                new ShootThreeBallsCommand(robot, SPINDEXER_SORTED_POWER),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
         );
@@ -318,12 +347,13 @@ public abstract class Auto extends LinearOpMode {
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardwareMap.dcMotor.get("motorFrontLeft").setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+//        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
-        robot.init(hardware, telemetry);
-        robot.camera.stopScanningForGlyphs();
+        robot.init(hardware, this);
+//        robot.camera.stopScanningForGlyphs();
 
-        this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
+        this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(AMOUNT_TO_TURN_FOR_MOTIF_DEG);
         robot.goalPos = team.getGoalPos();
         robot.follower.setStartingPose(team.getStartPosNear().toPedro());
 
@@ -333,9 +363,10 @@ public abstract class Auto extends LinearOpMode {
 
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
         // todo do the rules require that we do ths after init?
-        robot.setAutoSort(false);
-
-        robot.camera.startScanningForGlyphs();
+        robot.setAutoSort(false, false);
+//        robot.camera.setIsInAuto(true); //its false by default
+//        robot.camera.setTeam(this.team);
+//        robot.camera.startScanningForGlyphs();
 
         // we can't spin shooter in init bc it's illegal
         robot.shooter.isAutoVelOn = false;
@@ -353,16 +384,16 @@ public abstract class Auto extends LinearOpMode {
             robot.telemetry.update();
         }
 
-        // we're going to see the wrong one
-        if (robot.camera.gameGlyph != null) {
-            robot.camera.stopScanningForGlyphs();
-            robot.shooter.isAutoTurretOn = true;
-            if (Team.RED.equals(team)) {
-                robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
-            } else {
-                robot.camera.setGlyph(blueMotifMap.get(robot.camera.gameGlyph));
-            }
-        }
+//        // we're going to see the wrong one
+//        if (robot.camera.gameGlyph != null) {
+//            robot.camera.stopScanningForGlyphs();
+//            robot.shooter.isAutoTurretOn = true;
+//            if (Team.RED.equals(team)) {
+//                robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
+//            } else {
+//                robot.camera.setGlyph(blueMotifMap.get(robot.camera.gameGlyph));
+//            }
+//        }
 
         waitForStart();
         robot.shooter.isAutoVelOn = true;
@@ -387,6 +418,8 @@ public abstract class Auto extends LinearOpMode {
                 new InstantCommand(() -> hasFinished = true)
         ));
 
+//        robot.camera.stopCamera();
+
         lastLoop = System.nanoTime();
 
         while (opModeIsActive()) {
@@ -404,7 +437,7 @@ public abstract class Auto extends LinearOpMode {
             CommandScheduler.getInstance().run();
             Profiler.pop();
 
-            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
+//            blackboard.put(MOTIF_DATA_KEY, robot.camera.getGlyph());
             blackboard.put(AUTO_ENDING_DATA_KEY, robot.follower.getPose());
             blackboard.put(SPINDEXER_POSITION_KEY, robot.spindexer.getPosition());
 
