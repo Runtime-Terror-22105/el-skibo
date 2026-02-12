@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
@@ -13,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DEL
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
@@ -167,6 +167,7 @@ public class AutoBuilder {
 
     /**
      * Command to intake from spike number.
+     *
      * @param spikeNumber The spike number to intake from, where 1 is the closest to the goal and 3 is closest to the human player.
      * @return The command to intake from the specified spike.
      */
@@ -196,8 +197,9 @@ public class AutoBuilder {
 
     /**
      * Command to shoot from spike number.
+     *
      * @param spikeNumber The spike number to intake from, where 1 is the closest to the goal and 3 is closest to the human player.
-     * @param isLast Whether this is the last shoot command in the auto sequence.
+     * @param isLast      Whether this is the last shoot command in the auto sequence.
      * @return The command to intake from the specified spike.
      */
     public Command shootSpike(int spikeNumber, boolean isLast) {
@@ -232,11 +234,22 @@ public class AutoBuilder {
         return shootSpike(spikeNumber, false);
     }
 
+    public Command cycleSpike(int spikeNumber, boolean isLast) {
+        return new SequentialCommandGroup(
+                intakeSpike(spikeNumber),
+                shootSpike(spikeNumber, isLast)
+        );
+    }
+
+    public Command cycleSpike(int spikeNumber) {
+        return cycleSpike(spikeNumber, false);
+    }
+
     // For pushing the gate after a SPIKE STRIP. Not for cycling gate intake.
     public Command pushGate() {
         return new SequentialCommandGroup(
-            new FollowPathCommand(robot.follower, preparePushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING),
-            new FollowPathCommand(robot.follower, pushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING)
+                new FollowPathCommand(robot.follower, preparePushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new FollowPathCommand(robot.follower, pushGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING)
         );
     }
 
@@ -265,5 +278,16 @@ public class AutoBuilder {
 
     public Command shootGate() {
         return shootGate(false);
+    }
+
+    public Command cycleGate(boolean isLast) {
+        return new SequentialCommandGroup(
+                intakeGate(),
+                shootGate(isLast)
+        );
+    }
+
+    public Command cycleGate() {
+        return cycleGate(false);
     }
 }
