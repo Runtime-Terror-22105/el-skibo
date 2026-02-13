@@ -41,7 +41,6 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                 new WaitCommand(SPINDEX_TRANSFER_TIME),
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
                 new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
-
                 // reset spindexer, intake, shooter
                 new ParallelCommandGroup(
                         new SetIntakeSpeedCommand(robot.intake, 0),
