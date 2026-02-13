@@ -31,6 +31,9 @@ public class MotorServoTest extends LinearOpMode {
     public static String motorName3 = "";
     public static double motorPower3 = 0D;
 
+    public static String motorName4 = "";
+    public static double motorPower4 = 0D;
+
     public static boolean showEncoderOutput = true;
 
 
@@ -71,6 +74,10 @@ public class MotorServoTest extends LinearOpMode {
 
             if (!motorName3.isEmpty()) {
                 hardwareMap.get(DcMotor.class, motorName3).setPower(motorPower3);
+            }
+
+            if (!motorName4.isEmpty()) {
+                hardwareMap.get(DcMotor.class, motorName4).setPower(motorPower4);
             }
 
             if (showEncoderOutput && !motorName.isEmpty()) {

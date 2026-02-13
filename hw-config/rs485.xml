@@ -24,7 +24,7 @@
             <goBILDA5202SeriesMotor name="motorRearRight" port="3" />
             <Servo name="shooterHood" port="0" />
             <Servo name="lights" port="3" />
-            <AnalogInput name="spindexEncoder" port="0" />
+            <AnalogInput name="spindexEncoder" port="2" />
             <RevColorSensorV3 name="rightSensor" port="0" bus="1" />
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpoint name="pinpoint" port="1" bus="0" />
