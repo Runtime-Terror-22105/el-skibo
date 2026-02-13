@@ -225,6 +225,16 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), goalPos));
     }
 
+    public void manualAimAutoTurret(double velocity, double pitch) {
+        this.isAutoAimOn = false;
+        this.setSpeed(this.velToRPM(velocity));
+
+        this.goalPitch = pitch;
+        this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+
+        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), goalPosLookupTable.get()));
+    }
+
     public void manualAim(double velocity, double pitch, double turretYaw) {
         Pose2d goalPos = this.goalPosLookupTable.get();
 
