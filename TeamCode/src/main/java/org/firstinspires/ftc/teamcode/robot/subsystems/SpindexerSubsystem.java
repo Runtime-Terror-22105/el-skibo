@@ -381,6 +381,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
+            // ensure we update the PID coefficients in case they were changed in dashboard
+            this.yawPid.setPidfCoefficients(turningPidCoefficients);
+
             if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
                 hardware.spindexerRotate.setPower(0);
                 return;
