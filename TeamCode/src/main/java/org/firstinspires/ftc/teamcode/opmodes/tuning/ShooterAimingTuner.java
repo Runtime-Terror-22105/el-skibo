@@ -86,7 +86,7 @@ public class ShooterAimingTuner extends LinearOpMode {
     public ShooterAimingTuner(){
 
     }
-    
+
     @Override
     public void runOpMode() {
         Profiler.init();
