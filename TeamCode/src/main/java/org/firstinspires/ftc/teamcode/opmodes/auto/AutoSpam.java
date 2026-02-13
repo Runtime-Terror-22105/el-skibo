@@ -27,8 +27,9 @@ public abstract class AutoSpam extends OneAutoToRuleThemAll {
         return new SequentialCommandGroup(
                 builder.shootPreload(),
                 builder.cycleSpike(1),
-                builder.cycleSpike(2),
+                builder.intakeSpike(2),
                 builder.pushGate(),
+                builder.shootSpike(2),
                 builder.cycleGate(),
                 builder.cycleGate(true)
         );
