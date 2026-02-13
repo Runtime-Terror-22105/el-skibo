@@ -122,11 +122,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
         this.shooterPID.setTolerance(SHOOTER_VELOCITY_TOLERANCE);
         this.shooterPID.setTargetPosition(0.0);
-        this.velValues = new LinkedHashMap<Double,Double>();
 
         this.goalPosLookupTable = new GoalPosLookupTable(this.robot);
         for (int i=0; i < rollingValLen; i++){
-            this.velValues.put(0D, 0D);
+            velValues.put(0D, 0D);
         }
 
 

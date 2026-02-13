@@ -2,6 +2,15 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static org.firstinspires.ftc.teamcode.FieldConstants.AUTO_ENDING_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
 
 import androidx.annotation.NonNull;
 
@@ -39,9 +48,14 @@ import org.firstinspires.ftc.teamcode.robot.prompts.DetailedOptionPrompt;
 
 import kotlin.NotImplementedError;
 
+/**
+ * This is currently just kept for reference
+ * See OneAutoToRuleThemAll to see the new approach using AutoBuilder, we'll rewrite this opmode to use that later
+ */
 @Config
 @Disabled
 @Autonomous(name = "Build-A-Bear Auto", group = "Auto")
+@Deprecated
 public class CustomizableAuto extends LinearOpMode {
     private boolean mirror;
     private SequentialCommandGroup paths;
@@ -99,29 +113,6 @@ public class CustomizableAuto extends LinearOpMode {
     }
 
     public static double MAX_POWER = 1.0;
-
-    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(50.0, 104.644, Math.toRadians(315));
-
-    public static Pose2d PREPARE_INTAKE_1_POSE = new Pose2d(52.598, 85.149, Math.toRadians(180));
-    public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
-    public static Pose2d PUSH_GATE_POSE = new Pose2d(23, 72.827, Math.toRadians(180));
-    public static Pose2d SHOOT_POSE = new Pose2d(50, 104.644, Math.toRadians(315));
-
-    public static Pose2d PREPARE_INTAKE_2_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 60, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE = new Pose2d(20, 60, Math.toRadians(180));
-
-    public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(PREPARE_INTAKE_1_POSE.x, 37, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE = new Pose2d(20, 37, Math.toRadians(180));
-
-    public static Pose2d NEAR_PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
-
-    public static int PRE_INTAKE_DELAY = 0;
-    public static int INTAKE_DELAY = 400;
-    public static int PRELOAD_PRE_SHOOT_DELAY = 250;
-    public static int PRE_SHOOT_DELAY = 0;
-    public static int SHOOT_DELAY = 0;
-
-    public static double MAX_DRIVETRAIN_POWER_INTAKING = 0.8;
 
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
@@ -311,33 +302,34 @@ public class CustomizableAuto extends LinearOpMode {
     }
 
     public Pose getPrepareIntakePose(IntakePosition intakePosition) {
-        Pose2d p;
-        switch (intakePosition) {
-            case POSITION_1:
-                p = PREPARE_INTAKE_1_POSE;
-                break;
-            case POSITION_2:
-                p = PREPARE_INTAKE_2_POSE;
-                break;
-            case POSITION_3:
-                p = PREPARE_INTAKE_3_POSE;
-                break;
-            case HUMAN_PLAYER:
-                throw new NotImplementedError("human pllayer not yet implemented");
-            default:
-                throw new IllegalArgumentException("invalid intake position");
-        }
-        return p.toPedro(mirror);
+//        Pose2d p;
+//        switch (intakePosition) {
+//            case POSITION_1:
+//                p = PREPARE_INTAKE_1_POSE;
+//                break;
+//            case POSITION_2:
+//                p = PREPARE_INTAKE_2_POSE;
+//                break;
+//            case POSITION_3:
+//                p = PREPARE_INTAKE_3_POSE;
+//                break;
+//            case HUMAN_PLAYER:
+//                throw new NotImplementedError("human pllayer not yet implemented");
+//            default:
+//                throw new IllegalArgumentException("invalid intake position");
+//        }
+//        return p.toPedro(mirror);
+        throw new NotImplementedError("prepare intake pose not yet implemented");
     }
 
     public Pose getShootingPose(ShootingPosition shootingPosition) {
         Pose2d p;
         switch (shootingPosition) {
             case NEAR_TRIANGLE:
-                p = SHOOT_POSE;
+                p = SHOOT_EDGE_POSE;
                 break;
             case FAR_TRIANGLE:
-                p = SHOOT_POSE; // TODO: change when far triangle pose is known
+                p = SHOOT_EDGE_POSE; // TODO: change when far triangle pose is known
                 break;
             default:
                 throw new IllegalArgumentException("invalid shooting position");
@@ -345,12 +337,10 @@ public class CustomizableAuto extends LinearOpMode {
         return p.toPedro(mirror);
     }
 
+    public static Pose2d NEAR_PARK_POSE = new Pose2d(52.282, 120.575, Math.toRadians(315));
+
     public Pose getParkPose() {
         return NEAR_PARK_POSE.toPedro(mirror);
-    }
-
-    public Pose getPushGatePose() {
-        return PUSH_GATE_POSE.toPedro(mirror);
     }
 
     public Pose getShootPreloadPose() {

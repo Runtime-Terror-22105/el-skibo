@@ -30,6 +30,12 @@ public class Pose2d {
         this.heading = heading;
     }
 
+    public Pose2d(double x, double y) {
+        this.x = x;
+        this.y = y;
+        this.heading = 0;
+    }
+
     public Pose2d(@NonNull SparkFunOTOS.Pose2D pose) {
         this(pose.x, pose.y, pose.h);
     }

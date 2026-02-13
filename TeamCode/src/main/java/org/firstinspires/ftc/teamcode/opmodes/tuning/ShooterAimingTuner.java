@@ -84,6 +84,13 @@ public class ShooterAimingTuner extends LinearOpMode {
         robot.color = color;
     }
     public ShooterAimingTuner(){
+
+    }
+
+    @Override
+    public void runOpMode() {
+        Profiler.init();
+
         if (blueSide){
             this.setTeam(Team.BLUE);
         }
@@ -91,19 +98,9 @@ public class ShooterAimingTuner extends LinearOpMode {
             this.setTeam(Team.RED);
         }
 
-    }
-    @Override
-    public void runOpMode() {
-        Profiler.init();
-
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, this);
-        if (robot.color == Team.BLUE){
-            robot.follower.setStartingPose((FieldConstants.BLUE_START_POS_NEAR).toPedro());
-        }
-        else{
-            robot.follower.setStartingPose((FieldConstants.RED_START_POS_NEAR).toPedro());
-        }
+        robot.follower.setStartingPose(robot.color.getStartPosNear().toPedro());
 
 
         waitForStart();
