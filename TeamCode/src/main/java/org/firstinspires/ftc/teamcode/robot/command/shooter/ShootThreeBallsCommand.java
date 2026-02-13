@@ -23,7 +23,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
     public static double ANGLE_THRESHOLD_SPEED_CHANGE = 210;
     //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
     public static double SPINDEX_TRANSFER_POWER = -1;
-    public static int SPINDEX_TRANSFER_TIME = 900;  // milliseconds
+    public static int SPINDEX_TRANSFER_TIME = 1200;  // milliseconds
 
     private final Robot robot;
 
@@ -31,7 +31,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.SHOOTING),
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
-                new WaitCommand(200),
+//                new WaitCommand(200),
 
                 // Phase 5: transfer balls
                 new InstantCommand(() -> {

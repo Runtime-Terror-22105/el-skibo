@@ -369,6 +369,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         SpindexerEncoderLUT.SpindexLookupValue desAngle = this.angleLUT.get(desiredAngle);
         if (telemetry) Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
 
+        this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
         if (pidEnabled) {
 //            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
@@ -381,6 +382,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
+            // ensure we update the PID coefficients in case they were changed in dashboard
+            this.yawPid.setPidfCoefficients(turningPidCoefficients);
+
             if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
                 hardware.spindexerRotate.setPower(0);
                 return;

@@ -61,7 +61,6 @@ public class FlightTimeLookupTable {
      * @return Estimated flight time in milliseconds
      */
     public static double get(double distance) {
-
         return FLIGHT_TIME_LUT.get(distance);
     }
 }
