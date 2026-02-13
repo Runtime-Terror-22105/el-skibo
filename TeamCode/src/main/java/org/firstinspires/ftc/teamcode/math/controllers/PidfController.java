@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode.math.controllers;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.math.Angle;
-import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
 public class PidfController {
     private static final double MAX_INTEGRAL = 1e15; // random constant to prevent integral windup, will adjust later
 
     // pid constants
-    private final PidfCoefficients pidfCoefficients;
+    private PidfCoefficients pidfCoefficients;
     //region pid temp vars
     private double integralSum;
     private double lastError;
@@ -25,6 +24,10 @@ public class PidfController {
     public PidfController(PidfCoefficients pidfCoefficients) {
         this.pidfCoefficients = pidfCoefficients;
         _resetTempVars();
+    }
+
+    public void setPidfCoefficients(PidfCoefficients coefficients) {
+        this.pidfCoefficients = coefficients;
     }
 
     public double getTolerance() {
