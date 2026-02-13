@@ -91,20 +91,12 @@ public class ShooterAimingTuner extends LinearOpMode {
     public void runOpMode() {
         Profiler.init();
 
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-        robot.init(hardware, this);
-
         if (blueSide){
             this.setTeam(Team.BLUE);
         }
         else{
             this.setTeam(Team.RED);
         }
-
-    }
-    @Override
-    public void runOpMode() {
-        Profiler.init();
 
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, this);
