@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_P
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
@@ -22,6 +23,8 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -99,17 +102,29 @@ public class AutoBuilder {
         return lastPath;
     }
 
-    private PathChain intakeSpike3Path() {
+    private PathChain prepareIntakeSpike3Path() {
+        // TODO: i think we can combine the two paths into one PathChain
         // it might be a little sus here that addPathBuilderCurve sets the heading interpolation to linear but we then override this
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_3_CONTROL, PREPARE_INTAKE_3_POSE, mirror, false, false)
                 .setHeadingInterpolation(
                         HeadingInterpolator.piecewise(
                                 new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
                                 new HeadingInterpolator.PiecewiseNode(0.4, 1.0,
-                                        FixedHeadingInterpolator.linearFromPoint(() -> robot.follower.getHeading(), PREPARE_INTAKE_3_POSE.heading, 0.4, 0.7)
+                                        FixedHeadingInterpolator.linearFromPoint(
+                                                () -> robot.follower.getHeading(),
+                                                PREPARE_INTAKE_3_POSE.mirror(mirror).heading,
+                                                0.4, 0.7
+                                        )
                                 )
                         )
                 )
+                .build();
+        return lastPath;
+    }
+
+    private PathChain intakeSpike3Path() {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, INTAKE_3_POSE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
     }
@@ -177,6 +192,37 @@ public class AutoBuilder {
         return shootPreload(false);
     }
 
+    private Command intakeSpike1() {
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, intakeSpike1Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+        );
+    }
+
+    private Command intakeSpike2() {
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, intakeSpike2Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+        );
+    }
+
+    private Command intakeSpike3() {
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, prepareIntakeSpike3Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new FollowPathCommand(robot.follower, intakeSpike3Path(), true),
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+        );
+    }
+
     /**
      * Command to intake from spike number.
      *
@@ -184,27 +230,16 @@ public class AutoBuilder {
      * @return The command to intake from the specified spike.
      */
     public Command intakeSpike(int spikeNumber) {
-        PathChain intakePath;
         switch (spikeNumber) {
             case 1:
-                intakePath = intakeSpike1Path();
-                break;
+                return intakeSpike1();
             case 2:
-                intakePath = intakeSpike2Path();
-                break;
+                return intakeSpike2();
             case 3:
-                intakePath = intakeSpike3Path();
-                break;
+                return intakeSpike3();
             default:
                 throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
         }
-        return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, intakePath, true, MAX_DRIVETRAIN_POWER_INTAKING),
-                        new GoToIntakeStateCommand(robot)
-                ),
-                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
-        );
     }
 
     /**
