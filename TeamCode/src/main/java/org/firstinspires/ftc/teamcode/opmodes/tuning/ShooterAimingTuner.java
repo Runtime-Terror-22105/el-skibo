@@ -64,6 +64,7 @@ public class ShooterAimingTuner extends LinearOpMode {
     public static boolean tuneGoalPos = false;
     public static double goalPosOffset = 0;
     public static boolean testingAutoShoot = false;
+    public static boolean autoTurret = true; //overrides the other turret var
 
     private long lastLoop = System.nanoTime();
 
@@ -252,10 +253,11 @@ public class ShooterAimingTuner extends LinearOpMode {
             Profiler.pop();
 
             if (!testingAutoShoot) {
-                if (!tuneGoalPos) {
-                    robot.shooter.manualAim(velocity, hoodAngle, turretPos);
+
+                if (autoTurret){
+                    robot.shooter.manualAimAutoTurret(velocity, hoodAngle);
                 }
-                else{
+                else if (tuneGoalPos){
                     Pose2d goalPos = robot.goalPos.copy();
                     if(goalPosOffset > 0) {
                         if (robot.color == Team.BLUE) {
@@ -268,6 +270,9 @@ public class ShooterAimingTuner extends LinearOpMode {
                         goalPos.y += goalPosOffset;
                     }
                     robot.shooter.manualAimGoalPos(velocity, hoodAngle, goalPos);
+                }
+                else {
+                    robot.shooter.manualAim(velocity, hoodAngle, turretPos);
                 }
 
             } else {
