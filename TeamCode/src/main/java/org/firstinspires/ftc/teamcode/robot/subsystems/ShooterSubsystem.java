@@ -40,8 +40,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
-            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000185, 0);
-//            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000185, 0);
+            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000196, 0);
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
@@ -56,7 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
-    public static double turretPosAt180 = 0.48; //pos pointed directly towards the back
+    public static double turretPosAt180 = 0.515; //pos pointed directly towards the back
     public static double posChange90 = 0.35; //servo pos change that rotates turret 90 deg
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
@@ -93,7 +92,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean alwaysUpdateTurret = false;
 
     public static int rollingValLen = 5;
-    public LinkedHashMap<Double, Double> velValues;
+//    public LinkedHashMap<Double, Double> velValues;
     public int ballsShot = 0;
     public ElapsedTime ballsShotTimer = new ElapsedTime();
 
@@ -124,9 +123,9 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPID.setTargetPosition(0.0);
 
         this.goalPosLookupTable = new GoalPosLookupTable(this.robot);
-        for (int i=0; i < rollingValLen; i++){
-            velValues.put(0D, 0D);
-        }
+//        for (int i=0; i < rollingValLen; i++){
+//            velValues.put(0D, 0D);
+//        }
 
 
 
@@ -289,38 +288,38 @@ public class ShooterSubsystem extends SubsystemBase {
         return angleTurret;
     }
 
-    public void updateRollingVelValues(){
-        velValues.remove(velValues.keySet().iterator().next());
-        velValues.put(this.getVelocity(), this.getGoalVelocity());
-    }
+//    public void updateRollingVelValues(){
+//        velValues.remove(velValues.keySet().iterator().next());
+//        velValues.put(this.getVelocity(), this.getGoalVelocity());
+//    }
 
     public void checkShotBalls(){
         boolean valid = true;
-        if (velValues.get(velValues.keySet().iterator().next()) - goalVelocity < 20){
-
-            List<Double> differences = new ArrayList<>();
-            for (Map.Entry<Double, Double> entry : velValues.entrySet()){
-                 differences.add(Math.abs(entry.getKey())-entry.getValue());
-            }
-            double avg = 0;
-
-            for (double d1: differences){
-                for (double d2: differences){
-                    if (Math.abs(d1-d2) > 10){
-                        valid = false;
-                    }
-                }
-                avg += d1;
-            }
-            avg = avg/rollingValLen;
-
-            if (valid && Math.abs(goalVelocity-this.getVelocity()) *2 > avg){
-                ballsShot +=1;
-                Log.i("ShooterSubsystem.java", "Ball Shot!");
-                ballsShotTimer.reset();
-            }
-
-        }
+//        if (velValues.get(velValues.keySet().iterator().next()) - goalVelocity < 20){
+//
+//            List<Double> differences = new ArrayList<>();
+//            for (Map.Entry<Double, Double> entry : velValues.entrySet()){
+//                 differences.add(Math.abs(entry.getKey())-entry.getValue());
+//            }
+//            double avg = 0;
+//
+//            for (double d1: differences){
+//                for (double d2: differences){
+//                    if (Math.abs(d1-d2) > 10){
+//                        valid = false;
+//                    }
+//                }
+//                avg += d1;
+//            }
+//            avg = avg/rollingValLen;
+//
+//            if (valid && Math.abs(goalVelocity-this.getVelocity()) *2 > avg){
+//                ballsShot +=1;
+//                Log.i("ShooterSubsystem.java", "Ball Shot!");
+//                ballsShotTimer.reset();
+//            }
+//
+//        }
     }
     public int getBallsShot(){return ballsShot;}
 
@@ -402,7 +401,7 @@ public class ShooterSubsystem extends SubsystemBase {
             }
 
             Profiler.push("ball shot logic");
-            updateRollingVelValues();
+//            updateRollingVelValues();
             if (robot.robotState == RobotState.TRANSFER || robot.robotState == RobotState.SHOOTING){
                 checkShotBalls();
             }
