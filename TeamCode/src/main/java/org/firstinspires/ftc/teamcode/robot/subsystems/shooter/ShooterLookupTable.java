@@ -40,15 +40,10 @@ public class ShooterLookupTable {
             // endpoint (prevent crashing)
             new LookupValue(0, 590),
 
-            new LookupValue(33.0, 590),
-            new LookupValue(51.1, 625),
-            new LookupValue(60.9, 640),
-            new LookupValue(71.0, 710),
-            new LookupValue(80.2, 725),
-            new LookupValue(92.5, 750),
-            new LookupValue(107.2, 800),
-            new LookupValue(123.5, 900),
-            new LookupValue(134.9, 960),
+            new LookupValue(57.0, 450),
+            new LookupValue(81.1, 500),
+            new LookupValue(139, 600),
+
             // other endpoint (prevent crashing)
             new LookupValue(250, 960)
 
@@ -56,11 +51,10 @@ public class ShooterLookupTable {
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
             new HoodLookupValue(0, 0.7),
 
-            new HoodLookupValue(33.0, 0.7),
-            new HoodLookupValue(51.1, 0.77),
-            new HoodLookupValue(60.9, 0.83),
-            new HoodLookupValue(71.0, 0.87),
-            new HoodLookupValue(80.2, 0.91),
+            new HoodLookupValue(57.0, 0.63),
+            new HoodLookupValue(83.1, 0.65),
+            new HoodLookupValue(139, 0.8),
+
 
 
             // new vals
