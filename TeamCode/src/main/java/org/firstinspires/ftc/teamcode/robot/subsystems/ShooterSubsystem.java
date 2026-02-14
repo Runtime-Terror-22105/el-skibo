@@ -40,8 +40,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // TODO: tune velocity pid coefficients + tolerance
     public static PidfController.PidfCoefficients shooterPIDCoeffecients =
-            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000185, 0);
-//            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000185, 0);
+            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000196, 0);
     public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
     public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
 
