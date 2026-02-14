@@ -11,9 +11,11 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
  */
 @Config
 public class AutoConstants {
+    // Unless otherwise specified, all poses are for NEAR ZONE.
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(45, 95, Math.toRadians(225));
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 95, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
+    public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 15, Math.toRadians(180));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
     public static Pose2d INTAKE_1_POSE = new Pose2d(22, 85.149, Math.toRadians(180));
@@ -33,9 +35,13 @@ public class AutoConstants {
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 59.5, Math.toRadians(180));
     public static Pose2d AFTER_GATE = new Pose2d(12, 62, Math.toRadians(163));
 
+    public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 15, Math.toRadians(180));
+
     public static int INTAKE_DELAY = 600;
     public static int GATE_INTAKE_DELAY = 1500;
+    public static int WALL_INTAKE_DELAY = 2000;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
+    public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 1500;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
 

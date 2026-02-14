@@ -14,10 +14,8 @@ public class FieldConstants {
     // start poses.
     public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-132));
 //    public static Pose2d RED_START_POS_NEAR = BLUE_START_POS_NEAR.mirror();
-    public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 0, 1D / 2D * Math.PI);
+    public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 8, Math.toRadians(180));
 //    public static Pose2d RED_START_POS_FAR = new Pose2d(96, 0, 1D / 2D * Math.PI);
-
-    public static double TILE_WIDTH = 23.6;
 
     public static String MOTIF_DATA_KEY = "motif";
     public static String AUTO_ENDING_DATA_KEY = "auto ending pos, tele starting pos";
