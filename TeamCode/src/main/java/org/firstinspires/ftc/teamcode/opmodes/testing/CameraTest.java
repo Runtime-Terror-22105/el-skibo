@@ -18,23 +18,28 @@ public class CameraTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
+    public static boolean isBlue = false;
+    public static boolean isInNearAuto = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, this);
-        robot.camera.setTeam(Team.BLUE);
-        robot.camera.setIsInAuto(true);
+        robot.camera.setTeam(Team.RED);
+        if(isBlue)
+        {
+            robot.camera.setTeam(Team.BLUE);
+        }
+        if(isInNearAuto)
+        {
+            robot.camera.setIsInNearAuto(true);
+        }
         waitForStart();
 
         while (opModeIsActive())
         {
             CommandScheduler.getInstance().run();
-//            Log.d("gooning",String.valueOf(robot.camera.getGlyph()));
-
             robot.telemetry.addData("seenglyph",robot.camera.getGlyph());
-            //telemetry.addData("position",robot.camera.getPositionCamera());
-//            hardware.fieldCamera
-
             robot.telemetry.update();
         }
     }
