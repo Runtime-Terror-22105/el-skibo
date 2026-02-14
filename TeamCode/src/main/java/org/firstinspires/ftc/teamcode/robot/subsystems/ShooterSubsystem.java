@@ -70,8 +70,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretServoUpperBound = 1;
 
     // hood limits
-    public static double hoodPosMax = 0.6; //maximum position the servo can go to
-    public static double hoodPosMin = 0.05; //min position the servo can go to
+    public static double hoodPosMax = 0.9; //maximum position the servo can go to
+    public static double hoodPosMin = 0.14; //min position the servo can go to
     public static double hoodAngleMax = 0.919427826056; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.632748891943; //radian measure of hood at min pos
 
