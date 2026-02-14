@@ -36,25 +36,38 @@ public class ShooterLookupTable {
 
     }
 
+
     public static LookupValue[] VEL_DATA_POINTS = new LookupValue[]{
             // endpoint (prevent crashing)
-            new LookupValue(0, 590),
+            new LookupValue(0, 400),
 
-            new LookupValue(57.0, 450),
-            new LookupValue(81.1, 500),
-            new LookupValue(139, 600),
-
+            new LookupValue(27.7,400),
+            new LookupValue(45.5,430),
+            new LookupValue(68.7,470),
+            new LookupValue(90.7,510),
+            new LookupValue(104.4,540),
+            new LookupValue(122.7,560),
+            new LookupValue(140.2,630),
             // other endpoint (prevent crashing)
-            new LookupValue(250, 960)
 
+//            new LookupValue(250, 960)
+//
     };
     public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
-            new HoodLookupValue(0, 0.7),
+            //endpoint
+            new HoodLookupValue(0, 0),
 
-            new HoodLookupValue(57.0, 0.63),
-            new HoodLookupValue(83.1, 0.65),
-            new HoodLookupValue(139, 0.8),
+            new HoodLookupValue(27.7,0),
+            new HoodLookupValue(45.5,0.25),
+            new HoodLookupValue(68.7,0.75),
+            new HoodLookupValue(90.7,0.75),
+            new HoodLookupValue(104.4,0.85),
+            new HoodLookupValue(122.7,1),
+            new HoodLookupValue(140.2,1),
+            //endpoint
 
+//            //endpoint
+//            new HoodLookupValue(250, ShooterSubsystem.hoodAngleMax)
 
 
             // new vals
@@ -72,8 +85,6 @@ public class ShooterLookupTable {
 //            new HoodLookupValue(62.7, 0.8),//rad
 //            new HoodLookupValue(83.3, 0.8),
 //            new HoodLookupValue(87.56152811761086, 0.85),
-
-            new HoodLookupValue(250, ShooterSubsystem.hoodAngleMax)
     };
 
     static {
