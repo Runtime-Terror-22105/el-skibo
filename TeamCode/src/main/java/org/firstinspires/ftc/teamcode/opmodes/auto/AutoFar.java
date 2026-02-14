@@ -30,6 +30,8 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
                 builder.cycleWall(false),
                 builder.intakeSpike3Far(), builder.shootSpike3Far(),
                 builder.cycleWall(true),
+                builder.cycleWall(true),
+                builder.cycleWall(true),
                 builder.cycleWall(true)
         );
     }

@@ -49,6 +49,8 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYa
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.util.ArrayUtil;
+import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 @Config
@@ -398,17 +400,20 @@ public class AutoBuilder {
 
     public Command intakeWall(boolean reverseIntake) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, INTAKE_WALL_POSE, mirror, false, false)
+                .setConstraints(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new FollowPathCommand(robot.follower, lastPath, true, 0.9),
                         new GoToIntakeStateCommand(robot)
                 ),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
                         new InstantCommand(() -> {}),
-                        () -> reverseIntake
+                        // Only reverse if reverseIntake and we get 3 balls
+                        () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
                 )
         );
     }
