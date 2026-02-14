@@ -31,6 +31,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -40,11 +42,13 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 @Config
@@ -392,7 +396,7 @@ public class AutoBuilder {
         );
     }
 
-    public Command intakeWall() {
+    public Command intakeWall(boolean reverseIntake) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, INTAKE_WALL_POSE, mirror, false, false)
                 .build();
         return new SequentialCommandGroup(
@@ -400,7 +404,12 @@ public class AutoBuilder {
                         new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {}),
+                        () -> reverseIntake
+                )
         );
     }
 
@@ -420,9 +429,9 @@ public class AutoBuilder {
         );
     }
 
-    public Command cycleWall() {
+    public Command cycleWall(boolean reverseIntake) {
         return new SequentialCommandGroup(
-                intakeWall(),
+                intakeWall(reverseIntake),
                 shootWall()
         );
     }
