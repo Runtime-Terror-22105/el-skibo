@@ -10,7 +10,9 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_P
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
@@ -19,8 +21,10 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.paths.HeadingInterpolator;
@@ -66,7 +70,7 @@ public class AutoBuilder {
     }
 
     private PathChain shootPreloadPath(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, getShootPose(SHOOT_PRELOAD_POSE, isLast), mirror, false, false)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_PRELOAD_POSE, isLast), mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
@@ -176,6 +180,7 @@ public class AutoBuilder {
         return this.lastPath = path;
     }
 
+    // For NEAR ZONE preload shooting.
     public Command shootPreload(boolean isLast) {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
@@ -190,8 +195,25 @@ public class AutoBuilder {
         );
     }
 
+    // For NEAR ZONE preload shooting.
     public Command shootPreload() {
         return shootPreload(false);
+    }
+
+    public Command shootPreloadFar() {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new PrepareShootCommand(robot),
+                        new FollowPathCommand(robot.follower, lastPath, false),
+                        new WaitCommand(PRELOAD_FAR_PRE_SHOOT_DELAY)
+                ),
+                new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
+//                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
+                new WaitCommand(SHOOT_DELAY)
+        );
     }
 
     private Command intakeSpike1() {
@@ -338,5 +360,39 @@ public class AutoBuilder {
 
     public Command cycleGate() {
         return cycleGate(false);
+    }
+
+    public Command intakeWall() {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, INTAKE_WALL_POSE, mirror, false, false)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY)
+        );
+    }
+
+    public Command shootWall() {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, lastPath, false),
+                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
+                ),
+                new WaitCommand(PRE_SHOOT_DELAY),
+                new ShootThreeBallsCommand(robot),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitCommand(SHOOT_DELAY)
+        );
+    }
+
+    public Command cycleWall() {
+        return new SequentialCommandGroup(
+                intakeWall(),
+                shootWall()
+        );
     }
 }
