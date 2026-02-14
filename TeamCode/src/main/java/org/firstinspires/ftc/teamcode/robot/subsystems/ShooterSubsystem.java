@@ -72,8 +72,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // hood limits
     public static double hoodPosMax = 0.9; //maximum position the servo can go to
     public static double hoodPosMin = 0.14; //min position the servo can go to
-    public static double hoodAngleMax = 0.919427826056; //radian measure of hood at max pos
-    public static double hoodAngleMin = 0.632748891943; //radian measure of hood at min pos
+    public static double hoodAngleMax = 1.0; //radian measure of hood at max pos
+    public static double hoodAngleMin = 0.0; //radian measure of hood at min pos
 
     // vars for calculating shot (unused currently, todo: remove later)
     public static double robotHeight = 14.0; //in
