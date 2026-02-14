@@ -160,7 +160,7 @@ public class CameraSubsystem extends SubsystemBase {
         }
         else if(team.equals(Team.BLUE))
         {
-            if(tagAngle > 0)
+            if(tagAngle < 0)
             {
                 setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
             }
