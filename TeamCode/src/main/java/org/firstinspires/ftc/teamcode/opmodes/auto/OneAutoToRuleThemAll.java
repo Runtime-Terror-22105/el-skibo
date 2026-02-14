@@ -78,7 +78,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.telemetry.addLine("One Auto to rule them all, One Auto to find them,");
         robot.telemetry.addLine("One Auto to bring them all and in the darkness bind them");
         robot.telemetry.addLine("In the Land of Winecreek where the Terrors lie.");
-        robot.telemetry.update();
     }
 
     protected abstract StartConfig getStartConfig();
@@ -139,7 +138,10 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
             CommandScheduler.getInstance().run();
 
             hardware.write();
-            this.showPoem();
+
+            FtcDashDrawing.drawDebug(robot.follower);
+//            this.showPoem();
+            robot.telemetry.update();
         }
 
         // we're going to see the wrong one
