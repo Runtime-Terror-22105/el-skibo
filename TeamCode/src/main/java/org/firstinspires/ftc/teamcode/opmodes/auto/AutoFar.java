@@ -27,7 +27,7 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
         return new SequentialCommandGroup(
                 builder.shootPreloadFar(),
                 builder.cycleWall(),
-                builder.cycleSpike(3),
+                builder.intakeSpike3Far(), builder.shootSpike3Far(),
                 builder.cycleWall(),
                 builder.cycleWall()
         );
