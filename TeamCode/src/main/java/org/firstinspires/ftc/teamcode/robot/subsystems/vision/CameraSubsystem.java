@@ -134,12 +134,19 @@ public class CameraSubsystem extends SubsystemBase {
         vPortalField.stopStreaming();
     }
 
+    /*
+
+                 __
+                 \/
+             + yaw    -yaw
+     */
+
     public void setGlyphByNormal(AprilTagDetection tag)
     {
         robot.telemetry.addData(TAG,"skibidi yaw:"+Math.toDegrees(tag.ftcPose.yaw));
 //        robot.telemetry.addData(TAG,"skibidi pitch:"+tag.ftcPose.pitch);
         robot.telemetry.addData(TAG,"skibidi bearing:"+Math.toDegrees(tag.ftcPose.bearing));
-        double tagAngle = 0; //TODO: replace with whichever works
+        double tagAngle = tag.ftcPose.yaw; //TODO: replace with whichever works
         if(team.equals(Team.RED))
         {
             if(tagAngle < 0)
@@ -278,10 +285,7 @@ public class CameraSubsystem extends SubsystemBase {
             if(isAuto) {
                 if(obeliskIndex==1)
                 {
-                    if(obeliskpair[0].id == 21)
-                    {
                         setGlyphByNormal(obeliskpair[0]);
-                    }
                 }
                 else if(obeliskIndex==2)
                 {
