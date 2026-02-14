@@ -226,7 +226,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     }
 
-    public void setIsInAuto(boolean state)
+    public void setIsInNearAuto(boolean state)
     {
         this.isAuto = state;
     }
