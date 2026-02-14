@@ -26,10 +26,11 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
                 builder.shootPreloadFar(),
-                builder.cycleWall(),
+                // Do not intake on first since they're guaranteed
+                builder.cycleWall(false),
                 builder.intakeSpike3Far(), builder.shootSpike3Far(),
-                builder.cycleWall(),
-                builder.cycleWall()
+                builder.cycleWall(true),
+                builder.cycleWall(true)
         );
     }
 }
