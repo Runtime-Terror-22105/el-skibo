@@ -33,14 +33,14 @@ public class FlightTimeLookupTable {
     }
 
     public static FlightTimeLookupValue[] DATA_POINTS = new FlightTimeLookupValue[]{
-            new FlightTimeLookupValue(33.0, 0.51),
-            new FlightTimeLookupValue(51.1, 0.68),
-            new FlightTimeLookupValue(60.9, 0.69),
-            new FlightTimeLookupValue(71.0, 0.72),
-            new FlightTimeLookupValue(80.2, 0.72),
-            new FlightTimeLookupValue(93.5, 0.87),
-            new FlightTimeLookupValue(107.2, 0.89),
-            new FlightTimeLookupValue(123.5, 1.03)
+            new FlightTimeLookupValue(27.7,0.62),
+            new FlightTimeLookupValue(45.5,0.66), //im sorry aadit
+            new FlightTimeLookupValue(68.7,0.68), //im sorry aadit
+            new FlightTimeLookupValue(90.7,0.7),
+            new FlightTimeLookupValue(104.4,0.9),
+            new FlightTimeLookupValue(122.7,0.75),
+            new FlightTimeLookupValue(140.2,0.75),
+
     };
 
     // Note: Due to usage of InterpLUTSafe, the LUT will simply cap values outside the known range
