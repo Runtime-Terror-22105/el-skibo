@@ -15,7 +15,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(45, 95, Math.toRadians(225));
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 95, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
-    public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 15, Math.toRadians(180));
+    public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 13, Math.toRadians(180));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
     public static Pose2d INTAKE_1_POSE = new Pose2d(22, 85.149, Math.toRadians(180));
@@ -25,6 +25,7 @@ public class AutoConstants {
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 45.668);
+    public static Pose2d INTAKE_3_CONTROL_FAR = new Pose2d(48, 39);
     public static Pose2d INTAKE_3_POSE = new Pose2d(17, 39, Math.toRadians(180));
 
     // For pushing gate after a SPIKE STRIP.
@@ -35,7 +36,7 @@ public class AutoConstants {
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 59.5, Math.toRadians(180));
     public static Pose2d AFTER_GATE = new Pose2d(12, 62, Math.toRadians(163));
 
-    public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 15, Math.toRadians(180));
+    public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 10, Math.toRadians(180));
 
     public static int INTAKE_DELAY = 600;
     public static int GATE_INTAKE_DELAY = 1500;
