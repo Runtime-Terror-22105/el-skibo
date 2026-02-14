@@ -53,7 +53,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.8, 0, 0.025, 0, 0);
+            new PidfController.PidfCoefficients(0.85, 0, 0.025, 0, 0.15);
     public static double yawPidTolerance = Math.toRadians(4); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
