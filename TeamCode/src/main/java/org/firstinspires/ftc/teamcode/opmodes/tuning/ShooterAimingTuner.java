@@ -7,7 +7,11 @@ import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.SHOOTING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.TRANSFER;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -24,6 +28,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
@@ -292,6 +297,22 @@ public class ShooterAimingTuner extends LinearOpMode {
             long time = System.nanoTime();
             long dt = time - lastLoop;
             lastLoop = time;
+
+            Vector goalToRobot;
+            Pose robotPose = robot.follower.getPose();
+
+            if (Team.RED.equals(robot.color)) {
+                robotPose = robotPose.mirror();
+            }
+
+
+            goalToRobot = new Vector(new Pose(robotPose.getX(), robotPose.getY()-144D));
+            double angle = Math.abs(Angle.angleWrap(goalToRobot.getTheta()));
+            if (angle > ((1D/2D)*Math.PI)){
+                angle = (1D/4D)*Math.PI;
+            }
+
+            if (debug) Log.i("BetterShooterAimTuner", "angle" + angle + "offset "+ goalPosOffset);
 
             robot.telemetry.addData("Robot Position", robot.follower.getPose());
             robot.telemetry.addData("Goal Position", robot.shooter.goalPosLookupTable.get());
