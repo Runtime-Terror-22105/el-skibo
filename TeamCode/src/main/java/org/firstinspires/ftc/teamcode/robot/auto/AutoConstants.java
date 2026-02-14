@@ -12,10 +12,16 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Config
 public class AutoConstants {
     // Unless otherwise specified, all poses are for NEAR ZONE.
-    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(45, 95, Math.toRadians(225));
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 95, Math.toRadians(225));
+    public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(24, 108, Math.toRadians(225));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
     public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 13, Math.toRadians(180));
+
+    public static Pose2d INTAKE_BEFORE_HORIZ_CONTROL = new Pose2d(24, 114, 0);
+    public static Pose2d INTAKE_BEFORE_HORIZ_POSE = new Pose2d(24, 102, Math.toRadians(270));
+    public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(24, 82, Math.toRadians(270));
+    public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(24, 58, Math.toRadians(270));
+    public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(24, 34, Math.toRadians(270));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
     public static Pose2d INTAKE_1_POSE = new Pose2d(22, 85.149, Math.toRadians(180));
