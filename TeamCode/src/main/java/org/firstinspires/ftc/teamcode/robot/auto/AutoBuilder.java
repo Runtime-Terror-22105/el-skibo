@@ -4,13 +4,18 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
@@ -28,6 +33,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PREL
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -273,6 +279,37 @@ public class AutoBuilder {
         }
     }
 
+    public Command intakeSpikeHorizontal(int spikeNumber) {
+        Pose2d intakePose;
+        if (spikeNumber == 1) {
+            intakePose = INTAKE_1_HORIZ_POSE;
+        } else if (spikeNumber == 2) {
+            intakePose = INTAKE_2_HORIZ_POSE;
+        } else if (spikeNumber == 3) {
+            intakePose = INTAKE_3_HORIZ_POSE;
+        } else {
+            throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
+        }
+        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_BEFORE_HORIZ_CONTROL, INTAKE_BEFORE_HORIZ_POSE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .addPath(
+                        new BezierLine(
+                                INTAKE_BEFORE_HORIZ_POSE.mirror(mirror).toPedro(),
+                                intakePose.mirror(mirror).toPedro()
+                        )
+                )
+                .setConstantHeadingInterpolation(INTAKE_BEFORE_HORIZ_POSE.mirror(mirror).heading)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+        );
+    }
+
     /**
      * Command to shoot from spike number.
      *
@@ -400,7 +437,7 @@ public class AutoBuilder {
 
     public Command intakeWall(boolean reverseIntake) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, INTAKE_WALL_POSE, mirror, false, false)
-                .setConstraints(RELAXED_CONSTRAINTS)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
