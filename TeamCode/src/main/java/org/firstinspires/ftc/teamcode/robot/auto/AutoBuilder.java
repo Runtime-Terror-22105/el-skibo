@@ -23,8 +23,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -105,16 +103,20 @@ public class AutoBuilder {
     private PathChain prepareIntakeSpike3Path() {
         // TODO: i think we can combine the two paths into one PathChain
         // it might be a little sus here that addPathBuilderCurve sets the heading interpolation to linear but we then override this
+        Pose2d prepareIntakePose = PREPARE_INTAKE_3_POSE.mirror(mirror);
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_3_CONTROL, PREPARE_INTAKE_3_POSE, mirror, false, false)
                 .setHeadingInterpolation(
                         HeadingInterpolator.piecewise(
                                 new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(0.4, 1.0,
+                                new HeadingInterpolator.PiecewiseNode(0.4, 0.7,
                                         FixedHeadingInterpolator.linearFromPoint(
                                                 () -> robot.follower.getHeading(),
-                                                PREPARE_INTAKE_3_POSE.mirror(mirror).heading,
+                                                prepareIntakePose.heading,
                                                 0.4, 0.7
                                         )
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0,
+                                        HeadingInterpolator.constant(prepareIntakePose.heading)
                                 )
                         )
                 )
