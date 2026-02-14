@@ -278,7 +278,10 @@ public class CameraSubsystem extends SubsystemBase {
             if(isAuto) {
                 if(obeliskIndex==1)
                 {
-                    setGlyphByNormal(obeliskpair[0]);
+                    if(obeliskpair[0].id == 21)
+                    {
+                        setGlyphByNormal(obeliskpair[0]);
+                    }
                 }
                 else if(obeliskIndex==2)
                 {
