@@ -20,7 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorDummyMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
@@ -162,7 +161,7 @@ public class RobotHardware {
 
 
         // Initialize the spindexer
-        this.spindexerRotate = new TerrorDummyMotorNormal(
+        this.spindexerRotate = new TerrorMotorNormal(
                 hwMap, "spindexerRotate",
                 0.01,
                 1.0
