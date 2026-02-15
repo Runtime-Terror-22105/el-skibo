@@ -16,6 +16,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_P
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_CONTROL;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
@@ -455,6 +456,26 @@ public class AutoBuilder {
         );
     }
 
+    public Command intakeTunnel(boolean reverseIntake) {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, INTAKE_TUNNEL_POSE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, lastPath, true, 0.9),
+                        new GoToIntakeStateCommand(robot)
+                ),
+                new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {}),
+                        // Only reverse if reverseIntake and we get 3 balls
+                        () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
+                )
+        );
+    }
+
     public Command shootWall() {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
@@ -468,6 +489,12 @@ public class AutoBuilder {
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
                 new WaitCommand(SHOOT_DELAY)
+        );
+    }
+    public Command cycleTunnel(boolean reverseIntake){
+        return new SequentialCommandGroup(
+                intakeTunnel(reverseIntake),
+                shootWall()
         );
     }
 
