@@ -24,7 +24,9 @@ public class SortTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    public static CameraSubsystem.GLYPH glyph=CameraSubsystem.GLYPH.GPP;
+    public static String glyphChoice = "PGP";
+
+//    public static CameraSubsystem.GLYPH glyph=CameraSubsystem.GLYPH.GPP;
 
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
@@ -32,7 +34,18 @@ public class SortTest extends LinearOpMode {
 
         waitForStart();
 
-        robot.camera.setGlyph(glyph);
+        if(glyphChoice.equals("PGP"))
+        {
+            robot.camera.setGlyph(CameraSubsystem.GLYPH.PGP);
+        }
+        if(glyphChoice.equals("GPP"))
+        {
+            robot.camera.setGlyph(CameraSubsystem.GLYPH.GPP);
+        }
+        if(glyphChoice.equals("PPG"))
+        {
+            robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
+        }
 
         CommandScheduler.getInstance().schedule(new WaitCommand(500).andThen(new SortCommand(robot)));
         while (opModeIsActive()) {

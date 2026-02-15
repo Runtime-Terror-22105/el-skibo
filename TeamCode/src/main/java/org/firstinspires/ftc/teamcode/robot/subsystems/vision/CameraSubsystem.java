@@ -30,8 +30,10 @@ public class CameraSubsystem extends SubsystemBase {
     public static String TAG = "CameraSubsystem";
 
     public static boolean disableRelocalization = false;
-    public static Coordinate cameraToTurretCenterOffset = new Coordinate(4.7, 2.2);
-    public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
+
+    public static int xOffset = -8;
+    public static int yOffset = 0;
+    public static Coordinate cameraToRobotCenterOffset = new Coordinate(xOffset, yOffset);
 
     public static double CONVERGENCE_RATE = 0.1;
     public static double VELOCITY_THRESHOLD = 5.0; // inches per second
@@ -302,7 +304,7 @@ public class CameraSubsystem extends SubsystemBase {
             robot.telemetry.addData("Localization Tag", localizationTag);
             if (localizationTag != null && localizationTag.robotPose != null
                     && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
-//                handleLocalizationDetection(localizationTag);
+//                relocalize(localizationTag);
             }
 
             if (debugLastDetection != null) {
@@ -314,43 +316,54 @@ public class CameraSubsystem extends SubsystemBase {
         }
     }
 
-    private void handleLocalizationDetection(AprilTagDetection tag) {
-        Pose cameraFieldPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI);
-//        FtcDashDrawing.drawDot(cameraFieldPose, "#0000FF");
-
-        double turretAngle = robot.shooter.getGoalTurretYaw();
-        double cameraRobotHeading = cameraFieldPose.getHeading() - turretAngle;
-        double pinpointRobotHeading = robot.follower.poseTracker.getPose().getHeading();
-
-        // If the Pinpoint IMU heading is extremely off from the calculated angle, this means we've
-        // likely inited the IMU in the wrong position. So, we will do a "full localization reset"
-        // to correct it.
-//        boolean isFullReset = MathFunctions.getSmallestAngleDifference(cameraRobotHeading, pinpointRobotHeading) < Math.toRadians(FULL_RESET_THRESHOLD_ANGLE);
-        double robotHeading;
-        double convergenceRate;
-        robotHeading = pinpointRobotHeading;
-        convergenceRate = CONVERGENCE_RATE;
-
-        Pose turretVector = new Pose(cameraToTurretCenterOffset.x, cameraToTurretCenterOffset.y, 0).rotate(cameraFieldPose.getHeading(), false);
-        Pose turretCenter = cameraFieldPose.minus(turretVector);
-//        FtcDashDrawing.drawDot(turretCenter, "#FF00FF");
-        Pose robotVector = new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0).rotate(robotHeading, false);
-        Pose robotCenter = turretCenter.minus(robotVector);
-
-        Pose robotPose = new Pose(robotCenter.getX(), robotCenter.getY(), robotHeading);
-
-        debugLastDetection = robotPose;
-        debugDetectionTime = System.currentTimeMillis();
-
-        // Apply exponential convergence
-        if (!disableRelocalization) {
-            Pose currentPose = robot.follower.poseTracker.getPose();
-            Pose convergedPose = new Pose(
-                    currentPose.getX() + convergenceRate * (robotPose.getX() - currentPose.getX()),
-                    currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
-                    currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
-            );
-            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
-        }
+    private void relocalize(AprilTagDetection tag)
+    {
+        Pose robotPoseFromCamera = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
+        FtcDashDrawing.drawDot(robotPoseFromCamera, "#0000FF");
+        Pose cameraOffsetVector = new Pose(cameraToRobotCenterOffset.x,cameraToRobotCenterOffset.y,0).rotate(robotPoseFromCamera.getHeading(),false);
+        Pose localizedPose = robotPoseFromCamera.minus(cameraOffsetVector);
+        robot.follower.setPose(localizedPose);
+        robot.telemetry.addData("pleasework",localizedPose.toString());
+//        Log.d("pleasework",localizedPose.toString());
+        /*
+        * 73.62766055610237, 68.73611089751476, -115.51848399842707)*/
+        /*pleasework: (66.54386596014463, 75.20379864761392, -124.53039951388197)*/
     }
+
+//    private void handleLocalizationDetection(AprilTagDetection tag) {
+//        Pose cameraFieldPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI);
+////        FtcDashDrawing.drawDot(cameraFieldPose, "#0000FF");
+//
+//        double pinpointRobotHeading = robot.follower.poseTracker.getPose().getHeading();
+//
+//        // If the Pinpoint IMU heading is extremely off from the calculated angle, this means we've
+//        // likely inited the IMU in the wrong position. So, we will do a "full localization reset"
+//        // to correct it.
+////        boolean isFullReset = MathFunctions.getSmallestAngleDifference(cameraRobotHeading, pinpointRobotHeading) < Math.toRadians(FULL_RESET_THRESHOLD_ANGLE);
+//        double robotHeading;
+//        double convergenceRate;
+//        robotHeading = pinpointRobotHeading;
+//        convergenceRate = CONVERGENCE_RATE;
+//
+//        Pose turretVector = new Pose(cameraToRobotCenterOffset.x, cameraToRobotCenterOffset.y, 0).rotate(cameraFieldPose.getHeading(), false);
+//        Pose robotCenter = cameraFieldPose.minus(turretVector);
+////        FtcDashDrawing.drawDot(turretCenter, "#FF00FF");
+//
+//        Pose robotPose = new Pose(robotCenter.getX(), robotCenter.getY(), robotHeading);
+//
+//        debugLastDetection = robotPose;
+//        debugDetectionTime = System.currentTimeMillis();
+//
+//        // Apply exponential convergence
+//        if (!disableRelocalization) {
+//            Pose currentPose = robot.follower.poseTracker.getPose();
+//            Pose convergedPose = new Pose(
+//                    currentPose.getX() + convergenceRate * (robotPose.getX() - currentPose.getX()),
+//                    currentPose.getY() + convergenceRate * (robotPose.getY() - currentPose.getY()),
+//                    currentPose.getHeading() + convergenceRate * (robotPose.getHeading() - currentPose.getHeading())
+//            );
+//            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
+//        }
+//    }
+
 }
