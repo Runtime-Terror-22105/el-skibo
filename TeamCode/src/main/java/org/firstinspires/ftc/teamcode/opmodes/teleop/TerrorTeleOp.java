@@ -165,10 +165,23 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton hangManualDownButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
 
         Trigger threeBallsAreInside = new Trigger(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE));
+        GamepadButton tapeZoneShoot = new GamepadButton(gamepad1ex, GamepadKeys.Button.CIRCLE);
+        tapeZoneShoot.whenPressed(() -> robot.setShootInTapeZone(!robot.getShootInTapeZone()));
 
         Trigger botInTapeZone = new Trigger(()-> robot.isInTapeZone() && robot.getShootInTapeZone());
 
-//        botInTapeZone.whenActive(new InstantCommand()->);
+        botInTapeZone.whenActive(()->new ConditionalCommand(
+                new ConditionalCommand( // if we already did the transfer, just shoot immediately
+                        new ShootThreeBallsCommand(robot),
+                        new SequentialCommandGroup(
+                                new PrepareShootCommand(robot, true),
+                                new ShootThreeBallsCommand(robot)
+                        ),
+                        () -> robot.robotState == READY_TO_SHOOT
+                ),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
+        ));
 
         // todo: implement hang later
         hangButton.whenPressed(new ChangeHangStateCommand(robot));
