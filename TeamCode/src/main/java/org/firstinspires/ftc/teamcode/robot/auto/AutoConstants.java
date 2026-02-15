@@ -43,6 +43,7 @@ public class AutoConstants {
     public static Pose2d AFTER_GATE = new Pose2d(12, 62, Math.toRadians(163));
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(11, 8, Math.toRadians(180));
+    public static Pose2d INTAKE_TUNNEL_POSE = new Pose2d(11, 32, Math.toRadians(180));
 
     public static int INTAKE_DELAY = 600;
     public static int GATE_INTAKE_DELAY = 1500;
