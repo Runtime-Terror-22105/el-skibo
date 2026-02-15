@@ -33,6 +33,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double MANUAL_SPINDEXER_DEGREE_CHANGE = 0.5;
 
+    public static double READY_POSITION = 0.52359877559829887307710723054658;
+
     public static double INTAKE_WALL_DOWN = 0.8;
     public static double INTAKE_WALL_UP = 0.1;
 
