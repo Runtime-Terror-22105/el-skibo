@@ -168,7 +168,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton tapeZoneShoot = new GamepadButton(gamepad1ex, GamepadKeys.Button.CIRCLE);
         tapeZoneShoot.whenPressed(() -> robot.setShootInTapeZone(!robot.getShootInTapeZone()));
 
-        Trigger botInTapeZone = new Trigger(()-> robot.isInTapeZone() && robot.getShootInTapeZone());
+        Trigger botInTapeZone = new Trigger(()-> robot.isInTapeZone() && robot.getShootInTapeZone() && threeBallsAreInside.get());
 
         botInTapeZone.whenActive(()->new ConditionalCommand(
                 new ConditionalCommand( // if we already did the transfer, just shoot immediately
