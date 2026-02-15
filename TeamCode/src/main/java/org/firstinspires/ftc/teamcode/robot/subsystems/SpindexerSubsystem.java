@@ -284,6 +284,7 @@ public class SpindexerSubsystem extends SubsystemBase {
             case 2:
 
             case -1:
+
                 this.rotate(rotateAmount);
                 break;
 
