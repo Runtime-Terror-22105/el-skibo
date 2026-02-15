@@ -57,7 +57,7 @@ public class RobotHardware {
     public TerrorEncoder shooterEncoder;   // i forgot to write the comment
 
     // Spindexer
-    public static double SPINDEXER_ENCODER_OFFSET_DEGREES = -90.0;
+    public static double SPINDEXER_ENCODER_OFFSET_DEGREES = -95.0;
     public static boolean SPINDEXER_ENCODER_REVERSED = false;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo spindexerIntakeWallServo;
