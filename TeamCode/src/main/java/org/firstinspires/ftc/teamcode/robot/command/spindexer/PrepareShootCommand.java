@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
@@ -55,13 +56,15 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                                 new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING), // todo: adjust this delay based on how long it takes for these two servos
                                 new SortCommand(robot)
                         ),
-                        new InstantCommand(() -> {}),
+                        new ParallelCommandGroup(
+                                new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
+                                new SetSpindexerRampActive(robot.spindexer, true)),
                         robot::getAutoSort
                 ),
                 new LogCatCommand("PrepareShootCommand", "Phase 2/3 done", Log.INFO),
 
                 // Phase 4: drop down ramp and start intake
-                new SetSpindexerRampActive(robot.spindexer, true),
+
                 new WaitCommand(RAMP_DELAY), // todo: adjust this delay based on how long it takes for ramp to drop
                 new LogCatCommand("PrepareShootCommand", "Phase 4 done", Log.INFO),
                 new SetIntakeSpeedCommand(robot.intake, 0),
