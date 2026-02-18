@@ -39,7 +39,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static boolean disableRelocalization = false;
 
     //banks on the camera always being aligned on one of the robot's center axes
-    public static double cameraOffsetInches = 8;
+    public static double cameraOffsetInches = -8;
 
 
     public static double CONVERGENCE_RATE = 0.1;
@@ -92,6 +92,8 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean isNearAuto = false;
     private boolean isFarAuto = false; //maybe do smth with this i lowk dunno
 
+    private int[] visionPortalIDs;
+
     public CameraSubsystem() {
         this.vPortalFront = null;
         this.vPortalBack = null;
@@ -99,6 +101,7 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
+        this.visionPortalIDs =  VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
         this.robot = robot;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
@@ -111,6 +114,7 @@ public class CameraSubsystem extends SubsystemBase {
 //                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setLiveViewContainerId(visionPortalIDs[0])
                 .addProcessor(this.frontTagProcessor);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
@@ -118,6 +122,7 @@ public class CameraSubsystem extends SubsystemBase {
 //                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setLiveViewContainerId(visionPortalIDs[1])
                 .addProcessor(this.backTagProcessor);
 
         switch (liveViewSettings) {
