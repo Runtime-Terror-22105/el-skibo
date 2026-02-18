@@ -34,7 +34,7 @@ public class CameraTest extends LinearOpMode {
         }
         if(isInNearAuto)
         {
-            robot.camera.setIsInNearAuto(true);
+            robot.camera.setAuto(true,false);
         }
         waitForStart();
 
