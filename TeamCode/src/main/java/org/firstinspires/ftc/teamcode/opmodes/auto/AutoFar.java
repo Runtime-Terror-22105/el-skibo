@@ -29,9 +29,9 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
                 // Do not intake on first since they're guaranteed
                 builder.cycleWall(false),
                 builder.intakeSpike3Far(), builder.shootSpike3Far(),
+                builder.cycleTunnel(true),
                 builder.cycleWall(true),
-                builder.cycleWall(true),
-                builder.cycleWall(true),
+                builder.cycleTunnel(true),
                 builder.cycleWall(true)
         );
     }
