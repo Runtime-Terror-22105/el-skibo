@@ -101,7 +101,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.setAutoSort(false);
 
         // Set up the camera
-        if (hardware.fieldCamera != null) {
+        if (hardware.frontCamera != null || hardware.backCamera != null) {
 
             this.camera = new CameraSubsystem(this,hardware, CameraSubsystem.LiveViewSettings.FIELD);
 //            this.camera = new TerrorCameraVisionPortal.Builder()
