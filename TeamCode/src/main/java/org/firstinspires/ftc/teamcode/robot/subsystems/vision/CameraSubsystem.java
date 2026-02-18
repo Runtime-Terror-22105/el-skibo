@@ -27,13 +27,20 @@ import java.util.Arrays;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
+
+    /*
+      front camera is primarily for ball detection
+      back camera is primarily for atag relocalization
+      we'll see what we can do with both
+     */
+
     public static String TAG = "CameraSubsystem";
 
     public static boolean disableRelocalization = false;
 
-    public static int xOffset = -8;
-    public static int yOffset = 0;
-    public static Coordinate cameraToRobotCenterOffset = new Coordinate(xOffset, yOffset);
+    //banks on the camera always being aligned on one of the robot's center axes
+    public static double cameraOffsetInches = 8;
+
 
     public static double CONVERGENCE_RATE = 0.1;
     public static double VELOCITY_THRESHOLD = 5.0; // inches per second
@@ -42,7 +49,8 @@ public class CameraSubsystem extends SubsystemBase {
     public static int GAIN = 255;
 
 //    private AprilTagProcessorDash aTagProcessor;
-    private AprilTagProcessor aTagProcessor;
+    private AprilTagProcessor frontTagProcessor;
+    private AprilTagProcessor backTagProcessor;
 
     private boolean shouldScanForGlyphs = false;
 
@@ -65,8 +73,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     public GLYPH gameGlyph;
 
-    private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
-    public final VisionPortal vPortalField;
+//    private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
+    public final VisionPortal vPortalFront;
+    public final VisionPortal vPortalBack;
+
+    public static boolean usingFrontCamera = true;
+    public static boolean usingBackCamera = true;
 
     private ArrayList<AprilTagDetection> detections;
 
@@ -77,10 +89,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     private Team team;
 
-    private boolean isAuto = false;
+    private boolean isNearAuto = false;
+    private boolean isFarAuto = false; //maybe do smth with this i lowk dunno
 
     public CameraSubsystem() {
-        this.vPortalField = null;
+        this.vPortalFront = null;
+        this.vPortalBack = null;
         this.shouldScanForGlyphs = true;
     }
 
@@ -88,15 +102,23 @@ public class CameraSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
-        this.aTagProcessor = createAprilTagProcessor();
+        this.frontTagProcessor = createAprilTagProcessor();
+        this.backTagProcessor = createAprilTagProcessor();
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
-        VisionPortal.Builder vPortalFieldBuilder = new VisionPortal.Builder()
-                .setCamera(hardware.fieldCamera)
+        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
+                .setCamera(hardware.frontCamera)
 //                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .addProcessor(this.aTagProcessor);
+                .addProcessor(this.frontTagProcessor);
+
+        VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
+                .setCamera(hardware.backCamera)
+//                .setCameraResolution(new Size(320, 240))
+                .setCameraResolution(new Size(1280, 800))
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .addProcessor(this.backTagProcessor);
 
         switch (liveViewSettings) {
             case FIELD:
@@ -108,7 +130,8 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
         }
 
-        vPortalField = vPortalFieldBuilder.build();
+        vPortalFront = vPortalFrontBuilder.build();
+        vPortalBack = vPortalBackBuilder.build();
 
 //        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
@@ -133,7 +156,8 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public void stopCamera() {
-        vPortalField.stopStreaming();
+        vPortalFront.stopStreaming();
+        vPortalBack.stopStreaming();
     }
 
     /*
@@ -171,11 +195,6 @@ public class CameraSubsystem extends SubsystemBase {
                 setGlyph(VisionConstants.APRILTAG.BlueIndividualPairs.get(tag.id));
             }
         }
-//        robot.telemetry.addData(TAG,"skibidi elevation:"+tag.ftcPose.elevation);
-//        robot.telemetry.addData(TAG,"skibidi range:"+tag.ftcPose.range);
-//        robot.telemetry.addData(TAG,"skibidi roll:"+tag.ftcPose.roll);
-//        robot.telemetry.addData(TAG,"skibidi truth:"+tag.rawPose.R);
-//        Log.d(TAG,
     }
 
     public void stopScanningForGlyphs() {
@@ -228,15 +247,21 @@ public class CameraSubsystem extends SubsystemBase {
 
     }
 
-    public void setIsInNearAuto(boolean state)
+    public void setAuto(boolean isNearAuto, boolean isFarAuto)
     {
-        this.isAuto = state;
+        this.isNearAuto = isNearAuto;
+        this.isFarAuto = isFarAuto;
     }
 
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("CameraSubsystem")) {
-            if (vPortalField == null) return;
+            if((usingFrontCamera && vPortalFront == null) ||
+                    (usingBackCamera && vPortalBack == null) ||
+                    (!usingBackCamera && !usingFrontCamera))
+            {
+                return;
+            }
 
             // Reference for Logitech C270:
 //        public void setDefaultExposure() {
@@ -262,7 +287,16 @@ public class CameraSubsystem extends SubsystemBase {
 //        }
 
 
-            this.detections = aTagProcessor.getDetections();
+            this.detections = backTagProcessor.getDetections();
+            if(!usingBackCamera || backTagProcessor.getDetections().isEmpty())
+            {
+                this.detections = frontTagProcessor.getDetections();
+            }
+            if(!usingFrontCamera) //eventually add some check for || no balls cv detected
+            {
+
+            }
+
             // Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
             //should only ever be the blue or red goal which is 20 and 24 respectively
             AprilTagDetection localizationTag = null;
@@ -272,7 +306,7 @@ public class CameraSubsystem extends SubsystemBase {
                 if (tag.id >= 21 && tag.id <= 23) {
                     obeliskpair[obeliskIndex] = tag;
                     obeliskIndex++;
-                    if(!isAuto)
+                    if(!isNearAuto)
                     {
                         GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
                         this.gameGlyph = glyphhh;
@@ -284,7 +318,7 @@ public class CameraSubsystem extends SubsystemBase {
                     localizationTag = tag;
                 }
             }
-            if(isAuto) {
+            if(isNearAuto) {
                 if(obeliskIndex==1)
                 {
                         setGlyphByNormal(obeliskpair[0]);
@@ -301,10 +335,13 @@ public class CameraSubsystem extends SubsystemBase {
             // Log.d(TAG, "Localization Tag: " + localizationTag);
             robot.telemetry.addData("Glyph", gameGlyph);
             robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
-            robot.telemetry.addData("Localization Tag", localizationTag);
+            if(localizationTag != null)
+            {
+                robot.telemetry.addData("Localization Tag id", localizationTag.id);
+            }
             if (localizationTag != null && localizationTag.robotPose != null
                     && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
-//                relocalize(localizationTag);
+                relocalize(localizationTag);
             }
 
             if (debugLastDetection != null) {
@@ -316,14 +353,44 @@ public class CameraSubsystem extends SubsystemBase {
         }
     }
 
+    private void ballBlob()
+    {
+        //i should really find something better to name this
+    }
+
     private void relocalize(AprilTagDetection tag)
     {
-        Pose robotPoseFromCamera = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
-        FtcDashDrawing.drawDot(robotPoseFromCamera, "#0000FF");
-        Pose cameraOffsetVector = new Pose(cameraToRobotCenterOffset.x,cameraToRobotCenterOffset.y,0).rotate(robotPoseFromCamera.getHeading(),false);
-        Pose localizedPose = robotPoseFromCamera.minus(cameraOffsetVector);
-        robot.follower.setPose(localizedPose);
-        robot.telemetry.addData("pleasework",localizedPose.toString());
+        Pose rawPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
+        //this funnily not a "raw pose" then but oh well noone cares
+
+        double offsetX = cameraOffsetInches * Math.cos(rawPose.getHeading());
+        double offsetY = cameraOffsetInches * Math.sin(rawPose.getHeading());
+        Pose cameraOffset = new Pose(offsetX,offsetY);
+        Pose localizedPose = rawPose.minus(cameraOffset);
+
+        debugLastDetection = localizedPose;
+        debugDetectionTime = System.currentTimeMillis();
+
+        if(!disableRelocalization)
+        {
+            robot.follower.poseTracker.setCurrentPoseWithOffset(localizedPose);
+            robot.telemetry.addData("pleasework",localizedPose.toString());
+            //i would be lying if i understood the diff between this and setpose
+            //i was not listening to double take when i wrote i would be lying twice and now thrice in a row
+        }
+
+        //i'd be lying if i said i understood what this does from the old localizatoin code
+//        // Apply exponential convergence
+//        if (!disableRelocalization) {
+//            Pose currentPose = robot.follower.poseTracker.getPose();
+//            Pose convergedPose = new Pose(
+//                    currentPose.getX() + CONVERGENCE_RATE * (robotPose.getX() - currentPose.getX()),
+//                    currentPose.getY() + CONVERGENCE_RATE * (robotPose.getY() - currentPose.getY()),
+//                    currentPose.getHeading() + CONVERGENCE_RATE * (robotPose.getHeading() - currentPose.getHeading())
+//            );
+//            robot.follower.poseTracker.setCurrentPoseWithOffset(convergedPose);
+//        }
+
 //        Log.d("pleasework",localizedPose.toString());
         /*
         * 73.62766055610237, 68.73611089751476, -115.51848399842707)*/

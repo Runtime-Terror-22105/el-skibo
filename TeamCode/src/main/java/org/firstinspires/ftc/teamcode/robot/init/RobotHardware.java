@@ -74,7 +74,8 @@ public class RobotHardware {
 
     // Camera
     public int cameraMonitorViewId;
-    public WebcamName fieldCamera;
+    public WebcamName frontCamera;
+    public WebcamName backCamera;
 //    private TerrorCameraVisionPortal camera;
 
     // Sensors
@@ -264,7 +265,8 @@ public class RobotHardware {
                         "id",
                         hwMap.appContext.getPackageName()
                 );
-        this.fieldCamera = hwMap.get(WebcamName.class, "Webcam 1");
+        this.frontCamera = hwMap.get(WebcamName.class, "Front Webcam");
+        this.backCamera = hwMap.get(WebcamName.class, "Back Webcam");
 
 //        this.camera = new TerrorCameraVisionPortal.Builder()
 //                .setCamera(fieldCamera)
