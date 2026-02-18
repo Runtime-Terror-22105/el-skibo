@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 
-import android.util.Log;
+import android.graphics.Color;
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -11,7 +10,6 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -21,6 +19,10 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +50,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static long EXPOSURE_MICROSECONDS = 200;
     public static int GAIN = 255;
 
-//    private AprilTagProcessorDash aTagProcessor;
+    private AprilTagProcessorDash aTagProcessor;
     private AprilTagProcessor frontTagProcessor;
     private AprilTagProcessor backTagProcessor;
 
@@ -94,6 +96,50 @@ public class CameraSubsystem extends SubsystemBase {
 
     private int[] visionPortalIDs;
 
+    private OpenCvCamera maskingCamera;
+
+
+
+    //roi
+    double top = 1;
+    double right = 1;
+
+    double left = -1;
+    double bottom = -1;
+
+    int imageWidth = 640;
+    int immageWidthMid = imageWidth/2;
+
+    private ColorBlobLocatorProcessor purpleBlobProcessor = new ColorBlobLocatorProcessor.Builder()
+            .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)
+            .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+            .setRoi(ImageRegion.asUnityCenterCoordinates(left,top,right,bottom)) //i lowk dunno this does
+            .setDrawContours(true)
+            .setBoxFitColor(0)
+            .setCircleFitColor(Color.rgb(255,255,255))
+            .setBlurSize(5)
+            .setDilateSize(15)
+            .setErodeSize(15)
+            .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
+            .build();
+
+    private ColorBlobLocatorProcessor greenBlobProcessor = new ColorBlobLocatorProcessor.Builder()
+            .setTargetColorRange(ColorRange.ARTIFACT_GREEN)
+            .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
+            .setRoi(ImageRegion.asUnityCenterCoordinates(left,top,right,bottom)) //i lowk dunno this does
+            .setDrawContours(true)
+            .setBoxFitColor(0)
+            .setCircleFitColor(Color.rgb(255,255,255))
+            .setBlurSize(5)
+            .setDilateSize(15)
+            .setErodeSize(15)
+            .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
+            .build();
+
+
+
+//    private VisionPipeline pipeline = new VisionPipeline(webcam);
+
     public CameraSubsystem() {
         this.vPortalFront = null;
         this.vPortalBack = null;
@@ -109,13 +155,14 @@ public class CameraSubsystem extends SubsystemBase {
         this.backTagProcessor = createAprilTagProcessor();
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
+
         VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.frontCamera)
 //                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[0])
-                .addProcessor(this.frontTagProcessor);
+                .addProcessors(this.frontTagProcessor);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
@@ -123,7 +170,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[1])
-                .addProcessor(this.backTagProcessor);
+                .addProcessors(this.backTagProcessor,purpleBlobProcessor,greenBlobProcessor);
 
         switch (liveViewSettings) {
             case FIELD:
@@ -293,6 +340,9 @@ public class CameraSubsystem extends SubsystemBase {
 
 
             this.detections = backTagProcessor.getDetections();
+            robot.telemetry.addData("greenblob",greenBlobProcessor.getBlobs());
+            robot.telemetry.addData("purpleblob",purpleBlobProcessor.getBlobs());
+
             if(!usingBackCamera || backTagProcessor.getDetections().isEmpty())
             {
                 this.detections = frontTagProcessor.getDetections();
