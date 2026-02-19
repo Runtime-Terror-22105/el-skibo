@@ -94,8 +94,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public void runOpMode() {
         Profiler.init();
 
-//        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
+        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+//        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL,Rob);
         robot.init(hardware, this);
 
         this.setTeam(color);
