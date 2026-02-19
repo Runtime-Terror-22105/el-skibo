@@ -76,7 +76,7 @@ public class CameraSubsystem extends SubsystemBase {
     public GLYPH gameGlyph;
 
 //    private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
-    public final VisionPortal vPortalFront;
+//    public final VisionPortal vPortalFront;
     public final VisionPortal vPortalBack;
 
     public static boolean usingFrontCamera = true;
@@ -141,7 +141,7 @@ public class CameraSubsystem extends SubsystemBase {
 //    private VisionPipeline pipeline = new VisionPipeline(webcam);
 
     public CameraSubsystem() {
-        this.vPortalFront = null;
+//        this.vPortalFront = null;
         this.vPortalBack = null;
         this.shouldScanForGlyphs = true;
     }
@@ -156,13 +156,13 @@ public class CameraSubsystem extends SubsystemBase {
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
 
-        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
-                .setCamera(hardware.frontCamera)
-//                .setCameraResolution(new Size(320, 240))
-                .setCameraResolution(new Size(1280, 800))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setLiveViewContainerId(visionPortalIDs[0])
-                .addProcessors(this.frontTagProcessor);
+//        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
+//                .setCamera(hardware.frontCamera)
+////                .setCameraResolution(new Size(320, 240))
+//                .setCameraResolution(new Size(1280, 800))
+//                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+//                .setLiveViewContainerId(visionPortalIDs[0])
+//                .addProcessors(this.frontTagProcessor,purpleBlobProcessor,greenBlobProcessor);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
@@ -170,7 +170,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[1])
-                .addProcessors(this.backTagProcessor,purpleBlobProcessor,greenBlobProcessor);
+                .addProcessors(this.backTagProcessor);
 
         switch (liveViewSettings) {
             case FIELD:
@@ -182,7 +182,7 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
         }
 
-        vPortalFront = vPortalFrontBuilder.build();
+//        vPortalFront = vPortalFrontBuilder.build();
         vPortalBack = vPortalBackBuilder.build();
 
 //        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
@@ -208,7 +208,7 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public void stopCamera() {
-        vPortalFront.stopStreaming();
+//        vPortalFront.stopStreaming();
         vPortalBack.stopStreaming();
     }
 
@@ -308,7 +308,8 @@ public class CameraSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("CameraSubsystem")) {
-            if((usingFrontCamera && vPortalFront == null) ||
+            if(
+//                    (usingFrontCamera && vPortalFront == null) ||
                     (usingBackCamera && vPortalBack == null) ||
                     (!usingBackCamera && !usingFrontCamera))
             {
@@ -428,7 +429,8 @@ public class CameraSubsystem extends SubsystemBase {
 
         if(!disableRelocalization)
         {
-            robot.follower.poseTracker.setCurrentPoseWithOffset(localizedPose);
+//            robot.follower.poseTracker.setCurrentPoseWithOffset(localizedPose);
+            robot.follower.setPose(localizedPose);
             robot.telemetry.addData("pleasework",localizedPose.toString());
             //i would be lying if i understood the diff between this and setpose
             //i was not listening to double take when i wrote i would be lying twice and now thrice in a row

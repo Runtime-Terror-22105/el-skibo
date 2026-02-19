@@ -100,21 +100,22 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         // Other
         this.setAutoSort(false);
 
-        // Set up the camera
-        if (hardware.frontCamera != null || hardware.backCamera != null) {
-
-            this.camera = new CameraSubsystem(this,hardware, CameraSubsystem.LiveViewSettings.FIELD);
-//            this.camera = new TerrorCameraVisionPortal.Builder()
-//                    .setCamera(hardware.fieldCamera)
-//                    .setCameraResolution(new Size(320, 240))
-//                    .enableLiveView(true)
-////                    .detectAprilTags()
-//                    .detectColorBlobs(matchColors)
-//                    .flip()
-//                    .build();
-        } else {
-            this.camera = new CameraSubsystem();
-        }
+//        // Set up the camera
+//        if (hardware.frontCamera != null || hardware.backCamera != null) {
+//
+//            this.camera = new CameraSubsystem(this,hardware, CameraSubsystem.LiveViewSettings.FIELD);
+////            this.camera = new TerrorCameraVisionPortal.Builder()
+////                    .setCamera(hardware.fieldCamera)
+////                    .setCameraResolution(new Size(320, 240))
+////                    .enableLiveView(true)
+//////                    .detectAprilTags()
+////                    .detectColorBlobs(matchColors)
+////                    .flip()
+////                    .build();
+//        } else {
+//            this.camera = new CameraSubsystem();
+//        }
+        this.camera = new CameraSubsystem(this,hardware,CameraSubsystem.LiveViewSettings.FIELD);
     }
 
     /**
