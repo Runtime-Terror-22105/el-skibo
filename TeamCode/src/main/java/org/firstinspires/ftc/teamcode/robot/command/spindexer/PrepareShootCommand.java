@@ -54,7 +54,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new ConditionalCommand(
                         new SequentialCommandGroup(
                                 new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING), // todo: adjust this delay based on how long it takes for these two servos
-                                new SortCommand(robot)
+                                new SortCommand(robot),
+                                new SetSpindexerRampActive(robot.spindexer, true)
                         ),
                         new ParallelCommandGroup(
                                 new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
