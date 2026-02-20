@@ -225,6 +225,14 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        slowSpeedButton.whenReleased(() -> robot.drive.setSlowSpeed(false));
 
         shoot3button.whenPressed(new ConditionalCommand(
+                new PrepareShootCommand(robot),
+                new InstantCommand(() -> {} ),
+                () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
+        ));
+
+        shoot3button.whenActive(() -> robot.shooter.isAutoAimOn = true);
+        shoot3button.whenInactive(() -> robot.shooter.isAutoAimOn = false);
+        shoot3button.whenReleased(new ConditionalCommand(
                 new ConditionalCommand( // if we already did the transfer, just shoot immediately
                         new ShootThreeBallsCommand(robot),
                         new SequentialCommandGroup(
@@ -237,11 +245,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
         ));
 
-        transferButton.whenPressed(new ConditionalCommand(
-                new PrepareShootCommand(robot),
-                new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
-        ));
+
 
         restingButton.whenPressed(new GoToRestingStateCommand(robot));
 
