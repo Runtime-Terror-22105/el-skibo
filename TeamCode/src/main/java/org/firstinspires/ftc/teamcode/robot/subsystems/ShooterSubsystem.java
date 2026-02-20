@@ -147,7 +147,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
-        this.isAutoAimOn = true;
+
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
         double distToGoal = botPos.distanceFrom(goalPos.toPedro());
@@ -190,6 +190,41 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if (debug) Log.i("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
         if (debug) Log.i("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
+    }
+
+    public void intermediateAim(Pose botPos, boolean useVelocityCompensation){
+        this.isAutoAimOn = false;
+        this.setSpeed(this.velToRPM(this.goalVelocity));
+
+        Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
+        double distToGoal = botPos.distanceFrom(goalPos.toPedro());
+        FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
+
+        if (useVelocityCompensation) {
+            double flightTime = FlightTimeLookupTable.get(distToGoal);
+            Vector goalAdjAmt = robot.follower.getVelocity().times(flightTime);
+            goalPos = Pose2d.minus(goalPos, goalAdjAmt);
+            distToGoal = botPos.distanceFrom(goalPos.toPedro());
+
+            if (debug) Log.d("ShooterSubsystem", "Adjusted goal pos for velocity: " + goalAdjAmt);
+            FtcDashDrawing.drawDot(goalPos.toPedro(), "#0000FF");
+        }
+
+        if (isAutoTurretOn && (alwaysUpdateTurret || loopCount == 0 || robot.isInTapeZone())) {
+            this.setTurretAngle(this.findYawAngle(botPos, goalPos));
+        }
+
+        ShooterValues math;
+        math = ShooterLookupTable.get(distToGoal);
+
+        if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
+            this.goalPitch = math.rad;
+            this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        }
+
+
+
+
     }
 
     public void setTurretAngle(double angleRad) {
@@ -425,6 +460,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
+
+
             if (robot.goalPos != null && isAutoAimOn) {
                 Pose robotPos;
                 boolean useSotm;
@@ -438,7 +475,11 @@ public class ShooterSubsystem extends SubsystemBase {
 //                }
                 this.doAutoShoot(robotPos, useSotm);
             }
+            else if (robot.goalPos != null){
+                intermediateAim(this.robot.follower.getPose(), USE_SOTM);
+            }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
+
             Profiler.pop();
 
             // shooter pitch
