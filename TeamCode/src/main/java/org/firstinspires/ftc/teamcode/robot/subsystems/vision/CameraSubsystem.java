@@ -5,15 +5,11 @@ import android.util.Log;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.ftc.FTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -43,7 +39,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     public static String TAG = "CameraSubsystem";
 
-    public static boolean disableRelocalization = false;
+    public static boolean GLOBAL_DISABLE_RELOCALIZATION = false;
 
     //banks on the camera always being aligned on one of the robot's center axes
     public static double cameraOffsetInches = -8;
@@ -60,6 +56,7 @@ public class CameraSubsystem extends SubsystemBase {
     private AprilTagProcessor backTagProcessor;
 
     private boolean shouldScanForGlyphs = false;
+    public boolean disableRelocalization = false;
 
     public enum GLYPH {
         GPP(BallColor.GREEN, BallColor.PURPLE, BallColor.PURPLE),
@@ -449,10 +446,10 @@ public class CameraSubsystem extends SubsystemBase {
 
         robot.telemetry.addData("trying to relocalize",localizedPose);
 
-                debugLastDetection = localizedPose;
+        debugLastDetection = localizedPose;
         debugDetectionTime = System.currentTimeMillis();
 
-        if(!disableRelocalization)
+        if(!GLOBAL_DISABLE_RELOCALIZATION && !disableRelocalization)
         {
             robot.follower.poseTracker.setCurrentPoseWithOffset(localizedPose);
 //            robot.follower.setPose(localizedPose);

@@ -106,6 +106,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         robot.init(hardware, this);
         robot.camera.stopScanningForGlyphs();
+        robot.camera.disableRelocalization = true;
 
         this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
 
