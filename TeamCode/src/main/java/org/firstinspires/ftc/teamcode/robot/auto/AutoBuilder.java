@@ -349,9 +349,10 @@ public class AutoBuilder {
         PathChain shootPath = shootSpikePath(ArrayUtil.toEnumSet(flags, ShootPathFlag.class));
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, shootPath, false),
-                        new WaitCommand(1000).andThen(new PrepareShootCommand(robot))
+                        new FollowPathCommand(robot.follower, shootPath, false)
+
                 ),
+                new PrepareShootCommand(robot),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
