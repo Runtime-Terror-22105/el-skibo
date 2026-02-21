@@ -454,8 +454,8 @@ public class CameraSubsystem extends SubsystemBase {
 
         if(!disableRelocalization)
         {
-//            robot.follower.poseTracker.setCurrentPoseWithOffset(localizedPose);
-            robot.follower.setPose(localizedPose);
+            robot.follower.poseTracker.setCurrentPoseWithOffset(localizedPose);
+//            robot.follower.setPose(localizedPose);
             robot.telemetry.addData("pleasework",localizedPose.toString());
             //i would be lying if i understood the diff between this and setpose
             //i was not listening to double take when i wrote i would be lying twice and now thrice in a row
