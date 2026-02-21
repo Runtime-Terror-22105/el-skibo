@@ -56,7 +56,7 @@ public class CameraSubsystem extends SubsystemBase {
     private AprilTagProcessor frontTagProcessor;
     private AprilTagProcessor backTagProcessor;
 
-    private boolean shouldScanForGlyphs = false;
+    private boolean shouldScanForGlyphs = true;
     public boolean disableRelocalization = false;
     public boolean disableAprilTagsAfterGlyph = false;
 
