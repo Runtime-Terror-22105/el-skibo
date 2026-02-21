@@ -49,6 +49,7 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.opmodes.auto.OneAutoToRuleThemAll;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
@@ -72,9 +73,11 @@ public class AutoBuilder {
     public final Pose2d startPoseBlue;
     public final Robot robot;
     public final boolean mirror;
+    public final OneAutoToRuleThemAll auto;
     private PathChain lastPath = null;
 
-    public AutoBuilder(Robot robot, Team team, StartConfig initial) {
+    public AutoBuilder(OneAutoToRuleThemAll auto, Robot robot, Team team, StartConfig initial) {
+        this.auto = auto;
         this.robot = robot;
         // NB: We do not mirror the start pose here because the path builder's mirror parameter
         // will handle it for us.
@@ -206,18 +209,31 @@ public class AutoBuilder {
     }
 
     // For NEAR ZONE preload shooting.
-    public Command shootPreload(ShootPathFlag... flags) {
-        return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new PrepareShootCommand(robot),
-                        new FollowPathCommand(robot.follower, shootPreloadPath(ArrayUtil.toEnumSet(flags, ShootPathFlag.class)), false)
-                ),
-                new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
-//                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
-                new WaitCommand(SHOOT_DELAY)
-        );
+    public Command shootPreload(ShootPathFlag... flagArr) {
+        boolean wantsAutoSort = robot.getAutoSort();
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
+        if (wantsAutoSort) {
+            return new SequentialCommandGroup(
+                    new FollowPathCommand(robot.follower, shootPreloadPath(flags), false),
+                    new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
+                    new PrepareShootCommand(robot),
+                    new StopScanningForGlyphsCommand(robot.camera),
+                    new ShootThreeBallsCommand(robot),
+                    new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
+                    new WaitCommand(SHOOT_DELAY)
+            );
+        } else {
+            return new SequentialCommandGroup(
+                    new ParallelCommandGroup(
+                            new PrepareShootCommand(robot),
+                            new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
+                    ),
+                    new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
+                    new ShootThreeBallsCommand(robot),
+                    new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
+                    new WaitCommand(SHOOT_DELAY)
+            );
+        }
     }
 
     public Command shootPreloadFar() {

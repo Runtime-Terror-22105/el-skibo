@@ -13,12 +13,12 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected StartConfig getStartConfig() {
+    public StartConfig getStartConfig() {
         return StartConfig.FAR;
     }
 
     @Override
-    protected boolean wantsAutoSort() {
+    public boolean wantsAutoSort() {
         return false;
     }
 
