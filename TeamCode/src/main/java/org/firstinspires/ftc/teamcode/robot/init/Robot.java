@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.skeletonarmy.marrow.zones.Point;
 import com.skeletonarmy.marrow.zones.PolygonZone;
@@ -72,9 +72,12 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public FtcDashboard dashboard;
     public MultipleTelemetry telemetry;
     public RobotHardware hardware;
+    public LinearOpMode opMode;
 
-    public void init(@NonNull RobotHardware hardware, @NonNull OpMode opMode) {
+    public void init(@NonNull RobotHardware hardware, @NonNull LinearOpMode opMode) {
         CommandScheduler.getInstance().reset();
+
+        this.opMode = opMode;
 
         // Save local copy of RobotHardware class
         this.hardware = hardware;
