@@ -40,7 +40,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static String TAG = "CameraSubsystem";
 
     public static boolean GLOBAL_DISABLE_RELOCALIZATION = false;
-    public static boolean USE_LIVE_VIEW = true;
+    public static boolean USE_LIVE_VIEW = false;
 
     //banks on the camera always being aligned on one of the robot's center axes
     public static double cameraOffsetInches = -8;
