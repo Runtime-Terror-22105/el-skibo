@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -403,8 +404,20 @@ public class CameraSubsystem extends SubsystemBase {
             {
                 robot.telemetry.addData("Localization Tag id", localizationTag.id);
             }
-            if (localizationTag != null && localizationTag.robotPose != null) {
-//                    && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
+
+            if(localizationTag != null)
+            {
+            Log.d("YAEHEYAEYEAH.", (localizationTag != null) + String.valueOf(localizationTag.robotPose != null) + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
+                robot.telemetry.addData("isRobotPoseReal", localizationTag.robotPose != null);
+                robot.telemetry.addData("robotVelocityMag", robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD);
+            }
+
+
+
+
+
+            if (localizationTag != null && localizationTag.robotPose != null
+                    && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
                 relocalize(localizationTag);
             }
 
