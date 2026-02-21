@@ -217,6 +217,8 @@ public class AutoBuilder {
                     new FollowPathCommand(robot.follower, shootPreloadPath(flags), false),
                     new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                     new PrepareShootCommand(robot),
+                    // `disableAprilTagsAfterGlyph` handles main disabling logic, this is
+                    // just a fallback.
                     new InstantCommand(() -> robot.camera.setAprilTagsEnabled(false)),
                     new ShootThreeBallsCommand(robot),
                     new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
