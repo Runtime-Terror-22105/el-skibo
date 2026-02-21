@@ -58,6 +58,7 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootComman
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
+import org.firstinspires.ftc.teamcode.robot.command.vision.WaitForGlyphCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
@@ -216,6 +217,7 @@ public class AutoBuilder {
             return new SequentialCommandGroup(
                     new FollowPathCommand(robot.follower, shootPreloadPath(flags), false),
                     new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
+                    new WaitForGlyphCommand(robot.camera).withTimeout(AutoConstants.WAIT_TIMEOUT_MOTIF),
                     new PrepareShootCommand(robot),
                     // `disableAprilTagsAfterGlyph` handles main disabling logic, this is
                     // just a fallback.

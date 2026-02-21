@@ -26,10 +26,10 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
-                builder.shootPreload()
-//                builder.cycleSpike(1),
-//                builder.cycleSpike(2),
-//                builder.cycleSpike(3, ShootPathFlag.LAST)
+                builder.shootPreload(),
+                builder.cycleSpike(1),
+                builder.cycleSpike(2),
+                builder.cycleSpike(3, ShootPathFlag.LAST)
         );
     }
 }
