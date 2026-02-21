@@ -195,7 +195,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void intermediateAim(Pose botPos, boolean useVelocityCompensation){
         this.isAutoAimOn = false;
-        this.setSpeed(this.velToRPM(this.goalVelocity));
+        this.setSpeed(this.goalVelocity);
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
         double distToGoal = botPos.distanceFrom(goalPos.toPedro());
