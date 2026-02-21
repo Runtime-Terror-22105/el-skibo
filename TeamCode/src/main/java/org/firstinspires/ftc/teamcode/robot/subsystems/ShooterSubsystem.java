@@ -135,6 +135,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoHoodOn = true;
         this.isAutoTurretOn = true;
         this.turretInDeadzone = false;
+        this.goalVelocity = ShooterLookupTable.get(60).velocity;
     }
 
     public static double turretAngleToServoPos(double angleRad) {
