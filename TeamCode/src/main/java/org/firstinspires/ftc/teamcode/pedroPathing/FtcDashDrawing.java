@@ -14,6 +14,8 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
+
 import java.lang.reflect.Field;
 
 @Config
@@ -147,14 +149,35 @@ public class FtcDashDrawing {
 
     private static void drawRobotOnCanvas(Canvas c, Pose t) {
         t = t.getAsCoordinateSystem(FTCCoordinates.INSTANCE);
-        c.strokeCircle(t.getX(), t.getY(), 9.0);
-        Vector v = t.getHeadingAsUnitVector();
-        v.setMagnitude(v.getMagnitude() * 9.0);
-        double x1 = t.getX() + v.getXComponent() / 2.0;
-        double y1 = t.getY() + v.getYComponent() / 2.0;
-        double x2 = t.getX() + v.getXComponent();
-        double y2 = t.getY() + v.getYComponent();
-        c.strokeLine(x1, y1, x2, y2);
+
+        // Draw a rectangle of Robot.ROBOT_WIDTH and Robot.ROBOT_LENGTH at angle t.getHeading().
+        Vector fwd = t.getHeadingAsUnitVector();
+        Vector side = fwd.copy();
+        side.rotateVector(Math.PI / 2);
+        fwd.setMagnitude(Robot.ROBOT_LENGTH / 2.0);
+        side.setMagnitude(Robot.ROBOT_WIDTH / 2.0);
+
+        {
+            double x1 = t.getX() + fwd.getXComponent() + side.getXComponent();
+            double y1 = t.getY() + fwd.getYComponent() + side.getYComponent();
+            double x2 = t.getX() + fwd.getXComponent() - side.getXComponent();
+            double y2 = t.getY() + fwd.getYComponent() - side.getYComponent();
+            double x3 = t.getX() - fwd.getXComponent() - side.getXComponent();
+            double y3 = t.getY() - fwd.getYComponent() - side.getYComponent();
+            double x4 = t.getX() - fwd.getXComponent() + side.getXComponent();
+            double y4 = t.getY() - fwd.getYComponent() + side.getYComponent();
+            double[] xPoints = new double[]{x1, x2, x3, x4};
+            double[] yPoints = new double[]{y1, y2, y3, y4};
+            c.strokePolygon(xPoints, yPoints);
+        }
+
+        {
+            double x1 = t.getX() + fwd.getXComponent() / 2.0;
+            double y1 = t.getY() + fwd.getYComponent() / 2.0;
+            double x2 = t.getX() + fwd.getXComponent();
+            double y2 = t.getY() + fwd.getYComponent();
+            c.strokeLine(x1, y1, x2, y2);
+        }
     }
 
     public static void drawPath(Canvas c, double[][] points) {
