@@ -217,7 +217,7 @@ public class AutoBuilder {
                     new FollowPathCommand(robot.follower, shootPreloadPath(flags), false),
                     new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                     new PrepareShootCommand(robot),
-                    new StopScanningForGlyphsCommand(robot.camera),
+                    new InstantCommand(() -> robot.camera.setAprilTagsEnabled(false)),
                     new ShootThreeBallsCommand(robot),
                     new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
                     new WaitCommand(SHOOT_DELAY)

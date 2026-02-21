@@ -40,6 +40,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static String TAG = "CameraSubsystem";
 
     public static boolean GLOBAL_DISABLE_RELOCALIZATION = false;
+    public static boolean USE_LIVE_VIEW = false;
 
     //banks on the camera always being aligned on one of the robot's center axes
     public static double cameraOffsetInches = -8;
@@ -183,11 +184,19 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
         }
 
-        if (hardware.frontCamera != null) this.vPortalFront = vPortalFrontBuilder.build();
-        if (hardware.backCamera != null) this.vPortalBack = vPortalBackBuilder.build();
+        if (hardware.frontCamera != null) {
+            this.vPortalFront = vPortalFrontBuilder.build();
+            if (USE_LIVE_VIEW) vPortalFront.stopLiveView();
+        }
+        if (hardware.backCamera != null) {
+            this.vPortalBack = vPortalBackBuilder.build();
+            if (USE_LIVE_VIEW) vPortalBack.stopLiveView();
+        }
 
 //        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
+
+        setAprilTagsEnabled(true);
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
@@ -201,11 +210,20 @@ public class CameraSubsystem extends SubsystemBase {
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
 //                    .setLensIntrinsics() // TODO: placeholder to remind us to calibrate the camera
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
-                .setNumThreads(3) // TODO: the default is 3 but maybe we can change
+                .setNumThreads(2) // TODO: the default is 3 but maybe we can change
                 .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
         processor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
         return processor;
+    }
+
+    public void setAprilTagsEnabled(boolean enabled) {
+        if (vPortalFront != null) {
+            vPortalFront.setProcessorEnabled(frontTagProcessor, enabled);
+        }
+        if (vPortalBack != null) {
+            vPortalBack.setProcessorEnabled(backTagProcessor, enabled);
+        }
     }
 
     public void stopCamera() {
