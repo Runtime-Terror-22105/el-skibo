@@ -61,7 +61,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
     public Team color;
 
-    public static boolean SAVE_LOCATION_TELEOP = false;
+    public boolean SAVE_LOCATION_TELEOP = false;
 
 
     private long lastLoop = System.nanoTime();
@@ -82,12 +82,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     }
 
     public TerrorTeleOp() {
-        if ( RED_KEY == blackboard.getOrDefault(TEAM_COLOR_KEY, null)){
-            this.color = Team.RED;
-        }
-        else{
-            this.color = Team.BLUE;
-        }
+
         SAVE_LOCATION_TELEOP = true;
     }
 
@@ -104,6 +99,15 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         Object spindexerPosition = blackboard.getOrDefault(SPINDEXER_POSITION_KEY, null);
         Object teleEnd =  blackboard.getOrDefault(TELEOP_ENDING_KEY, null);
         Log.i("Auto", "Ending position after auto " + ((Pose) blackboard.get(AUTO_ENDING_DATA_KEY)));
+
+        if (SAVE_LOCATION_TELEOP){
+            if (RED_KEY == blackboard.getOrDefault(TEAM_COLOR_KEY, null)){
+                this.setTeam(Team.RED);
+            }
+            else{
+                this.setTeam(Team.BLUE);
+            }
+        }
         if (motif != null) {
             //robot.camera.setGlyph((CameraSubsystem.GLYPH) motif);
             //robot.camera.stopScanningForGlyphs();
