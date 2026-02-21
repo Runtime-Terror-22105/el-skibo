@@ -5,6 +5,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 public abstract class AutoSpamNoPushGate2 extends OneAutoToRuleThemAll {
@@ -29,7 +30,7 @@ public abstract class AutoSpamNoPushGate2 extends OneAutoToRuleThemAll {
                 builder.cycleSpike(1),
                 builder.cycleSpike(2),
                 builder.cycleGate(),
-                builder.cycleGate(true)
+                builder.cycleGate(ShootPathFlag.LAST)
         );
     }
 }

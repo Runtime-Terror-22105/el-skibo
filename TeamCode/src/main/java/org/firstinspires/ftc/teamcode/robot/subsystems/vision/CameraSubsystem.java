@@ -404,8 +404,8 @@ public class CameraSubsystem extends SubsystemBase {
 
 
 
-            if (localizationTag != null && localizationTag.robotPose != null
-                    && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
+            if (localizationTag != null && localizationTag.robotPose != null) {
+                    //&& robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
                 relocalize(localizationTag);
             }
 
