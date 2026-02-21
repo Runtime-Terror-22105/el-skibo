@@ -394,6 +394,10 @@ public class SpindexerSubsystem extends SubsystemBase {
             }
 
             this.updateSpindexer();
+            if (telemetry){
+                BallColor[] balls = getBallPositions();
+                robot.telemetry.addData( "balls",  Character.toString(balls[0].toChar()) + Character.toString(balls[1].toChar()) +Character.toString(balls[2].toChar()));
+            }
             double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
             if (debug) Log.d("SpindexerSubsystem", "max power: " + maxPower);
             if (debug) Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
