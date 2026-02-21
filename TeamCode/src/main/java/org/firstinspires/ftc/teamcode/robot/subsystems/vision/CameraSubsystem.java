@@ -4,11 +4,15 @@ import android.graphics.Color;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.ftc.PoseConverter;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -76,8 +80,8 @@ public class CameraSubsystem extends SubsystemBase {
     public GLYPH gameGlyph;
 
 //    private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
-//    public final VisionPortal vPortalFront;
-    public final VisionPortal vPortalBack;
+    public VisionPortal vPortalFront;
+    public VisionPortal vPortalBack;
 
     public static boolean usingFrontCamera = true;
     public static boolean usingBackCamera = true;
@@ -141,12 +145,14 @@ public class CameraSubsystem extends SubsystemBase {
 //    private VisionPipeline pipeline = new VisionPipeline(webcam);
 
     public CameraSubsystem() {
-//        this.vPortalFront = null;
+        this.vPortalFront = null;
         this.vPortalBack = null;
         this.shouldScanForGlyphs = true;
     }
 
     public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
+        this.vPortalFront = null;
+        this.vPortalBack = null;
         this.visionPortalIDs =  VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
         this.robot = robot;
         this.hardware = hardware;
@@ -156,13 +162,13 @@ public class CameraSubsystem extends SubsystemBase {
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
 
-//        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
-//                .setCamera(hardware.frontCamera)
-////                .setCameraResolution(new Size(320, 240))
-//                .setCameraResolution(new Size(1280, 800))
-//                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-//                .setLiveViewContainerId(visionPortalIDs[0])
-//                .addProcessors(this.frontTagProcessor,purpleBlobProcessor,greenBlobProcessor);
+        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
+                .setCamera(hardware.frontCamera)
+//                .setCameraResolution(new Size(320, 240))
+                .setCameraResolution(new Size(320, 240))
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setLiveViewContainerId(visionPortalIDs[0])
+                .addProcessors(this.frontTagProcessor,purpleBlobProcessor,greenBlobProcessor);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
@@ -182,8 +188,8 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
         }
 
-//        vPortalFront = vPortalFrontBuilder.build();
-        vPortalBack = vPortalBackBuilder.build();
+        this.vPortalFront = vPortalFrontBuilder.build();
+        this.vPortalBack = vPortalBackBuilder.build();
 
 //        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
@@ -346,7 +352,7 @@ public class CameraSubsystem extends SubsystemBase {
 
             if(!usingBackCamera || backTagProcessor.getDetections().isEmpty())
             {
-                this.detections = frontTagProcessor.getDetections();
+//                this.detections = frontTagProcessor.getDetections();
             }
             if(!usingFrontCamera) //eventually add some check for || no balls cv detected
             {
@@ -357,6 +363,8 @@ public class CameraSubsystem extends SubsystemBase {
             //should only ever be the blue or red goal which is 20 and 24 respectively
             AprilTagDetection localizationTag = null;
             int obeliskIndex = 0;
+
+            robot.telemetry.addData("detections",detections);
 
             for (AprilTagDetection tag : detections) {
                 if (tag.id >= 21 && tag.id <= 23) {
@@ -395,8 +403,8 @@ public class CameraSubsystem extends SubsystemBase {
             {
                 robot.telemetry.addData("Localization Tag id", localizationTag.id);
             }
-            if (localizationTag != null && localizationTag.robotPose != null
-                    && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
+            if (localizationTag != null && localizationTag.robotPose != null) {
+//                    && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
                 relocalize(localizationTag);
             }
 
@@ -416,6 +424,8 @@ public class CameraSubsystem extends SubsystemBase {
 
     private void relocalize(AprilTagDetection tag)
     {
+//        Pose2D pose2D = new Pose2D(DistanceUnit.INCH, tag.robotPose.getPosition().x, tag.robotPose.getPosition().y, AngleUnit.RADIANS, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
+//        Pose rawPose = PoseConverter.pose2DToPose(pose2D, PedroCoordinates.INSTANCE);
         Pose rawPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
         //this funnily not a "raw pose" then but oh well noone cares
 
@@ -424,7 +434,9 @@ public class CameraSubsystem extends SubsystemBase {
         Pose cameraOffset = new Pose(offsetX,offsetY);
         Pose localizedPose = rawPose.minus(cameraOffset);
 
-        debugLastDetection = localizedPose;
+        robot.telemetry.addData("trying to relocalize",localizedPose);
+
+                debugLastDetection = localizedPose;
         debugDetectionTime = System.currentTimeMillis();
 
         if(!disableRelocalization)
@@ -435,8 +447,9 @@ public class CameraSubsystem extends SubsystemBase {
             //i would be lying if i understood the diff between this and setpose
             //i was not listening to double take when i wrote i would be lying twice and now thrice in a row
         }
+        robot.telemetry.addData("follower",robot.follower.getPose());
 
-        //i'd be lying if i said i understood what this does from the old localizatoin code
+                //i'd be lying if i said i understood what this does from the old localizatoin code
 //        // Apply exponential convergence
 //        if (!disableRelocalization) {
 //            Pose currentPose = robot.follower.poseTracker.getPose();
