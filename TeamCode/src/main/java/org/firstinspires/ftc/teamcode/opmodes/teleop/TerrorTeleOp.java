@@ -111,12 +111,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         } else {
 //            robot.camera.startScanningForGlyphs();
         }
+        blackboard.put(AUTO_ENDING_DATA_KEY, null);
+        blackboard.put(TELEOP_ENDING_KEY, null);
         if (autoEnd != null) {
             robot.follower.setStartingPose((Pose) autoEnd);
-            blackboard.put(AUTO_ENDING_DATA_KEY, null);
         } else if (teleEnd != null && SAVE_LOCATION_TELEOP){
             robot.follower.setStartingPose((Pose) teleEnd);
-            blackboard.put(TELEOP_ENDING_KEY, null);
         }
         else {
             robot.follower.setStartingPose(color.getStartPosNear().toPedro());
