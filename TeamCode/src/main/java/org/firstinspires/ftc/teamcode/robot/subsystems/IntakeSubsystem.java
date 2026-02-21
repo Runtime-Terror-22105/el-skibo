@@ -42,7 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
             }
 
             // When not intaking, increase the update period to reduce I2C load
-            robot.hardware.colorSensors.setUpdatePeriod(RobotState.INTAKING.equals(robot.robotState) ? 1 : -1);
+            robot.hardware.colorSensors.setUpdatePeriod(RobotState.INTAKING.equals(robot.robotState) ? 1 : 1);
             robot.hardware.intake.setPower(this.targetSpeed);
             if (debug) {
                 Log.i("IntakeSubsystem", "Intake motor power: " + robot.hardware.intake.getPower());

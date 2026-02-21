@@ -350,7 +350,7 @@ public class AutoBuilder {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shootPath, false),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
+                        new WaitCommand(1000).andThen(new PrepareShootCommand(robot))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
