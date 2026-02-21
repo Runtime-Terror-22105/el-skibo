@@ -93,9 +93,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     private Team team;
 
-    private boolean isNearAuto = false;
-    private boolean isFarAuto = false; //maybe do smth with this i lowk dunno
-
     private int[] visionPortalIDs;
 
     private OpenCvCamera maskingCamera;
@@ -303,12 +300,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     }
 
-    public void setAuto(boolean isNearAuto, boolean isFarAuto)
-    {
-        this.isNearAuto = isNearAuto;
-        this.isFarAuto = isFarAuto;
-    }
-
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("CameraSubsystem")) {
@@ -368,7 +359,7 @@ public class CameraSubsystem extends SubsystemBase {
                 if (tag.id >= 21 && tag.id <= 23) {
                     obeliskpair[obeliskIndex] = tag;
                     obeliskIndex++;
-                    if(!isNearAuto)
+                    if(shouldScanForGlyphs)
                     {
                         GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
                         this.gameGlyph = glyphhh;
@@ -380,18 +371,18 @@ public class CameraSubsystem extends SubsystemBase {
                     localizationTag = tag;
                 }
             }
-            if(isNearAuto) {
-                if(obeliskIndex==1)
-                {
-                        setGlyphByNormal(obeliskpair[0]);
-                }
-                else if(obeliskIndex==2)
-                {
-//                    Arrays.sort(obeliskpair);
-                    // Log.d(TAG, "obeliskpair: " + Arrays.toString(obeliskpair));
-                    setObeliskPairInAuto(obeliskpair);
-                }
-            }
+//            if(isNearAuto) {
+//                if(obeliskIndex==1)
+//                {
+//                        setGlyphByNormal(obeliskpair[0]);
+//                }
+//                else if(obeliskIndex==2)
+//                {
+////                    Arrays.sort(obeliskpair);
+//                    // Log.d(TAG, "obeliskpair: " + Arrays.toString(obeliskpair));
+//                    setObeliskPairInAuto(obeliskpair);
+//                }
+//            }
             // Log.d(TAG, "Glyph: " + gameGlyph);
             // Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
             // Log.d(TAG, "Localization Tag: " + localizationTag);
