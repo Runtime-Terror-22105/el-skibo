@@ -41,8 +41,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
-    public static double MAX_POWER_14V = 1.0;
-    public static double MAX_POWER_12V = 1.0;
+    public static double MAX_POWER_SORTING = 0.8;
+    public boolean useMaxPower = false;
 
     public double intakeWallPosition = INTAKE_WALL_UP;
     public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
@@ -398,11 +398,19 @@ public class SpindexerSubsystem extends SubsystemBase {
                 BallColor[] balls = getBallPositions();
                 robot.telemetry.addData( "balls",  Character.toString(balls[0].toChar()) + Character.toString(balls[1].toChar()) +Character.toString(balls[2].toChar()));
             }
-            double maxPower = Algebra.mapRangeNoClamp(hardware.initialVoltage, 12, 14, MAX_POWER_12V, MAX_POWER_14V);
-            if (debug) Log.d("SpindexerSubsystem", "max power: " + maxPower);
+
+
             if (debug) Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
-            double clampedPower = Math.max(-maxPower, Math.min(maxPower, spindexerPower));
-            if (this.overrideMaxPower)  clampedPower = spindexerPower;
+
+            double clampedPower;
+            if (useMaxPower && !overrideMaxPower){
+                 clampedPower = Math.max(-MAX_POWER_SORTING, Math.min(MAX_POWER_SORTING, spindexerPower));
+            }
+            else{
+                clampedPower = spindexerPower;
+            }
+
+
             this.hardware.spindexerRotate.setPower(clampedPower);
     //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
 
