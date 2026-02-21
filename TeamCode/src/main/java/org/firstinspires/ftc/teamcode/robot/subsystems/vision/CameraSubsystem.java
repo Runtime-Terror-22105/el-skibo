@@ -186,8 +186,8 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
         }
 
-        this.vPortalFront = vPortalFrontBuilder.build();
-        this.vPortalBack = vPortalBackBuilder.build();
+        if (hardware.frontCamera != null) this.vPortalFront = vPortalFrontBuilder.build();
+        if (hardware.backCamera != null) this.vPortalBack = vPortalBackBuilder.build();
 
 //        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
