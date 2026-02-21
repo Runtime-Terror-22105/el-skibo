@@ -394,11 +394,6 @@ public class SpindexerSubsystem extends SubsystemBase {
             }
 
             this.updateSpindexer();
-            if (telemetry){
-                BallColor[] balls = getBallPositions();
-                robot.telemetry.addData( "balls",  Character.toString(balls[0].toChar()) + Character.toString(balls[1].toChar()) +Character.toString(balls[2].toChar()));
-            }
-
 
             if (debug) Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
 
