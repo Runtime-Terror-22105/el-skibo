@@ -14,22 +14,22 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected StartConfig getStartConfig() {
+    public StartConfig getStartConfig() {
         return StartConfig.NEAR;
     }
 
     @Override
-    protected boolean wantsAutoSort() {
+    public boolean wantsAutoSort() {
         return true;
     }
 
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
-                builder.shootPreload(),
-                builder.cycleSpike(1),
-                builder.cycleSpike(2),
-                builder.cycleSpike(3, ShootPathFlag.LAST)
+                builder.shootPreload()
+//                builder.cycleSpike(1),
+//                builder.cycleSpike(2),
+//                builder.cycleSpike(3, ShootPathFlag.LAST)
         );
     }
 }

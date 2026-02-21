@@ -14,12 +14,12 @@ public abstract class AutoSpam extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected StartConfig getStartConfig() {
+    public StartConfig getStartConfig() {
         return StartConfig.NEAR;
     }
 
     @Override
-    protected boolean wantsAutoSort() {
+    public boolean wantsAutoSort() {
         return false;
     }
 

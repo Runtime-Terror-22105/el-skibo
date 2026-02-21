@@ -80,9 +80,9 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.telemetry.addLine("In the Land of Winecreek where the Terrors lie.");
     }
 
-    protected abstract StartConfig getStartConfig();
+    public abstract StartConfig getStartConfig();
 
-    protected abstract boolean wantsAutoSort();
+    public abstract boolean wantsAutoSort();
 
     protected abstract Command createAutoCommand(AutoBuilder builder);
 
@@ -112,7 +112,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // TODO: the autobuilder class currently does not handle the init logic.
         //  Does it need to?
-        AutoBuilder builder = new AutoBuilder(robot, this.team, this.getStartConfig());
+        AutoBuilder builder = new AutoBuilder(this, robot, this.team, this.getStartConfig());
         robot.follower.setStartingPose(team.getStartPose(this.getStartConfig()).toPedro());
         robot.goalPos = team.getGoalPos();
 
