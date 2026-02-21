@@ -58,6 +58,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     private boolean shouldScanForGlyphs = false;
     public boolean disableRelocalization = false;
+    public boolean disableAprilTagsAfterGlyph = false;
 
     public enum GLYPH {
         GPP(BallColor.GREEN, BallColor.PURPLE, BallColor.PURPLE),
@@ -210,7 +211,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
 //                    .setLensIntrinsics() // TODO: placeholder to remind us to calibrate the camera
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.RADIANS) // TODO: Placeholder
-                .setNumThreads(2) // TODO: the default is 3 but maybe we can change
+                .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
         processor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
@@ -352,6 +353,10 @@ public class CameraSubsystem extends SubsystemBase {
 //            // Log.w("CameraSubsystem", e);
 //        }
 
+            robot.telemetry.addData("backTagProcessor enabled", vPortalBack.getProcessorEnabled(backTagProcessor));
+            if (!vPortalBack.getProcessorEnabled(backTagProcessor)) {
+                return;
+            }
 
             this.detections = backTagProcessor.getDetections();
             robot.telemetry.addData("greenblob",greenBlobProcessor.getBlobs());
@@ -383,6 +388,9 @@ public class CameraSubsystem extends SubsystemBase {
                         this.gameGlyph = glyphhh;
                         robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
                         // Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
+                        if (disableAprilTagsAfterGlyph) {
+                            setAprilTagsEnabled(false);
+                        }
                     }
 //
                 } else {

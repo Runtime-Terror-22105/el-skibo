@@ -105,8 +105,8 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         }
 
         robot.init(hardware, this);
-        robot.camera.stopScanningForGlyphs();
         robot.camera.disableRelocalization = true;
+        robot.camera.disableAprilTagsAfterGlyph = true;
 
         this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
 
@@ -147,7 +147,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // we're going to see the wrong one
         if (robot.camera.gameGlyph != null) {
-            robot.camera.stopScanningForGlyphs();
             robot.shooter.isAutoTurretOn = true;
             if (Team.RED.equals(team)) {
                 robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
