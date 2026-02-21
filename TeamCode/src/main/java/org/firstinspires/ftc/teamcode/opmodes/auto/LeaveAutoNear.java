@@ -4,6 +4,7 @@ import com.seattlesolvers.solverslib.command.Command;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 public abstract class LeaveAutoNear extends OneAutoToRuleThemAll {
@@ -23,6 +24,6 @@ public abstract class LeaveAutoNear extends OneAutoToRuleThemAll {
 
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
-        return builder.shootPreload(true);
+        return builder.shootPreload(ShootPathFlag.LAST);
     }
 }

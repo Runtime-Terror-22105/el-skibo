@@ -27,9 +27,11 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
@@ -61,6 +63,10 @@ import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Supplier;
+
 @Config
 public class AutoBuilder {
     public final Pose2d startPoseBlue;
@@ -76,16 +82,41 @@ public class AutoBuilder {
         this.mirror = Team.RED.equals(team);
     }
 
-    private static Pose2d getShootPose(Pose2d mainPose, boolean isLast) {
-        return isLast ? SHOOT_LAST_POSE : mainPose;
+    // For NEAR ZONE
+    private enum ShootPathType {
+        PRELOAD(() -> SHOOT_PRELOAD_POSE, () -> SHOOT_PRELOAD_HORIZ_POSE),
+        EDGE(() -> SHOOT_EDGE_POSE, () -> SHOOT_EDGE_HORIZ_POSE);
+
+        public final Supplier<Pose2d> normal, horiz;
+
+        ShootPathType(Supplier<Pose2d> normal, Supplier<Pose2d> horiz) {
+            this.normal = normal;
+            this.horiz = horiz;
+        }
+    }
+
+    // Flags defined in ShootPathFlags
+    private static Pose2d getShootPose(ShootPathType type, EnumSet<ShootPathFlag> flags) {
+        if (flags.contains(ShootPathFlag.LAST))
+            return SHOOT_LAST_POSE;
+
+        boolean isHoriz = flags.contains(ShootPathFlag.NEXT_HORIZ);
+        return isHoriz ? type.horiz.get() : type.normal.get();
     }
 
     public PathChain getLastPath() {
         return lastPath;
     }
 
-    private PathChain shootPreloadPath(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_PRELOAD_POSE, isLast), mirror, false, false)
+    private PathChain shootPreloadPath(EnumSet<ShootPathFlag> flags) {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.PRELOAD, flags), mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return lastPath;
+    }
+
+    private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags) {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
@@ -98,22 +129,8 @@ public class AutoBuilder {
         return lastPath;
     }
 
-    private PathChain shootSpike1Path(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_EDGE_POSE, isLast), mirror, true, true)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
-        return lastPath;
-    }
-
     private PathChain intakeSpike2Path() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE, mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
-        return lastPath;
-    }
-
-    private PathChain shootSpike2Path(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_EDGE_POSE, isLast), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
@@ -150,13 +167,6 @@ public class AutoBuilder {
         return lastPath;
     }
 
-    private PathChain shootSpike3Path(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_EDGE_POSE, isLast), mirror, true, true)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
-        return lastPath;
-    }
-
     // This is for pushing the gate after a SPIKE STRIP, not for cycling gate intake.
     //
     // preparePushGatePath and pushGatePath should be used together.
@@ -184,8 +194,8 @@ public class AutoBuilder {
         return lastPath;
     }
 
-    private PathChain shootGatePath(boolean isLast) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(SHOOT_EDGE_POSE, isLast), mirror, true, true)
+    private PathChain shootGatePath(EnumSet<ShootPathFlag> flags) {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return lastPath;
@@ -196,11 +206,11 @@ public class AutoBuilder {
     }
 
     // For NEAR ZONE preload shooting.
-    public Command shootPreload(boolean isLast) {
+    public Command shootPreload(ShootPathFlag... flags) {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new PrepareShootCommand(robot),
-                        new FollowPathCommand(robot.follower, shootPreloadPath(isLast), false)
+                        new FollowPathCommand(robot.follower, shootPreloadPath(ArrayUtil.toEnumSet(flags, ShootPathFlag.class)), false)
                 ),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
@@ -208,11 +218,6 @@ public class AutoBuilder {
 //                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
                 new WaitCommand(SHOOT_DELAY)
         );
-    }
-
-    // For NEAR ZONE preload shooting.
-    public Command shootPreload() {
-        return shootPreload(false);
     }
 
     public Command shootPreloadFar() {
@@ -316,25 +321,11 @@ public class AutoBuilder {
      * Command to shoot from spike number.
      *
      * @param spikeNumber The spike number to intake from, where 1 is the closest to the goal and 3 is closest to the human player.
-     * @param isLast      Whether this is the last shoot command in the auto sequence.
+     * @param flags       Whether this is the last shoot command in the auto sequence.
      * @return The command to intake from the specified spike.
      */
-    public Command shootSpike(int spikeNumber, boolean isLast) {
-        PathChain shootPath;
-        switch (spikeNumber) {
-            case 1:
-                shootPath = shootSpike1Path(isLast);
-                break;
-            case 2:
-                shootPath = shootSpike2Path(isLast);
-                break;
-            case 3:
-                shootPath = shootSpike3Path(isLast);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
-        }
-
+    public Command shootSpike(int spikeNumber, ShootPathFlag... flags) {
+        PathChain shootPath = shootSpikePath(ArrayUtil.toEnumSet(flags, ShootPathFlag.class));
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shootPath, false),
@@ -347,19 +338,11 @@ public class AutoBuilder {
         );
     }
 
-    public Command shootSpike(int spikeNumber) {
-        return shootSpike(spikeNumber, false);
-    }
-
-    public Command cycleSpike(int spikeNumber, boolean isLast) {
+    public Command cycleSpike(int spikeNumber, ShootPathFlag... flags) {
         return new SequentialCommandGroup(
                 intakeSpike(spikeNumber),
-                shootSpike(spikeNumber, isLast)
+                shootSpike(spikeNumber, flags)
         );
-    }
-
-    public Command cycleSpike(int spikeNumber) {
-        return cycleSpike(spikeNumber, false);
     }
 
     // For pushing the gate after a SPIKE STRIP. Not for cycling gate intake.
@@ -380,10 +363,10 @@ public class AutoBuilder {
         );
     }
 
-    public Command shootGate(boolean isLast) {
+    public Command shootGate(ShootPathFlag... flags) {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, shootGatePath(isLast), false),
+                        new FollowPathCommand(robot.follower, shootGatePath(ArrayUtil.toEnumSet(flags, ShootPathFlag.class)), false),
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot, true))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
@@ -393,19 +376,11 @@ public class AutoBuilder {
         );
     }
 
-    public Command shootGate() {
-        return shootGate(false);
-    }
-
-    public Command cycleGate(boolean isLast) {
+    public Command cycleGate(ShootPathFlag... flags) {
         return new SequentialCommandGroup(
                 intakeGate(),
-                shootGate(isLast)
+                shootGate(flags)
         );
-    }
-
-    public Command cycleGate() {
-        return cycleGate(false);
     }
 
     public Command intakeSpike3Far() {
