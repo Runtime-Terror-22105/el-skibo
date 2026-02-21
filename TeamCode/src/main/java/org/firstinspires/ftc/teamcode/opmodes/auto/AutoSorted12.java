@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
-public abstract class Auto extends OneAutoToRuleThemAll {
-    protected Auto(Team team) {
+public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
+    protected AutoSorted12(Team team) {
         super(team);
     }
 
@@ -25,10 +25,10 @@ public abstract class Auto extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
-                builder.shootPreload(),
-                builder.cycleSpike(1),
-                builder.cycleSpike(2),
-                builder.cycleSpike(3, true)
+                builder.shootPreload()
+//                builder.cycleSpike(1),
+//                builder.cycleSpike(2),
+//                builder.cycleSpike(3, true)
         );
     }
 }

@@ -54,6 +54,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsComma
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
@@ -225,8 +226,8 @@ public class AutoBuilder {
                 ),
                 new ShootThreeBallsCommand(robot),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
-//                new InstantCommand(() -> robot.camera.stopScanningForGlyphs()),
-                new WaitCommand(SHOOT_DELAY)
+                new WaitCommand(SHOOT_DELAY),
+                new StopScanningForGlyphsCommand(robot.camera)
         );
     }
 
