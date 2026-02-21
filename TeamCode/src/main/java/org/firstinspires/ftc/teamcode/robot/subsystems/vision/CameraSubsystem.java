@@ -40,7 +40,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static String TAG = "CameraSubsystem";
 
     public static boolean GLOBAL_DISABLE_RELOCALIZATION = false;
-    public static boolean USE_LIVE_VIEW = false;
+    public static boolean USE_LIVE_VIEW = true;
 
     //banks on the camera always being aligned on one of the robot's center axes
     public static double cameraOffsetInches = -8;
@@ -187,11 +187,11 @@ public class CameraSubsystem extends SubsystemBase {
 
         if (hardware.frontCamera != null) {
             this.vPortalFront = vPortalFrontBuilder.build();
-            if (USE_LIVE_VIEW) vPortalFront.stopLiveView();
+            if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
         }
         if (hardware.backCamera != null) {
             this.vPortalBack = vPortalBackBuilder.build();
-            if (USE_LIVE_VIEW) vPortalBack.stopLiveView();
+            if (!USE_LIVE_VIEW) vPortalBack.stopLiveView();
         }
 
 //        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
