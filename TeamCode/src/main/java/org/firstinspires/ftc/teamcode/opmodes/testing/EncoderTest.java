@@ -17,6 +17,9 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 @TeleOp(name="Encoder Test", group="Testing")
 public class EncoderTest extends LinearOpMode {
 
+    double lowestVoltage = 1;
+    double highestVoltage = 0;
+
     private RobotHardware hardware = new RobotHardware();
 
     @Override
@@ -28,6 +31,16 @@ public class EncoderTest extends LinearOpMode {
         while(opModeIsActive())
         {
             double voltage = hardware.hwMap.get(AnalogInput.class, "spindexEncoder").getVoltage();
+            if(voltage > highestVoltage)
+            {
+                highestVoltage = voltage;
+            }
+            if(voltage < lowestVoltage)
+            {
+                lowestVoltage = voltage;
+            }
+            telemetry.addData("lowestVoltage ",String.valueOf(lowestVoltage));
+            telemetry.addData("highestVoltage ",String.valueOf(highestVoltage));
             telemetry.addLine("ANALOG ENCODER");
             telemetry.addLine("--------------");
             telemetry.addData("raw voltage (volts)",String.valueOf(voltage));
