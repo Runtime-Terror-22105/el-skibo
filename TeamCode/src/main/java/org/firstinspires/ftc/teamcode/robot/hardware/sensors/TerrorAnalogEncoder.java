@@ -12,8 +12,8 @@ public class TerrorAnalogEncoder {
     public static double ANGLE_120_MIN = 0;
     public static double ANGLE_240_MIN = 0;
 
-    public static double VOLTAGE_MIN = 0.017;
-    public static double VOLTAGE_MAX = 3.211;
+    public static double VOLTAGE_MIN = 0.041;
+    public static double VOLTAGE_MAX = 3.145;
 
     private double offset = 0;
     private final AnalogInput encoder;
