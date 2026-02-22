@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.RED_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.TELEOP_ENDING_KEY;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING_FINAL;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
@@ -205,7 +206,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER
+                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER && robot.robotState != HANGING_FINAL
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(
@@ -327,7 +328,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 robot.robotState = RobotState.HANGING_FINAL;
                 hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.REVERSE);
                 hardware.hangRight.setPower(TerrorSwyftCRServo.Power.REVERSE);
-            } else {
+
+            } else if (robot.getState() != HANGING_FINAL) {
                 hardware.hangLeft.setPwmEnable(false);
                 hardware.hangRight.setPwmEnable(false);
             }

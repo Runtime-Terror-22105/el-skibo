@@ -56,7 +56,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
     public static double turretPosAt180 = 0.53; //pos pointed directly towards the back
-    public static double posChange90 = 0.37; //servo pos change that rotates turret 90 deg
+    public static double posChange90 = 0.36; //servo pos change that rotates turret 90 deg
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
@@ -151,6 +151,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
+        //Pose2d goalPos = this.robot.color.getGoalPos();
         double distToGoal = botPos.distanceFrom(goalPos.toPedro());
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
@@ -308,11 +309,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double findYawAngle(Pose botPos, Pose2d goalPos){
         /** all in rad **/
-        Pose robotVector = new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0)
-                .rotate(botPos.getHeading(), false);
-        Pose turretCenter = botPos.plus(robotVector);
-        double dx = goalPos.x - turretCenter.getX();
-        double dy = goalPos.y - turretCenter.getY();
+//        Pose robotVector = new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0)
+//                .rotate(botPos.getHeading(), false);
+//        Pose turretCenter = botPos.plus(robotVector);
+        double dx = goalPos.x - botPos.getX();
+        double dy = goalPos.y - botPos.getY();
         double angle = Math.atan2(dy, dx);
 
         double absoluteGoalAngle = angle;
@@ -321,11 +322,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         double botHeading = botPos.getHeading();
-        if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180/Math.PI );
+        if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180D/Math.PI );
 
 
-        // note: this is 0 to 360 instead of -180 to 180 for convenience below
+
+
         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
+
         if (debug) Log.d("ShooterSubsystem", "turret angle (deg): " + Math.toDegrees(angleTurret));
         if (debug) Log.d("ShooterSubsystem", "calculated servo pos: " + turretAngleToServoPos(angleTurret));
 
