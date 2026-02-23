@@ -357,7 +357,7 @@ public class AutoBuilder {
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(1000),
                 new WaitCommand(SHOOT_DELAY)
         );
     }
