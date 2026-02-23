@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
+@Config
 public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
+    public static long SHOOTING_DELAY = 1000;
+
     protected AutoSorted12(Team team) {
         super(team);
     }
@@ -27,9 +32,9 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
                 builder.shootPreload(),
-                builder.cycleSpike(1),
-                builder.cycleSpike(2),
-                builder.cycleSpike(3, ShootPathFlag.LAST)
+                builder.intakeSpike(1), new WaitCommand(SHOOTING_DELAY), builder.shootSpike(1, ShootPathFlag.NEXT_HORIZ),
+                builder.intakeSpike(2), new WaitCommand(SHOOTING_DELAY), builder.shootSpike(2, ShootPathFlag.NEXT_HORIZ),
+                builder.intakeSpike(3), new WaitCommand(SHOOTING_DELAY), builder.shootSpike(3, ShootPathFlag.LAST)
         );
     }
 }

@@ -220,7 +220,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setAprilTagsEnabled(boolean enabled) {
         if (vPortalFront != null) {
-            vPortalFront.setProcessorEnabled(frontTagProcessor, enabled);
+//            vPortalFront.setProcessorEnabled(frontTagProcessor, enabled);
         }
         if (vPortalBack != null) {
             vPortalBack.setProcessorEnabled(backTagProcessor, enabled);

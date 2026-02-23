@@ -13,9 +13,9 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_C
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
@@ -45,6 +45,7 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.Team;
@@ -65,7 +66,6 @@ import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.function.Supplier;
 
@@ -259,6 +259,7 @@ public class AutoBuilder {
 
     private Command intakeSpike1() {
         return new SequentialCommandGroup(
+                new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, intakeSpike1Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
@@ -269,6 +270,7 @@ public class AutoBuilder {
 
     private Command intakeSpike2() {
         return new SequentialCommandGroup(
+                new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, intakeSpike2Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
@@ -279,6 +281,7 @@ public class AutoBuilder {
 
     private Command intakeSpike3() {
         return new SequentialCommandGroup(
+                new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, prepareIntakeSpike3Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
@@ -354,7 +357,7 @@ public class AutoBuilder {
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
+                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(1000),
                 new WaitCommand(SHOOT_DELAY)
         );
     }

@@ -30,7 +30,7 @@ import java.util.Map;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
-    public static boolean USE_SOTM = false;
+    public static boolean USE_SOTM = true;
 
 
     public static boolean debug = false;
@@ -135,6 +135,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoHoodOn = true;
         this.isAutoTurretOn = true;
         this.turretInDeadzone = false;
+        this.goalVelocity = ShooterLookupTable.get(60).velocity;
     }
 
     public static double turretAngleToServoPos(double angleRad) {
@@ -147,7 +148,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
-        this.isAutoAimOn = true;
+
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
         //Pose2d goalPos = this.robot.color.getGoalPos();
@@ -463,6 +464,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
+
+
             if (robot.goalPos != null && isAutoAimOn) {
                 Pose robotPos;
                 boolean useSotm;

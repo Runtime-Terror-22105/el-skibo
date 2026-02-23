@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -41,7 +40,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
 
-    public static double MAX_POWER_SORTING = 0.8;
+    public static double MAX_POWER_SORTING = 0.6;
     public boolean useMaxPower = false;
 
     public double intakeWallPosition = INTAKE_WALL_UP;

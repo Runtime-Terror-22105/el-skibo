@@ -70,8 +70,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new WaitCommand(RAMP_DELAY), // todo: adjust this delay based on how long it takes for ramp to drop
                 new LogCatCommand("PrepareShootCommand", "Phase 4 done", Log.INFO),
                 new SetIntakeSpeedCommand(robot.intake, 0),
-                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT),
-                new InstantCommand(() -> robot.spindexer.useMaxPower = false)
+                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT)
+
         );
     }
 }
