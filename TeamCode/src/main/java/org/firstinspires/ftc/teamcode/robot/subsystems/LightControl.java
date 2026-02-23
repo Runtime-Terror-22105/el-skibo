@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.subsystems;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -47,6 +48,11 @@ public class LightControl extends SubsystemBase {
     @Override
     public void periodic()
     {
+        if (robot.opMode.opModeInInit()) {
+            hardware.lights.setColor(robot.color.equals(Team.RED) ? TerrorLight.LightColors.RED : TerrorLight.LightColors.BLUE);
+            return;
+        }
+
         //eventually most of these states wont have anything special so a hashmap would make iteasy
         //just do 3 ifstatmeents at most: if(insert special case) if(another special) else(mapcolor)
         switch(robot.getState())

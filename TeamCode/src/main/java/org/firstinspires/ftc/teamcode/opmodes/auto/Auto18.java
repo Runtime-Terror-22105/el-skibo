@@ -5,6 +5,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 public abstract class Auto18 extends OneAutoToRuleThemAll {
@@ -13,12 +14,12 @@ public abstract class Auto18 extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected StartConfig getStartConfig() {
+    public StartConfig getStartConfig() {
         return StartConfig.NEAR;
     }
 
     @Override
-    protected boolean wantsAutoSort() {
+    public boolean wantsAutoSort() {
         return false;
     }
 
@@ -30,7 +31,7 @@ public abstract class Auto18 extends OneAutoToRuleThemAll {
                 builder.cycleGate(),
                 builder.cycleGate(),
                 builder.cycleSpike(3),
-                builder.cycleSpike(1, true)
+                builder.cycleSpike(1, ShootPathFlag.LAST)
         );
     }
 }

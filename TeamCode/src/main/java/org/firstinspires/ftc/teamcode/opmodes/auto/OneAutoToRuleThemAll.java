@@ -81,9 +81,9 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.telemetry.addLine("In the Land of Winecreek where the Terrors lie.");
     }
 
-    protected abstract StartConfig getStartConfig();
+    public abstract StartConfig getStartConfig();
 
-    protected abstract boolean wantsAutoSort();
+    public abstract boolean wantsAutoSort();
 
     protected abstract Command createAutoCommand(AutoBuilder builder);
 
@@ -106,14 +106,14 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         }
 
         robot.init(hardware, this);
-        robot.camera.stopScanningForGlyphs();
         robot.camera.disableRelocalization = true;
+        robot.camera.disableAprilTagsAfterGlyph = true;
 
         this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
 
         // TODO: the autobuilder class currently does not handle the init logic.
         //  Does it need to?
-        AutoBuilder builder = new AutoBuilder(robot, this.team, this.getStartConfig());
+        AutoBuilder builder = new AutoBuilder(this, robot, this.team, this.getStartConfig());
         robot.follower.setStartingPose(team.getStartPose(this.getStartConfig()).toPedro());
         robot.goalPos = team.getGoalPos();
 
@@ -159,7 +159,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // we're going to see the wrong one
         if (robot.camera.gameGlyph != null) {
-            robot.camera.stopScanningForGlyphs();
             robot.shooter.isAutoTurretOn = true;
             if (Team.RED.equals(team)) {
                 robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));

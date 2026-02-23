@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+
 public class ArrayUtil {
     public static <T> int indexOf(T[] array, T value) {
         for (int i = 0; i < array.length; i++) {
@@ -22,5 +25,11 @@ public class ArrayUtil {
 
     public static <T> boolean contains(T[] array, T value) {
         return indexOf(array, value) != -1;
+    }
+
+    public static <T extends Enum<T>> EnumSet<T> toEnumSet(T[] array, Class<T> enumType) {
+        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
+        enumSet.addAll(Arrays.asList(array));
+        return enumSet;
     }
 }

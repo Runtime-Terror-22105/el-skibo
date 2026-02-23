@@ -55,7 +55,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         new SequentialCommandGroup(
                                 new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING), // todo: adjust this delay based on how long it takes for these two servos
                                 new SortCommand(robot),
-                                new SetSpindexerRampActive(robot.spindexer, true)
+                                new SetSpindexerRampActive(robot.spindexer, true),
+                                new InstantCommand(() -> robot.spindexer.useMaxPower = true)
                         ),
                         new ParallelCommandGroup(
                                 new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
@@ -69,7 +70,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new WaitCommand(RAMP_DELAY), // todo: adjust this delay based on how long it takes for ramp to drop
                 new LogCatCommand("PrepareShootCommand", "Phase 4 done", Log.INFO),
                 new SetIntakeSpeedCommand(robot.intake, 0),
-                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT)
+                new InstantCommand(() -> robot.robotState = RobotState.READY_TO_SHOOT),
+                new InstantCommand(() -> robot.spindexer.useMaxPower = false)
         );
     }
 }

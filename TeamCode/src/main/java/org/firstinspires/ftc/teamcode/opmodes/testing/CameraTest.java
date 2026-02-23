@@ -32,10 +32,10 @@ public class CameraTest extends LinearOpMode {
         {
             robot.camera.setTeam(Team.BLUE);
         }
-        if(isInNearAuto)
-        {
-            robot.camera.setAuto(true,false);
-        }
+//        if(isInNearAuto)
+//        {
+//            robot.camera.setAuto(true,false);
+//        }
         waitForStart();
 
         while (opModeIsActive())

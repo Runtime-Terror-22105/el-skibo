@@ -40,6 +40,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static String TAG = "CameraSubsystem";
 
     public static boolean GLOBAL_DISABLE_RELOCALIZATION = false;
+    public static boolean USE_LIVE_VIEW = false;
 
     //banks on the camera always being aligned on one of the robot's center axes
     public static double cameraOffsetInches = -8;
@@ -55,8 +56,9 @@ public class CameraSubsystem extends SubsystemBase {
 //    private AprilTagProcessor frontTagProcessor;
     private AprilTagProcessor backTagProcessor;
 
-    private boolean shouldScanForGlyphs = false;
+    private boolean shouldScanForGlyphs = true;
     public boolean disableRelocalization = false;
+    public boolean disableAprilTagsAfterGlyph = false;
 
     public enum GLYPH {
         GPP(BallColor.GREEN, BallColor.PURPLE, BallColor.PURPLE),
@@ -183,11 +185,19 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
         }
 
-        if (hardware.frontCamera != null) this.vPortalFront = vPortalFrontBuilder.build();
-        if (hardware.backCamera != null) this.vPortalBack = vPortalBackBuilder.build();
+        if (hardware.frontCamera != null) {
+            this.vPortalFront = vPortalFrontBuilder.build();
+            if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
+        }
+        if (hardware.backCamera != null) {
+            this.vPortalBack = vPortalBackBuilder.build();
+            if (!USE_LIVE_VIEW) vPortalBack.stopLiveView();
+        }
 
 //        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
         this.shouldScanForGlyphs = true;
+
+        setAprilTagsEnabled(true);
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
@@ -206,6 +216,15 @@ public class CameraSubsystem extends SubsystemBase {
                 .build();
         processor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
         return processor;
+    }
+
+    public void setAprilTagsEnabled(boolean enabled) {
+        if (vPortalFront != null) {
+            vPortalFront.setProcessorEnabled(frontTagProcessor, enabled);
+        }
+        if (vPortalBack != null) {
+            vPortalBack.setProcessorEnabled(backTagProcessor, enabled);
+        }
     }
 
     public void stopCamera() {
@@ -334,6 +353,10 @@ public class CameraSubsystem extends SubsystemBase {
 //            // Log.w("CameraSubsystem", e);
 //        }
 
+            robot.telemetry.addData("backTagProcessor enabled", vPortalBack.getProcessorEnabled(backTagProcessor));
+            if (!vPortalBack.getProcessorEnabled(backTagProcessor)) {
+                return;
+            }
 
             this.detections = backTagProcessor.getDetections();
             robot.telemetry.addData("greenblob",greenBlobProcessor.getBlobs());
@@ -365,6 +388,9 @@ public class CameraSubsystem extends SubsystemBase {
                         this.gameGlyph = glyphhh;
                         robot.telemetry.addData("seenButUnusedGlyph", glyphhh);
                         // Log.d(TAG, "seenButUnusedGlyph: " + glyphhh);
+                        if (disableAprilTagsAfterGlyph) {
+                            setAprilTagsEnabled(false);
+                        }
                     }
 //
                 } else {
@@ -404,8 +430,8 @@ public class CameraSubsystem extends SubsystemBase {
 
 
 
-            if (localizationTag != null && localizationTag.robotPose != null
-                    && robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
+            if (localizationTag != null && localizationTag.robotPose != null) {
+                    //&& robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
                 relocalize(localizationTag);
             }
 
