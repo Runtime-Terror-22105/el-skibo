@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.command.shooter;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
@@ -38,7 +39,10 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                     robot.spindexer.setPidEnabled(false);
                     robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
                 }),
-                new WaitCommand(SPINDEX_TRANSFER_TIME),
+                new ConditionalCommand(new WaitCommand(SPINDEX_TRANSFER_TIME *2),
+                        new WaitCommand(SPINDEX_TRANSFER_TIME),
+                        () -> robot.getAutoSort()),
+
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
                 new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
                 // reset spindexer, intake, shooter
@@ -48,7 +52,8 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                         new SetSpindexerYawCommand(robot.spindexer, 0.0),
                         new InstantCommand(() -> robot.spindexer.setPidEnabled(true))
                 ),
-                new GoToRestingStateCommand(robot)
+                new GoToRestingStateCommand(robot),
+            new InstantCommand(() -> robot.spindexer.useMaxPower = false)
         );
         this.robot = robot;
     }
