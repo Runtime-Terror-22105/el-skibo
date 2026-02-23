@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.util.MathUtils;
 
-import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
