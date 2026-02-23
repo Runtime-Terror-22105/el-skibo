@@ -141,11 +141,11 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
 
             robot.lightControl.setIsManualLighting(true);
-            if(robot.color == Team.RED)
+            if(robot.color.equals(Team.RED))
             {
                 robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
             }
-            else if(robot.color == Team.BLUE)
+            else if(robot.color.equals(Team.BLUE))
             {
                 robot.lightControl.setManualLightColor(TerrorLight.LightColors.BLUE);
             }
