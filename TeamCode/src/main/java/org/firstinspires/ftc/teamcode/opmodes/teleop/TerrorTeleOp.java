@@ -132,19 +132,34 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //            blackboard.put(SPINDEXER_POSITION_KEY, null);
 //        }
 
-        robot.lightControl.setIsManualLighting(true);
-        if(robot.color.equals(Team.RED))
-        {
-            robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
-        }
-        else if(robot.color.equals(Team.BLUE))
-        {
-            robot.lightControl.setManualLightColor(TerrorLight.LightColors.BLUE);
+        while (opModeInInit()) {
+            for (LynxModule hub : hardware.allHubs) {
+                hub.clearBulkCache();
+            }
+
+            CommandScheduler.getInstance().run();
+
+            robot.lightControl.setIsManualLighting(true);
+            if(robot.color.equals(Team.RED))
+            {
+                robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
+            }
+            else if(robot.color.equals(Team.BLUE))
+            {
+                robot.lightControl.setManualLightColor(TerrorLight.LightColors.BLUE);
+            }
+
+            hardware.write();
+
+            FtcDashDrawing.drawDebug(robot.follower);
+//            this.showPoem();
+            robot.telemetry.update();
         }
 
         waitForStart();
 //        robot.camera.stopCamera();
 
+        robot.lightControl.setIsManualLighting(false);
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
         GamepadEx gamepad2ex = new GamepadEx(gamepad2);
 
