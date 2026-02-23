@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 @Config
 public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
-    public static long SHOOTING_DELAY = 1000;
+    public static long SHOOTING_DELAY = 1500;
 
     protected AutoSorted12(Team team) {
         super(team);

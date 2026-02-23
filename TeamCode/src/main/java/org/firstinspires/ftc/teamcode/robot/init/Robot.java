@@ -142,7 +142,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     }
 
     public void setAutoSort(boolean autoSort) {
-        this.setAutoSort(autoSort, false);
+        this.setAutoSort(autoSort, true);
     }
 
     public void toggleAutoSort() {
