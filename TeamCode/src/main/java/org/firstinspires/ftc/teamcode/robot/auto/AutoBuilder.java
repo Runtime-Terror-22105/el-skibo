@@ -76,6 +76,7 @@ public class AutoBuilder {
     public final boolean mirror;
     public final OneAutoToRuleThemAll auto;
     private PathChain lastPath = null;
+    private long waitBeforeShooting;
 
     public AutoBuilder(OneAutoToRuleThemAll auto, Robot robot, Team team, StartConfig initial) {
         this.auto = auto;
@@ -84,6 +85,11 @@ public class AutoBuilder {
         // will handle it for us.
         this.startPoseBlue = initial.getStartPoseBlue();
         this.mirror = Team.RED.equals(team);
+        this.waitBeforeShooting = 1000;
+    }
+
+    public void waitBeforeShooting(long time) {
+        this.waitBeforeShooting += time;
     }
 
     // For NEAR ZONE
@@ -353,7 +359,7 @@ public class AutoBuilder {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shootPath, false),
-                        new WaitCommand(1000).andThen(new PrepareShootCommand(robot))
+                        new WaitCommand(waitBeforeShooting).andThen(new PrepareShootCommand(robot))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
