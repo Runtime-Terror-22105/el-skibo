@@ -32,12 +32,9 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
                 builder.shootPreload(),
-                new WaitCommand(SHOOTING_DELAY),
-                builder.cycleSpike(1),
-                new WaitCommand(SHOOTING_DELAY),
-                builder.cycleSpike(2),
-                new WaitCommand(SHOOTING_DELAY),
-                builder.cycleSpike(3, ShootPathFlag.LAST)
+                builder.intakeSpike(1), new WaitCommand(SHOOTING_DELAY), builder.shootSpike(1, ShootPathFlag.NEXT_HORIZ),
+                builder.intakeSpike(2), new WaitCommand(SHOOTING_DELAY), builder.shootSpike(2, ShootPathFlag.NEXT_HORIZ),
+                builder.intakeSpike(3), new WaitCommand(SHOOTING_DELAY), builder.shootSpike(3, ShootPathFlag.LAST)
         );
     }
 }
