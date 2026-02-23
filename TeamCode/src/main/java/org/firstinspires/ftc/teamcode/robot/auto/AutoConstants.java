@@ -13,17 +13,17 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class AutoConstants {
     // Unless otherwise specified, all poses are for NEAR ZONE.
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(45, 95, Math.toRadians(225));
-    public static Pose2d SHOOT_PRELOAD_HORIZ_POSE = new Pose2d(24, 108, Math.toRadians(225));
+    public static Pose2d SHOOT_PRELOAD_HORIZ_POSE = new Pose2d(24, 115, Math.toRadians(225));
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 95, Math.toRadians(225));
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
     public static Pose2d SHOOT_FAR_POSE = new Pose2d(46, 11, Math.toRadians(180));
 
-    public static Pose2d INTAKE_BEFORE_HORIZ_CONTROL = new Pose2d(24, 114, 0);
-    public static Pose2d INTAKE_BEFORE_HORIZ_POSE = new Pose2d(24, 102, Math.toRadians(270));
-    public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(24, 82, Math.toRadians(270));
-    public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(24, 58, Math.toRadians(270));
-    public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(24, 34, Math.toRadians(270));
+    public static Pose2d INTAKE_BEFORE_HORIZ_CONTROL = new Pose2d(21, 116, 0);
+    public static Pose2d INTAKE_BEFORE_HORIZ_POSE = new Pose2d(21, 102, Math.toRadians(263));
+    public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(21, 82, Math.toRadians(263));
+    public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(21, 58, Math.toRadians(263));
+    public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(21, 34, Math.toRadians(263));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
     public static Pose2d INTAKE_1_POSE = new Pose2d(22, 85.149, Math.toRadians(180));
@@ -41,8 +41,8 @@ public class AutoConstants {
     public static Pose2d PUSH_GATE_POSE = new Pose2d(18.5, 70, Math.toRadians(180));
 
     // For CYCLING gate.
-    public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 59.5, Math.toRadians(180));
-    public static Pose2d AFTER_GATE = new Pose2d(12, 62, Math.toRadians(163));
+    public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 61.5, Math.toRadians(180));
+    public static Pose2d AFTER_GATE = new Pose2d(10, 64, Math.toRadians(155));
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(11, 8, Math.toRadians(180));
     public static Pose2d INTAKE_TUNNEL_POSE = new Pose2d(11, 32, Math.toRadians(180));
@@ -55,6 +55,7 @@ public class AutoConstants {
     public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 1500;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
+    public static int INTAKE_DELAY_HORIZ = 1000;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
