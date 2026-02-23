@@ -41,6 +41,7 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootComman
 import org.firstinspires.ftc.teamcode.robot.command.states.ChangeHangStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
+import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -130,6 +131,16 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //            robot.spindexer.setHomedSpindexerOffset(-((double) spindexerPosition));
 //            blackboard.put(SPINDEXER_POSITION_KEY, null);
 //        }
+
+        robot.lightControl.setIsManualLighting(true);
+        if(robot.color.equals(Team.RED))
+        {
+            robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
+        }
+        else if(robot.color.equals(Team.BLUE))
+        {
+            robot.lightControl.setManualLightColor(TerrorLight.LightColors.BLUE);
+        }
 
         waitForStart();
 //        robot.camera.stopCamera();

@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoConstants;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ToggleAutoTurretCommand;
+import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
@@ -138,6 +139,17 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
             CommandScheduler.getInstance().run();
 
+
+            robot.lightControl.setIsManualLighting(true);
+            if(robot.color.equals(Team.RED))
+            {
+                robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
+            }
+            else if(robot.color.equals(Team.BLUE))
+            {
+                robot.lightControl.setManualLightColor(TerrorLight.LightColors.BLUE);
+            }
+
             hardware.write();
 
             FtcDashDrawing.drawDebug(robot.follower);
@@ -156,6 +168,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         }
 
         waitForStart();
+        robot.lightControl.setIsManualLighting(false);
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
         robot.shooter.isAutoTurretOn = true;

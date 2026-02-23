@@ -53,7 +53,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static int GAIN = 255;
 
     private AprilTagProcessorDash aTagProcessor;
-    private AprilTagProcessor frontTagProcessor;
+//    private AprilTagProcessor frontTagProcessor;
     private AprilTagProcessor backTagProcessor;
 
     private boolean shouldScanForGlyphs = true;
@@ -154,7 +154,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
-        this.frontTagProcessor = createAprilTagProcessor();
+//        this.frontTagProcessor = createAprilTagProcessor();
         this.backTagProcessor = createAprilTagProcessor();
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
@@ -165,7 +165,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setCameraResolution(new Size(320, 240))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[0])
-                .addProcessors(this.frontTagProcessor,purpleBlobProcessor,greenBlobProcessor);
+                .addProcessors(purpleBlobProcessor,greenBlobProcessor);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
