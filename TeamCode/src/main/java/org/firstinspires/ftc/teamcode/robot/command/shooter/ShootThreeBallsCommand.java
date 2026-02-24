@@ -39,7 +39,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                     robot.spindexer.setPidEnabled(false);
                     robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
                 }),
-                new ConditionalCommand(new WaitCommand(SPINDEX_TRANSFER_TIME *2),
+                new ConditionalCommand(new WaitCommand((int) (SPINDEX_TRANSFER_TIME * 2.5)),
                         new WaitCommand(SPINDEX_TRANSFER_TIME),
                         () -> robot.getAutoSort()),
 

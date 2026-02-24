@@ -16,6 +16,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_P
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY_HORIZ;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
@@ -340,10 +341,10 @@ public class AutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new FollowPathCommand(robot.follower, lastPath, true, 0.9),
                         new GoToIntakeStateCommand(robot)
                 ),
-                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY_HORIZ)
         );
     }
 
