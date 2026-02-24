@@ -38,7 +38,6 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.shooter.AdjustTurretOffsetCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
-import org.firstinspires.ftc.teamcode.robot.command.states.ChangeHangStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
@@ -176,11 +175,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton manualSpindexLeft = new GamepadButton(gamepad1ex,GamepadKeys.Button.DPAD_LEFT);
         GamepadButton manualSpindexRight = new GamepadButton(gamepad1ex,GamepadKeys.Button.DPAD_RIGHT);
 
-        GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
         Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
         GamepadButton restingButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
-        GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
         GamepadButton transferButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
@@ -192,8 +189,13 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 //        GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
         GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
+
+//        GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         GamepadButton hangManualUpButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
         GamepadButton hangManualDownButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
+
+        GamepadButton headingLockButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
+        GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
         Trigger threeBallsAreInside = new Trigger(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE));
 //        GamepadButton tapeZoneShoot = new GamepadButton(gamepad1ex, GamepadKeys.Button.CIRCLE);
@@ -215,7 +217,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        ));
 
         // todo: implement hang later
-        hangButton.whenPressed(new ChangeHangStateCommand(robot));
+//        hangButton.whenPressed(new ChangeHangStateCommand(robot));
 
         intakeButton.whenActive(new ConditionalCommand(
                 new GoToIntakeStateCommand(robot),
@@ -252,8 +254,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         manualSpindexRight.whileHeld(new AdjustTurretOffsetCommand(robot, false));
 
-        slowSpeedButton.whenPressed(() -> robot.drive.setSlowSpeed(!robot.drive.slowSpeed));
-//        slowSpeedButton.whenReleased(() -> robot.drive.setSlowSpeed(false));
+        slowSpeedButton.whenPressed(() -> robot.drive.toggleSlowSpeed());
+        headingLockButton.whenPressed(() -> robot.drive.toggleHeadingLock());
 
         shoot3button.whenPressed(new ConditionalCommand(
                 new PrepareShootCommand(robot),

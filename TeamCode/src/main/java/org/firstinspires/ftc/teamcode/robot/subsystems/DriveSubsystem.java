@@ -47,7 +47,7 @@ public class DriveSubsystem extends SubsystemBase {
         }
     }
 
-    public void setSlowSpeed(boolean slowSpeed) {
-        this.slowSpeed = slowSpeed;
+    public void toggleSlowSpeed() {
+        this.slowSpeed = !this.slowSpeed;
     }
 }

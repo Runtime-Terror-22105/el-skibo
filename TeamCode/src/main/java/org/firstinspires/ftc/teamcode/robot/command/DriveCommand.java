@@ -49,12 +49,7 @@ public class DriveCommand extends CommandBase {
         double rotationMultiplier = Algebra.mapRangeNoClamp(robot.hardware.initialVoltage, 12, 14, ROTATION_MULTIPLIER_12V, ROTATION_MULTIPLIER_14V);
         double left_y = -y.get();
         double left_x = -x.get();
-        double right_x;
-        if (robot.drive.isHeadingLocked()) {
-            right_x = headingController.calculatePower(getHeadingError(), 0);
-        } else {
-            right_x = -turn.get();
-        }
+        double right_x = -turn.get();;
 
 //        Log.d("DriveCommand", Boolean.toString(robot.drive.slowSpeed));
         if (robot.drive.slowSpeed) {
@@ -62,7 +57,12 @@ public class DriveCommand extends CommandBase {
             left_x *= SLOW_SPEED_STRAFE;
             right_x *= SLOW_SPEED_ROTATION;
         }
-        robot.follower.setTeleOpDrive(left_y, left_x, right_x * rotationMultiplier);
+
+        double rotation = right_x * rotationMultiplier;
+        if (robot.drive.isHeadingLocked()) {
+            rotation = headingController.calculatePower(getHeadingError(), 0);
+        }
+        robot.follower.setTeleOpDrive(left_y, left_x, rotation);
 //        robot.drivetrain.move(
 //                direction,
 //                rotation,
