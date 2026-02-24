@@ -11,10 +11,20 @@ public class DriveSubsystem extends SubsystemBase {
     private final String TAG = "DriveSubsystem";
     private final Robot robot;
     public boolean slowSpeed;
+    private boolean headingLock;
 
     public DriveSubsystem(Robot robot) {
         this.robot = robot;
         this.slowSpeed = false;
+        this.headingLock = false;
+    }
+
+    public boolean isHeadingLocked() {
+        return this.headingLock;
+    }
+
+    public void toggleHeadingLock() {
+        this.headingLock = !headingLock;
     }
 
     @Override

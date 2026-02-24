@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.math.controllers;
 
+import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.math.Angle;
@@ -24,6 +25,10 @@ public class PidfController {
     public PidfController(PidfCoefficients pidfCoefficients) {
         this.pidfCoefficients = pidfCoefficients;
         _resetTempVars();
+    }
+
+    public PidfController(PIDFCoefficients coeff) {
+        this(new PidfCoefficients(coeff.P, coeff.I, coeff.D, coeff.F));
     }
 
     public void setPidfCoefficients(PidfCoefficients coefficients) {
