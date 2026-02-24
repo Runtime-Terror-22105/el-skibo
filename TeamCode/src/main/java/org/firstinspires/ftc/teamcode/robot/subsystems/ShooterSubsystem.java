@@ -419,7 +419,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         double ff = this.hardware.getVoltageScale() * getGoalVelocity();
         this.shooterPID.setTargetPosition(getGoalVelocity());
-        return this.shooterPID.calculatePower(this.getVelocityRpm(), ff);
+        return this.shooterPID.calculatePower(this.getVelocityRpm(), ff, false);
     }
 
     public void addTurretOffset(double change){

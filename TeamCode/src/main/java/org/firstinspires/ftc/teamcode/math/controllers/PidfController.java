@@ -38,14 +38,6 @@ public class PidfController {
         this.tolerance = tolerance;
     }
 
-    public double calculatePower(double currentPosition, double feedforwardReference) {
-        return this.calculatePower(currentPosition, feedforwardReference, false);
-    }
-
-    /**
-     * NOTE: You must run this function each loop iteration. It will do the PID stuff to calculate
-     * the power to be used.
-     */
     public double calculatePower(double currentPosition, double feedforwardReference, boolean angleWrapError) {
         if (Double.isNaN(this.targetPosition) || Double.isNaN(currentPosition)) {
             return 0;
@@ -54,7 +46,14 @@ public class PidfController {
         this.currentPosition = currentPosition;
 
         double error = calculateError(currentPosition, angleWrapError);
+        return this.calculatePower(error, feedforwardReference);
+    }
 
+    /**
+     * NOTE: You must run this function each loop iteration. It will do the PID stuff to calculate
+     * the power to be used.
+     */
+    public double calculatePower(double error, double feedforwardReference) {
         double timestamp = (double) System.nanoTime() / 1E9;
         if (lastTimeStamp == 0) lastTimeStamp = timestamp;
         double period = Math.max(timestamp - lastTimeStamp, 1E-5);
