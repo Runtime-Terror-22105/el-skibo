@@ -49,8 +49,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
             new PidfController.PidfCoefficients(0.002, 0, 0, 0.000196, 0);
     public static double SHOOTER_VELOCITY_TOLERANCE = 300.0;  // Units are RPM
-    private final PidfController shooterSmallPID = new PidfController(SMALL_PID_COEFFICIENTS);
-    private final PidfController shooterLargePID = new PidfController(LARGE_PID_COEFFICIENTS);
+    private final PidfController shooterPID = new PidfController(SMALL_PID_COEFFICIENTS);
 
     public GoalPosLookupTable goalPosLookupTable;
 
@@ -126,8 +125,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
 
-        this.shooterSmallPID.setTargetPosition(0.0);
-        this.shooterLargePID.setTargetPosition(0.0);
+        this.shooterPID.setTargetPosition(0.0);
 
         this.goalPosLookupTable = new GoalPosLookupTable(this.robot);
 //        for (int i=0; i < rollingValLen; i++){
@@ -425,16 +423,12 @@ public class ShooterSubsystem extends SubsystemBase {
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
 
-        // Although we only use the output of one PID, we need to calculate power for both
-        // PIDs always, as the PID internally tracks time to calculate derivatives and integrals.
-        double goalRpm = getGoalVelocity();
-        double ff = this.hardware.getVoltageScale() * goalRpm;
-        shooterSmallPID.setTargetPosition(goalRpm);
-        shooterLargePID.setTargetPosition(goalRpm);
-        double smallPower = shooterSmallPID.calculatePower(currentRpm, ff, false);
-        double largePower = shooterLargePID.calculatePower(currentRpm, ff, false);
-        boolean useSmallPID = shooterSmallPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_VELOCITY_TOLERANCE);
-        return useSmallPID ? smallPower : largePower;
+        shooterPID.setTargetPosition(getGoalVelocity());
+        boolean useSmallPID = shooterPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_VELOCITY_TOLERANCE);
+        shooterPID.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
+
+        double ff = this.hardware.getVoltageScale() * getGoalVelocity();
+        return shooterPID.calculatePower(currentRpm, ff, false);
     }
 
     public void addTurretOffset(double change){
