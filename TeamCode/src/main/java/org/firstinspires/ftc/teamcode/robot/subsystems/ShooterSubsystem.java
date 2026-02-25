@@ -23,11 +23,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTabl
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 @Config
 public class ShooterSubsystem extends SubsystemBase {
     public static boolean USE_SOTM = true;
@@ -45,10 +40,10 @@ public class ShooterSubsystem extends SubsystemBase {
     //
     // SHOOTER_VELOCITY_TOLERANCE determines when we switch between the two PIDs.
     public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000196, 0);
+            new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
     public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.002, 0, 0, 0.000196, 0);
-    public static double SHOOTER_VELOCITY_TOLERANCE = 300.0;  // Units are RPM
+            new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
+    public static double SHOOTER_VELOCITY_TOLERANCE = 800;  // Units are RPM
     private final PidfController shooterPID = new PidfController(SMALL_PID_COEFFICIENTS);
 
     public GoalPosLookupTable goalPosLookupTable;
