@@ -413,7 +413,9 @@ public class CameraSubsystem extends SubsystemBase {
             // Log.d(TAG, "Velocity Magnitude: " + robot.follower.getVelocity().getMagnitude());
             // Log.d(TAG, "Localization Tag: " + localizationTag);
             robot.telemetry.addData("Glyph", gameGlyph);
-            robot.telemetry.addData("Velocity Magnitude", robot.follower.getVelocity().getMagnitude());
+            robot.telemetry.addData("Velocity Magnitude", "" + robot.follower.getVelocity().getMagnitude() + " < " +
+                    VELOCITY_THRESHOLD + " = " + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
+
             if(localizationTag != null)
             {
                 robot.telemetry.addData("Localization Tag id", localizationTag.id);
@@ -428,8 +430,12 @@ public class CameraSubsystem extends SubsystemBase {
 
 
 
-
-
+            Log.d("CameraSubsystem", "localizationTag != null: " + (localizationTag != null));
+            Log.d("CameraSubsystem", "localizationTag.robotPose != null: " + (localizationTag != null && localizationTag.robotPose != null));
+            Log.d("CameraSubsystem", "robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD: "
+                    + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
+            Log.d("CameraSubsystem", "Relocalization conditions met: " + ((localizationTag != null && localizationTag.robotPose != null)
+                    && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)));
             if (localizationTag != null && localizationTag.robotPose != null
                     && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)) {
                 Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
