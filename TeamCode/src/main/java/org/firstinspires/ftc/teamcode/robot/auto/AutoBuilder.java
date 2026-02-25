@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE_2;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.HITTING_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
@@ -198,8 +200,18 @@ public class AutoBuilder {
     }
 
     // This is for CYCLING gate intake, not for pushing the gate after a spike strip.
-    private PathChain intakeGatePath() {
-        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false)
+    private PathChain intakeGatePath1() {
+//        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE, AFTER_GATE, mirror, false, false)
+//                .setBrakingStrength(0.6)
+//                .build();
+        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE, HITTING_GATE, mirror, false, false)
+                .setBrakingStrength(0.6)
+                .build();
+        return lastPath;
+    }
+
+    private PathChain intakeGatePath2() {
+        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE_2, AFTER_GATE, mirror, false, false)
                 .setBrakingStrength(0.6)
                 .build();
         return lastPath;
@@ -387,9 +399,10 @@ public class AutoBuilder {
     public Command intakeGate() {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, intakeGatePath(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                        new FollowPathCommand(robot.follower, intakeGatePath1(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                         new GoToIntakeStateCommand(robot)
                 ),
+                new FollowPathCommand(robot.follower, intakeGatePath2(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                 new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
     }
