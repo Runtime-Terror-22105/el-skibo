@@ -430,8 +430,9 @@ public class CameraSubsystem extends SubsystemBase {
 
 
 
-            if (localizationTag != null && localizationTag.robotPose != null) {
-                    //&& robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD) {
+            if (localizationTag != null && localizationTag.robotPose != null
+                    && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)) {
+                Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
                 relocalize(localizationTag);
             }
 
@@ -453,12 +454,16 @@ public class CameraSubsystem extends SubsystemBase {
     {
 //        Pose2D pose2D = new Pose2D(DistanceUnit.INCH, tag.robotPose.getPosition().x, tag.robotPose.getPosition().y, AngleUnit.RADIANS, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
 //        Pose rawPose = PoseConverter.pose2DToPose(pose2D, PedroCoordinates.INSTANCE);
-        Pose rawPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
+//        Pose rawPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS));
+        double pinpointRobotHeading = robot.follower.poseTracker.getPose().getHeading();
+        Pose rawPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, pinpointRobotHeading);
         //this funnily not a "raw pose" then but oh well noone cares
 
         double offsetX = cameraOffsetInches * Math.cos(rawPose.getHeading());
         double offsetY = cameraOffsetInches * Math.sin(rawPose.getHeading());
-        Pose cameraOffset = new Pose(offsetX,offsetY);
+
+        Pose cameraOffset = new Pose(cameraOffsetInches, 0, 0).rotate(rawPose.getHeading(), false);
+//        Pose cameraOffset = new Pose(offsetX,offsetY);
         Pose localizedPose = rawPose.minus(cameraOffset);
 
         robot.telemetry.addData("trying to relocalize",localizedPose);
