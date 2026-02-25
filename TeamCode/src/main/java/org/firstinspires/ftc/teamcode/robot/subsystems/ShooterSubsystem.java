@@ -39,11 +39,18 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
     // TODO: tune velocity pid coefficients + tolerance
-    public static PidfController.PidfCoefficients shooterPIDCoeffecients =
+    // Small/large PID is for when error is small/large, respectively.
+    //
+    // kV should be the same for both PIDs. kP can be more aggressive for the large PID.
+    //
+    // SHOOTER_VELOCITY_TOLERANCE determines when we switch between the two PIDs.
+    public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
             new PidfController.PidfCoefficients(0.0005, 0, 0, 0.000196, 0);
-    public final PidfController shooterPID = new PidfController(shooterPIDCoeffecients);
-    public static double SHOOTER_VELOCITY_TOLERANCE = 0.0;
-
+    public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
+            new PidfController.PidfCoefficients(0.002, 0, 0, 0.000196, 0);
+    public static double SHOOTER_VELOCITY_TOLERANCE = 300.0;  // Units are RPM
+    private final PidfController shooterSmallPID = new PidfController(SMALL_PID_COEFFICIENTS);
+    private final PidfController shooterLargePID = new PidfController(LARGE_PID_COEFFICIENTS);
 
     public GoalPosLookupTable goalPosLookupTable;
 
@@ -119,8 +126,8 @@ public class ShooterSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
 
-        this.shooterPID.setTolerance(SHOOTER_VELOCITY_TOLERANCE);
-        this.shooterPID.setTargetPosition(0.0);
+        this.shooterSmallPID.setTargetPosition(0.0);
+        this.shooterLargePID.setTargetPosition(0.0);
 
         this.goalPosLookupTable = new GoalPosLookupTable(this.robot);
 //        for (int i=0; i < rollingValLen; i++){
@@ -412,14 +419,22 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double updateShooter() {
-        if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", this.getVelocityRpm());
-        if (telemetry) Robot.debugTelemetry.addData("Shooter in/s", this.getVelocityRpm() / 6.469);
+        double currentRpm = this.getVelocityRpm();
+        if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", currentRpm);
+        if (telemetry) Robot.debugTelemetry.addData("Shooter in/s", currentRpm / 6.469);
 //        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
 
-        double ff = this.hardware.getVoltageScale() * getGoalVelocity();
-        this.shooterPID.setTargetPosition(getGoalVelocity());
-        return this.shooterPID.calculatePower(this.getVelocityRpm(), ff, false);
+        // Although we only use the output of one PID, we need to calculate power for both
+        // PIDs always, as the PID internally tracks time to calculate derivatives and integrals.
+        double goalRpm = getGoalVelocity();
+        double ff = this.hardware.getVoltageScale() * goalRpm;
+        shooterSmallPID.setTargetPosition(goalRpm);
+        shooterLargePID.setTargetPosition(goalRpm);
+        double smallPower = shooterSmallPID.calculatePower(currentRpm, ff, false);
+        double largePower = shooterLargePID.calculatePower(currentRpm, ff, false);
+        boolean useSmallPID = shooterSmallPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_VELOCITY_TOLERANCE);
+        return useSmallPID ? smallPower : largePower;
     }
 
     public void addTurretOffset(double change){
