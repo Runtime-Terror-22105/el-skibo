@@ -248,7 +248,7 @@ public class AutoBuilder {
         if (flags.contains(ShootPathFlag.EARLY_LEAVE)) {
             command = new SequentialCommandGroup(
                     new ScheduleCommand(command),
-                    new WaitCommand(550)
+                    new WaitCommand(500)
             );
         }
         return command;
@@ -274,7 +274,10 @@ public class AutoBuilder {
             // No need to PrepareShootCommand here; since init will do it for us.
             if (flags.contains(ShootPathFlag.SOTM)) {
                 return new ParallelCommandGroup(
-                        new WaitCommand(625).andThen(shootCommand(flags)),
+                        new SequentialCommandGroup(
+                                new WaitForFlywheelCommand(robot.shooter).withTimeout(625),
+                                shootCommand(flags)
+                        ),
                         new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
                 );
             } else {
