@@ -86,6 +86,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final Robot robot;
 
     // flags for autoshoot
+    public boolean disableFlywheel = false;
     public boolean isAutoAimOn;
     public boolean isAutoVelOn;
     public boolean isAutoHoodOn;
@@ -411,6 +412,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double updateShooter() {
+        if (disableFlywheel) return 0.0;
+
         double currentRpm = this.getVelocityRpm();
         if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", currentRpm);
         if (telemetry) Robot.debugTelemetry.addData("Shooter in/s", currentRpm / 6.469);
