@@ -12,7 +12,6 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -22,15 +21,10 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.opencv.Circle;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
-import org.firstinspires.ftc.vision.opencv.ColorRange;
-import org.firstinspires.ftc.vision.opencv.ImageRegion;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
@@ -426,39 +420,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     public boolean hasBlobs()
     {
-        List<ColorBlobLocatorProcessor.Blob> blobs = purpleBlobProcessor.getBlobs();
-        return !blobs.isEmpty();
-    }
-
-    /**
-     <p>don't use unless you've confirmed there are blobs via hasBlobs()</p>
-     */
-    private Coordinate getLargestBlobCoordinate()
-    {
-        List<ColorBlobLocatorProcessor.Blob> blobs = purpleBlobProcessor.getBlobs();
-        blobs.addAll(greenBlobProcessor.getBlobs());
-
-        ColorBlobLocatorProcessor.Util.filterByCriteria(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
-                300,500000,blobs);
-
-        for(ColorBlobLocatorProcessor.Blob blob: blobs)
-        {
-            Circle circle = blob.getCircle();
-            double circularity = blob.getCircularity();
-            float radius = circle.getRadius();
-            double x = circle.getX();
-            double y = circle.getY();
-            double contourArea = blob.getContourArea();
-            double circleArea = Math.pow(radius,2)*Math.PI;
-        }
-
-        //i dont know if this is true or not but i think blob(0) is the biggest one
-        ColorBlobLocatorProcessor.Blob targetBlob = blobs.get(0);
-
-        //me when i lie
-        return new Coordinate(5000,5000);
-
+        return !ballPipeline.getBlobs().isEmpty();
     }
 
     private void relocalize(AprilTagDetection tag)
