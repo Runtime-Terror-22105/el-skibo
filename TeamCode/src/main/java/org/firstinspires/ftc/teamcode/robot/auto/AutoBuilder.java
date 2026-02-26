@@ -59,6 +59,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -292,7 +293,7 @@ public class AutoBuilder {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, lastPath, false),
-                        new WaitCommand(PRELOAD_FAR_PRE_SHOOT_DELAY)
+                        new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY)
                 ),
                 shootCommand(flags),
                 new StopScanningForGlyphsCommand(robot.camera)

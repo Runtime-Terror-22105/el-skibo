@@ -37,14 +37,17 @@ public class ShooterSubsystem extends SubsystemBase {
     // Small/large PID is for when error is small/large, respectively.
     //
     // kV should be the same for both PIDs. kP can be more aggressive for the large PID.
-    //
-    // SHOOTER_VELOCITY_TOLERANCE determines when we switch between the two PIDs.
     public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
             new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
     public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
             new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
-    public static double SHOOTER_VELOCITY_TOLERANCE = 800;  // Units are RPM
     private final PidfController shooterPID = new PidfController(SMALL_PID_COEFFICIENTS);
+
+    // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
+    public static double SHOOTER_PID_SWITCH = 800;  // Units are RPM
+
+    // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
+    public static double SHOOTER_VEL_TOLERANCE = 75;  // Units are RPM
 
     public GoalPosLookupTable goalPosLookupTable;
 
@@ -411,6 +414,10 @@ public class ShooterSubsystem extends SubsystemBase {
         return velocity * 6.469;
     }
 
+    public boolean isFlywheelAtTarget() {
+        return shooterPID.atTargetPositionWithTolerance(this.getVelocityRpm(), SHOOTER_VEL_TOLERANCE);
+    }
+
     public double updateShooter() {
         if (disableFlywheel) return 0.0;
 
@@ -421,7 +428,7 @@ public class ShooterSubsystem extends SubsystemBase {
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
 
         shooterPID.setTargetPosition(getGoalVelocity());
-        boolean useSmallPID = shooterPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_VELOCITY_TOLERANCE);
+        boolean useSmallPID = shooterPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_PID_SWITCH);
         shooterPID.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
 
         double ff = this.hardware.getVoltageScale() * getGoalVelocity();
