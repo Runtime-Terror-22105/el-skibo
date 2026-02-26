@@ -46,6 +46,7 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.ScheduleCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -247,7 +248,7 @@ public class AutoBuilder {
         if (flags.contains(ShootPathFlag.EARLY_LEAVE)) {
             command = new SequentialCommandGroup(
                     new ScheduleCommand(command),
-                    new WaitCommand(300)
+                    new WaitCommand(550)
             );
         }
         return command;
@@ -439,7 +440,10 @@ public class AutoBuilder {
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
-                new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new ParallelRaceGroup(
+                    new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                    new WaitForIntakeCommand(robot)
+                ),
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
         );
     }
