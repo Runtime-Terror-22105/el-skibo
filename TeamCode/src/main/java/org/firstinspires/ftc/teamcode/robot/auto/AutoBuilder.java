@@ -261,7 +261,7 @@ public class AutoBuilder {
             );
             if (flags.contains(ShootPathFlag.SOTM)) {
                 return new ParallelCommandGroup(
-                        new WaitCommand(750).andThen(shootCommand),
+                        new WaitCommand(625).andThen(shootCommand),
                         new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
                 );
             } else {
