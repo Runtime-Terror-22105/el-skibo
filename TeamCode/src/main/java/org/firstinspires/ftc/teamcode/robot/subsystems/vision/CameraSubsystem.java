@@ -11,6 +11,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -81,7 +82,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     public GLYPH gameGlyph;
 
-//    private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
     public VisionPortal vPortalFront;
     public VisionPortal vPortalBack;
 
@@ -99,12 +99,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     private int[] visionPortalIDs;
 
-    private OpenCvCamera maskingCamera;
-
-    private boolean hasBlobTarget = false;
-
-    public static double CVBallStopRadius = 1; //tune via dashboard
-
 
 
     //roi
@@ -116,7 +110,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     int frontCameraWidth = 320;
 
-    private ColorBlobLocatorProcessor purpleBlobProcessor = new ColorBlobLocatorProcessor.Builder()
+    private final ColorBlobLocatorProcessor purpleBlobProcessor = new ColorBlobLocatorProcessor.Builder()
             .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)
             .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
             .setRoi(ImageRegion.asUnityCenterCoordinates(left,top,right,bottom)) //i lowk dunno this does
@@ -129,7 +123,7 @@ public class CameraSubsystem extends SubsystemBase {
             .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
             .build();
 
-    private ColorBlobLocatorProcessor greenBlobProcessor = new ColorBlobLocatorProcessor.Builder()
+    private final ColorBlobLocatorProcessor greenBlobProcessor = new ColorBlobLocatorProcessor.Builder()
             .setTargetColorRange(ColorRange.ARTIFACT_GREEN)
             .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
             .setRoi(ImageRegion.asUnityCenterCoordinates(left,top,right,bottom)) //i lowk dunno this does
@@ -166,7 +160,6 @@ public class CameraSubsystem extends SubsystemBase {
 
         VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.frontCamera)
-//                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(frontCameraWidth, 240))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[0])
@@ -174,7 +167,6 @@ public class CameraSubsystem extends SubsystemBase {
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
-//                .setCameraResolution(new Size(320, 240))
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[1])
@@ -243,36 +235,6 @@ public class CameraSubsystem extends SubsystemBase {
                  \/
              + yaw    -yaw
      */
-
-    public void setGlyphByNormal(AprilTagDetection tag)
-    {
-        robot.telemetry.addData(TAG,"skibidi yaw:"+Math.toDegrees(tag.ftcPose.yaw));
-//        robot.telemetry.addData(TAG,"skibidi pitch:"+tag.ftcPose.pitch);
-        robot.telemetry.addData(TAG,"skibidi bearing:"+Math.toDegrees(tag.ftcPose.bearing));
-        double tagAngle = tag.ftcPose.yaw; //TODO: replace with whichever works
-        if(team.equals(Team.RED))
-        {
-            if(tagAngle < 0)
-            {
-                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
-            }
-            else
-            {
-                setGlyph(VisionConstants.APRILTAG.RedIndividualPairs.get(tag.id));
-            }
-        }
-        else if(team.equals(Team.BLUE))
-        {
-            if(tagAngle < 0)
-            {
-                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
-            }
-            else
-            {
-                setGlyph(VisionConstants.APRILTAG.BlueIndividualPairs.get(tag.id));
-            }
-        }
-    }
 
     public void stopScanningForGlyphs() {
         this.shouldScanForGlyphs = false;
@@ -453,40 +415,31 @@ public class CameraSubsystem extends SubsystemBase {
                 int red = Math.max(0, 255 - ageMs / 5);
                 FtcDashDrawing.drawRobot(debugLastDetection != null ? debugLastDetection : new Pose(0, 0, 0), String.format("#%02X0000", red));
             }
-
-            PIDtoBallBlob();
         }
     }
 
-    public void setHasBlobTarget(boolean state)
+    public boolean hasBlobs()
     {
-        this.hasBlobTarget = state;
-    }
-
-    public boolean getHasBlobTarget()
-    {
-        return this.hasBlobTarget;
-    }
-
-    private void PIDtoBallBlob()
-    {
-
-        //its not actually "pid" just kind of a sus way of doing things
         List<ColorBlobLocatorProcessor.Blob> blobs = purpleBlobProcessor.getBlobs();
         blobs.addAll(greenBlobProcessor.getBlobs());
+        ColorBlobLocatorProcessor.Util.filterByCriteria(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
+                300,500000,blobs);
+        return !blobs.isEmpty();
+    }
 
-        if(blobs.isEmpty() && !hasBlobTarget)
-        {
-            return;
-        }
-
-        //targetXCoordinate = imagewidth/2
+    /**
+     <p>don't use unless you've confirmed there are blobs via hasBlobs()</p>
+     */
+    private Coordinate getLargestBlobCoordinate()
+    {
+        List<ColorBlobLocatorProcessor.Blob> blobs = purpleBlobProcessor.getBlobs();
+        blobs.addAll(greenBlobProcessor.getBlobs());
 
         ColorBlobLocatorProcessor.Util.filterByCriteria(
                 ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
                 300,500000,blobs);
 
-        //for now this does literally nothing for us except maybe figuring out largest blob
         for(ColorBlobLocatorProcessor.Blob blob: blobs)
         {
             Circle circle = blob.getCircle();
@@ -500,17 +453,9 @@ public class CameraSubsystem extends SubsystemBase {
 
         //i dont know if this is true or not but i think blob(0) is the biggest one
         ColorBlobLocatorProcessor.Blob targetBlob = blobs.get(0);
-        Circle targetCircle = targetBlob.getCircle();
-        if(targetBlob.getCircle().getRadius() >= CVBallStopRadius)
-        {
-            //do some intake stuff idk
-            return;
-        }
-        double XError = frontCameraWidth/2 - targetCircle.getX();
-        //admittedly i dont know how to do this
-        //the idea is if it's on the left drive forward and and turn slolwy left based on the xerror
 
-
+        //me when i lie
+        return new Coordinate(5000,5000);
 
     }
 
@@ -562,6 +507,41 @@ public class CameraSubsystem extends SubsystemBase {
         * 73.62766055610237, 68.73611089751476, -115.51848399842707)*/
         /*pleasework: (66.54386596014463, 75.20379864761392, -124.53039951388197)*/
     }
+
+
+    //=======old stuff=======
+
+    /*
+     public void setGlyphByNormal(AprilTagDetection tag)
+    {
+        robot.telemetry.addData(TAG,"skibidi yaw:"+Math.toDegrees(tag.ftcPose.yaw));
+//        robot.telemetry.addData(TAG,"skibidi pitch:"+tag.ftcPose.pitch);
+        robot.telemetry.addData(TAG,"skibidi bearing:"+Math.toDegrees(tag.ftcPose.bearing));
+        double tagAngle = tag.ftcPose.yaw; //TODO: replace with whichever works
+        if(team.equals(Team.RED))
+        {
+            if(tagAngle < 0)
+            {
+                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            }
+            else
+            {
+                setGlyph(VisionConstants.APRILTAG.RedIndividualPairs.get(tag.id));
+            }
+        }
+        else if(team.equals(Team.BLUE))
+        {
+            if(tagAngle < 0)
+            {
+                setGlyph(GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id)));
+            }
+            else
+            {
+                setGlyph(VisionConstants.APRILTAG.BlueIndividualPairs.get(tag.id));
+            }
+        }
+    }
+     */
 
 //    private void handleLocalizationDetection(AprilTagDetection tag) {
 //        Pose cameraFieldPose = new Pose(72 + tag.robotPose.getPosition().y, 72 - tag.robotPose.getPosition().x, tag.robotPose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI);
