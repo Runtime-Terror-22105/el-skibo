@@ -43,7 +43,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static String TAG = "CameraSubsystem";
 
     public static boolean GLOBAL_DISABLE_RELOCALIZATION = false;
-    public static boolean USE_LIVE_VIEW = false;
+    public static boolean USE_LIVE_VIEW = true;
 
     //banks on the camera always being aligned on one of the robot's center axes
     public static double cameraOffsetInches = -8;
@@ -162,14 +162,14 @@ public class CameraSubsystem extends SubsystemBase {
                 .setCamera(hardware.frontCamera)
                 .setCameraResolution(new Size(frontCameraWidth, 240))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setLiveViewContainerId(visionPortalIDs[0])
+                .setLiveViewContainerId(visionPortalIDs[1])
                 .addProcessors(purpleBlobProcessor,greenBlobProcessor);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setLiveViewContainerId(visionPortalIDs[1])
+                .setLiveViewContainerId(visionPortalIDs[0])
                 .addProcessors(this.backTagProcessor);
 
         switch (liveViewSettings) {
