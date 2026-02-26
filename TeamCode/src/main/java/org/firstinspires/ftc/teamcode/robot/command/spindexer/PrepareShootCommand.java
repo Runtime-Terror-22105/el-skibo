@@ -35,6 +35,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 // Phase 1: ???
                 new InstantCommand(() -> robot.shooter.isAutoVelOn = true),
                 new InstantCommand(() -> robot.shooter.isAutoHoodOn = true),
+                new SetSpindexerWallDown(robot.spindexer, false),
                 new ConditionalCommand(
                         new SequentialCommandGroup(
                             new WaitCommand(TIME_BEFORE_REVERSE_INTAKE),
@@ -44,10 +45,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                         new InstantCommand(() -> {}),
                         () -> doReverseIntake
                 ),
-                new ParallelCommandGroup(
-                    new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
-                    new SetSpindexerWallDown(robot.spindexer, false)
-                ),
+                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                 new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO),
 
                 // Phase 2/3: Sort the balls, spin to pre-transfer yaw
