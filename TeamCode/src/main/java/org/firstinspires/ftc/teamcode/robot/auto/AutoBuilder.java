@@ -247,8 +247,8 @@ public class AutoBuilder {
                     new WaitCommand(SHOOT_DELAY)
             );
         } else {
+            // No need to PrepareShootCommand here; since init will do it for us.
             Command shootCommand = new SequentialCommandGroup(
-                    new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                     new ShootThreeBallsCommand(robot),
                     new ConditionalCommand(
                             new InstantCommand(() -> {}),
@@ -261,18 +261,13 @@ public class AutoBuilder {
             );
             if (flags.contains(ShootPathFlag.SOTM)) {
                 return new ParallelCommandGroup(
-                        new SequentialCommandGroup(
-                                new PrepareShootCommand(robot),
-                                shootCommand
-                        ),
+                        new WaitCommand(750).andThen(shootCommand),
                         new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
                 );
             } else {
                 return new SequentialCommandGroup(
-                        new ParallelCommandGroup(
-                                new PrepareShootCommand(robot),
-                                new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
-                        ),
+                        new FollowPathCommand(robot.follower, shootPreloadPath(flags), false),
+                        new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                         shootCommand
                 );
             }
@@ -284,7 +279,6 @@ public class AutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new PrepareShootCommand(robot),
                         new FollowPathCommand(robot.follower, lastPath, false),
                         new WaitCommand(PRELOAD_FAR_PRE_SHOOT_DELAY)
                 ),

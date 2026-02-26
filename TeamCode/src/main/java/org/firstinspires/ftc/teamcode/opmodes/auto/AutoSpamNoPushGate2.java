@@ -30,6 +30,7 @@ public abstract class AutoSpamNoPushGate2 extends OneAutoToRuleThemAll {
                 builder.cycleSpike(1, ShootPathFlag.EARLY_FINISH),
                 builder.cycleSpike(2, ShootPathFlag.EARLY_FINISH),
                 builder.cycleGate(ShootPathFlag.EARLY_FINISH),
+                builder.cycleGate(ShootPathFlag.EARLY_FINISH),
                 builder.cycleGate(ShootPathFlag.LAST, ShootPathFlag.EARLY_FINISH)
         );
     }

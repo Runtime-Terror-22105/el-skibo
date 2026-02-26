@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoConstants;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ToggleAutoTurretCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -125,11 +126,12 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         if (this.wantsAutoSort()) {
             robot.camera.startScanningForGlyphs();
             CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
+        } else {
+            CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, false));
         }
 
         // we can't spin shooter in init bc it's illegal
-        robot.shooter.isAutoVelOn = false;
-        robot.shooter.setSpeed(0D);
+        robot.shooter.disableFlywheel = true;
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
@@ -138,7 +140,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
             this.initLoop();
 
             CommandScheduler.getInstance().run();
-
 
             robot.lightControl.setIsManualLighting(true);
             if(robot.color.equals(Team.RED))
@@ -169,6 +170,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         waitForStart();
         robot.lightControl.setIsManualLighting(false);
+        robot.shooter.disableFlywheel = false;
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
         robot.shooter.isAutoTurretOn = true;
