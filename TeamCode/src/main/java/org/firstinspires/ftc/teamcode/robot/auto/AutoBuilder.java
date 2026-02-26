@@ -250,8 +250,14 @@ public class AutoBuilder {
             Command shootCommand = new SequentialCommandGroup(
                     new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                     new ShootThreeBallsCommand(robot),
-                    new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
-                    new WaitCommand(SHOOT_DELAY)
+                    new ConditionalCommand(
+                            new InstantCommand(() -> {}),
+                            new SequentialCommandGroup(
+                                    new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(1000),
+                                    new WaitCommand(SHOOT_DELAY)
+                            ),
+                            () -> flags.contains(ShootPathFlag.EARLY_FINISH)
+                    )
             );
             if (flags.contains(ShootPathFlag.SOTM)) {
                 return new ParallelCommandGroup(
@@ -377,11 +383,12 @@ public class AutoBuilder {
      * Command to shoot from spike number.
      *
      * @param spikeNumber The spike number to intake from, where 1 is the closest to the goal and 3 is closest to the human player.
-     * @param flags       Whether this is the last shoot command in the auto sequence.
+     * @param flagArr     Whether this is the last shoot command in the auto sequence.
      * @return The command to intake from the specified spike.
      */
-    public Command shootSpike(int spikeNumber, ShootPathFlag... flags) {
-        PathChain shootPath = shootSpikePath(ArrayUtil.toEnumSet(flags, ShootPathFlag.class));
+    public Command shootSpike(int spikeNumber, ShootPathFlag... flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
+        PathChain shootPath = shootSpikePath(flags);
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shootPath, false),
@@ -389,8 +396,14 @@ public class AutoBuilder {
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
                 new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(1000),
-                new WaitCommand(SHOOT_DELAY)
+                new ConditionalCommand(
+                    new InstantCommand(() -> {}),
+                    new SequentialCommandGroup(
+                            new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(1000),
+                            new WaitCommand(SHOOT_DELAY)
+                    ),
+                    () -> flags.contains(ShootPathFlag.EARLY_FINISH)
+                )
         );
     }
 

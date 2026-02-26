@@ -5,5 +5,8 @@ public enum ShootPathFlag {
     NEXT_HORIZ,
 
     // Only valid for preload
-    SOTM
+    SOTM,
+
+    // Be more aggressive with when we consider the shooting to be finished
+    EARLY_FINISH
 }
