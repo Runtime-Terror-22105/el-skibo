@@ -20,6 +20,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.opencv.Circle;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
@@ -27,6 +28,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
@@ -99,6 +101,10 @@ public class CameraSubsystem extends SubsystemBase {
 
     private OpenCvCamera maskingCamera;
 
+    private boolean hasBlobTarget = false;
+
+    public static double CVBallStopRadius = 1; //tune via dashboard
+
 
 
     //roi
@@ -108,8 +114,7 @@ public class CameraSubsystem extends SubsystemBase {
     double left = -1;
     double bottom = -1;
 
-    int imageWidth = 640;
-    int immageWidthMid = imageWidth/2;
+    int frontCameraWidth = 320;
 
     private ColorBlobLocatorProcessor purpleBlobProcessor = new ColorBlobLocatorProcessor.Builder()
             .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)
@@ -162,7 +167,7 @@ public class CameraSubsystem extends SubsystemBase {
         VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.frontCamera)
 //                .setCameraResolution(new Size(320, 240))
-                .setCameraResolution(new Size(320, 240))
+                .setCameraResolution(new Size(frontCameraWidth, 240))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[0])
                 .addProcessors(purpleBlobProcessor,greenBlobProcessor);
@@ -448,12 +453,65 @@ public class CameraSubsystem extends SubsystemBase {
                 int red = Math.max(0, 255 - ageMs / 5);
                 FtcDashDrawing.drawRobot(debugLastDetection != null ? debugLastDetection : new Pose(0, 0, 0), String.format("#%02X0000", red));
             }
+
+            PIDtoBallBlob();
         }
     }
 
-    private void ballBlob()
+    public void setHasBlobTarget(boolean state)
     {
-        //i should really find something better to name this
+        this.hasBlobTarget = state;
+    }
+
+    public boolean getHasBlobTarget()
+    {
+        return this.hasBlobTarget;
+    }
+
+    private void PIDtoBallBlob()
+    {
+
+        //its not actually "pid" just kind of a sus way of doing things
+        List<ColorBlobLocatorProcessor.Blob> blobs = purpleBlobProcessor.getBlobs();
+        blobs.addAll(greenBlobProcessor.getBlobs());
+
+        if(blobs.isEmpty() && !hasBlobTarget)
+        {
+            return;
+        }
+
+        //targetXCoordinate = imagewidth/2
+
+        ColorBlobLocatorProcessor.Util.filterByCriteria(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
+                300,500000,blobs);
+
+        //for now this does literally nothing for us except maybe figuring out largest blob
+        for(ColorBlobLocatorProcessor.Blob blob: blobs)
+        {
+            Circle circle = blob.getCircle();
+            double circularity = blob.getCircularity();
+            float radius = circle.getRadius();
+            double x = circle.getX();
+            double y = circle.getY();
+            double contourArea = blob.getContourArea();
+            double circleArea = Math.pow(radius,2)*Math.PI;
+        }
+
+        //i dont know if this is true or not but i think blob(0) is the biggest one
+        ColorBlobLocatorProcessor.Blob targetBlob = blobs.get(0);
+        Circle targetCircle = targetBlob.getCircle();
+        if(targetBlob.getCircle().getRadius() >= CVBallStopRadius)
+        {
+            //do some intake stuff idk
+            return;
+        }
+        double XError = frontCameraWidth/2 - targetCircle.getX();
+        //admittedly i dont know how to do this
+        //the idea is if it's on the left drive forward and and turn slolwy left based on the xerror
+
+
+
     }
 
     private void relocalize(AprilTagDetection tag)
