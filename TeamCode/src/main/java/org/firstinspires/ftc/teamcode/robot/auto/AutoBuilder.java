@@ -89,7 +89,7 @@ public class AutoBuilder {
         // will handle it for us.
         this.startPoseBlue = initial.getStartPoseBlue();
         this.mirror = Team.RED.equals(team);
-        this.waitBeforeShooting = 1000;
+        this.waitBeforeShooting = 0;
     }
 
     public void waitBeforeShooting(long time) {
