@@ -243,7 +243,7 @@ public class AutoBuilder {
             command = command.andThen(new GoToIntakeStateCommand(robot));
         }
 
-        if (flags.contains(ShootPathFlag.EARLY_FINISH)) {
+        if (flags.contains(ShootPathFlag.EARLY_LEAVE)) {
             command = new SequentialCommandGroup(
                     new ScheduleCommand(command),
                     new WaitCommand(300)

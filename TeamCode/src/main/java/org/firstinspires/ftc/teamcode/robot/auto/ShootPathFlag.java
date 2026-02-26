@@ -7,6 +7,6 @@ public enum ShootPathFlag {
     // Only valid for preload
     SOTM,
 
-    // Be more aggressive with when we consider the shooting to be finished
-    EARLY_FINISH
+    // Be more aggressive with when we leave from the shoot position
+    EARLY_LEAVE
 }
