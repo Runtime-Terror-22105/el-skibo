@@ -247,16 +247,29 @@ public class AutoBuilder {
                     new WaitCommand(SHOOT_DELAY)
             );
         } else {
-            return new SequentialCommandGroup(
-                    new ParallelCommandGroup(
-                            new PrepareShootCommand(robot),
-                            new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
-                    ),
+            Command shootCommand = new SequentialCommandGroup(
                     new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                     new ShootThreeBallsCommand(robot),
                     new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(500),
                     new WaitCommand(SHOOT_DELAY)
             );
+            if (flags.contains(ShootPathFlag.SOTM)) {
+                return new ParallelCommandGroup(
+                        new SequentialCommandGroup(
+                                new PrepareShootCommand(robot),
+                                shootCommand
+                        ),
+                        new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
+                );
+            } else {
+                return new SequentialCommandGroup(
+                        new ParallelCommandGroup(
+                                new PrepareShootCommand(robot),
+                                new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
+                        ),
+                        shootCommand
+                );
+            }
         }
     }
 

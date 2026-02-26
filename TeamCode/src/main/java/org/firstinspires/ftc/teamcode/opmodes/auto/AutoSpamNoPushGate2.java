@@ -26,7 +26,7 @@ public abstract class AutoSpamNoPushGate2 extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
-                builder.shootPreload(),
+                builder.shootPreload(ShootPathFlag.SOTM),
                 builder.cycleSpike(1),
                 builder.cycleSpike(2),
                 builder.cycleGate(),
