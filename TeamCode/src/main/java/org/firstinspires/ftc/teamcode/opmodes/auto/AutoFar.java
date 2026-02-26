@@ -5,6 +5,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 public abstract class AutoFar extends OneAutoToRuleThemAll {
@@ -25,14 +26,15 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
-                builder.shootPreloadFar(),
-                // Do not intake on first since they're guaranteed
-                builder.cycleWall(false),
-                builder.intakeSpike3Far(), builder.shootSpike3Far(),
-                builder.cycleTunnel(true),
-                builder.cycleWall(true),
-                builder.cycleTunnel(true),
-                builder.cycleWall(true)
+                builder.shootPreloadFar(ShootPathFlag.EARLY_LEAVE),
+                // Do not reverse intake on first since they're guaranteed
+                builder.cycleWall(false, ShootPathFlag.EARLY_LEAVE),
+                builder.intakeSpike3Far(),
+                builder.shootSpike3Far(ShootPathFlag.EARLY_LEAVE),
+                builder.cycleTunnel(true, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleWall(true, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleTunnel(true, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleWall(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_LEAVE)
         );
     }
 }

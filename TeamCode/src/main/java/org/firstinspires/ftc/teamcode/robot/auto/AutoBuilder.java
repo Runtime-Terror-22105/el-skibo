@@ -285,7 +285,8 @@ public class AutoBuilder {
         }
     }
 
-    public Command shootPreloadFar() {
+    public Command shootPreloadFar(ShootPathFlag... flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
                 .build();
         return new SequentialCommandGroup(
@@ -293,7 +294,7 @@ public class AutoBuilder {
                         new FollowPathCommand(robot.follower, lastPath, false),
                         new WaitCommand(PRELOAD_FAR_PRE_SHOOT_DELAY)
                 ),
-                shootCommand(EnumSet.noneOf(ShootPathFlag.class)),
+                shootCommand(flags),
                 new StopScanningForGlyphsCommand(robot.camera)
         );
     }
@@ -442,7 +443,8 @@ public class AutoBuilder {
         );
     }
 
-    public Command shootSpike3Far() {
+    public Command shootSpike3Far(ShootPathFlag ...flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
@@ -452,9 +454,7 @@ public class AutoBuilder {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
-                new WaitCommand(SHOOT_DELAY)
+                shootCommand(flags)
         );
     }
 
@@ -492,7 +492,8 @@ public class AutoBuilder {
         );
     }
 
-    public Command shootWall() {
+    public Command shootWall(ShootPathFlag ...flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
@@ -502,22 +503,20 @@ public class AutoBuilder {
                         new WaitCommand(250).andThen(new PrepareShootCommand(robot))
                 ),
                 new WaitCommand(PRE_SHOOT_DELAY),
-                new ShootThreeBallsCommand(robot),
-                new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(2000),
-                new WaitCommand(SHOOT_DELAY)
+                shootCommand(flags)
         );
     }
-    public Command cycleTunnel(boolean reverseIntake){
+    public Command cycleTunnel(boolean reverseIntake, ShootPathFlag ...flagArr) {
         return new SequentialCommandGroup(
                 intakeTunnel(reverseIntake),
-                shootWall()
+                shootWall(flagArr)
         );
     }
 
-    public Command cycleWall(boolean reverseIntake) {
+    public Command cycleWall(boolean reverseIntake, ShootPathFlag ...flagArr) {
         return new SequentialCommandGroup(
                 intakeWall(reverseIntake),
-                shootWall()
+                shootWall(flagArr)
         );
     }
 }
