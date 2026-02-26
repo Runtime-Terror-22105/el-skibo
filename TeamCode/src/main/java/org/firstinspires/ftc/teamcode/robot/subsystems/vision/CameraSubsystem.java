@@ -157,12 +157,15 @@ public class CameraSubsystem extends SubsystemBase {
         this.backTagProcessor = createAprilTagProcessor();
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
-
+        Log.d(TAG, "Vision portal IDs: " + Arrays.toString(visionPortalIDs));
         VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.frontCamera)
                 .setCameraResolution(new Size(frontCameraWidth, 240))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[1])
+                .setAutoStartStreamOnBuild(true)
+                .setAutoStopLiveView(false)
+                .setShowStatsOverlay(true)
                 .addProcessors(purpleBlobProcessor,greenBlobProcessor);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
@@ -170,6 +173,9 @@ public class CameraSubsystem extends SubsystemBase {
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setLiveViewContainerId(visionPortalIDs[0])
+                .setAutoStartStreamOnBuild(true)
+                .setAutoStopLiveView(false)
+                .setShowStatsOverlay(true)
                 .addProcessors(this.backTagProcessor);
 
         switch (liveViewSettings) {
