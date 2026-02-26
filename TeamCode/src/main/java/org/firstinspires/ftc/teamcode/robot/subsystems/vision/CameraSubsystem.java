@@ -6,6 +6,7 @@ import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.util.SortOrder;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -25,7 +26,7 @@ import org.firstinspires.ftc.vision.opencv.Circle;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
-import org.openftc.easyopencv.OpenCvCamera;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +63,9 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean shouldScanForGlyphs = true;
     public boolean disableRelocalization = false;
     public boolean disableAprilTagsAfterGlyph = false;
+    private BallDetectionPipeline ballPipeline;
+    public static double MIN_CONTOUR_AREA = 300;
+    public static double MAX_CONTOUR_AREA = 100000;
 
     public enum GLYPH {
         GPP(BallColor.GREEN, BallColor.PURPLE, BallColor.PURPLE),
@@ -104,38 +108,10 @@ public class CameraSubsystem extends SubsystemBase {
     //roi
     double top = 1;
     double right = 1;
-
     double left = -1;
     double bottom = -1;
 
     int frontCameraWidth = 320;
-
-    private final ColorBlobLocatorProcessor purpleBlobProcessor = new ColorBlobLocatorProcessor.Builder()
-            .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)
-            .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-            .setRoi(ImageRegion.asUnityCenterCoordinates(left,top,right,bottom)) //i lowk dunno this does
-            .setDrawContours(true)
-            .setBoxFitColor(0)
-            .setCircleFitColor(Color.rgb(255,255,255))
-            .setBlurSize(5)
-            .setDilateSize(15)
-            .setErodeSize(15)
-            .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
-            .build();
-
-    private final ColorBlobLocatorProcessor greenBlobProcessor = new ColorBlobLocatorProcessor.Builder()
-            .setTargetColorRange(ColorRange.ARTIFACT_GREEN)
-            .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-            .setRoi(ImageRegion.asUnityCenterCoordinates(left,top,right,bottom)) //i lowk dunno this does
-            .setDrawContours(true)
-            .setBoxFitColor(0)
-            .setCircleFitColor(Color.rgb(255,255,255))
-            .setBlurSize(5)
-            .setDilateSize(15)
-            .setErodeSize(15)
-            .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
-            .build();
-
 
 
 //    private VisionPipeline pipeline = new VisionPipeline(webcam);
@@ -155,6 +131,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.detections = new ArrayList<>();
 //        this.frontTagProcessor = createAprilTagProcessor();
         this.backTagProcessor = createAprilTagProcessor();
+        this.ballPipeline = createBallDetectionPipeline();
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
         Log.d(TAG, "Vision portal IDs: " + Arrays.toString(visionPortalIDs));
@@ -166,7 +143,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setAutoStartStreamOnBuild(true)
                 .setAutoStopLiveView(false)
                 .setShowStatsOverlay(true)
-                .addProcessors(purpleBlobProcessor,greenBlobProcessor);
+                .addProcessor(this.ballPipeline);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
@@ -176,7 +153,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setAutoStartStreamOnBuild(true)
                 .setAutoStopLiveView(false)
                 .setShowStatsOverlay(true)
-                .addProcessors(this.backTagProcessor);
+                .addProcessor(this.backTagProcessor);
 
         switch (liveViewSettings) {
             case FIELD:
@@ -219,6 +196,30 @@ public class CameraSubsystem extends SubsystemBase {
                 .build();
         processor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
         return processor;
+    }
+
+    private BallDetectionPipeline createBallDetectionPipeline() {
+        BallDetectionPipeline pipeline = new BallDetectionPipeline(
+                org.firstinspires.ftc.teamcode.robot.subsystems.vision.ImageRegion
+                        .asImageCoordinates(0, 0, 320, 240), // the roi
+                ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY, // don't do blobs from nested contours
+                -1, // erodesize
+                -1, // don't dilate the image
+                -1, // don't blur the image
+                Color.rgb(255, 120, 31), // bounding box, orange-ish color
+                Color.rgb(255, 255, 255), // roi color, white
+                Color.rgb(3, 227, 252) // contour color, light blue
+        );
+        pipeline.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
+                MIN_CONTOUR_AREA,
+                MAX_CONTOUR_AREA
+        ));
+        pipeline.setSort(new ColorBlobLocatorProcessor.BlobSort(
+                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
+                SortOrder.DESCENDING
+        ));
+        return pipeline;
     }
 
     public void setAprilTagsEnabled(boolean enabled) {
@@ -332,8 +333,7 @@ public class CameraSubsystem extends SubsystemBase {
             }
 
             this.detections = backTagProcessor.getDetections();
-            robot.telemetry.addData("greenblob",greenBlobProcessor.getBlobs());
-            robot.telemetry.addData("purpleblob",purpleBlobProcessor.getBlobs());
+            robot.telemetry.addData("blobs array",ballPipeline.getBlobs());
 
             if(!usingBackCamera || backTagProcessor.getDetections().isEmpty())
             {
@@ -427,10 +427,6 @@ public class CameraSubsystem extends SubsystemBase {
     public boolean hasBlobs()
     {
         List<ColorBlobLocatorProcessor.Blob> blobs = purpleBlobProcessor.getBlobs();
-        blobs.addAll(greenBlobProcessor.getBlobs());
-        ColorBlobLocatorProcessor.Util.filterByCriteria(
-                ColorBlobLocatorProcessor.BlobCriteria.BY_CONTOUR_AREA,
-                300,500000,blobs);
         return !blobs.isEmpty();
     }
 
