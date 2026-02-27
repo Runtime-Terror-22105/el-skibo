@@ -84,6 +84,9 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     private final AtomicReference<Bitmap> lastFrame =
             new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
 
+    private final AtomicReference<Bitmap> lastMask =
+            new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
+
     // for now I just set it to the full thing, but still have it as an option just in case
     public static Point[] ROI_POINTS = {
             new Point(0,0),
@@ -203,6 +206,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
         lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+        lastMask.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
         roi = roiImg.asOpenCvRect(width, height);
         roiMask = new Mat(height, width, 0);
 
@@ -238,6 +242,9 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
         // Create masks for all color types
         Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
+        Bitmap maskBitmap = Bitmap.createBitmap(colorMask.width(), colorMask.height(), Bitmap.Config.RGB_565);
+        Utils.matToBitmap(colorMask, maskBitmap);
+        lastMask.set(maskBitmap);
 
         // Morphology cleans up the mask, erosion removes noise and dilation fills in gaps
         Size smallKernel = new Size(3, 3);
@@ -456,12 +463,23 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
             return;
         }
 
-        drawOverlay(canvas,
-                onscreenWidth,
-                onscreenHeight,
-                scaleBmpPxToCanvasPx,
-                scaleCanvasDensity,
-                (ArrayList<Blob>) userContext);
+        switch (streamType) {
+            case MASK:
+                canvas.drawBitmap(lastMask.get(), 0, 0, null);
+                break;
+            case IMAGE_DRAWING:
+                drawOverlay(canvas,
+                        onscreenWidth,
+                        onscreenHeight,
+                        scaleBmpPxToCanvasPx,
+                        scaleCanvasDensity,
+                        (ArrayList<Blob>) userContext);
+                break;
+            case RAW:
+            default:
+                // Do nothing, assume canvas has the raw frame
+                break;
+        }
     }
 
     @NonNull
