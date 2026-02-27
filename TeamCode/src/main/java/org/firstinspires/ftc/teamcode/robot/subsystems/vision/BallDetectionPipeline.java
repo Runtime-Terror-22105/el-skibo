@@ -219,17 +219,17 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     public Object processFrame(Mat frame, long captureTimeNanos) {
         Log.i(TAG, "Processing frame...");
 
-        if (frame == null || frame.empty()) {
-            Log.e(TAG, "Received empty frame, skipping processing.");
-            userBlobs = new ArrayList<>();
-            return userBlobs;
-        }
-
-        if (chosenBlobIsLocked) {
-            Log.i(TAG, "Locked on best sample at " + pixelToRealCoords(chosenBlob.getBoxFit().center));
-            userBlobs = new ArrayList<>();
-            return userBlobs;
-        }
+//        if (frame == null || frame.empty()) {
+//            Log.e(TAG, "Received empty frame, skipping processing.");
+//            userBlobs = new ArrayList<>();
+//            return userBlobs;
+//        }
+//
+//        if (chosenBlobIsLocked) {
+//            Log.i(TAG, "Locked on best sample at " + pixelToRealCoords(chosenBlob.getBoxFit().center));
+//            userBlobs = new ArrayList<>();
+//            return userBlobs;
+//        }
 
 //        // Flip and convert frame
 //        Core.flip(frame, frame, -1);
@@ -238,10 +238,12 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         Imgproc.cvtColor(roiMat, roiMat, Imgproc.COLOR_RGB2HSV);
 
         // Apply blur if configured
-        applyBlurIfNeeded();
+//        applyBlurIfNeeded();
 
         // Create masks for all color types
-        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
+        Mat colorMask = new Mat();
+        Core.inRange(this.roiMat, ColorRange.GREEN.min,  ColorRange.GREEN.max, colorMask);
+//        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
         Bitmap maskBitmap = Bitmap.createBitmap(colorMask.width(), colorMask.height(), Bitmap.Config.RGB_565);
         Utils.matToBitmap(colorMask, maskBitmap);
         lastMask.set(maskBitmap);
