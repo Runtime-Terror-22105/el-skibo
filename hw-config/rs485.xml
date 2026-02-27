@@ -31,5 +31,5 @@
         </LynxModule>
     </LynxUsbDevice>
     <Webcam name="Back Webcam" serialNumber="UC762" />
-    <Webcam name="Front Webcam" serialNumber="7749:32802" />
+    <Webcam name="Front Webcam" serialNumber="VendorProduct:vendor=0x1e45|product=0x8022|connection=" />
 </Robot>

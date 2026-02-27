@@ -32,35 +32,48 @@
  */
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 
-import org.firstinspires.ftc.vision.opencv.ColorSpace;
+import com.acmerobotics.dashboard.config.Config;
+
 import org.opencv.core.Scalar;
 
 /**
  * An {@link ColorRange represents a 3-channel minimum/maximum
  * range for a given color space}
  */
+// note: for simplicity, removed colorspace parameter. assume HSV
+@Config
 public class ColorRange
 {
-    protected final ColorSpace colorSpace;
-    protected final Scalar min;
-    protected final Scalar max;
+    public final Scalar min;
+    public final Scalar max;
+
+    public static Scalar purpleLow1  = new Scalar(45.3, 77.9, 155.8);
+    public static Scalar purpleHigh1 = new Scalar(121.8, 68, 255);
+    public static Scalar purpleLow2  = new Scalar(117.6, 59.5, 97.8);
+    public static Scalar purpleHigh2 = new Scalar(168.6, 255, 255);
+
+    public static Scalar greenLow  = new Scalar(35, 40, 40);
+    // Upper bound for green
+    public static Scalar greenHigh = new Scalar(85, 255, 255);
 
     // todo: temporary values
     public static final ColorRange GREEN = new ColorRange(
-            ColorSpace.HSV,
-            new Scalar(0,0,0),
-            new Scalar(255, 255, 255)
+            greenLow,
+            greenHigh
     );
 
-    public static final ColorRange PURPLE = new ColorRange(
-            ColorSpace.HSV,
-            new Scalar(0,0,0),
-            new Scalar(255, 255, 255)
+    public static final ColorRange PURPLE_1 = new ColorRange(
+            purpleLow1,
+            purpleHigh1
     );
 
-    public ColorRange(ColorSpace colorSpace, Scalar min, Scalar max)
+    public static final ColorRange PURPLE_2 = new ColorRange(
+            purpleLow2,
+            purpleHigh2
+    );
+
+    public ColorRange(Scalar min, Scalar max)
     {
-        this.colorSpace = colorSpace;
         this.min = min;
         this.max = max;
     }

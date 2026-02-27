@@ -85,7 +85,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
             new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
 
     // for now I just set it to the full thing, but still have it as an option just in case
-    public static Point[] ROI_POINTS = { // this is for if we scan the whole sub from center
+    public static Point[] ROI_POINTS = {
             new Point(0,0),
             new Point(0,240),
             new Point(320,240),
@@ -103,6 +103,12 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     private String TAG = "BallDetectionPipeline";
     private List<Blob> userBlobs;
+
+    public enum StreamType {
+        RAW, MASK, IMAGE_DRAWING
+    }
+
+    public static StreamType streamType = StreamType.IMAGE_DRAWING;
 
     public Point pixelToRealCoords(Point pixelCoords) {
         // TODO
@@ -137,6 +143,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
                                       int erodeSize, int dilateSize, int blurSize,
                                       @ColorInt int boundingBoxColor, @ColorInt int roiColor, @ColorInt int contourColor)
     {
+        Log.i(TAG, "Initializing BallDetectionPipeline");
         this.roiImg = roiImg;
         this.boundingBoxColor = boundingBoxColor;
         this.roiColor = roiColor;
@@ -206,6 +213,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+        Log.i(TAG, "Processing frame...");
+
         if (frame == null || frame.empty()) {
             Log.e(TAG, "Received empty frame, skipping processing.");
             userBlobs = new ArrayList<>();
@@ -218,8 +227,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
             return userBlobs;
         }
 
-        // Flip and convert frame
-        Core.flip(frame, frame, -1);
+//        // Flip and convert frame
+//        Core.flip(frame, frame, -1);
 
         roiMat = frame.clone();
         Imgproc.cvtColor(roiMat, roiMat, Imgproc.COLOR_RGB2HSV);
@@ -228,7 +237,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         applyBlurIfNeeded();
 
         // Create masks for all color types
-        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE);
+        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
 
         // Morphology cleans up the mask, erosion removes noise and dilation fills in gaps
         Size smallKernel = new Size(3, 3);
@@ -329,14 +338,28 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     private Bitmap createOutputBitmap(@NonNull Mat frame, Mat colorMask, List<Blob> blobs) {
         Bitmap bmp = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
 
-        Utils.matToBitmap(frame, bmp);
-        Canvas c = new Canvas(bmp);
-        int w = bmp.getWidth();
-        int h = bmp.getHeight();
-        float scalePx = 1f;
-        float density = Resources.getSystem().getDisplayMetrics().density;
-        drawOverlay(c, w, h, scalePx, density, new ArrayList<>(blobs));
-        return bmp;
+        Log.d(TAG, "Creating output bitmap for stream type: " + streamType);
+        switch (streamType) {
+            case RAW:
+                Utils.matToBitmap(frame, bmp);
+                return bmp;
+            case MASK:
+                Utils.matToBitmap(colorMask, bmp);
+                return bmp;
+            case IMAGE_DRAWING:
+                Utils.matToBitmap(frame, bmp);
+                Canvas c = new Canvas(bmp);
+                int w = bmp.getWidth();
+                int h = bmp.getHeight();
+                float scalePx = 1f;
+                float density = Resources.getSystem().getDisplayMetrics().density;
+                drawOverlay(c, w, h, scalePx, density, new ArrayList<>(blobs));
+                return bmp;
+            default:
+                Log.e(TAG, "Unknown stream type: " + streamType);
+                Utils.matToBitmap(frame, bmp);
+                return bmp;
+        }
     }
 
     private void drawOverlay(
@@ -415,9 +438,9 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         canvas.drawLine(gfxRect.right, gfxRect.top, gfxRect.right, gfxRect.bottom, roiPaint);
         canvas.drawLine(gfxRect.right, gfxRect.bottom, gfxRect.left, gfxRect.bottom, roiPaint);
         canvas.drawLine(gfxRect.left, gfxRect.bottom, gfxRect.left, gfxRect.top, roiPaint);
-
-        // flip the camera
-        canvas.scale(-1f, -1f, canvas.getWidth() / 2f, canvas.getHeight() / 2f);
+//
+//        // flip the camera
+//        canvas.scale(-1f, -1f, canvas.getWidth() / 2f, canvas.getHeight() / 2f);
     }
 
     @SuppressLint("DefaultLocale")

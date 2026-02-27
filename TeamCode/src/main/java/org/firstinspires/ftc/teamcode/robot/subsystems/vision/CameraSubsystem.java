@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.SortOrder;
@@ -158,6 +159,8 @@ public class CameraSubsystem extends SubsystemBase {
 //                FtcDashboard.getInstance().startCameraStream(atagPipeline, 0);
                 break;
         }
+
+        FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
 
         if (hardware.frontCamera != null) {
             this.vPortalFront = vPortalFrontBuilder.build();

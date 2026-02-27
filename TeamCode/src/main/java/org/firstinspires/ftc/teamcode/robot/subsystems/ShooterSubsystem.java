@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
-    public static boolean USE_SOTM = true;
+    public static boolean USE_SOTM = false;
 
 
     public static boolean debug = false;
@@ -64,7 +64,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
-    public static double TURRET_UPDATE_FREQUENCY = 10;
+    public static double TURRET_UPDATE_FREQUENCY = 1; // todo: set this to 10 later
     private double loopCount = 0;
 
     // No angle limit for turret, but we have servo positions limits
