@@ -403,7 +403,7 @@ public class AutoBuilder {
                 new PrepareShootCommand(robot),
                 new InstantCommand(() -> hasFinishedPrepareShoot.set(true))
         );
-        Command maybeShootCommand = new ConditionalCommand(
+        Supplier<Command> maybeShootCommandSupplier = () -> new ConditionalCommand(
                 new InstantCommand(() -> {}),
                 new SequentialCommandGroup(
                         new InstantCommand(() -> hasStartedShoot.set(true)),
@@ -417,7 +417,7 @@ public class AutoBuilder {
                 builder.addParametricCallback(0.8, () -> {
                     CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
                             new WaitUntilCommand(hasFinishedPrepareShoot::get),
-                            maybeShootCommand
+                            maybeShootCommandSupplier.get()
                     ));
                 });
             }
@@ -428,7 +428,7 @@ public class AutoBuilder {
                         new FollowPathCommand(robot.follower, shootPath, false),
                         prepareShootCommand
                 ),
-                maybeShootCommand,
+                maybeShootCommandSupplier.get(),
                 new WaitUntilCommand(hasFinishedShoot::get)
         );
     }
