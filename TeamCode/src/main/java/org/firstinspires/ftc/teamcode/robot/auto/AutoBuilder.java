@@ -41,8 +41,10 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAK
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
@@ -73,6 +75,8 @@ import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 import java.util.EnumSet;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Config
@@ -131,11 +135,13 @@ public class AutoBuilder {
         return lastPath;
     }
 
-    private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
-        return lastPath;
+    private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags, Consumer<PathBuilder> builderModifier) {
+        PathBuilder builder = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS);
+        if (builderModifier != null) {
+            builderModifier.accept(builder);
+        }
+        return lastPath = builder.build();
     }
 
     private PathChain intakeSpike1Path() {
@@ -271,7 +277,7 @@ public class AutoBuilder {
                     shootCommand(flags)
             );
         } else {
-            // No need to PrepareShootCommand here; since init will do it for us.
+            // No need to PrepareShootCommand here; init will do it for us.
             if (flags.contains(ShootPathFlag.SOTM)) {
                 return new ParallelCommandGroup(
                         new SequentialCommandGroup(
@@ -385,14 +391,45 @@ public class AutoBuilder {
      */
     public Command shootSpike(int spikeNumber, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        PathChain shootPath = shootSpikePath(flags);
+        boolean earlyShoot = flags.contains(ShootPathFlag.EARLY_SHOOT);
+
+        // Use AtomicBoolean here since Java lambdas capture by value. Note that these
+        // booleans are basically unused unless the EARLY_SHOOT flag is enabled.
+        AtomicBoolean hasFinishedPrepareShoot = new AtomicBoolean(false);
+        AtomicBoolean hasStartedShoot = new AtomicBoolean(false);
+        AtomicBoolean hasFinishedShoot = new AtomicBoolean(false);
+        Command prepareShootCommand = new SequentialCommandGroup(
+                new WaitCommand(waitBeforeShooting),
+                new PrepareShootCommand(robot),
+                new InstantCommand(() -> hasFinishedPrepareShoot.set(true))
+        );
+        Command maybeShootCommand = new ConditionalCommand(
+                new InstantCommand(() -> {}),
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> hasStartedShoot.set(true)),
+                        shootCommand(flags),
+                        new InstantCommand(() -> hasFinishedShoot.set(true))
+                ),
+                hasStartedShoot::get
+        );
+        PathChain shootPath = shootSpikePath(flags, builder -> {
+            if (earlyShoot) {
+                builder.addParametricCallback(0.8, () -> {
+                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+                            new WaitUntilCommand(hasFinishedPrepareShoot::get),
+                            maybeShootCommand
+                    ));
+                });
+            }
+        });
+
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shootPath, false),
-                        new WaitCommand(waitBeforeShooting).andThen(new PrepareShootCommand(robot))
+                        prepareShootCommand
                 ),
-                new WaitCommand(PRE_SHOOT_DELAY),
-                shootCommand(flags)
+                maybeShootCommand,
+                new WaitUntilCommand(hasFinishedShoot::get)
         );
     }
 
