@@ -36,6 +36,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -46,6 +47,7 @@ import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
@@ -77,6 +79,7 @@ import org.firstinspires.ftc.teamcode.util.StartConfig;
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Config
@@ -135,13 +138,11 @@ public class AutoBuilder {
         return lastPath;
     }
 
-    private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags, Consumer<PathBuilder> builderModifier) {
-        PathBuilder builder = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS);
-        if (builderModifier != null) {
-            builderModifier.accept(builder);
-        }
-        return lastPath = builder.build();
+    private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags) {
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return lastPath;
     }
 
     private PathChain intakeSpike1Path() {
@@ -277,7 +278,7 @@ public class AutoBuilder {
                     shootCommand(flags)
             );
         } else {
-            // No need to PrepareShootCommand here; init will do it for us.
+            // No need to PrepareShootCommand here; since init will do it for us.
             if (flags.contains(ShootPathFlag.SOTM)) {
                 return new ParallelCommandGroup(
                         new SequentialCommandGroup(
@@ -391,45 +392,14 @@ public class AutoBuilder {
      */
     public Command shootSpike(int spikeNumber, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        boolean earlyShoot = flags.contains(ShootPathFlag.EARLY_SHOOT);
-
-        // Use AtomicBoolean here since Java lambdas capture by value. Note that these
-        // booleans are basically unused unless the EARLY_SHOOT flag is enabled.
-        AtomicBoolean hasFinishedPrepareShoot = new AtomicBoolean(false);
-        AtomicBoolean hasStartedShoot = new AtomicBoolean(false);
-        AtomicBoolean hasFinishedShoot = new AtomicBoolean(false);
-        Command prepareShootCommand = new SequentialCommandGroup(
-                new WaitCommand(waitBeforeShooting),
-                new PrepareShootCommand(robot),
-                new InstantCommand(() -> hasFinishedPrepareShoot.set(true))
-        );
-        Supplier<Command> maybeShootCommandSupplier = () -> new ConditionalCommand(
-                new InstantCommand(() -> {}),
-                new SequentialCommandGroup(
-                        new InstantCommand(() -> hasStartedShoot.set(true)),
-                        shootCommand(flags),
-                        new InstantCommand(() -> hasFinishedShoot.set(true))
-                ),
-                hasStartedShoot::get
-        );
-        PathChain shootPath = shootSpikePath(flags, builder -> {
-            if (earlyShoot) {
-                builder.addParametricCallback(0.8, () -> {
-                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-                            new WaitUntilCommand(hasFinishedPrepareShoot::get),
-                            maybeShootCommandSupplier.get()
-                    ));
-                });
-            }
-        });
-
+        PathChain shootPath = shootSpikePath(flags);
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, shootPath, false),
-                        prepareShootCommand
+                        new WaitCommand(waitBeforeShooting).andThen(new PrepareShootCommand(robot))
                 ),
-                maybeShootCommandSupplier.get(),
-                new WaitUntilCommand(hasFinishedShoot::get)
+                new WaitCommand(PRE_SHOOT_DELAY),
+                shootCommand(flags)
         );
     }
 
@@ -520,6 +490,41 @@ public class AutoBuilder {
         );
     }
 
+    public Command prepareVision(){
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, VISION_POSE, mirror, true, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, lastPath, false, 0.9),
+                        new InstantCommand(() -> robot.camera.doBallVision = true))
+
+
+        );
+
+    }
+
+    public Command intakeVision(boolean reverseIntake){
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, robot.camera.ballGoal, mirror, true, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new FollowPathCommand(robot.follower, lastPath, true, 0.9),
+                new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {}),
+                        // Only reverse if reverseIntake and we get 3 balls
+                        () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
+                )
+        );
+
+    }
+
+
     public Command intakeTunnel(boolean reverseIntake) {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, INTAKE_TUNNEL_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
@@ -564,4 +569,14 @@ public class AutoBuilder {
                 shootWall(flagArr)
         );
     }
+
+    //when running this the first time run prepare vision seperatly first
+    public Command cycleVision(boolean reverseIntake, ShootPathFlag... flagArr){
+        return new DeferredCommand(() -> new SequentialCommandGroup(
+                intakeVision(reverseIntake),
+                shootWall(flagArr),
+                prepareVision()
+        ), null);
+    }
+
 }

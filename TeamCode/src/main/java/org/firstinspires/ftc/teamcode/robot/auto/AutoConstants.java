@@ -49,6 +49,7 @@ public class AutoConstants {
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(11, 8, Math.toRadians(180));
     public static Pose2d INTAKE_TUNNEL_POSE = new Pose2d(11, 32, Math.toRadians(180));
+    public static Pose2d VISION_POSE = new Pose2d(24, 24, Math.toRadians(270));
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
     public static int INTAKE_DELAY = 600;

@@ -13,6 +13,8 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Coordinate;
+import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -23,6 +25,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.core.Mat;
+import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +103,10 @@ public class CameraSubsystem extends SubsystemBase {
     private Team team;
 
     private int[] visionPortalIDs;
+
+    public Pose2d ballGoal;
+
+    public boolean doBallVision = false;
 
 
 
@@ -338,6 +348,11 @@ public class CameraSubsystem extends SubsystemBase {
             }
             if(!usingFrontCamera) //eventually add some check for || no balls cv detected
             {
+
+            }
+
+            if(usingFrontCamera && this.doBallVision){
+                this.ballGoal = this.getBlobCoordinates();
 
             }
 
