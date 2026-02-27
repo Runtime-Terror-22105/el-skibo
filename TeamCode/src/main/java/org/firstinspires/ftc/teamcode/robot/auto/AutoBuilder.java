@@ -491,14 +491,14 @@ public class AutoBuilder {
     }
 
     public Command prepareVision(){
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, VISION_POSE, mirror, true, false)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, VISION_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
                 .build();
 
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, lastPath, false, 0.9),
+                        new FollowPathCommand(robot.follower, lastPath, true, 0.9),
                         new InstantCommand(() -> robot.camera.doBallVision = true))
 
 

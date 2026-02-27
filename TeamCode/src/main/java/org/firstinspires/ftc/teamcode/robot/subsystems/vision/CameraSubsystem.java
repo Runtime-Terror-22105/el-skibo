@@ -104,7 +104,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     private int[] visionPortalIDs;
 
-    public Pose2d ballGoal;
+    public static Pose2d ballGoal = new Pose2d(8, 12);
 
     public boolean doBallVision = false;
 
@@ -352,7 +352,7 @@ public class CameraSubsystem extends SubsystemBase {
             }
 
             if(usingFrontCamera && this.doBallVision){
-                this.ballGoal = this.getBlobCoordinates();
+                //this.ballGoal = this.getBlobCoordinates();
 
             }
 
