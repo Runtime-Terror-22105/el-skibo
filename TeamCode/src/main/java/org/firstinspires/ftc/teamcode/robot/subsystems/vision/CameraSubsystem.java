@@ -13,6 +13,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
@@ -104,9 +105,15 @@ public class CameraSubsystem extends SubsystemBase {
 
     private int[] visionPortalIDs;
 
-    public static Pose2d ballGoal = new Pose2d(8, 12);
+    public Pose2d ballGoal = new Pose2d(8, 24);
+    public static Pose2d ballDefaultGoal = new Pose2d(8, 24);
 
     public boolean doBallVision = false;
+
+    public static double pixelValueLow = 70;
+    public static double pixelValueHigh = 240;
+    public static double inchesValueLow = -12;
+    public static double inchesValueHigh = 12;
 
 
 
@@ -297,6 +304,15 @@ public class CameraSubsystem extends SubsystemBase {
                 // Log.d("CameraSubsystem", "Can't do this, team unknown!");
                 break;
         }
+
+    }
+
+    public Pose2d getBallCoords(){
+        BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
+        Pose2d tempPos = this.ballDefaultGoal.copy();
+        double offset = Algebra.mapRangeNoClamp(blob.getCenter().x, pixelValueLow, pixelValueHigh, inchesValueLow, inchesValueHigh);
+        tempPos.x += offset;
+        return tempPos;
 
     }
 

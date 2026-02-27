@@ -498,8 +498,9 @@ public class AutoBuilder {
 
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, lastPath, true, 0.9),
-                        new InstantCommand(() -> robot.camera.doBallVision = true))
+                        new InstantCommand(() -> robot.camera.doBallVision = true)),
+                        new FollowPathCommand(robot.follower, lastPath, true, 0.9)
+
 
 
         );
@@ -512,6 +513,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
+                new InstantCommand(() -> robot.camera.doBallVision = false),
                 new FollowPathCommand(robot.follower, lastPath, true, 0.9),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(

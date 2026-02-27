@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.Circle;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
@@ -33,6 +34,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -579,6 +581,19 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
             }
 
             return area;
+        }
+
+        public Pose2d getCenter(){
+            Moments m = Imgproc.moments(contour);
+
+
+            if (m.m00 != 0) {
+                int cX = (int) (m.m10 / m.m00);
+                int cY = (int) (m.m01 / m.m00);
+                return new Pose2d(cX, cY);
+            }
+            return new Pose2d(0, 0);
+
         }
 
         @Override
