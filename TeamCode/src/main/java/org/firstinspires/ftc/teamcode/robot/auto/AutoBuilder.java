@@ -471,9 +471,8 @@ public class AutoBuilder {
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
                 new ParallelRaceGroup(
-                    new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                    new FollowPathAndWaitForWallCommand(robot, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 20.0),
                     new WaitForIntakeCommand(robot)
                 ),
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
@@ -494,8 +493,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
-                new FollowPathCommand(robot.follower, lastPath, true),
+                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 24.0),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
@@ -552,8 +550,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
-                new FollowPathCommand(robot.follower, lastPath, true),
+                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 24.0),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
