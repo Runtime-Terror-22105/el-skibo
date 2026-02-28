@@ -559,7 +559,7 @@ public class AutoBuilder {
     public Command shootWall(ShootPathFlag ...flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return createFollowShootPathAndShootCommand(250, lastPath, flags);
     }

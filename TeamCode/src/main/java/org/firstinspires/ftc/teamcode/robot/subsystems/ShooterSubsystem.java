@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
-    public static boolean USE_SOTM = false;
+    public static boolean USE_SOTM = true;
 
 
     public static boolean debug = false;
