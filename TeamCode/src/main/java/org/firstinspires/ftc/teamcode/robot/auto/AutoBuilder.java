@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE_2;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
@@ -36,6 +38,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
@@ -590,6 +593,65 @@ public class AutoBuilder {
                 shootWall(flagArr),
                 prepareVision()
         ), null);
+    }
+    public Command intakeWallLong(){
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, INTAKE_WALL_POSE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new WaitForSpindexerWallCommand(robot.spindexer),
+                new FollowPathCommand(robot.follower, lastPath, true),
+                new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY)
+        );
+    }
+    public Command controlPathLong(){
+        this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, CONTROL_POSE_LONG_INTAKE, START_POSE_LONG_INTAKE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new FollowPathCommand(robot.follower, this.lastPath)
+        );
+    }
+    public Command intakeTunnelLong(){
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, END_POSE_LONG_INTAKE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new FollowPathCommand(robot.follower, this.lastPath)
+        );
+    }
+    public Command shootWallLong(ShootPathFlag ...flagArr){
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return createFollowShootPathAndShootCommand(250, lastPath, flags);
+
+    }
+
+    public Command cycleLong(boolean reverseIntake, ShootPathFlag... flagArr){
+        return new SequentialCommandGroup(
+                new ParallelRaceGroup(
+                        new SequentialCommandGroup(
+                                intakeWallLong(),
+                                controlPathLong(),
+                                intakeTunnelLong()
+                        ),
+                        new WaitForIntakeCommand(robot)
+                ),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {}),
+                        // Only reverse if reverseIntake and we get 3 balls
+                        () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
+                ),
+                shootWallLong(flagArr)
+
+
+        );
     }
 
 }
