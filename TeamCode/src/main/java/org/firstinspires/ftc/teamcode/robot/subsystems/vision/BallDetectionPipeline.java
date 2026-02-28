@@ -50,6 +50,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     //use a set multiplier to calculate pixels off center into inches off center
     //return position with the offset of the balls
 
+    public static double PIXEL_TO_INCHES_SCALE = (double) 1 /3; // pixels * 1/3 = inches
 
     // Configuration options
     public static boolean DRAW_CONTOURS = false;
@@ -108,6 +109,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     private String TAG = "BallDetectionPipeline";
     private List<Blob> userBlobs;
+    private int frameWidth;
+    private int frameHeight;
 
     public enum StreamType {
         RAW, MASK, IMAGE_DRAWING
@@ -117,12 +120,13 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     public Point pixelToRealCoords(Point pixelCoords) {
         // TODO
-        return new Point();
+        pixelCoords.x = (pixelCoords.x - ((double) frameWidth)/2) * PIXEL_TO_INCHES_SCALE;
+        return pixelCoords;
     }
 
     public Point realToPixelCoords(Point realCoords) {
-        // TODO
-        return new Point();
+        realCoords.x = realCoords.x / PIXEL_TO_INCHES_SCALE + ((double) frameWidth)/2;
+        return realCoords;
     }
 
 
@@ -211,6 +215,9 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         lastMask.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
         roi = roiImg.asOpenCvRect(width, height);
         roiMask = new Mat(height, width, 0);
+
+        this.frameWidth = width;
+        this.frameHeight = height;
 
         synchronized (chosenBlobThreadLock) {
             chosenBlob = null;

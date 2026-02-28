@@ -13,8 +13,6 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.math.Algebra;
-import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -26,17 +24,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
-import org.firstinspires.ftc.vision.opencv.ColorRange;
-import org.firstinspires.ftc.vision.opencv.ImageRegion;
-import org.opencv.core.Mat;
-import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
-
     /*
       front camera is primarily for ball detection
       back camera is primarily for atag relocalization
@@ -318,11 +311,14 @@ public class CameraSubsystem extends SubsystemBase {
 
     public Pose2d getBallCoords(){
         BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
-        Pose2d tempPos = this.ballDefaultGoal.copy();
-        double offset = Algebra.mapRangeNoClamp(blob.getCenter().x, pixelValueLow, pixelValueHigh, inchesValueLow, inchesValueHigh);
+        if (blob == null) {
+            return ballDefaultGoal;
+        }
+        Pose2d tempPos = ballDefaultGoal.copy();
+//        double offset = blob.getCenter().x;
+        double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
         tempPos.x += offset;
         return tempPos;
-
     }
 
     @Override
@@ -461,9 +457,13 @@ public class CameraSubsystem extends SubsystemBase {
         }
     }
 
-    public boolean hasBlobs()
+    public boolean hasBlob()
     {
-        return !ballPipeline.getBlobs().isEmpty();
+        return ballPipeline.getChosenBlob() != null;
+    }
+
+    public void resetBlob() {
+        ballPipeline.unlockChosenBlob();
     }
 
     private void relocalize(AprilTagDetection tag)
