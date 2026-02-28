@@ -503,7 +503,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 30.0),
+                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 24.0),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
@@ -560,7 +560,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 30.0),
+                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 24.0),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
