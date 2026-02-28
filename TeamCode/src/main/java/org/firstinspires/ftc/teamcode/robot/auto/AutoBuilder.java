@@ -468,6 +468,7 @@ public class AutoBuilder {
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
+                new WaitForSpindexerWallCommand(robot.spindexer),
                 new ParallelRaceGroup(
                     new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
                     new WaitForIntakeCommand(robot)
