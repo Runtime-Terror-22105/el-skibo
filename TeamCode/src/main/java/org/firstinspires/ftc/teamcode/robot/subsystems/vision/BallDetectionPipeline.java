@@ -120,13 +120,15 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     public Point pixelToRealCoords(Point pixelCoords) {
         // TODO
-        pixelCoords.x = (pixelCoords.x - ((double) frameWidth)/2) * PIXEL_TO_INCHES_SCALE;
-        return pixelCoords;
+        Point realCoords = new Point(pixelCoords.x, pixelCoords.y);
+        realCoords.x = (realCoords.x - ((double) frameWidth)/2) * PIXEL_TO_INCHES_SCALE;
+        return realCoords;
     }
 
     public Point realToPixelCoords(Point realCoords) {
-        realCoords.x = realCoords.x / PIXEL_TO_INCHES_SCALE + ((double) frameWidth)/2;
-        return realCoords;
+        Point pixelCoords = new Point(realCoords.x, realCoords.y);
+        pixelCoords.x = pixelCoords.x / PIXEL_TO_INCHES_SCALE + ((double) frameWidth)/2;
+        return pixelCoords;
     }
 
 
@@ -253,24 +255,25 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         Mat colorMask = new Mat();
         Core.inRange(this.roiMat, ColorRange.GREEN.min,  ColorRange.GREEN.max, colorMask);
 //        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
+
         Bitmap maskBitmap = Bitmap.createBitmap(colorMask.width(), colorMask.height(), Bitmap.Config.RGB_565);
         Utils.matToBitmap(colorMask, maskBitmap);
         lastMask.set(maskBitmap);
 
         // Morphology cleans up the mask, erosion removes noise and dilation fills in gaps
-        Size smallKernel = new Size(3, 3);
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, smallKernel);
-        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
-        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_CLOSE, kernel);
-
-        // Apply erosion if configured
-        if (erodeElement != null) {
-            Imgproc.erode(colorMask, colorMask, erodeElement);
-        }
+//        Size smallKernel = new Size(3, 3);
+//        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, smallKernel);
+//        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
+//        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_CLOSE, kernel);
+//
+//        // Apply erosion if configured
+//        if (erodeElement != null) {
+//            Imgproc.erode(colorMask, colorMask, erodeElement);
+//        }
 
         // Apply ROI mask
-        Core.bitwise_and(colorMask, roiMask, colorMask);
-        Log.d(TAG, "Applied morphology operations and ROI masking");
+//        Core.bitwise_and(colorMask, roiMask, colorMask);
+//        Log.d(TAG, "Applied morphology operations and ROI masking");
 
         // Find contours
         ArrayList<MatOfPoint> contours = new ArrayList<>();
@@ -278,13 +281,15 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         Imgproc.findContours(colorMask, contours, hierarchy, contourCode, Imgproc.CHAIN_APPROX_SIMPLE);
         hierarchy.release();
 
+        Log.d(TAG, "Found " + contours.size() + " contours");
+
         List<Blob> blobs = new ArrayList<>();
         for (MatOfPoint contour : contours) {
             blobs.add(new BlobImpl(contour));
         }
 
         // Apply filters to all blobs
-        applyFilters(blobs);
+//        applyFilters(blobs);
 
         if (blobs.isEmpty()) {
             Log.w(TAG, "No valid blobs found after processing.");
