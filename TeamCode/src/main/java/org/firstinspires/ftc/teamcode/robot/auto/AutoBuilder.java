@@ -64,6 +64,7 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerWallCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
@@ -295,13 +296,13 @@ public class AutoBuilder {
 
     public Command shootPreloadFar(ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-//        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
-//                .build();
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
+                .build();
         return new SequentialCommandGroup(
-//                new ParallelCommandGroup(
-//                        new FollowPathCommand(robot.follower, lastPath, false),
-                        new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY),
-//                ),
+                new ParallelCommandGroup(
+                        new FollowPathCommand(robot.follower, lastPath, true),
+                        new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY)
+                ),
                 shootCommand(flags),
                 new StopScanningForGlyphsCommand(robot.camera)
         );
@@ -486,6 +487,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
+                new WaitForSpindexerWallCommand(robot.spindexer),
                 new FollowPathCommand(robot.follower, lastPath, true, 0.9),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
@@ -543,6 +545,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
+                new WaitForSpindexerWallCommand(robot.spindexer),
                 new FollowPathCommand(robot.follower, lastPath, true, 0.9),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
@@ -557,7 +560,7 @@ public class AutoBuilder {
     public Command shootWall(ShootPathFlag ...flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
-//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return createFollowShootPathAndShootCommand(250, lastPath, flags);
     }
