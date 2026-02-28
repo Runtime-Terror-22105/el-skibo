@@ -47,7 +47,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double SHOOTER_PID_SWITCH = 800;  // Units are RPM
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
-    public static double SHOOTER_VEL_TOLERANCE = 75;  // Units are RPM
+    public static double SHOOTER_VEL_TOLERANCE = 30;  // Units are RPM
 
     public GoalPosLookupTable goalPosLookupTable;
 
@@ -419,7 +419,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double updateShooter() {
-        if (disableFlywheel) return 0.0;
+        if (disableFlywheel) {
+            if (telemetry) {
+                Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", 0.0);
+                Robot.debugTelemetry.addData("Shooter in/s", 0.0);
+            }
+            return 0.0;
+        }
 
         double currentRpm = this.getVelocityRpm();
         if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", currentRpm);
