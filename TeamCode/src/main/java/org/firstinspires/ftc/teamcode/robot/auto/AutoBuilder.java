@@ -27,7 +27,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FA
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
@@ -43,10 +42,8 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAK
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
-import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
-import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -80,8 +77,6 @@ import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Config
@@ -516,14 +511,15 @@ public class AutoBuilder {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new InstantCommand(() -> robot.camera.setBallPipelineEnabled(true)),
-                        new FollowPathCommand(robot.follower, lastPath, true)
-                )
+                        new FollowPathCommand(robot.follower, lastPath, true, 0.9)
+                ),
+                new WaitUntilCommand(() -> robot.camera.hasBlob())
         );
 
     }
 
     public Command intakeVision(boolean reverseIntake){
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, robot.camera.ballGoal, mirror, true, false)
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, robot.camera.getBallCoords(), mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
                 .build();
@@ -536,7 +532,11 @@ public class AutoBuilder {
                         new InstantCommand(() -> {}),
                         // Only reverse if reverseIntake and we get 3 balls
                         () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
-                )
+                ),
+                new InstantCommand(() -> {
+                    robot.camera.resetBlob();
+                    robot.camera.setBallPipelineEnabled(false);
+                })
         );
 
     }
