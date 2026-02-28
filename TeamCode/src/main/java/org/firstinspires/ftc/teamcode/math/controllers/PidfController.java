@@ -140,11 +140,15 @@ public class PidfController {
     }
 
     public boolean atTargetPositionWithTolerance(double currentPosition, double tolerance) {
-        return Math.abs(calculateError(currentPosition)) <= tolerance;
+        return atTargetPositionWithTolerance(currentPosition, tolerance, false);
     }
 
     public boolean atTargetPosition(double currentPosition, boolean angleWrapError) {
-        return Math.abs(calculateError(currentPosition, angleWrapError)) <= this.tolerance;
+        return atTargetPositionWithTolerance(currentPosition, this.tolerance, angleWrapError);
+    }
+
+    public boolean atTargetPositionWithTolerance(double currentPosition, double tolerance, boolean angleWrapError) {
+        return Math.abs(calculateError(currentPosition, angleWrapError)) <= tolerance;
     }
 
     public static class PidfCoefficients {

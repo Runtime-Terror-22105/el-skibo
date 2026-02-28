@@ -53,11 +53,22 @@ public class SpindexerSubsystem extends SubsystemBase {
 //    public static double READY_POSITION = 0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
-    public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.38, 0, 0.012, 0, 0.06);
-    public static double yawPidTolerance = Math.toRadians(4); // radians
+    // Small/large PID is for when error is small/large, respectively.
+    //
+    // kV should be the same for both PIDs. kP can be more aggressive for the large PID.
+    public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
+            new PidfController.PidfCoefficients(0.5, 0, 0.02, 0, 0.06);
+    public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
+            new PidfController.PidfCoefficients(0.2, 0, 0.01, 0, 0.06);
+    private final PidfController yawPid = new PidfController(SMALL_PID_COEFFICIENTS);
+
+    // PID_SWITCH determines when we switch between the two PIDs.
+    public static double PID_SWITCH = Math.toRadians(30);  // Units are radians
+
+    // POS_TOLERANCE determines when we consider the spindexer to be "at position"
+    public static double POS_TOLERANCE = Math.toRadians(6);  // Units are radians
+
     private boolean pidEnabled = true;
-    public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
     public double desiredAngle;
     public SpindexerEncoderLUT angleLUT;
@@ -74,7 +85,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.hardware = hardware;
         this.homedSpindexerOffset = 0;
 //        this.desiredAngle = getPosition();
-        this.yawPid.setTolerance(yawPidTolerance);
+        this.yawPid.setTolerance(POS_TOLERANCE);
         this.yawPid.setTargetPosition(0.0);
         this.angleLUT = new SpindexerEncoderLUT(this.robot);
         goToAngle120(0);
@@ -374,12 +385,16 @@ public class SpindexerSubsystem extends SubsystemBase {
         SpindexerEncoderLUT.SpindexLookupValue desAngle = this.angleLUT.get(desiredAngle);
         if (telemetry) Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
 
-        this.yawPid.setTolerance(yawPidTolerance);
-        this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
+        double positionRaw = getPositionRaw();
+        yawPid.setTolerance(POS_TOLERANCE);
+        yawPid.setTargetPosition(desAngle.correctedAngleRad);
+        boolean useSmallPID = yawPid.atTargetPositionWithTolerance(positionRaw, PID_SWITCH, true);
+        yawPid.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
         if (pidEnabled) {
-//            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
             this.spindexerPower = yawPid.calculatePower(getPositionRaw(), 0, true);
         }
+
+        if (telemetry) Robot.debugTelemetry.addData("Spindexer PID", useSmallPID ? "small" : "large");
     }
 
 
@@ -387,9 +402,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
-            // ensure we update the PID coefficients in case they were changed in dashboard
-            this.yawPid.setPidfCoefficients(turningPidCoefficients);
-
             if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
                 hardware.spindexerRotate.setPower(0);
                 return;
