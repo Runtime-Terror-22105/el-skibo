@@ -495,8 +495,8 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-//                new WaitForSpindexerWallCommand(robot.spindexer),
-                new FollowPathCommand(robot.follower, lastPath, true, 0.9),
+                new WaitForSpindexerWallCommand(robot.spindexer),
+                new FollowPathCommand(robot.follower, lastPath, true),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
@@ -516,7 +516,7 @@ public class AutoBuilder {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new InstantCommand(() -> robot.camera.setBallPipelineEnabled(true)),
-                        new FollowPathCommand(robot.follower, lastPath, true, 0.9)
+                        new FollowPathCommand(robot.follower, lastPath, true)
                 )
         );
 
@@ -529,7 +529,7 @@ public class AutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new InstantCommand(() -> robot.camera.setBallPipelineEnabled(false)),
-                new FollowPathCommand(robot.follower, lastPath, true, 0.9),
+                new FollowPathCommand(robot.follower, lastPath, true),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
@@ -548,8 +548,8 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-//                new WaitForSpindexerWallCommand(robot.spindexer),
-                new FollowPathCommand(robot.follower, lastPath, true, 0.9),
+                new WaitForSpindexerWallCommand(robot.spindexer),
+                new FollowPathCommand(robot.follower, lastPath, true),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
