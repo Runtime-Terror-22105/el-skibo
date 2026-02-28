@@ -601,8 +601,7 @@ public class AutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new WaitForSpindexerWallCommand(robot.spindexer),
-                new FollowPathCommand(robot.follower, lastPath, true),
-                new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY)
+                new FollowPathCommand(robot.follower, lastPath, true)
         );
     }
     public Command controlPathLong(){

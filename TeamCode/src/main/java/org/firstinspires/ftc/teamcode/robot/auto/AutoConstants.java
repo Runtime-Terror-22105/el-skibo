@@ -53,7 +53,7 @@ public class AutoConstants {
 
     public static Pose2d CONTROL_POSE_LONG_INTAKE = new Pose2d(17, 18, Math.toRadians(120));
     public static Pose2d START_POSE_LONG_INTAKE = new Pose2d(12, 18, Math.toRadians(120));
-    public static Pose2d END_POSE_LONG_INTAKE = new Pose2d(12, 50, Math.toRadians(120));
+    public static Pose2d END_POSE_LONG_INTAKE = new Pose2d(12, 40, Math.toRadians(120));
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
     public static int INTAKE_DELAY = 600;
@@ -67,7 +67,7 @@ public class AutoConstants {
 
     // Distance (in inches) from the target shoot pose for which early shoot begins
     // shooting.
-    public static double EARLY_SHOOT_DISTANCE = 0.0;
+    public static double EARLY_SHOOT_DISTANCE = 5;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
