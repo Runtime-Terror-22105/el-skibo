@@ -4,6 +4,8 @@
  */
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -11,15 +13,19 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import java.util.concurrent.TimeUnit;
 
 public class CameraUtil {
+    private static final String TAG = "CameraUtil";
+
     // wait like 50 ms after calling this function to call setManualExposure() to make sure the camera is in manual mode before setting the exposure and gain
     static boolean setManualExposureMode(VisionPortal visionPortal) {
         // Ensure Vision Portal has been setup.
         if (visionPortal == null) {
+            Log.d(TAG, "setManualExposureMode: Vision Portal is null");
             return false;
         }
 
         // Wait for the camera to be open
         if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            Log.d(TAG, "setManualExposureMode: Camera is not streaming");
             return false;
         }
 

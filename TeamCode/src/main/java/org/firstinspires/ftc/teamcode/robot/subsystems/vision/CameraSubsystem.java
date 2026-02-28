@@ -339,22 +339,22 @@ public class CameraSubsystem extends SubsystemBase {
                 return;
             }
 
-            if (!exposureHasBeenSet) {
-                if (usingFrontCamera && vPortalFront != null) {
+//            if (!exposureHasBeenSet) {
+//                if (usingFrontCamera && vPortalFront != null) {
                     if (CameraUtil.setManualExposureMode(vPortalFront)) {
-                        Log.d(TAG, "Manual exposure mode set for front camera");
+                        Log.i(TAG, "Manual exposure mode set for front camera");
                     } else {
                         Log.e(TAG, "Failed to set manual exposure mode for front camera");
                     }
 
                     if (CameraUtil.setManualExposure(vPortalFront, (int)EXPOSURE_MICROSECONDS / 1000, GAIN)) {
-                        Log.d(TAG, "Manual exposure set for front camera");
+                        Log.i(TAG, "Manual exposure set for front camera");
                         exposureHasBeenSet = true;
                     } else {
                         Log.e(TAG, "Failed to set manual exposure for front camera");
                     }
-                }
-            }
+//                }
+//            }
 
             // Reference for Logitech C270:
 //        public void setDefaultExposure() {
