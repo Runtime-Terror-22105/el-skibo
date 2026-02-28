@@ -108,7 +108,7 @@ public class CameraSubsystem extends SubsystemBase {
     public Pose2d ballGoal = new Pose2d(8, 24);
     public static Pose2d ballDefaultGoal = new Pose2d(8, 24);
 
-    public boolean doBallVision = false;
+    private boolean doBallVision = false;
 
     public static double pixelValueLow = 70;
     public static double pixelValueHigh = 240;
@@ -192,6 +192,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.shouldScanForGlyphs = true;
 
         setAprilTagsEnabled(true);
+        setBallPipelineEnabled(false);
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
@@ -234,6 +235,14 @@ public class CameraSubsystem extends SubsystemBase {
                 SortOrder.DESCENDING
         ));
         return pipeline;
+    }
+
+    public void setBallPipelineEnabled(boolean enabled) {
+        if (vPortalFront != null) {
+            vPortalFront.setProcessorEnabled(ballPipeline, enabled);
+        }
+
+        doBallVision = enabled;
     }
 
     public void setAprilTagsEnabled(boolean enabled) {
