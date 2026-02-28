@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE_2;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
@@ -383,6 +384,39 @@ public class AutoBuilder {
         );
     }
 
+    private Command createFollowShootPathAndShootCommand(long prepareShootDelay, PathChain shootPath, EnumSet<ShootPathFlag> flags) {
+        // Use AtomicBoolean here since Java lambdas capture by value.
+        AtomicBoolean hasFinishedPrepareShoot = new AtomicBoolean(false);
+        AtomicBoolean hasFinishedPath = new AtomicBoolean(false);
+        double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
+
+        // Although this is a ParallelCommandGroup, we essentially implement
+        // custom Sequential logic using the AtomicBoolean flags.
+        return new ParallelCommandGroup(
+                // Follow path
+                new SequentialCommandGroup(
+                        new FollowPathCommand(robot.follower, shootPath, false),
+                        new InstantCommand(() -> hasFinishedPath.set(true))
+                ),
+
+                // Prepare shoot
+                new SequentialCommandGroup(
+                        new WaitCommand(prepareShootDelay),
+                        new PrepareShootCommand(robot),
+                        new InstantCommand(() -> hasFinishedPrepareShoot.set(true))
+                ),
+
+                // Shoot command
+                new SequentialCommandGroup(
+                        new WaitUntilCommand(hasFinishedPrepareShoot::get),
+                        new WaitUntilCommand(() ->
+                                hasFinishedPath.get() || robot.follower.getDistanceRemaining() < distanceConstraint
+                        ),
+                        shootCommand(flags)
+                )
+        );
+    }
+
     /**
      * Command to shoot from spike number.
      *
@@ -392,15 +426,7 @@ public class AutoBuilder {
      */
     public Command shootSpike(int spikeNumber, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        PathChain shootPath = shootSpikePath(flags);
-        return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, shootPath, false),
-                        new WaitCommand(waitBeforeShooting).andThen(new PrepareShootCommand(robot))
-                ),
-                new WaitCommand(PRE_SHOOT_DELAY),
-                shootCommand(flags)
-        );
+        return createFollowShootPathAndShootCommand(waitBeforeShooting, shootSpikePath(flags), flags);
     }
 
     public Command cycleSpike(int spikeNumber, ShootPathFlag... flags) {
@@ -428,14 +454,7 @@ public class AutoBuilder {
 
     public Command shootGate(ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, shootGatePath(flags), false),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot, true))
-                ),
-                new WaitCommand(PRE_SHOOT_DELAY),
-                shootCommand(flags)
-        );
+        return createFollowShootPathAndShootCommand(250, shootGatePath(flags), flags);
     }
 
     public Command cycleGate(ShootPathFlag... flags) {
@@ -463,14 +482,7 @@ public class AutoBuilder {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, lastPath, false),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
-                ),
-                new WaitCommand(PRE_SHOOT_DELAY),
-                shootCommand(flags)
-        );
+        return createFollowShootPathAndShootCommand(250, lastPath, flags);
     }
 
     public Command intakeWall(boolean reverseIntake) {
@@ -549,15 +561,9 @@ public class AutoBuilder {
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, lastPath, false),
-                        new WaitCommand(250).andThen(new PrepareShootCommand(robot))
-                ),
-                new WaitCommand(PRE_SHOOT_DELAY),
-                shootCommand(flags)
-        );
+        return createFollowShootPathAndShootCommand(250, lastPath, flags);
     }
+
     public Command cycleTunnel(boolean reverseIntake, ShootPathFlag ...flagArr) {
         return new SequentialCommandGroup(
                 intakeTunnel(reverseIntake),
