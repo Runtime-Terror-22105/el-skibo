@@ -495,7 +495,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
+//                new WaitForSpindexerWallCommand(robot.spindexer),
                 new FollowPathCommand(robot.follower, lastPath, true, 0.9),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
@@ -548,7 +548,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
+//                new WaitForSpindexerWallCommand(robot.spindexer),
                 new FollowPathCommand(robot.follower, lastPath, true, 0.9),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
