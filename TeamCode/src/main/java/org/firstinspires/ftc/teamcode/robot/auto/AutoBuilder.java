@@ -600,7 +600,6 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
                 new FollowPathCommand(robot.follower, lastPath, true)
         );
     }
