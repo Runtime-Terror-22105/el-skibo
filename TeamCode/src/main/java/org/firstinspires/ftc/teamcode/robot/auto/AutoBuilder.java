@@ -626,6 +626,20 @@ public class AutoBuilder {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0, 0.7,
+                                        FixedHeadingInterpolator.linearFromPoint(
+                                                () -> robot.follower.getHeading(),
+                                                SHOOT_FAR_POSE.heading,
+                                                0, 0.5
+                                        )
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0,
+                                        HeadingInterpolator.constant(SHOOT_FAR_POSE.heading)
+                                )
+                        )
+                )
                 .build();
         return createFollowShootPathAndShootCommand(250, lastPath, flags);
 
