@@ -468,6 +468,16 @@ public class AutoBuilder {
 
     public Command intakeSpike3Far() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_3_CONTROL_FAR, INTAKE_3_POSE, mirror, false, false)
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.25,
+                                        HeadingInterpolator.linear(lastPath.getFinalHeadingGoal(), INTAKE_3_POSE.mirror(mirror).heading)
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(0.25, 1.0,
+                                        HeadingInterpolator.constant(INTAKE_3_POSE.mirror(mirror).heading)
+                                )
+                        )
+                )
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
