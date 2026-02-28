@@ -66,7 +66,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double PID_SWITCH = Math.toRadians(30);  // Units are radians
 
     // POS_TOLERANCE determines when we consider the spindexer to be "at position"
-    public static double POS_TOLERANCE = Math.toRadians(6);  // Units are radians
+    public static double POS_TOLERANCE = Math.toRadians(4);  // Units are radians
 
     private boolean pidEnabled = true;
 

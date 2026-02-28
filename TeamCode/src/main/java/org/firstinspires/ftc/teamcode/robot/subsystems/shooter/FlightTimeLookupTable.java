@@ -36,10 +36,10 @@ public class FlightTimeLookupTable {
             new FlightTimeLookupValue(27.7,0.62),
             new FlightTimeLookupValue(45.5,0.66), //im sorry aadit
             new FlightTimeLookupValue(68.7,0.68), //im sorry aadit
-            new FlightTimeLookupValue(90.7,0.7),
-            new FlightTimeLookupValue(104.4,0.9),
-            new FlightTimeLookupValue(122.7,0.75),
-            new FlightTimeLookupValue(140.2,0.75),
+            new FlightTimeLookupValue(90.7,0.68),
+            new FlightTimeLookupValue(104.4,0.68),
+            new FlightTimeLookupValue(122.7,0.68),
+            new FlightTimeLookupValue(140.2,0.68),
 
     };
 
