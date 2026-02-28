@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
-@Autonomous(name="Auto Far Vision Test", group="testing")
+@Autonomous(name="Auto Far Vision (blue)", group="testing")
 public class AutoFarVisionTest extends OneAutoToRuleThemAll {
-    protected AutoFarVisionTest(Team team) {
-        super(team);
+    public AutoFarVisionTest() {
+        super(Team.BLUE);
     }
 
     @Override

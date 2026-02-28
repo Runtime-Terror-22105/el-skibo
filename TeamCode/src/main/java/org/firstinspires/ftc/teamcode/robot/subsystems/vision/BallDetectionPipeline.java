@@ -120,13 +120,15 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     public Point pixelToRealCoords(Point pixelCoords) {
         // TODO
-        pixelCoords.x = (pixelCoords.x - ((double) frameWidth)/2) * PIXEL_TO_INCHES_SCALE;
-        return pixelCoords;
+        Point realCoords = new Point(pixelCoords.x, pixelCoords.y);
+        realCoords.x = (realCoords.x - ((double) frameWidth)/2) * PIXEL_TO_INCHES_SCALE;
+        return realCoords;
     }
 
     public Point realToPixelCoords(Point realCoords) {
-        realCoords.x = realCoords.x / PIXEL_TO_INCHES_SCALE + ((double) frameWidth)/2;
-        return realCoords;
+        Point pixelCoords = new Point(realCoords.x, realCoords.y);
+        pixelCoords.x = pixelCoords.x / PIXEL_TO_INCHES_SCALE + ((double) frameWidth)/2;
+        return pixelCoords;
     }
 
 

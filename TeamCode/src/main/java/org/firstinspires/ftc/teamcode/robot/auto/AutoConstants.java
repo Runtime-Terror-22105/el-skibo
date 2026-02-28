@@ -17,7 +17,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 95, Math.toRadians(225));
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 116, Math.toRadians(315));
-    public static Pose2d SHOOT_FAR_POSE = new Pose2d(51, 16, Math.toRadians(190));
+    public static Pose2d SHOOT_FAR_POSE = new Pose2d(51, 16, Math.toRadians(195));
 
     public static Pose2d INTAKE_BEFORE_HORIZ_CONTROL = new Pose2d(21, 116, 0);
     public static Pose2d INTAKE_BEFORE_HORIZ_POSE = new Pose2d(21, 102, Math.toRadians(263));
@@ -63,7 +63,7 @@ public class AutoConstants {
 
     // Distance (in inches) from the target shoot pose for which early shoot begins
     // shooting.
-    public static double EARLY_SHOOT_DISTANCE = 10.0;
+    public static double EARLY_SHOOT_DISTANCE = 0.0;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
@@ -71,7 +71,7 @@ public class AutoConstants {
     public static PathConstraints RELAXED_CONSTRAINTS;
     static {
         RELAXED_CONSTRAINTS = Constants.pathConstraints.copy();
-        RELAXED_CONSTRAINTS.setTValueConstraint(0.93);
+        RELAXED_CONSTRAINTS.setTValueConstraint(0.95);
         RELAXED_CONSTRAINTS.setVelocityConstraint(10);
         RELAXED_CONSTRAINTS.setTranslationalConstraint(5);
         RELAXED_CONSTRAINTS.setHeadingConstraint(0.07);
