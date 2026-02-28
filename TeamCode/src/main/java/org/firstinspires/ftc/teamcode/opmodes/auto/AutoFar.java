@@ -35,8 +35,8 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
                 builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 builder.cycleTunnel(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleTunnel(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleWall(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
+                builder.cycleTunnel(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
+//                builder.cycleWall(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
         );
     }
 }
