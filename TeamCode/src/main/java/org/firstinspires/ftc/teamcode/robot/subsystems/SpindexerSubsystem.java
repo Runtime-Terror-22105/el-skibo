@@ -101,6 +101,9 @@ public class SpindexerSubsystem extends SubsystemBase {
 ////        return Angle.angleWrap(hardware.spindexerEncoder.getCurrentPosition());
 //    }
 
+    public void setTolerance(double tolerance) {
+        this.yawPid.setTolerance(tolerance);
+    }
 
     public double getTargetYaw() {
         return desiredAngle;

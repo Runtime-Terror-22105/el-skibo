@@ -600,6 +600,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
+                new GoToIntakeStateCommand(robot),
                 new FollowPathCommand(robot.follower, lastPath, true)
         );
     }

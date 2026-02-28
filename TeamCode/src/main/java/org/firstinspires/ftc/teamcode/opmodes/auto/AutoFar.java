@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
@@ -26,16 +27,19 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
+                new InstantCommand(() -> robot.spindexer.setTolerance(10)),
                 builder.shootPreloadFar(ShootPathFlag.EARLY_LEAVE),
                 // Do not reverse intake on first since they're guaranteed
                 builder.cycleWall(false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 builder.intakeSpike3Far(),
                 builder.shootSpike3Far(ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleLong(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleLong(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleLong(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleLong(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
-//                builder.cycleWall(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
+                builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleWall(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
+
         );
     }
 }
