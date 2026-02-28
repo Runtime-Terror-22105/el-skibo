@@ -300,13 +300,13 @@ public class AutoBuilder {
 
     public Command shootPreloadFar(ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
-                .build();
+//        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
+//                .build();
         return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new FollowPathCommand(robot.follower, lastPath, false),
-                        new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY)
-                ),
+//                new ParallelCommandGroup(
+//                        new FollowPathCommand(robot.follower, lastPath, false),
+                        new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY),
+//                ),
                 shootCommand(flags),
                 new StopScanningForGlyphsCommand(robot.camera)
         );
