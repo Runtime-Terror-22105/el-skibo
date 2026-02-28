@@ -53,7 +53,7 @@ public class AutoConstants {
 
     public static Pose2d CONTROL_POSE_LONG_INTAKE = new Pose2d(17, 18, Math.toRadians(120));
     public static Pose2d START_POSE_LONG_INTAKE = new Pose2d(12, 18, Math.toRadians(120));
-    public static Pose2d END_POSE_LONG_INTAKE = new Pose2d(12, 18, Math.toRadians(120));
+    public static Pose2d END_POSE_LONG_INTAKE = new Pose2d(12, 50, Math.toRadians(120));
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
     public static int INTAKE_DELAY = 600;
