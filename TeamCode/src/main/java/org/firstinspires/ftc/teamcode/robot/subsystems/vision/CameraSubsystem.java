@@ -268,6 +268,7 @@ public class CameraSubsystem extends SubsystemBase {
     public void scheduleRelocalizeRequest()
     {
 //        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
+        robot.telemetry.addLine("this is still being held");
         this.relocalizeSucceeded = false;
         this.relocalizeTimer.reset();
         this.hasRelocalizeRequest = true;
@@ -479,6 +480,7 @@ public class CameraSubsystem extends SubsystemBase {
             {
                 setAprilTagsEnabled(true);
                 this.robot.lightControl.setIsManualLighting(true);
+                robot.telemetry.addData("localizertimer", relocalizeTimer.milliseconds());
 
                 if(!this.relocalizeSucceeded)
                 {
