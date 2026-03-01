@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -124,7 +123,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     private ElapsedTime relocalizeTimer;
 
-    public static int relocalizeTimeWindowMS = 100;
+    public static int relocalizeTimeWindowMS = 200;
 
     private boolean relocalizeSucceeded = false;
 

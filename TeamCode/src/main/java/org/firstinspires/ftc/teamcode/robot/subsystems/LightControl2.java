@@ -65,9 +65,7 @@ public class LightControl2 extends SubsystemBase {
                     {
                         hardware.lights.setColor(TerrorLight.LightColors.RED);
                     }
-
-
-
+                    break;
                 //i might be misunderstanding
 //           case FULL:
 //                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
