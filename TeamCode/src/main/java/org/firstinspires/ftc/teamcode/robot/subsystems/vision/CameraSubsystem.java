@@ -482,7 +482,7 @@ public class CameraSubsystem extends SubsystemBase {
                 }
 
                 if (localizationTag != null && localizationTag.robotPose != null
-                        && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)) {
+                        ){//(robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)) {
                     Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
                     relocalize(localizationTag);
                     this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.GREEN);
@@ -546,6 +546,7 @@ public class CameraSubsystem extends SubsystemBase {
         Pose cameraOffset = new Pose(cameraOffsetInches, 0, 0).rotate(rawPose.getHeading(), false);
 //        Pose cameraOffset = new Pose(offsetX,offsetY);
         Pose localizedPose = rawPose.minus(cameraOffset);
+        localizedPose = localizedPose.setHeading(pinpointRobotHeading);
 
         robot.telemetry.addData("trying to relocalize",localizedPose);
 
