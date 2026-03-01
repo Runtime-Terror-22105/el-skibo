@@ -129,8 +129,8 @@ public class RobotHardware {
         motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Initialize the turret
-        this.turretYawLeft = new TerrorServo(hwMap, "turretYawLeft", 0.001);
-        this.turretYawRight = new TerrorServo(hwMap, "turretYawRight", 0.001);
+        this.turretYawLeft = new TerrorServo(hwMap, "turretYawLeft", 0.005);
+        this.turretYawRight = new TerrorServo(hwMap, "turretYawRight", 0.005);
         this.turretYawLeft.setPwmRange(500, 2500);
         this.turretYawRight.setPwmRange(500, 2500);
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
@@ -157,7 +157,7 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterPitch = new TerrorServo(hwMap, "shooterHood", 0.001);
+        this.shooterPitch = new TerrorServo(hwMap, "shooterHood", 0.005);
         this.publisher.subscribe(5, shooterPitch);
 
 

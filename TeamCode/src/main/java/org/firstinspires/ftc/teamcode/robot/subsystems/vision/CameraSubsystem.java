@@ -7,6 +7,7 @@ import android.util.Size;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.SortOrder;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
+import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.util.BallColor;
@@ -120,6 +122,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     int frontCameraWidth = 320;
 
+    private ElapsedTime relocalizeTimer;
+
+    public static int relocalizeTimeWindowMS = 100;
+
+    private boolean hasRelocalizeRequest = false;
+
 
 //    private VisionPipeline pipeline = new VisionPipeline(webcam);
 
@@ -172,9 +180,8 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
         }
 
-        FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
-
         if (hardware.frontCamera != null) {
+            FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
             this.vPortalFront = vPortalFrontBuilder.build();
             if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
         }
@@ -252,6 +259,13 @@ public class CameraSubsystem extends SubsystemBase {
         if (vPortalBack != null) {
             vPortalBack.setProcessorEnabled(backTagProcessor, enabled);
         }
+    }
+
+    public void scheduleRelocalizeRequest()
+    {
+        this.hasRelocalizeRequest = true;
+        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
+        relocalizeTimer.reset();
     }
 
     public void stopCamera() {
@@ -338,6 +352,8 @@ public class CameraSubsystem extends SubsystemBase {
             {
                 return;
             }
+
+
 
 //            if (!exposureHasBeenSet) {
 //                if (usingFrontCamera && vPortalFront != null) {
@@ -451,6 +467,39 @@ public class CameraSubsystem extends SubsystemBase {
                 robot.telemetry.addData("Localization Tag id", localizationTag.id);
             }
 
+            if(hasRelocalizeRequest)
+            {
+                setAprilTagsEnabled(true);
+                robot.lightControl.setIsManualLighting(true);
+
+                if(relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
+                {
+                    this.hasRelocalizeRequest = false;
+                    this.robot.lightControl.setIsManualLighting(false);
+                    setAprilTagsEnabled(false);
+                }
+
+                if (localizationTag != null && localizationTag.robotPose != null
+                        && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)) {
+                    Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
+                    relocalize(localizationTag);
+                    this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.GREEN);
+                }
+
+
+            }
+
+
+            Log.d("CameraSubsystem", "localizationTag != null: " + (localizationTag != null));
+            Log.d("CameraSubsystem", "localizationTag.robotPose != null: " + (localizationTag != null && localizationTag.robotPose != null));
+            Log.d("CameraSubsystem", "robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD: "
+                    + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
+            Log.d("CameraSubsystem", "Relocalization conditions met: " + ((localizationTag != null && localizationTag.robotPose != null)
+                    && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)));
+
+
+
+
             if(localizationTag != null)
             {
             Log.d("YAEHEYAEYEAH.", (localizationTag != null) + String.valueOf(localizationTag.robotPose != null) + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
@@ -460,17 +509,7 @@ public class CameraSubsystem extends SubsystemBase {
 
 
 
-            Log.d("CameraSubsystem", "localizationTag != null: " + (localizationTag != null));
-            Log.d("CameraSubsystem", "localizationTag.robotPose != null: " + (localizationTag != null && localizationTag.robotPose != null));
-            Log.d("CameraSubsystem", "robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD: "
-                    + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
-            Log.d("CameraSubsystem", "Relocalization conditions met: " + ((localizationTag != null && localizationTag.robotPose != null)
-                    && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)));
-            if (localizationTag != null && localizationTag.robotPose != null
-                    && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)) {
-                Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
-                relocalize(localizationTag);
-            }
+
 
             if (debugLastDetection != null) {
                 // Fade color from red to black as detection gets older

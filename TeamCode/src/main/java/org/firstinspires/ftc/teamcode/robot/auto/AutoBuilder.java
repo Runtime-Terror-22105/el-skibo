@@ -255,7 +255,7 @@ public class AutoBuilder {
         if (flags.contains(ShootPathFlag.EARLY_LEAVE)) {
             command = new SequentialCommandGroup(
                     new ScheduleCommand(command),
-                    new WaitCommand(500)
+                    new WaitCommand(600)
             );
         }
         return command;
@@ -305,8 +305,8 @@ public class AutoBuilder {
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, lastPath, true),
                         new SequentialCommandGroup(
-                                new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY),
-                                new WaitCommand(250)
+                                new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY)
+//                                new WaitCommand(250)
                         )
                 ),
                 shootCommand(flags),
@@ -468,12 +468,21 @@ public class AutoBuilder {
 
     public Command intakeSpike3Far() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, INTAKE_3_CONTROL_FAR, INTAKE_3_POSE, mirror, false, false)
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.25,
+                                        HeadingInterpolator.linear(lastPath.getFinalHeadingGoal(), INTAKE_3_POSE.mirror(mirror).heading)
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(0.25, 1.0,
+                                        HeadingInterpolator.constant(INTAKE_3_POSE.mirror(mirror).heading)
+                                )
+                        )
+                )
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
                 new ParallelRaceGroup(
-                    new FollowPathCommand(robot.follower, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                    new FollowPathAndWaitForWallCommand(robot, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
                     new WaitForIntakeCommand(robot)
                 ),
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
@@ -494,8 +503,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
-                new FollowPathCommand(robot.follower, lastPath, true),
+                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 12.0),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
@@ -552,8 +560,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new WaitForSpindexerWallCommand(robot.spindexer),
-                new FollowPathCommand(robot.follower, lastPath, true),
+                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 12.0),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),

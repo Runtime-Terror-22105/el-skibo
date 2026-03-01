@@ -33,7 +33,7 @@ public class AutoConstants {
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 45.668);
-    public static Pose2d INTAKE_3_CONTROL_FAR = new Pose2d(48, 39);
+    public static Pose2d INTAKE_3_CONTROL_FAR = new Pose2d(56, 39);
     public static Pose2d INTAKE_3_POSE = new Pose2d(17, 39, Math.toRadians(180));
 
     // For pushing gate after a SPIKE STRIP.
@@ -66,8 +66,8 @@ public class AutoConstants {
     public static int INTAKE_DELAY_HORIZ = 1000;
 
     // Distance (in inches) from the target shoot pose for which early shoot begins
-    // shooting.
-    public static double EARLY_SHOOT_DISTANCE = 5;
+    // shooting
+    public static double EARLY_SHOOT_DISTANCE = 7.0;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
