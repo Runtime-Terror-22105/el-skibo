@@ -16,7 +16,7 @@ public class SpindexerEncoderLUT {
     public static int angle1 = 0;
     public static double fixedAngle1 = 0;
     public static int angle2 = 120;
-    public static double fixedAngle2 = 115;
+    public static double fixedAngle2 = 120;
     public static int angle3 = 240;
     public static double fixedAngle3 = 240;
 
