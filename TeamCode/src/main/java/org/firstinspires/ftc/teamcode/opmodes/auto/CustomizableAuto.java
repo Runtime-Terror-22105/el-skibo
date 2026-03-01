@@ -440,5 +440,7 @@ public class CustomizableAuto extends LinearOpMode {
             robot.telemetry.addData("Loop Time (ms)", String.format("%.2f", dt / 1e6));
             robot.telemetry.update();
         }
+
+        robot.close();
     }
 }

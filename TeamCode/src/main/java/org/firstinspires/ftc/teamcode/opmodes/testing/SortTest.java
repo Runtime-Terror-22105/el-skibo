@@ -61,5 +61,6 @@ public class SortTest extends LinearOpMode {
             robot.telemetry.update();
         }
 
+        robot.close();
     }
 }

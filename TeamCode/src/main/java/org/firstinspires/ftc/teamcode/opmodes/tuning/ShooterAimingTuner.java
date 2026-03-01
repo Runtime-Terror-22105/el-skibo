@@ -366,6 +366,8 @@ public class ShooterAimingTuner extends LinearOpMode {
         }
 
         blackboard.put(AUTO_ENDING_DATA_KEY, null);
+
+        robot.close();
     }
 
 

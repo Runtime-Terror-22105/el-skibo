@@ -29,5 +29,7 @@ public class SlothTest extends LinearOpMode {
             tele.addData("sloth test", "e");
             tele.update();
         }
+
+        robot.close();
     }
 }

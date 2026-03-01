@@ -45,5 +45,7 @@ public class CameraTest extends LinearOpMode {
             robot.telemetry.addData("seenglyph",robot.camera.getGlyph());
             robot.telemetry.update();
         }
+
+        robot.close();
     }
 }
