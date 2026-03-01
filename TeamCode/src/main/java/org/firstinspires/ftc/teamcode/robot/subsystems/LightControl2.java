@@ -56,6 +56,16 @@ public class LightControl2 extends SubsystemBase {
                     hardware.lights.setColor(TerrorLight.LightColors.BLUE);
                     break;
 
+                case SCANNING:
+                    if(robot.camera.getRelocalizeSucceeded())
+                    {
+                        hardware.lights.setColor(TerrorLight.LightColors.GREEN);
+                    }
+                    else
+                    {
+                        hardware.lights.setColor(TerrorLight.LightColors.RED);
+                    }
+                    break;
                 //i might be misunderstanding
 //           case FULL:
 //                hardware.lights.setColor(TerrorLight.LightColors.GREEN);

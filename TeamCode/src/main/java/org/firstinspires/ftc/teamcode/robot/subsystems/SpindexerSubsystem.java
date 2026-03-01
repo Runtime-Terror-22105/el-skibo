@@ -54,7 +54,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.45, 0, 0.02, 0, 0.1);
+            new PidfController.PidfCoefficients(0.279, 0, 0.005, 0, 0.01);
     public static double yawPidTolerance = Math.toRadians(4); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
@@ -378,7 +378,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
         if (pidEnabled) {
 //            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
-            this.spindexerPower = yawPid.calculatePower(getPositionRaw(), 0, true);
+            double tmp = yawPid.calculatePower(getPositionRaw(), 0, true);
+            this.spindexerPower = Math.copySign(Math.sqrt(Math.abs(tmp)), tmp);
         }
     }
 

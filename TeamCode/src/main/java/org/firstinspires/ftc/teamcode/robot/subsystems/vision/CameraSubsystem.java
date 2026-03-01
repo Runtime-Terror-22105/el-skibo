@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.util.Log;
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,9 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -60,7 +59,7 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean shouldScanForGlyphs = true;
     public boolean disableRelocalization = false;
     public boolean disableAprilTagsAfterGlyph = false;
-    private BallDetectionPipeline ballPipeline;
+//    private BallDetectionPipeline ballPipeline;
     public static double MIN_CONTOUR_AREA = 300;
     public static double MAX_CONTOUR_AREA = 100000;
 
@@ -124,9 +123,9 @@ public class CameraSubsystem extends SubsystemBase {
 
     private ElapsedTime relocalizeTimer;
 
-    public static int relocalizeTimeWindowMS = 100;
+    public static int relocalizeTimeWindowMS = 200;
 
-    private boolean hasRelocalizeRequest = false;
+    private boolean relocalizeSucceeded = false;
 
 
 //    private VisionPipeline pipeline = new VisionPipeline(webcam);
@@ -138,6 +137,10 @@ public class CameraSubsystem extends SubsystemBase {
         this.relocalizeTimer = new ElapsedTime();
     }
 
+    public boolean getRelocalizeSucceeded(){
+        return this.relocalizeSucceeded;
+    }
+
     public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
         this.vPortalFront = null;
         this.vPortalBack = null;
@@ -147,19 +150,19 @@ public class CameraSubsystem extends SubsystemBase {
         this.detections = new ArrayList<>();
 //        this.frontTagProcessor = createAprilTagProcessor();
         this.backTagProcessor = createAprilTagProcessor();
-        this.ballPipeline = createBallDetectionPipeline();
+//        this.ballPipeline = createBallDetectionPipeline();
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
         Log.d(TAG, "Vision portal IDs: " + Arrays.toString(visionPortalIDs));
-        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
-                .setCamera(hardware.frontCamera)
-                .setCameraResolution(new Size(frontCameraWidth, 240))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setLiveViewContainerId(visionPortalIDs[0])
-                .setAutoStartStreamOnBuild(true)
-                .setAutoStopLiveView(false)
-                .setShowStatsOverlay(true)
-                .addProcessor(this.ballPipeline);
+//        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
+//                .setCamera(hardware.frontCamera)
+//                .setCameraResolution(new Size(frontCameraWidth, 240))
+//                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+//                .setLiveViewContainerId(visionPortalIDs[0])
+//                .setAutoStartStreamOnBuild(true)
+//                .setAutoStopLiveView(false)
+//                .setShowStatsOverlay(true)
+//                .addProcessor(this.ballPipeline);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
@@ -182,9 +185,9 @@ public class CameraSubsystem extends SubsystemBase {
         }
 
         if (hardware.frontCamera != null) {
-            FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
-            this.vPortalFront = vPortalFrontBuilder.build();
-            if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
+//            FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
+//            this.vPortalFront = vPortalFrontBuilder.build();
+//            if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
         }
         if (hardware.backCamera != null) {
             this.vPortalBack = vPortalBackBuilder.build();
@@ -195,7 +198,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.shouldScanForGlyphs = true;
 
         setAprilTagsEnabled(true);
-        setBallPipelineEnabled(false);
+//        setBallPipelineEnabled(false);
 
         if (!CameraUtil.setManualExposureMode(vPortalFront)) {
             Log.e(TAG, "Failed to set manual exposure mode for front camera");
@@ -247,11 +250,11 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public void setBallPipelineEnabled(boolean enabled) {
-        if (vPortalFront != null) {
-            vPortalFront.setProcessorEnabled(ballPipeline, enabled);
-        }
-
-        doBallVision = enabled;
+//        if (vPortalFront != null) {
+//            vPortalFront.setProcessorEnabled(ballPipeline, enabled);
+//        }
+//
+//        doBallVision = enabled;
     }
 
     public void setAprilTagsEnabled(boolean enabled) {
@@ -263,12 +266,17 @@ public class CameraSubsystem extends SubsystemBase {
         }
     }
 
-    public void scheduleRelocalizeRequest()
-    {
-        this.hasRelocalizeRequest = true;
-        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
-        this.relocalizeTimer.reset();
-    }
+//    public void scheduleRelocalizeRequest()
+//    {
+////        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
+//        robot.telemetry.addLine("this is still being held");
+//        this.relocalizeSucceeded = false;
+//        this.relocalizeTimer.reset();
+//        this.hasRelocalizeRequest = true;
+//        this.robot.lightControl.setIsManualLighting(true);
+//        this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
+//
+//    }
 
     public void stopCamera() {
 //        vPortalFront.stopStreaming();
@@ -333,15 +341,16 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public Pose2d getBallCoords(){
-        BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
-        if (blob == null) {
-            return ballDefaultGoal;
-        }
-        Pose2d tempPos = ballDefaultGoal.copy();
-//        double offset = blob.getCenter().x;
-        double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
-        tempPos.y += offset;
-        return tempPos;
+//        BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
+//        if (blob == null) {
+//            return ballDefaultGoal;
+//        }
+//        Pose2d tempPos = ballDefaultGoal.copy();
+////        double offset = blob.getCenter().x;
+//        double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
+//        tempPos.y += offset;
+//        return tempPos;
+        return ballDefaultGoal;
     }
 
     @Override
@@ -403,7 +412,7 @@ public class CameraSubsystem extends SubsystemBase {
             }
 
             this.detections = backTagProcessor.getDetections();
-            robot.telemetry.addData("blobs array",ballPipeline.getBlobs());
+//            robot.telemetry.addData("blobs array",ballPipeline.getBlobs());
 
             if(!usingBackCamera || backTagProcessor.getDetections().isEmpty())
             {
@@ -469,26 +478,27 @@ public class CameraSubsystem extends SubsystemBase {
                 robot.telemetry.addData("Localization Tag id", localizationTag.id);
             }
 
-            if(hasRelocalizeRequest)
+            if(this.robot.getState().equals(RobotState.SCANNING))
             {
                 setAprilTagsEnabled(true);
-                robot.lightControl.setIsManualLighting(true);
 
-                if(relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
+                if(this.relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
                 {
-                    this.hasRelocalizeRequest = false;
-                    this.robot.lightControl.setIsManualLighting(false);
-                    setAprilTagsEnabled(false);
+                    this.robot.robotState = RobotState.RESTING;
                 }
 
                 if (localizationTag != null && localizationTag.robotPose != null
                         ){//(robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)) {
                     Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
                     relocalize(localizationTag);
-                    this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.GREEN);
+                    this.relocalizeSucceeded = true;
                 }
 
-
+            }
+            else
+            {
+                this.relocalizeSucceeded = false;
+                this.relocalizeTimer.reset();
             }
 
 
@@ -524,11 +534,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     public boolean hasBlob()
     {
-        return ballPipeline.getChosenBlob() != null;
+        return false;
+//        return ballPipeline.getChosenBlob() != null;
     }
 
     public void resetBlob() {
-        ballPipeline.unlockChosenBlob();
+//        ballPipeline.unlockChosenBlob();
     }
 
     private void relocalize(AprilTagDetection tag)
