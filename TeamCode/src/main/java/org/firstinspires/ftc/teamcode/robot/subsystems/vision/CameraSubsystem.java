@@ -135,6 +135,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.vPortalFront = null;
         this.vPortalBack = null;
         this.shouldScanForGlyphs = true;
+        this.relocalizeTimer = new ElapsedTime();
     }
 
     public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
@@ -200,6 +201,7 @@ public class CameraSubsystem extends SubsystemBase {
             Log.e(TAG, "Failed to set manual exposure mode for front camera");
         }
         exposureHasBeenSet = false;
+        this.relocalizeTimer = new ElapsedTime();
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
@@ -265,7 +267,7 @@ public class CameraSubsystem extends SubsystemBase {
     {
         this.hasRelocalizeRequest = true;
         robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
-        relocalizeTimer.reset();
+        this.relocalizeTimer.reset();
     }
 
     public void stopCamera() {
