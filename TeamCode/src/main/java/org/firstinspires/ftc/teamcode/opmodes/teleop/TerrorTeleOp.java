@@ -177,7 +177,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
         Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
-        GamepadButton restingButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
+        GamepadButton relocalizeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
 
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
         GamepadButton transferButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
@@ -276,7 +276,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
         ));
 
-        restingButton.whenPressed(new GoToRestingStateCommand(robot));
+        relocalizeButton.whenPressed(new InstantCommand(()->{
+            robot.camera.scheduleRelocalizeRequest();
+        }));
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
 
