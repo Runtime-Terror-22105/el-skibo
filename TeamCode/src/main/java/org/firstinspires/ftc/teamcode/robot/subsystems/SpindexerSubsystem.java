@@ -378,7 +378,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
         if (pidEnabled) {
 //            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
-            this.spindexerPower = yawPid.calculatePower(getPositionRaw(), 0, true);
+            double tmp = yawPid.calculatePower(getPositionRaw(), 0, true);
+            this.spindexerPower = Math.copySign(Math.sqrt(Math.abs(tmp)), tmp);
         }
     }
 
