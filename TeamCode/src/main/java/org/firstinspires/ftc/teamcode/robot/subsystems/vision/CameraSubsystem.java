@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.util.Log;
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -60,7 +59,7 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean shouldScanForGlyphs = true;
     public boolean disableRelocalization = false;
     public boolean disableAprilTagsAfterGlyph = false;
-    private BallDetectionPipeline ballPipeline;
+//    private BallDetectionPipeline ballPipeline;
     public static double MIN_CONTOUR_AREA = 300;
     public static double MAX_CONTOUR_AREA = 100000;
 
@@ -149,19 +148,19 @@ public class CameraSubsystem extends SubsystemBase {
         this.detections = new ArrayList<>();
 //        this.frontTagProcessor = createAprilTagProcessor();
         this.backTagProcessor = createAprilTagProcessor();
-        this.ballPipeline = createBallDetectionPipeline();
+//        this.ballPipeline = createBallDetectionPipeline();
 //        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
         Log.d(TAG, "Vision portal IDs: " + Arrays.toString(visionPortalIDs));
-        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
-                .setCamera(hardware.frontCamera)
-                .setCameraResolution(new Size(frontCameraWidth, 240))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setLiveViewContainerId(visionPortalIDs[0])
-                .setAutoStartStreamOnBuild(true)
-                .setAutoStopLiveView(false)
-                .setShowStatsOverlay(true)
-                .addProcessor(this.ballPipeline);
+//        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
+//                .setCamera(hardware.frontCamera)
+//                .setCameraResolution(new Size(frontCameraWidth, 240))
+//                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+//                .setLiveViewContainerId(visionPortalIDs[0])
+//                .setAutoStartStreamOnBuild(true)
+//                .setAutoStopLiveView(false)
+//                .setShowStatsOverlay(true)
+//                .addProcessor(this.ballPipeline);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
@@ -184,9 +183,9 @@ public class CameraSubsystem extends SubsystemBase {
         }
 
         if (hardware.frontCamera != null) {
-            FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
-            this.vPortalFront = vPortalFrontBuilder.build();
-            if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
+//            FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
+//            this.vPortalFront = vPortalFrontBuilder.build();
+//            if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
         }
         if (hardware.backCamera != null) {
             this.vPortalBack = vPortalBackBuilder.build();
@@ -197,7 +196,7 @@ public class CameraSubsystem extends SubsystemBase {
         this.shouldScanForGlyphs = true;
 
         setAprilTagsEnabled(true);
-        setBallPipelineEnabled(false);
+//        setBallPipelineEnabled(false);
 
         if (!CameraUtil.setManualExposureMode(vPortalFront)) {
             Log.e(TAG, "Failed to set manual exposure mode for front camera");
@@ -249,11 +248,11 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public void setBallPipelineEnabled(boolean enabled) {
-        if (vPortalFront != null) {
-            vPortalFront.setProcessorEnabled(ballPipeline, enabled);
-        }
-
-        doBallVision = enabled;
+//        if (vPortalFront != null) {
+//            vPortalFront.setProcessorEnabled(ballPipeline, enabled);
+//        }
+//
+//        doBallVision = enabled;
     }
 
     public void setAprilTagsEnabled(boolean enabled) {
@@ -340,15 +339,16 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public Pose2d getBallCoords(){
-        BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
-        if (blob == null) {
-            return ballDefaultGoal;
-        }
-        Pose2d tempPos = ballDefaultGoal.copy();
-//        double offset = blob.getCenter().x;
-        double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
-        tempPos.y += offset;
-        return tempPos;
+//        BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
+//        if (blob == null) {
+//            return ballDefaultGoal;
+//        }
+//        Pose2d tempPos = ballDefaultGoal.copy();
+////        double offset = blob.getCenter().x;
+//        double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
+//        tempPos.y += offset;
+//        return tempPos;
+        return ballDefaultGoal;
     }
 
     @Override
@@ -410,7 +410,7 @@ public class CameraSubsystem extends SubsystemBase {
             }
 
             this.detections = backTagProcessor.getDetections();
-            robot.telemetry.addData("blobs array",ballPipeline.getBlobs());
+//            robot.telemetry.addData("blobs array",ballPipeline.getBlobs());
 
             if(!usingBackCamera || backTagProcessor.getDetections().isEmpty())
             {
@@ -539,11 +539,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     public boolean hasBlob()
     {
-        return ballPipeline.getChosenBlob() != null;
+        return false;
+//        return ballPipeline.getChosenBlob() != null;
     }
 
     public void resetBlob() {
-        ballPipeline.unlockChosenBlob();
+//        ballPipeline.unlockChosenBlob();
     }
 
     private void relocalize(AprilTagDetection tag)
