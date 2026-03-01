@@ -267,10 +267,13 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void scheduleRelocalizeRequest()
     {
-        this.hasRelocalizeRequest = true;
 //        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
         this.relocalizeSucceeded = false;
         this.relocalizeTimer.reset();
+        this.hasRelocalizeRequest = true;
+        this.robot.lightControl.setIsManualLighting(true);
+        this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
+
     }
 
     public void stopCamera() {
@@ -472,14 +475,14 @@ public class CameraSubsystem extends SubsystemBase {
                 robot.telemetry.addData("Localization Tag id", localizationTag.id);
             }
 
-            if(hasRelocalizeRequest)
+            if(this.hasRelocalizeRequest)
             {
                 setAprilTagsEnabled(true);
-                robot.lightControl.setIsManualLighting(true);
+                this.robot.lightControl.setIsManualLighting(true);
 
-                if(!relocalizeSucceeded)
+                if(!this.relocalizeSucceeded)
                 {
-                    robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
+                    this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
                 }
 
                 if(relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
@@ -487,7 +490,7 @@ public class CameraSubsystem extends SubsystemBase {
                     this.hasRelocalizeRequest = false;
                     this.robot.lightControl.setIsManualLighting(false);
                     setAprilTagsEnabled(false);
-                    relocalizeSucceeded = false;
+                    this.relocalizeSucceeded = false;
                 }
 
                 if (localizationTag != null && localizationTag.robotPose != null
@@ -495,7 +498,7 @@ public class CameraSubsystem extends SubsystemBase {
                     Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
                     relocalize(localizationTag);
                     this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.GREEN);
-                    relocalizeSucceeded = true;
+                    this.relocalizeSucceeded = true;
                 }
 
 
