@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -125,8 +126,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     public static int relocalizeTimeWindowMS = 100;
 
-    private boolean hasRelocalizeRequest = false;
-
     private boolean relocalizeSucceeded = false;
 
 
@@ -137,6 +136,10 @@ public class CameraSubsystem extends SubsystemBase {
         this.vPortalBack = null;
         this.shouldScanForGlyphs = true;
         this.relocalizeTimer = new ElapsedTime();
+    }
+
+    public boolean getRelocalizeSucceeded(){
+        return this.relocalizeSucceeded;
     }
 
     public CameraSubsystem(Robot robot, RobotHardware hardware, LiveViewSettings liveViewSettings) {
@@ -264,17 +267,17 @@ public class CameraSubsystem extends SubsystemBase {
         }
     }
 
-    public void scheduleRelocalizeRequest()
-    {
-//        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
-        robot.telemetry.addLine("this is still being held");
-        this.relocalizeSucceeded = false;
-        this.relocalizeTimer.reset();
-        this.hasRelocalizeRequest = true;
-        this.robot.lightControl.setIsManualLighting(true);
-        this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
-
-    }
+//    public void scheduleRelocalizeRequest()
+//    {
+////        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
+//        robot.telemetry.addLine("this is still being held");
+//        this.relocalizeSucceeded = false;
+//        this.relocalizeTimer.reset();
+//        this.hasRelocalizeRequest = true;
+//        this.robot.lightControl.setIsManualLighting(true);
+//        this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
+//
+//    }
 
     public void stopCamera() {
 //        vPortalFront.stopStreaming();
@@ -476,34 +479,27 @@ public class CameraSubsystem extends SubsystemBase {
                 robot.telemetry.addData("Localization Tag id", localizationTag.id);
             }
 
-            if(this.hasRelocalizeRequest)
+            if(this.robot.getState().equals(RobotState.SCANNING))
             {
                 setAprilTagsEnabled(true);
-                this.robot.lightControl.setIsManualLighting(true);
-                robot.telemetry.addData("localizertimer", relocalizeTimer.milliseconds());
 
-                if(!this.relocalizeSucceeded)
+                if(this.relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
                 {
-                    this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
-                }
-
-                if(relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
-                {
-                    this.hasRelocalizeRequest = false;
-                    this.robot.lightControl.setIsManualLighting(false);
-                    setAprilTagsEnabled(false);
-                    this.relocalizeSucceeded = false;
+                    this.robot.robotState = RobotState.RESTING;
                 }
 
                 if (localizationTag != null && localizationTag.robotPose != null
                         ){//(robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)) {
                     Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
                     relocalize(localizationTag);
-                    this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.GREEN);
                     this.relocalizeSucceeded = true;
                 }
 
-
+            }
+            else
+            {
+                this.relocalizeSucceeded = false;
+                this.relocalizeTimer.reset();
             }
 
 
