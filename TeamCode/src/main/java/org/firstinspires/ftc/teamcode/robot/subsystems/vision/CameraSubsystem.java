@@ -180,9 +180,8 @@ public class CameraSubsystem extends SubsystemBase {
                 break;
         }
 
-        FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
-
         if (hardware.frontCamera != null) {
+            FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
             this.vPortalFront = vPortalFrontBuilder.build();
             if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
         }
