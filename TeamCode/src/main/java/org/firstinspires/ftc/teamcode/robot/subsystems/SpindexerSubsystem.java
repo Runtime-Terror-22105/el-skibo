@@ -57,16 +57,16 @@ public class SpindexerSubsystem extends SubsystemBase {
     //
     // kV should be the same for both PIDs. kP can be more aggressive for the large PID.
     public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.5, 0, 0.02, 0, 0.06);
+            new PidfController.PidfCoefficients(0.003, 0, 0.00012, 0, 0.006);
     public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.2, 0, 0.01, 0, 0.06);
+            new PidfController.PidfCoefficients(0.4, 0, 0.001, 0, 0.02);
     private final PidfController yawPid = new PidfController(SMALL_PID_COEFFICIENTS);
 
     // PID_SWITCH determines when we switch between the two PIDs.
     public static double PID_SWITCH = Math.toRadians(30);  // Units are radians
 
     // POS_TOLERANCE determines when we consider the spindexer to be "at position"
-    public static double POS_TOLERANCE = Math.toRadians(6);  // Units are radians
+    public static double POS_TOLERANCE = Math.toRadians(4);  // Units are radians
 
     private boolean pidEnabled = true;
 
@@ -391,7 +391,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         boolean useSmallPID = yawPid.atTargetPositionWithTolerance(positionRaw, PID_SWITCH, true);
         yawPid.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
         if (pidEnabled) {
-            this.spindexerPower = yawPid.calculatePower(getPositionRaw(), 0, true);
+            double rawPower = yawPid.calculatePower(getPositionRaw(), 0, true);
+            this.spindexerPower = Math.copySign(Math.sqrt(Math.abs(rawPower)), rawPower);
         }
 
         if (telemetry) Robot.debugTelemetry.addData("Spindexer PID", useSmallPID ? "small" : "large");

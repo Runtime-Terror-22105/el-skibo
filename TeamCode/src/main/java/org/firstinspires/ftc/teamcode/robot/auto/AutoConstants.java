@@ -66,8 +66,8 @@ public class AutoConstants {
     public static int INTAKE_DELAY_HORIZ = 1000;
 
     // Distance (in inches) from the target shoot pose for which early shoot begins
-    // shooting.
-    public static double EARLY_SHOOT_DISTANCE = 5;
+    // shooting
+    public static double EARLY_SHOOT_DISTANCE = 7.0;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;

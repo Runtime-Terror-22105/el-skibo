@@ -255,7 +255,7 @@ public class AutoBuilder {
         if (flags.contains(ShootPathFlag.EARLY_LEAVE)) {
             command = new SequentialCommandGroup(
                     new ScheduleCommand(command),
-                    new WaitCommand(500)
+                    new WaitCommand(600)
             );
         }
         return command;
@@ -305,8 +305,8 @@ public class AutoBuilder {
                 new ParallelCommandGroup(
                         new FollowPathCommand(robot.follower, lastPath, true),
                         new SequentialCommandGroup(
-                                new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY),
-                                new WaitCommand(250)
+                                new WaitForFlywheelCommand(robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY)
+//                                new WaitCommand(250)
                         )
                 ),
                 shootCommand(flags),
@@ -503,7 +503,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 24.0),
+                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 12.0),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
@@ -560,7 +560,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 24.0),
+                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 12.0),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
