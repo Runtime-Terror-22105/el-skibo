@@ -391,7 +391,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         boolean useSmallPID = yawPid.atTargetPositionWithTolerance(positionRaw, PID_SWITCH, true);
         yawPid.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
         if (pidEnabled) {
-            this.spindexerPower = yawPid.calculatePower(getPositionRaw(), 0, true);
+            double rawPower = yawPid.calculatePower(getPositionRaw(), 0, true);
+            this.spindexerPower = Math.copySign(Math.sqrt(Math.abs(rawPower)), rawPower);
         }
 
         if (telemetry) Robot.debugTelemetry.addData("Spindexer PID", useSmallPID ? "small" : "large");
