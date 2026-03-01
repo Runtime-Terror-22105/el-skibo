@@ -128,6 +128,8 @@ public class CameraSubsystem extends SubsystemBase {
 
     private boolean hasRelocalizeRequest = false;
 
+    private boolean relocalizeSucceeded = false;
+
 
 //    private VisionPipeline pipeline = new VisionPipeline(webcam);
 
@@ -266,7 +268,8 @@ public class CameraSubsystem extends SubsystemBase {
     public void scheduleRelocalizeRequest()
     {
         this.hasRelocalizeRequest = true;
-        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
+//        robot.lightControl.setManualLightColor(TerrorLight.LightColors.YELLOW);
+        this.relocalizeSucceeded = false;
         this.relocalizeTimer.reset();
     }
 
@@ -474,11 +477,17 @@ public class CameraSubsystem extends SubsystemBase {
                 setAprilTagsEnabled(true);
                 robot.lightControl.setIsManualLighting(true);
 
+                if(!relocalizeSucceeded)
+                {
+                    robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
+                }
+
                 if(relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
                 {
                     this.hasRelocalizeRequest = false;
                     this.robot.lightControl.setIsManualLighting(false);
                     setAprilTagsEnabled(false);
+                    relocalizeSucceeded = false;
                 }
 
                 if (localizationTag != null && localizationTag.robotPose != null
@@ -486,6 +495,7 @@ public class CameraSubsystem extends SubsystemBase {
                     Log.d("CameraSubsystem", "Relocalizing with tag " + localizationTag.id);
                     relocalize(localizationTag);
                     this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.GREEN);
+                    relocalizeSucceeded = true;
                 }
 
 
