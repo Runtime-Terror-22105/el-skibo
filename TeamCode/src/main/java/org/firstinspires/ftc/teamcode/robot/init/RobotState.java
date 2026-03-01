@@ -21,7 +21,11 @@ public enum RobotState {
     HANGING_FINAL(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
 
     TRANSFER(new StateTag[] {}),
+
+    SCANNING(new StateTag[]{}),
     NOT_READY(new StateTag[]{});
+
+
 
     private final StateTag[] tags;
     RobotState(StateTag[] tags){ this.tags = tags;}
