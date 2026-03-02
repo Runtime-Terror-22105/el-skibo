@@ -230,5 +230,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
             Profiler.end();
             Profiler.sendFlamegraph(robot.telemetry);
         }
+
+        robot.close();
     }
 }

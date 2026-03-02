@@ -168,4 +168,32 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         //note that there is another method called isFullyInside, make of that what you will
         return robotZone.isInside(closeLaunchZone);
     }
+
+    public void close() {
+        // Allow stuff to be reclaimed
+        telemetry = null;
+        follower = null;
+        drive = null;
+        shooter = null;
+        spindexer = null;
+        intake = null;
+        hang = null;
+        lightControl = null;
+
+        if (camera != null) {
+            camera.close();
+            camera = null;
+        }
+
+        if (hardware != null) {
+            hardware.close();
+            hardware = null;
+        }
+
+        // we call these and hope the jvm listens to us
+        //
+        // We do this because some objects (camera stuff) define `finalize` methods.
+        System.gc();
+        System.runFinalization();
+    }
 }

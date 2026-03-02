@@ -234,6 +234,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
 
         blackboard.put(AUTO_ENDING_DATA_KEY, null);
 
+        robot.close();
 
     }
 

@@ -205,6 +205,7 @@ public class CameraSubsystem extends SubsystemBase {
         }
         exposureHasBeenSet = false;
         this.relocalizeTimer = new ElapsedTime();
+        vPortalBack.stopStreaming();
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
@@ -277,6 +278,11 @@ public class CameraSubsystem extends SubsystemBase {
 //        this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
 //
 //    }
+
+    public void startCamera()
+    {
+        vPortalBack.resumeStreaming();
+    }
 
     public void stopCamera() {
 //        vPortalFront.stopStreaming();
@@ -485,6 +491,7 @@ public class CameraSubsystem extends SubsystemBase {
                 if(this.relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
                 {
                     this.robot.robotState = RobotState.RESTING;
+                    stopCamera();
                 }
 
                 if (localizationTag != null && localizationTag.robotPose != null
@@ -592,6 +599,23 @@ public class CameraSubsystem extends SubsystemBase {
         /*pleasework: (66.54386596014463, 75.20379864761392, -124.53039951388197)*/
     }
 
+
+    public void close() {
+        if (vPortalFront != null) {
+            vPortalFront.close();
+            vPortalFront = null;
+        }
+        if (vPortalBack != null) {
+            vPortalBack.close();
+            vPortalBack = null;
+        }
+
+        if (backTagProcessor != null) {
+            // Allow the GC to reclaim atag resources
+            backTagProcessor = null;
+            detections = null;
+        }
+    }
 
     //=======old stuff=======
 
