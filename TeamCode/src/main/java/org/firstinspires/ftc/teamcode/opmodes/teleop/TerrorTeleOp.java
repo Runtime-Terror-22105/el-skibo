@@ -279,7 +279,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         relocalizeButton.whenPressed(new InstantCommand(()->{
             robot.robotState = RobotState.SCANNING;
-            robot.camera.startCamera();
         }));
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
