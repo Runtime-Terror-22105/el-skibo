@@ -456,15 +456,25 @@ public class AutoBuilder {
         );
     }
 
-    public Command shootGate(ShootPathFlag... flagArr) {
+    public Command shootGate(boolean reverseIntake, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        return createFollowShootPathAndShootCommand(250, shootGatePath(flags), flags);
+        return new ParallelCommandGroup(
+                createFollowShootPathAndShootCommand(250, lastPath, flags),
+                new SequentialCommandGroup(
+                        new WaitCommand(REVERSE_INTAKE_GATE_DELAY),
+                        new ConditionalCommand(
+                                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                                new InstantCommand(() -> {}),
+                                // Only reverse if reverseIntake and we get 3 balls
+                                () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
+                        ))
+        );
     }
 
     public Command cycleGate(boolean reverseIntake, ShootPathFlag... flags) {
         return new SequentialCommandGroup(
-                intakeGate(reverseIntake),
-                shootGate(flags)
+                intakeGate(),
+                shootGate(reverseIntake, flags)
         );
     }
 
@@ -573,22 +583,12 @@ public class AutoBuilder {
         );
     }
 
-    public Command shootWall(boolean reverseIntake, ShootPathFlag ...flagArr) {
+    public Command shootWall( ShootPathFlag ...flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_FAR_POSE, mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        return new ParallelCommandGroup(
-                createFollowShootPathAndShootCommand(250, lastPath, flags),
-                new SequentialCommandGroup(
-                        new WaitCommand(REVERSE_INTAKE_GATE_DELAY),
-                        new ConditionalCommand(
-                            new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
-                            new InstantCommand(() -> {}),
-                            // Only reverse if reverseIntake and we get 3 balls
-                            () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
-                ))
-        );
+        return createFollowShootPathAndShootCommand(250, lastPath, flags);
     }
 
     public Command cycleTunnel(boolean reverseIntake, ShootPathFlag ...flagArr) {
