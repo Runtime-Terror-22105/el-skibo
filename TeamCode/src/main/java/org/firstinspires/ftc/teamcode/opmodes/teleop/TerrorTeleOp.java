@@ -49,6 +49,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
 public abstract class TerrorTeleOp extends LinearOpMode {
@@ -278,6 +279,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         relocalizeButton.whenPressed(new InstantCommand(()->{
             robot.robotState = RobotState.SCANNING;
+            robot.camera.startCamera();
         }));
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
