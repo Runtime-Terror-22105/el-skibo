@@ -51,7 +51,6 @@ import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryInternal;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -724,22 +723,28 @@ public class FastTelemetryImpl implements Telemetry, TelemetryInternal
 
     protected enum UpdateReason { USER, LOG, IFDIRTY }
 
-    private final ConcurrentLinkedQueue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
-        {
-        Thread worker = new Thread(null, () ->
-            {
-            while (true)
-                {
-                Runnable task = taskQueue.poll();
-                if (task != null)
+    private final java.util.concurrent.BlockingQueue<Runnable> taskQueue = new java.util.concurrent.LinkedBlockingQueue<>();
+    private final Thread worker;
+
+    {
+        worker = new Thread(null, () -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    Runnable task = taskQueue.take();
                     task.run();
-                else
-                    Thread.yield();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
                 }
-            }, "TelemetryImplUpdateWorkerThread");
+            }
+        }, "TelemetryImplUpdateWorkerThread");
         worker.setDaemon(true);
         worker.start();
-        }
+    }
+
+    public void close() {
+        worker.interrupt();
+    }
 
     protected boolean tryUpdate(UpdateReason updateReason)
         {
