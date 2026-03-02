@@ -459,7 +459,7 @@ public class AutoBuilder {
     public Command shootGate(boolean reverseIntake, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         return new ParallelCommandGroup(
-                createFollowShootPathAndShootCommand(250, lastPath, flags),
+                createFollowShootPathAndShootCommand(250, shootGatePath(flags), flags),
                 new SequentialCommandGroup(
                         new WaitCommand(REVERSE_INTAKE_GATE_DELAY),
                         new ConditionalCommand(

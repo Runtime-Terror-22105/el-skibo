@@ -26,13 +26,13 @@ public abstract class AutoSpam extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
-                builder.shootPreload(),
-                builder.cycleSpike(1),
+                builder.shootPreload(ShootPathFlag.EARLY_LEAVE),
+                builder.cycleSpike(1, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 builder.intakeSpike(2),
                 builder.pushGate(),
-                builder.shootSpike(2),
-                builder.cycleGate(true),
-                builder.cycleGate(true, ShootPathFlag.LAST)
+                builder.shootSpike(2, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleGate(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleGate(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
         );
     }
 }
