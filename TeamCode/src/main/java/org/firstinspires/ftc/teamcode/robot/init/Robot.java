@@ -74,6 +74,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public RobotHardware hardware;
     public LinearOpMode opMode;
 
+    private FastTelemetryImpl fastTelemetryImpl = null;
+
     public void init(@NonNull RobotHardware hardware, @NonNull LinearOpMode opMode) {
         CommandScheduler.getInstance().reset();
 
@@ -83,7 +85,14 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.hardware = hardware;
 
         // Set up dashboard stuff
-        Telemetry driverHubTelemetry = USE_FAST_TELEMETRY ? new FastTelemetryImpl(opMode) : opMode.telemetry;
+        Telemetry driverHubTelemetry;
+        if (USE_FAST_TELEMETRY) {
+            fastTelemetryImpl = new FastTelemetryImpl(opMode);
+            driverHubTelemetry = fastTelemetryImpl;
+        } else {
+            fastTelemetryImpl = null;
+            driverHubTelemetry = opMode.telemetry;
+        }
         this.dashboard = FtcDashboard.getInstance();
         this.telemetry = new MultipleTelemetry(driverHubTelemetry, dashboard.getTelemetry());
         debugTelemetry = telemetry;
@@ -179,6 +188,11 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         intake = null;
         hang = null;
         lightControl = null;
+
+        if (fastTelemetryImpl != null) {
+            fastTelemetryImpl.close();
+            fastTelemetryImpl = null;
+        }
 
         if (camera != null) {
             camera.close();

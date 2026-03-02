@@ -67,10 +67,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double TURRET_UPDATE_FREQUENCY = 1; // todo: set this to 10 later
     private double loopCount = 0;
 
-    // How often to update stuff when intaking/resting pose
-    public static double INTAKING_UPDATE_FREQUENCY = 5;
-    private double loopCountIntaking = 0;
-
     // No angle limit for turret, but we have servo positions limits
     public static double turretLowerBound = Math.toRadians(0);
     public static double turretUpperBound = Math.toRadians(360);
@@ -153,7 +149,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 
-    public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean skipWrite) {
+    public void doAutoShoot(Pose botPos, boolean useVelocityCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
@@ -175,7 +171,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         // also currently only updates when in the tape zone or every 10 loops to reduce wrtes
-        if (isAutoTurretOn && (alwaysUpdateTurret || loopCount == 0 || robot.isInTapeZone()) && !skipWrite) {
+        if (isAutoTurretOn && (alwaysUpdateTurret || loopCount == 0 || robot.isInTapeZone())) {
             this.setTurretAngle(this.findYawAngle(botPos, goalPos));
         }
 
@@ -188,10 +184,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
-        if (this.isAutoVelOn && !skipWrite) {
+        if (this.isAutoVelOn) {
             this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
         }
-        if (this.isAutoHoodOn && !skipWrite) {
+        if (this.isAutoHoodOn) {
             this.goalPitch = math.rad;
             this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         }
@@ -487,8 +483,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
-            loopCountIntaking = (loopCountIntaking + 1) % INTAKING_UPDATE_FREQUENCY;
-            boolean isSkipWriteRobotState = RobotState.RESTING.equals(robot.robotState) || RobotState.INTAKING.equals(robot.robotState);
             if (robot.goalPos != null && isAutoAimOn) {
                 Pose robotPos;
                 boolean useSotm;
@@ -500,7 +494,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     useSotm = USE_SOTM;
 //                    useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
 //                }
-                this.doAutoShoot(robotPos, useSotm, loopCountIntaking != 0 && isSkipWriteRobotState);
+                this.doAutoShoot(robotPos, useSotm);
             }
             else if (robot.goalPos != null){
                 intermediateAim(this.robot.follower.getPose(), USE_SOTM);
