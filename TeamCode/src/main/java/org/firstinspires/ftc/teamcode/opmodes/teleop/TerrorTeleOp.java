@@ -409,6 +409,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             blackboard.put(TELEOP_ENDING_KEY, robot.follower.getPose());
         }
         blackboard.put(AUTO_ENDING_DATA_KEY, null);
+
+        robot.close();
     }
 
 

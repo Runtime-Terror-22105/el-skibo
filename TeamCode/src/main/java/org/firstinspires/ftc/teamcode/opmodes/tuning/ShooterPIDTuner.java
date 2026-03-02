@@ -41,6 +41,7 @@ public class ShooterPIDTuner extends LinearOpMode {
 
         }
 
+        robot.close();
     }
 
 }

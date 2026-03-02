@@ -36,5 +36,7 @@ public class Intaketesting extends LinearOpMode {
             }
             hardware.write();
         }
+
+        robot.close();
     }
 }

@@ -40,6 +40,7 @@ public class TerrorLightTest extends LinearOpMode {
 
         }
 
+        robot.close();
     }
 
 }
