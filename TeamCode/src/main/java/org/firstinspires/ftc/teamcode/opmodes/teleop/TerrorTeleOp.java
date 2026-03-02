@@ -352,7 +352,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 robot.robotState = RobotState.HANGING_FINAL;
                 hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.HOME);
                 hardware.hangRight.setPower(TerrorSwyftCRServo.Power.HOME);
-            } else if (robot.getState() != HANGING_FINAL) {
+            } else /*if (robot.getState() != HANGING_FINAL)*/ {
                 hardware.hangLeft.setPwmEnable(false);
                 hardware.hangRight.setPwmEnable(false);
             }
