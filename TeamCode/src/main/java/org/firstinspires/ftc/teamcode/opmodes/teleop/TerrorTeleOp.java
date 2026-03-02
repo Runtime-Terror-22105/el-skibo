@@ -361,6 +361,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 hardware.hangLeft.setPwmEnable(false);
                 hardware.hangRight.setPwmEnable(false);
             }
+
+            if (!lastState.equals(READY_TO_SHOOT) && robot.robotState.equals(READY_TO_SHOOT)) {
+                robot.intake.setSpeed(IntakeSubsystem.REVERSE_SPEED_SLOW);
+            }
+
             Profiler.pop();
 
             Profiler.push("hwWrite");
