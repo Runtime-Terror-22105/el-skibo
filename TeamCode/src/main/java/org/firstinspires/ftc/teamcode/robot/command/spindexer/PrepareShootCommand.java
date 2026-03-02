@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class PrepareShootCommand extends SequentialCommandGroup {
-    public static long TIME_BEFORE_REVERSE_INTAKE = 300;
-    public static long REVERSE_INTAKE_TIME_MS = 300;
+    public static long TIME_BEFORE_REVERSE_INTAKE = 150;
+    public static long REVERSE_INTAKE_TIME_MS = 150;
     public static int RAMP_DELAY = 0;  // milliseconds
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING = 100;
 
@@ -36,7 +36,6 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.shooter.isAutoVelOn = true),
                 new InstantCommand(() -> robot.shooter.isAutoHoodOn = true),
                 new SetSpindexerWallDown(robot.spindexer, false),
-
                 new ParallelCommandGroup(
                         new SequentialCommandGroup(
                             new ConditionalCommand(
@@ -48,8 +47,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                                     new InstantCommand(() -> {}),
                                     () -> doReverseIntake
                             ),
-                            new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED).andThen(
-                            new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO))
+                            new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO)
                         ),
 
                             // Phase 2/3: Sort the balls, spin to pre-transfer yaw
