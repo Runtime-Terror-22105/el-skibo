@@ -57,7 +57,7 @@ public class AutoConstants {
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
     public static int INTAKE_DELAY = 600;
-    public static int GATE_INTAKE_DELAY = 1500;
+    public static int GATE_INTAKE_DELAY = 1200;
     public static int WALL_INTAKE_DELAY = 700;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 1500;
@@ -67,7 +67,7 @@ public class AutoConstants {
 
     // Distance (in inches) from the target shoot pose for which early shoot begins
     // shooting
-    public static double EARLY_SHOOT_DISTANCE = 7.0;
+    public static double EARLY_SHOOT_DISTANCE = 5.0;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
