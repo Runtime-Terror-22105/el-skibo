@@ -49,7 +49,6 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
-import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
 public abstract class TerrorTeleOp extends LinearOpMode {
@@ -67,6 +66,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 
     private long lastLoop = System.nanoTime();
+    private RobotState lastState;
 
     public void setTeam(Team color) {
         if (color == Team.BLUE){
@@ -157,6 +157,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         }
 
         waitForStart();
+        lastState = robot.robotState;
 //        robot.camera.stopCamera();
 
         robot.lightControl.setIsManualLighting(false);
@@ -226,11 +227,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () ->  robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER
         ));
         // todo: test the following
-        // this allows that if we press intaking while shooting still, we'll go to intaking the moment we go to resting
+        // this allows that if we press intaking while shooting still   , we'll go to intaking the moment we go to resting
         intakeButton.whileActiveContinuous(new ConditionalCommand(
                 new GoToIntakeStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () ->  robot.robotState != INTAKING && robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER
+                () ->  robot.robotState == RESTING && lastState != INTAKING // if we are already intaking and 3 balls inside for resting, we don't want to immediately go back to intaking
         ));
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
@@ -246,7 +247,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         reverseIntakeButton.whenInactive(new SetIntakeSpeedCommand(robot.intake, 0.0));
 
         threeBallsAreInside.whenActive(new ConditionalCommand(
-                new PrepareShootCommand(robot, true),
+                new SequentialCommandGroup(
+                        new SetIntakeSpeedCommand(robot.intake, 0),
+                        new PrepareShootCommand(robot, true)
+                ),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState == RESTING || robot.robotState == INTAKING
         ));
@@ -405,6 +409,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
             Profiler.end();
             Profiler.sendFlamegraph(robot.telemetry);
+            lastState = robot.robotState;
         }
         if (SAVE_LOCATION_TELEOP){
             blackboard.put(TELEOP_ENDING_KEY, robot.follower.getPose());
