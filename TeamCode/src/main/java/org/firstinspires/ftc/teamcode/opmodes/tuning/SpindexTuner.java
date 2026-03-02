@@ -61,6 +61,7 @@ public class SpindexTuner extends LinearOpMode {
 
         }
 
+        robot.close();
     }
 
 }

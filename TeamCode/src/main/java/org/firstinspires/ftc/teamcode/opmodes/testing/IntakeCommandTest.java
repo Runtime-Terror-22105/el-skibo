@@ -63,7 +63,7 @@ public class IntakeCommandTest extends LinearOpMode {
             CommandScheduler.getInstance().run();
             hardware.write();
         }
+
+        robot.close();
     }
-
-
 }

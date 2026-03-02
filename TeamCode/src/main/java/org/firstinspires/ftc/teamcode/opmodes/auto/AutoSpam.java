@@ -31,8 +31,8 @@ public abstract class AutoSpam extends OneAutoToRuleThemAll {
                 builder.intakeSpike(2),
                 builder.pushGate(),
                 builder.shootSpike(2),
-                builder.cycleGate(),
-                builder.cycleGate(ShootPathFlag.LAST)
+                builder.cycleGate(true),
+                builder.cycleGate(true, ShootPathFlag.LAST)
         );
     }
 }

@@ -38,8 +38,8 @@ public class FlightTimeLookupTable {
             new FlightTimeLookupValue(68.7,0.68), //im sorry aadit
             new FlightTimeLookupValue(90.7,0.68),
             new FlightTimeLookupValue(104.4,0.68),
-            new FlightTimeLookupValue(122.7,0.68),
-            new FlightTimeLookupValue(140.2,0.68),
+            new FlightTimeLookupValue(122.7,0.72),
+            new FlightTimeLookupValue(140.2,0.76),
 
     };
 

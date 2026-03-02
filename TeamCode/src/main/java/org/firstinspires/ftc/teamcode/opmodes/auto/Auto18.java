@@ -28,8 +28,8 @@ public abstract class Auto18 extends OneAutoToRuleThemAll {
         return new SequentialCommandGroup(
                 builder.shootPreload(),
                 builder.cycleSpike(2),
-                builder.cycleGate(),
-                builder.cycleGate(),
+                builder.cycleGate(true),
+                builder.cycleGate(true),
                 builder.cycleSpike(3),
                 builder.cycleSpike(1, ShootPathFlag.LAST)
         );

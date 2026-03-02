@@ -446,11 +446,18 @@ public class AutoBuilder {
         );
     }
 
-    public Command intakeGate() {
+    public Command intakeGate(boolean reverseIntake) {
         return new SequentialCommandGroup(
                 new FollowPathCommand(robot.follower, intakeGatePath1(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new WaitCommand(250),
                 new FollowPathCommand(robot.follower, intakeGatePath2(), true, MAX_DRIVETRAIN_POWER_INTAKING),
-                new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY),
+        new ConditionalCommand(
+                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                new InstantCommand(() -> {}),
+                // Only reverse if reverseIntake and we get 3 balls
+                () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
+        )
         );
     }
 
@@ -459,9 +466,9 @@ public class AutoBuilder {
         return createFollowShootPathAndShootCommand(250, shootGatePath(flags), flags);
     }
 
-    public Command cycleGate(ShootPathFlag... flags) {
+    public Command cycleGate(boolean reverseIntake, ShootPathFlag... flags) {
         return new SequentialCommandGroup(
-                intakeGate(),
+                intakeGate(reverseIntake),
                 shootGate(flags)
         );
     }

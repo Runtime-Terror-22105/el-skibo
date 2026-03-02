@@ -600,6 +600,23 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
 
+    public void close() {
+        if (vPortalFront != null) {
+            vPortalFront.close();
+            vPortalFront = null;
+        }
+        if (vPortalBack != null) {
+            vPortalBack.close();
+            vPortalBack = null;
+        }
+
+        if (backTagProcessor != null) {
+            // Allow the GC to reclaim atag resources
+            backTagProcessor = null;
+            detections = null;
+        }
+    }
+
     //=======old stuff=======
 
     /*
