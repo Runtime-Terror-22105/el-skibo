@@ -467,7 +467,8 @@ public class AutoBuilder {
                                 new InstantCommand(() -> {}),
                                 // Only reverse if reverseIntake and we get 3 balls
                                 () -> reverseIntake && !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
-                        ))
+                        )
+                )
         );
     }
 
