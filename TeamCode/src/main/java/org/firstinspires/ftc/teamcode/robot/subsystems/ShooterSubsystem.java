@@ -191,7 +191,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if (this.isAutoVelOn && !skipWrite) {
             this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
         }
-        if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING && !skipWrite) {
+        if (this.isAutoHoodOn && !skipWrite) {
             this.goalPitch = math.rad;
             this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         }
