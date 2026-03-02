@@ -205,6 +205,7 @@ public class CameraSubsystem extends SubsystemBase {
         }
         exposureHasBeenSet = false;
         this.relocalizeTimer = new ElapsedTime();
+        vPortalBack.stopStreaming();
     }
 
     private AprilTagProcessor createAprilTagProcessor() {
@@ -277,6 +278,11 @@ public class CameraSubsystem extends SubsystemBase {
 //        this.robot.lightControl.setManualLightColor(TerrorLight.LightColors.RED);
 //
 //    }
+
+    public void startCamera()
+    {
+        vPortalBack.resumeStreaming();
+    }
 
     public void stopCamera() {
 //        vPortalFront.stopStreaming();
@@ -485,6 +491,7 @@ public class CameraSubsystem extends SubsystemBase {
                 if(this.relocalizeTimer.milliseconds() > relocalizeTimeWindowMS)
                 {
                     this.robot.robotState = RobotState.RESTING;
+                    stopCamera();
                 }
 
                 if (localizationTag != null && localizationTag.robotPose != null

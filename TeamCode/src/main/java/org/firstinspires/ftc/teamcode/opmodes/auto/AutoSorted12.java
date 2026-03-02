@@ -37,7 +37,10 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
                 builder.cycleSpike(1),
                 builder.cycleSpike(2),
                 // ppg is more optimal in case we miss in earlier rounds by maximizing purples
-                new InstantCommand(() -> robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG)),
+                new InstantCommand(() -> {
+                    robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
+                    robot.camera.startCamera();
+                }),
                 builder.cycleSpike(3, ShootPathFlag.LAST)
         );
     }
