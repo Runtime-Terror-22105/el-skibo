@@ -21,29 +21,13 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootComman
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 @Config
 public abstract class OneAutoToRuleThemAll extends LinearOpMode {
-    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> blueMotifMap = new HashMap<>();
-    public static Map<CameraSubsystem.GLYPH, CameraSubsystem.GLYPH> redMotifMap = new HashMap<>();
-
-    static {
-        blueMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.PGP);
-        blueMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.GPP);
-        blueMotifMap.put(CameraSubsystem.GLYPH.GPP, CameraSubsystem.GLYPH.PPG);
-
-        redMotifMap.put(CameraSubsystem.GLYPH.PPG, CameraSubsystem.GLYPH.GPP);
-        redMotifMap.put(CameraSubsystem.GLYPH.GPP, CameraSubsystem.GLYPH.PGP);
-        redMotifMap.put(CameraSubsystem.GLYPH.PGP, CameraSubsystem.GLYPH.PPG);
-    }
-
     protected final RobotHardware hardware = new RobotHardware();
     protected final Robot robot = new Robot();
     protected final Team team;
@@ -148,15 +132,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
             FtcDashDrawing.drawDebug(robot.follower);
 //            this.showPoem();
             robot.telemetry.update();
-        }
-
-        // we're going to see the wrong one
-        if (robot.camera.gameGlyph != null) {
-            if (Team.RED.equals(team)) {
-                robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
-            } else {
-                robot.camera.setGlyph(blueMotifMap.get(robot.camera.gameGlyph));
-            }
         }
 
         waitForStart();
