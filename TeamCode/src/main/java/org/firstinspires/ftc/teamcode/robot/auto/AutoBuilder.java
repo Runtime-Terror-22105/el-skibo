@@ -422,7 +422,7 @@ public class AutoBuilder {
                 )
                 .andThen(new LogCatCommand("AutoBuilder", "follow path done, waiting for prepare shoot")),
 
-                // Prepare shoot, ONLY IF NOT USING AUTOSHOOT
+                // Prepare shoot
                 new SequentialCommandGroup(
                         new WaitUntilCommand(() -> hasStartedPrepareShoot.get()
                                 || !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
