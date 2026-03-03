@@ -428,7 +428,13 @@ public class AutoBuilder {
      */
     public Command shootSpike(int spikeNumber, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        return createFollowShootPathAndShootCommand(waitBeforeShooting, shootSpikePath(flags), flags);
+        PathChain path;
+        if (flags.contains(ShootPathFlag.PRELOAD_SHOOT_SPOT)) {
+            path = shootPreloadPath(flags);
+        } else {
+            path = shootSpikePath(flags);
+        }
+        return createFollowShootPathAndShootCommand(waitBeforeShooting, path, flags);
     }
 
     public Command cycleSpike(int spikeNumber, ShootPathFlag... flags) {

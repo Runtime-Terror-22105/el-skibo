@@ -34,14 +34,14 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
         builder.waitBeforeShooting(SHOOTING_DELAY);
         return new SequentialCommandGroup(
                 builder.shootPreload(),
-                builder.cycleSpike(1),
-                builder.cycleSpike(2),
+                builder.cycleSpike(1, ShootPathFlag.PRELOAD_SHOOT_SPOT),
+                builder.cycleSpike(2, ShootPathFlag.PRELOAD_SHOOT_SPOT),
                 // ppg is more optimal in case we miss in earlier rounds by maximizing purples
                 new InstantCommand(() -> {
                     robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
-                    robot.camera.setAprilTagsEnabled(true);
+                    robot.camera.setAprilTagsEnabled(false);
                 }),
-                builder.cycleSpike(3, ShootPathFlag.LAST)
+                builder.cycleSpike(3, ShootPathFlag.PRELOAD_SHOOT_SPOT/*ShootPathFlag.LAST*/)
         );
     }
 }

@@ -14,5 +14,8 @@ public enum ShootPathFlag {
     EARLY_SHOOT,
 
     // Be more aggressive with when we leave from the shoot position
-    EARLY_LEAVE
+    EARLY_LEAVE,
+
+    // Shoot from the preload position
+    PRELOAD_SHOOT_SPOT,
 }
