@@ -222,6 +222,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setNumThreads(3) // TODO: the default is 3 but maybe we can change
                 .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
+        processor.setDecimation(1f);
         processor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
         return processor;
     }
