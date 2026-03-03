@@ -24,7 +24,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING = 100;
 
     public PrepareShootCommand(Robot robot) {
-        this(robot, false);
+        this(robot, true);
     }
 
     public PrepareShootCommand(Robot robot, boolean doReverseIntake) {
