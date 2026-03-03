@@ -143,8 +143,10 @@ public class AutoBuilder {
 
     private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags) {
         PathBuilder builder = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true);
-        if (!auto.wantsAutoSort()) {
-            builder.setConstraintsForLast(RELAXED_CONSTRAINTS);
+        if (auto.wantsAutoSort()) {
+            builder = builder.setBrakingStart(2.5);
+        } else {
+            builder = builder.setConstraintsForLast(RELAXED_CONSTRAINTS);
         }
         lastPath = builder.build();
         return lastPath;
@@ -402,6 +404,7 @@ public class AutoBuilder {
         // Use AtomicBoolean here since Java lambdas capture by value.
         AtomicBoolean hasFinishedPath = new AtomicBoolean(false);
         double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
+        long shootDelay = auto.wantsAutoSort() ? 500 : 0;
         boolean holdEnd = auto.wantsAutoSort();
 
         // TODO: possible race condition
@@ -439,6 +442,7 @@ public class AutoBuilder {
                         new WaitUntilCommand(() ->
                                 hasFinishedPath.get() || robot.follower.getDistanceRemaining() < distanceConstraint
                         ),
+                        new WaitCommand(shootDelay),
                         shootCommand(flags)
                 )
                 .andThen(new LogCatCommand("AutoBuilder", "shoot command done"))
