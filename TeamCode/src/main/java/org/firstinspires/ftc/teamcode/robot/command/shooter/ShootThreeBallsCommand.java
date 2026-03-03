@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.command.shooter;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
-import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
@@ -18,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateComma
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class ShootThreeBallsCommand extends SequentialCommandGroup {
@@ -25,6 +22,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
     //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
     public static double SPINDEX_TRANSFER_POWER = -1;
     public static int SPINDEX_TRANSFER_TIME = 700;  // milliseconds
+    public static int SPINDEX_SORTING_TRANSFER_TIME = (int) (700/SpindexerSubsystem.MAX_POWER_SORTING);  // milliseconds
 
     private final Robot robot;
 
@@ -39,7 +37,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                     robot.spindexer.setPidEnabled(false);
                     robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
                 }),
-                new ConditionalCommand(new WaitCommand((int) (SPINDEX_TRANSFER_TIME * 2.5)),
+                new ConditionalCommand(new WaitCommand(SPINDEX_SORTING_TRANSFER_TIME),
                         new WaitCommand(SPINDEX_TRANSFER_TIME),
                         () -> robot.getAutoSort()),
 
