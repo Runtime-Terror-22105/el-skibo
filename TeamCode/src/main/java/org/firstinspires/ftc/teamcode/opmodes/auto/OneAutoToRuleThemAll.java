@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoConstants;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.ToggleAutoTurretCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -48,8 +47,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
     protected final RobotHardware hardware = new RobotHardware();
     protected final Robot robot = new Robot();
     protected final Team team;
-
-    protected double turretAngleForMotif;
 
     protected boolean hasFinished = false;
     protected long duration = 0;
@@ -106,8 +103,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.camera.disableRelocalization = true;
         robot.camera.disableAprilTagsAfterGlyph = true;
 
-        this.turretAngleForMotif = Math.PI + (Team.BLUE.equals(team) ? -1 : 1) * Math.toRadians(30);
-
         // TODO: the autobuilder class currently does not handle the init logic.
         //  Does it need to?
         AutoBuilder builder = new AutoBuilder(this, robot, this.team, this.getStartConfig());
@@ -122,7 +117,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.camera.setBallPipelineEnabled(false);
         if (this.wantsAutoSort()) {
             robot.camera.startScanningForGlyphs();
-            CommandScheduler.getInstance().schedule(new ToggleAutoTurretCommand(robot, false, turretAngleForMotif));
         } else {
             robot.camera.setAprilTagsEnabled(false);
             CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, false));
@@ -158,7 +152,6 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // we're going to see the wrong one
         if (robot.camera.gameGlyph != null) {
-            robot.shooter.isAutoTurretOn = true;
             if (Team.RED.equals(team)) {
                 robot.camera.setGlyph(redMotifMap.get(robot.camera.gameGlyph));
             } else {
@@ -167,6 +160,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         }
 
         waitForStart();
+
         robot.lightControl.setIsManualLighting(false);
         robot.shooter.disableFlywheel = false;
         robot.shooter.isAutoVelOn = true;
