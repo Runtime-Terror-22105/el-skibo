@@ -110,7 +110,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public boolean atTargetYaw() {
-        // TODO: potentially beware of angle wrapping here
+        this.updateSpindexerPid();
         return this.yawPid.atTargetPosition(getPositionRaw(), true);
     }
 
@@ -368,14 +368,19 @@ public class SpindexerSubsystem extends SubsystemBase {
         overrideMaxPower = false;
     }
 
-    public void updateSpindexer() {
-        // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
-        // we calculate error ourselves and feed into PID.
+    private void updateSpindexerPid() {
         SpindexerEncoderLUT.SpindexLookupValue desAngle = this.angleLUT.get(desiredAngle);
         if (telemetry) Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
 
         this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
+    }
+
+    public void updateSpindexer() {
+        // setTargetPosition as 0.0 is intentional since PID does not account for angle wrapping, so
+        // we calculate error ourselves and feed into PID.
+        this.updateSpindexerPid();
+
         if (pidEnabled) {
 //            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
             double tmp = yawPid.calculatePower(getPositionRaw(), 0, true);
