@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class IntakeSubsystem extends SubsystemBase {
     public static double DEFAULT_SPEED = 1.0;
     public static double REVERSE_SPEED = -0.8;
+    public static double REVERSE_SPEED_SLOW = -0.45;
 
     public static boolean debug = false;
 
