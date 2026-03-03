@@ -46,11 +46,13 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAK
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.ScheduleCommand;
@@ -252,7 +254,8 @@ public class AutoBuilder {
         }
 
         if (!flags.contains(ShootPathFlag.LAST)) {
-            command = command.andThen(new GoToIntakeStateCommand(robot));
+            command = command.andThen(new GoToIntakeStateCommand(robot),
+                    new LogCatCommand("AutoBuilder", "ending shoot"));
         }
 
         if (flags.contains(ShootPathFlag.EARLY_LEAVE)) {
@@ -401,30 +404,32 @@ public class AutoBuilder {
         double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
         boolean holdEnd = auto.wantsAutoSort();
 
+        // TODO: possible race condition
+        Supplier<Boolean> hasStartedPrepareShoot = () -> robot.robotState.equals(RobotState.READY_TO_SHOOT) || robot.robotState.equals(RobotState.TRANSFER);
+        Supplier<Command> maybePrepareShootCommand = () -> new ConditionalCommand(
+                new PrepareShootCommand(robot),
+                new InstantCommand(() -> {}),
+                () -> !(robot.robotState.equals(RobotState.READY_TO_SHOOT) || robot.robotState.equals(RobotState.TRANSFER))
+        );
+
         // Although this is a ParallelCommandGroup, we essentially implement
         // custom Sequential logic using the AtomicBoolean flags.
         return new ParallelCommandGroup(
                 // Follow path
-                new ParallelCommandGroup(
-                        new SequentialCommandGroup(
-                                new FollowPathCommand(robot.follower, shootPath, holdEnd),
-                                new InstantCommand(() -> hasFinishedPath.set(true))
-                        ),
-                        new SequentialCommandGroup(
-                                new WaitUntilCommand(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)),
-                                new PrepareShootCommand(robot)
-                        )
-                ),
+                new SequentialCommandGroup(
+                        new FollowPathCommand(robot.follower, shootPath, holdEnd),
+                        new InstantCommand(() -> hasFinishedPath.set(true))
+                )
+                .andThen(new LogCatCommand("AutoBuilder", "follow path done, waiting for prepare shoot")),
 
-                // Prepare shoot
-                new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new WaitCommand(prepareShootDelay),
-                                new PrepareShootCommand(robot)
-                        ),
-                        new InstantCommand(() -> {}),
-                        () -> !(robot.robotState.equals(RobotState.READY_TO_SHOOT) || robot.robotState.equals(RobotState.TRANSFER))
-                ),
+                // Prepare shoot, ONLY IF NOT USING AUTOSHOOT
+                new SequentialCommandGroup(
+                        new WaitUntilCommand(() -> hasStartedPrepareShoot.get()
+                                || !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
+                        ).withTimeout(prepareShootDelay),
+                        maybePrepareShootCommand.get()
+                )
+                .andThen(new LogCatCommand("AutoBuilder", "prepare shoot done, waiting for path or distance")),
 
                 // Shoot command
                 new SequentialCommandGroup(
@@ -434,7 +439,8 @@ public class AutoBuilder {
                         ),
                         shootCommand(flags)
                 )
-        );
+                .andThen(new LogCatCommand("AutoBuilder", "shoot command done"))
+        ).andThen(new LogCatCommand("AutoBuilder", "createFollow end"));
     }
 
     /**

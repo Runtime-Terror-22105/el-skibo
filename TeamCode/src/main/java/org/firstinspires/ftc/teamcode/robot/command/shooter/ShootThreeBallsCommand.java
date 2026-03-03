@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.command.shooter;
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.LogCatCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -28,6 +29,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
     public ShootThreeBallsCommand(Robot robot, double transferPower) {
         super(
+                new LogCatCommand("ShootThreeBallsCommand", "starting shoot"),
                 new InstantCommand(() -> robot.robotState = RobotState.SHOOTING),
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
 //                new WaitCommand(200),
