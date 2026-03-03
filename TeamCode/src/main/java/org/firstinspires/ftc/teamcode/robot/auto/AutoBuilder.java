@@ -140,9 +140,11 @@ public class AutoBuilder {
     }
 
     private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
+        PathBuilder builder = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true);
+        if (!auto.wantsAutoSort()) {
+            builder.setConstraintsForLast(RELAXED_CONSTRAINTS);
+        }
+        lastPath = builder.build();
         return lastPath;
     }
 
@@ -397,6 +399,7 @@ public class AutoBuilder {
         // Use AtomicBoolean here since Java lambdas capture by value.
         AtomicBoolean hasFinishedPath = new AtomicBoolean(false);
         double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
+        boolean holdEnd = auto.wantsAutoSort();
 
         // Although this is a ParallelCommandGroup, we essentially implement
         // custom Sequential logic using the AtomicBoolean flags.
@@ -404,7 +407,7 @@ public class AutoBuilder {
                 // Follow path
                 new ParallelCommandGroup(
                         new SequentialCommandGroup(
-                                new FollowPathCommand(robot.follower, shootPath, false),
+                                new FollowPathCommand(robot.follower, shootPath, holdEnd),
                                 new InstantCommand(() -> hasFinishedPath.set(true))
                         ),
                         new SequentialCommandGroup(
