@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot.command.spindexer;
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
@@ -11,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 public class SortCommand extends SequentialCommandGroup {
 
     public static long alignTimeMS = 2000;
-    public static long SPINDEXER_TIMEOUT = 600L;
+    public static long SPINDEXER_TIMEOUT = 2000L;
 
     public SortCommand(Robot robot){
         super(

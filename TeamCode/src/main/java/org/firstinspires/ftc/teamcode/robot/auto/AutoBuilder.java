@@ -52,7 +52,6 @@ import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
-import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.ScheduleCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -393,7 +392,6 @@ public class AutoBuilder {
 
     private Command createFollowShootPathAndShootCommand(long prepareShootDelay, PathChain shootPath, EnumSet<ShootPathFlag> flags) {
         // Use AtomicBoolean here since Java lambdas capture by value.
-        AtomicBoolean hasFinishedPrepareShoot = new AtomicBoolean(false);
         AtomicBoolean hasFinishedPath = new AtomicBoolean(false);
         double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
 
@@ -401,31 +399,32 @@ public class AutoBuilder {
         // custom Sequential logic using the AtomicBoolean flags.
         return new ParallelCommandGroup(
                 // Follow path
-                new ParallelDeadlineGroup(
+                new ParallelCommandGroup(
                         new SequentialCommandGroup(
                                 new FollowPathCommand(robot.follower, shootPath, false),
                                 new InstantCommand(() -> hasFinishedPath.set(true))
                         ),
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)),
-                                new InstantCommand(() -> hasFinishedPath.set(true)),
                                 new PrepareShootCommand(robot)
                         )
                 ),
 
                 // Prepare shoot
-                new SequentialCommandGroup(
-                        new WaitCommand(prepareShootDelay),
-                        new PrepareShootCommand(robot),
-                        new InstantCommand(() -> hasFinishedPrepareShoot.set(true))
+                new ConditionalCommand(
+                        new SequentialCommandGroup(
+                                new WaitCommand(prepareShootDelay),
+                                new PrepareShootCommand(robot)
+                        ),
+                        new InstantCommand(() -> {}),
+                        () -> !(robot.robotState.equals(RobotState.READY_TO_SHOOT) || robot.robotState.equals(RobotState.TRANSFER))
                 ),
 
                 // Shoot command
                 new SequentialCommandGroup(
-                        new WaitUntilCommand(hasFinishedPrepareShoot::get),
+                        new WaitUntilCommand(() -> robot.robotState.equals(RobotState.READY_TO_SHOOT)),
                         new WaitUntilCommand(() ->
-                                hasFinishedPath.get() || robot.follower.getDistanceRemaining() < distanceConstraint &&
-                                        robot.robotState.equals(RobotState.READY_TO_SHOOT)
+                                hasFinishedPath.get() || robot.follower.getDistanceRemaining() < distanceConstraint
                         ),
                         shootCommand(flags)
                 )
