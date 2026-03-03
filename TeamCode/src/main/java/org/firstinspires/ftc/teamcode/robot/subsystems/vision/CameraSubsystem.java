@@ -167,7 +167,7 @@ public class CameraSubsystem extends SubsystemBase {
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
                 .setCameraResolution(new Size(1280, 800))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .setLiveViewContainerId(visionPortalIDs[1])
                 .setAutoStartStreamOnBuild(true)
                 .setAutoStopLiveView(false)
