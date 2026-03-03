@@ -7,7 +7,6 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
-import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
@@ -34,14 +33,14 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
         builder.waitBeforeShooting(SHOOTING_DELAY);
         return new SequentialCommandGroup(
                 builder.shootPreload(),
-                builder.cycleSpike(1, ShootPathFlag.PRELOAD_SHOOT_SPOT),
-                builder.cycleSpike(2, ShootPathFlag.PRELOAD_SHOOT_SPOT),
+                builder.cycleSpike(1),
+                builder.cycleSpike(2),
                 // ppg is more optimal in case we miss in earlier rounds by maximizing purples
                 new InstantCommand(() -> {
                     robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
                     robot.camera.setAprilTagsEnabled(false);
                 }),
-                builder.cycleSpike(3, ShootPathFlag.PRELOAD_SHOOT_SPOT/*ShootPathFlag.LAST*/)
+                builder.cycleSpike(3/*, ShootPathFlag.LAST*/)
         );
     }
 }

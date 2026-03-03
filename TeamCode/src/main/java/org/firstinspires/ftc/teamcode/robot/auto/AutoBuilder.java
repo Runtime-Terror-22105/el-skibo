@@ -52,6 +52,7 @@ import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelDeadlineGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.ScheduleCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -73,6 +74,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.WaitForGlyphCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
@@ -318,7 +320,8 @@ public class AutoBuilder {
         return new SequentialCommandGroup(
                 new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
                 new FollowPathCommand(robot.follower, intakeSpike1Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
-                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
+                new SetIntakeSpeedCommand(robot.intake, 0)
         );
     }
 
@@ -326,7 +329,8 @@ public class AutoBuilder {
         return new SequentialCommandGroup(
                 new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
                 new FollowPathCommand(robot.follower, intakeSpike2Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
-                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
+                new SetIntakeSpeedCommand(robot.intake, 0)
         );
     }
 
@@ -335,7 +339,8 @@ public class AutoBuilder {
                 new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
                 new FollowPathCommand(robot.follower, prepareIntakeSpike3Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                 new FollowPathCommand(robot.follower, intakeSpike3Path(), true),
-                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY)
+                new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
+                new SetIntakeSpeedCommand(robot.intake, 0)
         );
     }
 
@@ -396,9 +401,16 @@ public class AutoBuilder {
         // custom Sequential logic using the AtomicBoolean flags.
         return new ParallelCommandGroup(
                 // Follow path
-                new SequentialCommandGroup(
-                        new FollowPathCommand(robot.follower, shootPath, false),
-                        new InstantCommand(() -> hasFinishedPath.set(true))
+                new ParallelDeadlineGroup(
+                        new SequentialCommandGroup(
+                                new FollowPathCommand(robot.follower, shootPath, false),
+                                new InstantCommand(() -> hasFinishedPath.set(true))
+                        ),
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)),
+                                new InstantCommand(() -> hasFinishedPath.set(true)),
+                                new PrepareShootCommand(robot)
+                        )
                 ),
 
                 // Prepare shoot
@@ -412,7 +424,8 @@ public class AutoBuilder {
                 new SequentialCommandGroup(
                         new WaitUntilCommand(hasFinishedPrepareShoot::get),
                         new WaitUntilCommand(() ->
-                                hasFinishedPath.get() || robot.follower.getDistanceRemaining() < distanceConstraint
+                                hasFinishedPath.get() || robot.follower.getDistanceRemaining() < distanceConstraint &&
+                                        robot.robotState.equals(RobotState.READY_TO_SHOOT)
                         ),
                         shootCommand(flags)
                 )
