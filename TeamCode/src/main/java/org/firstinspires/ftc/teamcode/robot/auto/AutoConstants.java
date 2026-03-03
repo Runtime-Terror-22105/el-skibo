@@ -65,6 +65,7 @@ public class AutoConstants {
     public static int SHOOT_DELAY = 0;
     public static int INTAKE_DELAY_HORIZ = 1000;
     public static int REVERSE_INTAKE_GATE_DELAY = 250;
+    public static int SORTED_SHOOT_DELAY = 800;
 
 
     // Distance (in inches) from the target shoot pose for which early shoot begins

@@ -404,7 +404,7 @@ public class AutoBuilder {
         // Use AtomicBoolean here since Java lambdas capture by value.
         AtomicBoolean hasFinishedPath = new AtomicBoolean(false);
         double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
-        long shootDelay = auto.wantsAutoSort() ? 500 : 0;
+        long shootDelay = auto.wantsAutoSort() ? AutoConstants.SORTED_SHOOT_DELAY : 0;
         boolean holdEnd = auto.wantsAutoSort();
 
         // TODO: possible race condition
