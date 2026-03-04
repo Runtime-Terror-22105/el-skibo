@@ -43,7 +43,8 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                             new WaitCommand(REVERSE_INTAKE_TIME_MS)
                         ),
                         new InstantCommand(() -> {}),
-                        () -> doReverseIntake
+                        // do not reverse in auto sort since it will jam the spindex
+                        () -> doReverseIntake && !robot.getAutoSort()
                 ),
                 new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO),
 
