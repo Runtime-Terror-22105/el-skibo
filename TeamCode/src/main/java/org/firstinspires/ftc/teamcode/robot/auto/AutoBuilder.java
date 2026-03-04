@@ -336,8 +336,10 @@ public class AutoBuilder {
     private Command intakeSpike1() {
         return new SequentialCommandGroup(
                 new GoToIntakeStateCommand(robot),
-                new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
-                new FollowPathCommand(robot.follower, intakeSpike1Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new ParallelRaceGroup(
+                        new FollowPathAndWaitForWallCommand(robot, intakeSpike1Path(), true, MAX_DRIVETRAIN_POWER_INTAKING, 3.0),
+                        new WaitForIntakeCommand(robot)
+                ),
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
                 new SetIntakeSpeedCommand(robot.intake, 0)
         );
@@ -346,8 +348,10 @@ public class AutoBuilder {
     private Command intakeSpike2() {
         return new SequentialCommandGroup(
                 new GoToIntakeStateCommand(robot),
-                new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
-                new FollowPathCommand(robot.follower, intakeSpike2Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new ParallelRaceGroup(
+                        new FollowPathAndWaitForWallCommand(robot, intakeSpike2Path(), true, MAX_DRIVETRAIN_POWER_INTAKING, 18.0),
+                        new WaitForIntakeCommand(robot)
+                ),
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
                 new SetIntakeSpeedCommand(robot.intake, 0)
         );
@@ -356,8 +360,7 @@ public class AutoBuilder {
     private Command intakeSpike3() {
         return new SequentialCommandGroup(
                 new GoToIntakeStateCommand(robot),
-                new WaitUntilCommand(() -> robot.spindexer.atTargetYaw() && robot.spindexer.getTargetYaw() % (2 * Math.PI / 3) < Math.toRadians(2)),
-                new FollowPathCommand(robot.follower, prepareIntakeSpike3Path(), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new FollowPathAndWaitForWallCommand(robot, prepareIntakeSpike3Path(), true, MAX_DRIVETRAIN_POWER_INTAKING, 36.0),
                 new FollowPathCommand(robot.follower, intakeSpike3Path(), true),
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
                 new SetIntakeSpeedCommand(robot.intake, 0)
