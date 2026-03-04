@@ -225,9 +225,9 @@ public class RobotHardware {
     }
 
     public double getCurrentVoltage() {
-        // Only read voltage max once per second
+        // Only read voltage max a few times per second
         long time = System.currentTimeMillis();
-        if (time - lastVoltageTime > 1000 || Double.isNaN(currentVoltage)) {
+        if (time - lastVoltageTime > 300 || Double.isNaN(currentVoltage)) {
             currentVoltage = controlHub.getInputVoltage(VoltageUnit.VOLTS);
             lastVoltageTime = time;
         }
