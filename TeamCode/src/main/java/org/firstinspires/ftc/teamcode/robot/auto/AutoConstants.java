@@ -66,7 +66,7 @@ public class AutoConstants {
     public static int SHOOT_DELAY = 0;
     public static int INTAKE_DELAY_HORIZ = 1000;
     public static int REVERSE_INTAKE_GATE_DELAY = 250;
-    public static int SORTED_SHOOT_DELAY = 500;
+    public static int SORTED_SHOOT_DELAY = 800;
 
     public static double SHOOT_BRAKING_STRENGTH = 0.8;
     public static double SORTED_BRAKING_STRENGTH = 0.5;
