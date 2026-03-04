@@ -24,10 +24,14 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING = 400;
 
     public PrepareShootCommand(Robot robot) {
-        this(robot, true);
+        this(robot, TIME_BEFORE_REVERSE_INTAKE, true);
     }
 
     public PrepareShootCommand(Robot robot, boolean doReverseIntake) {
+        this(robot, TIME_BEFORE_REVERSE_INTAKE, doReverseIntake);
+    }
+
+    public PrepareShootCommand(Robot robot, long timeBeforeReverseIntake, boolean doReverseIntake) {
         super(
                 new InstantCommand(() -> robot.robotState = RobotState.TRANSFER),
                 new LogCatCommand("PrepareShootCommand", "Beginning prepare shoot", Log.INFO),
@@ -38,7 +42,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new SetSpindexerWallDown(robot.spindexer, false),
                 new ConditionalCommand(
                         new SequentialCommandGroup(
-                            new WaitCommand(TIME_BEFORE_REVERSE_INTAKE),
+                            new WaitCommand(timeBeforeReverseIntake),
                             new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
                             new WaitCommand(REVERSE_INTAKE_TIME_MS)
                         ),

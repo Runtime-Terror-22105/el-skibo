@@ -96,6 +96,7 @@ public class AutoBuilder {
     public final OneAutoToRuleThemAll auto;
     private PathChain lastPath = null;
     private long waitBeforeShooting;
+    public long prepareShootTimeBeforeReverseIntake = PrepareShootCommand.TIME_BEFORE_REVERSE_INTAKE;
 
     public AutoBuilder(OneAutoToRuleThemAll auto, Robot robot, Team team, StartConfig initial) {
         this.auto = auto;
@@ -418,7 +419,7 @@ public class AutoBuilder {
         // TODO: possible race condition
         Supplier<Boolean> hasStartedPrepareShoot = () -> robot.robotState.equals(RobotState.READY_TO_SHOOT) || robot.robotState.equals(RobotState.TRANSFER);
         Supplier<Command> maybePrepareShootCommand = () -> new ConditionalCommand(
-                new PrepareShootCommand(robot),
+                new PrepareShootCommand(robot, prepareShootTimeBeforeReverseIntake, true),
                 new InstantCommand(() -> {}),
                 () -> !(robot.robotState.equals(RobotState.READY_TO_SHOOT) || robot.robotState.equals(RobotState.TRANSFER))
         );
