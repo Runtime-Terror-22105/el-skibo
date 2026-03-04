@@ -437,7 +437,8 @@ public class AutoBuilder {
                 // Prepare shoot
                 new SequentialCommandGroup(
                         new WaitUntilCommand(() ->
-                                hasStartedPrepareShoot.get()
+                                !auto.wantsAutoSort()
+                                || hasStartedPrepareShoot.get()
                                 || hasFinishedPath.get()
                                 || !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE)
                         ).withTimeout(prepareShootDelay),
