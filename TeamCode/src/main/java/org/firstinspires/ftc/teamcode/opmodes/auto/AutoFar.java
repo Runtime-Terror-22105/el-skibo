@@ -27,7 +27,7 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
 //                new InstantCommand(() -> robot.spindexer.setTolerance(10)),
-                builder.shootPreloadFar(ShootPathFlag.EARLY_LEAVE),
+                builder.shootPreloadFar(),
                 // Do not reverse intake on first since they're guaranteed
                 builder.cycleWall(false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 builder.intakeSpike3Far(),
