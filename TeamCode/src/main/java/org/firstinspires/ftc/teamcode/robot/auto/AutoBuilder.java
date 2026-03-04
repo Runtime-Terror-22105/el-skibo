@@ -237,6 +237,7 @@ public class AutoBuilder {
 
     private PathChain intakeGatePath2() {
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE_2, AFTER_GATE, mirror, false, false)
+                .setConstantHeadingInterpolation(AFTER_GATE.mirror(mirror).heading)
                 .setBrakingStrength(0.6)
                 .build();
         return lastPath;
@@ -301,7 +302,7 @@ public class AutoBuilder {
                 return new ParallelCommandGroup(
                         new SequentialCommandGroup(
                                 new WaitForFlywheelCommand(robot.shooter).withTimeout(625),
-                                new WaitCommand(125),
+                                new WaitCommand(250),
                                 shootCommand(flags)
                         ),
                         new FollowPathCommand(robot.follower, path, false)
