@@ -39,6 +39,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SORTED_BRAKING_STRENGTH;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
@@ -48,6 +49,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.PathConstraints;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
@@ -64,6 +66,7 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.opmodes.auto.OneAutoToRuleThemAll;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
@@ -135,17 +138,17 @@ public class AutoBuilder {
     }
 
     private PathChain shootPreloadPath(EnumSet<ShootPathFlag> flags) {
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.PRELOAD, flags), mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
+        PathBuilder builder = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.PRELOAD, flags), mirror, false, false);
+        if (!auto.wantsAutoSort()) {
+            builder = builder.setConstraintsForLast(RELAXED_CONSTRAINTS);
+        }
+        lastPath = builder.build();
         return lastPath;
     }
 
     private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags) {
         PathBuilder builder = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true);
-        if (auto.wantsAutoSort()) {
-            builder = builder.setBrakingStart(2.5);
-        } else {
+        if (!auto.wantsAutoSort()) {
             builder = builder.setConstraintsForLast(RELAXED_CONSTRAINTS);
         }
         lastPath = builder.build();
@@ -274,8 +277,10 @@ public class AutoBuilder {
         boolean wantsAutoSort = robot.getAutoSort();
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         if (wantsAutoSort) {
+            PathChain path = shootPreloadPath(flags);
+            path.lastPath().setBrakingStrength(SORTED_BRAKING_STRENGTH);
             return new SequentialCommandGroup(
-                    new FollowPathCommand(robot.follower, shootPreloadPath(flags), false),
+                    new FollowPathCommand(robot.follower, path, true),
                     new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                     new WaitForGlyphCommand(robot.camera).withTimeout(AutoConstants.WAIT_TIMEOUT_MOTIF),
 
@@ -406,6 +411,9 @@ public class AutoBuilder {
         double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
         long shootDelay = auto.wantsAutoSort() ? AutoConstants.SORTED_SHOOT_DELAY : 0;
         boolean holdEnd = auto.wantsAutoSort();
+        if (auto.wantsAutoSort()) {
+            shootPath.lastPath().setBrakingStrength(SORTED_BRAKING_STRENGTH);
+        }
 
         // TODO: possible race condition
         Supplier<Boolean> hasStartedPrepareShoot = () -> robot.robotState.equals(RobotState.READY_TO_SHOOT) || robot.robotState.equals(RobotState.TRANSFER);
