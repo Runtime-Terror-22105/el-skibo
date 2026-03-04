@@ -41,6 +41,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SORTED_BRAKING_STRENGTH;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.VISION_POSE;
@@ -130,9 +131,14 @@ public class AutoBuilder {
     }
 
     // Flags defined in ShootPathFlags
-    private static Pose2d getShootPose(ShootPathType type, EnumSet<ShootPathFlag> flags) {
-        if (flags.contains(ShootPathFlag.LAST))
+    private Pose2d getShootPose(ShootPathType type, EnumSet<ShootPathFlag> flags) {
+        if (flags.contains(ShootPathFlag.LAST)) {
             return SHOOT_LAST_POSE;
+        }
+
+        if (auto.wantsAutoSort()) {
+            return SHOOT_SORTED_POSE;
+        }
 
         boolean isHoriz = flags.contains(ShootPathFlag.NEXT_HORIZ);
         return isHoriz ? type.horiz.get() : type.normal.get();
