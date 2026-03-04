@@ -437,8 +437,7 @@ public class ShooterSubsystem extends SubsystemBase {
         boolean useSmallPID = shooterPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_PID_SWITCH);
         shooterPID.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
 
-        double ff = this.hardware.getVoltageScale() * getGoalVelocity();
-        return shooterPID.calculatePower(currentRpm, ff, false);
+        return hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
     }
 
     public void addTurretOffset(double change){
