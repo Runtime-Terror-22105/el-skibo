@@ -21,7 +21,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
     public static long TIME_BEFORE_REVERSE_INTAKE = 150;
     public static long REVERSE_INTAKE_TIME_MS = 150;
     public static int RAMP_DELAY = 0;  // milliseconds
-    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING = 100;
+    public static long DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING = 400;
 
     public PrepareShootCommand(Robot robot) {
         this(robot, true);
