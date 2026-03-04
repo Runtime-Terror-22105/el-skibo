@@ -18,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_C
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
@@ -531,8 +532,15 @@ public class AutoBuilder {
                                 new HeadingInterpolator.PiecewiseNode(0.0, 0.25,
                                         HeadingInterpolator.linear(lastPath.getFinalHeadingGoal(), INTAKE_3_POSE.mirror(mirror).heading)
                                 ),
-                                new HeadingInterpolator.PiecewiseNode(0.25, 1.0,
+                                new HeadingInterpolator.PiecewiseNode(0.25, 0.8,
                                         HeadingInterpolator.constant(INTAKE_3_POSE.mirror(mirror).heading)
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(0.8, 1.0,
+                                        FixedHeadingInterpolator.linear(
+                                                INTAKE_3_POSE.mirror(mirror).heading,
+                                                INTAKE_3_POSE_FAR.mirror(mirror).heading,
+                                                0.8, 1.0
+                                        )
                                 )
                         )
                 )
