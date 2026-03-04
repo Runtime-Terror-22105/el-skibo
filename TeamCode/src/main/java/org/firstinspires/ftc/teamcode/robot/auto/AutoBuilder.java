@@ -281,9 +281,9 @@ public class AutoBuilder {
     public Command shootPreload(ShootPathFlag... flagArr) {
         boolean wantsAutoSort = robot.getAutoSort();
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
+        PathChain path = shootPreloadPath(flags);
+        path.lastPath().setBrakingStrength(shootBrakingStrength);
         if (wantsAutoSort) {
-            PathChain path = shootPreloadPath(flags);
-            path.lastPath().setBrakingStrength(SORTED_BRAKING_STRENGTH);
             return new SequentialCommandGroup(
                     new FollowPathCommand(robot.follower, path, true),
                     new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
@@ -303,11 +303,11 @@ public class AutoBuilder {
                                 new WaitForFlywheelCommand(robot.shooter).withTimeout(625),
                                 shootCommand(flags)
                         ),
-                        new FollowPathCommand(robot.follower, shootPreloadPath(flags), false)
+                        new FollowPathCommand(robot.follower, path, false)
                 );
             } else {
                 return new SequentialCommandGroup(
-                        new FollowPathCommand(robot.follower, shootPreloadPath(flags), false),
+                        new FollowPathCommand(robot.follower, path, false),
                         new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                         shootCommand(flags)
                 );
