@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Team;
 
-@TeleOp(name = "Red RC TeleOp", group = "ATeleOp")
+@TeleOp(name = "🟥 Red RC TeleOp", group = "ATeleOp")
 @Config
 public class RedRCTele extends TerrorTeleOp {
 
