@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoConstants;
+import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
@@ -42,7 +43,7 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
                     robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
                     robot.camera.setAprilTagsEnabled(false);
                 }),
-                builder.cycleSpike(3/*, ShootPathFlag.LAST*/)
+                builder.cycleSpike(3, ShootPathFlag.LAST)
         );
     }
 }
