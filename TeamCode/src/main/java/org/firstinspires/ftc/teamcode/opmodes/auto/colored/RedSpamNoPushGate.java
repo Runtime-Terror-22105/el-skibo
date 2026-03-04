@@ -4,12 +4,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSpam;
+import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSpamNoPushGate;
 
 @Config
-@Autonomous(name="🟥 Red Spam", group="15 Near Spam Auto")
-public class RedSpam extends AutoSpam {
-    public RedSpam(){
+@Autonomous(name="🟥 Red Spam No Push Gate", group="15 Near Spam Auto")
+public class RedSpamNoPushGate extends AutoSpamNoPushGate {
+    public RedSpamNoPushGate(){
         super(Team.RED);
     }
 }

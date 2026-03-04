@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
-public abstract class AutoSpamNoPushGate2 extends OneAutoToRuleThemAll {
-    protected AutoSpamNoPushGate2(Team team) {
+public abstract class AutoSpamNoPushGate extends OneAutoToRuleThemAll {
+    protected AutoSpamNoPushGate(Team team) {
         super(team);
     }
 
