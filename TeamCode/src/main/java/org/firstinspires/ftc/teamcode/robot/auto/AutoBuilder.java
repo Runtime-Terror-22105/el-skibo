@@ -269,7 +269,7 @@ public class AutoBuilder {
                     new WaitCommand(600)
             );
         }
-        return command;
+        return command.andThen(new IncrementNumCyclesCommand(auto));
     }
 
     // For NEAR ZONE preload shooting.

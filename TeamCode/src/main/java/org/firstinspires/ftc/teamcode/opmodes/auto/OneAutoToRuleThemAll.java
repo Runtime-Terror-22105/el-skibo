@@ -36,6 +36,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
     protected long duration = 0;
     protected long startTime = 0;
     protected long lastLoop = System.nanoTime();
+    public int numCycles = 0;
 
     protected OneAutoToRuleThemAll(Team team) {
         this.team = team;
@@ -187,6 +188,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
             long dt = time - lastLoop;
             lastLoop = time;
             robot.telemetry.addData("Loop Time (ms)", String.format(Locale.getDefault(), "%.2f", dt / 1e6));
+            robot.telemetry.addData("Num Cycles", numCycles);
             if (!hasFinished) {
                 duration = System.currentTimeMillis() - startTime;
             }
