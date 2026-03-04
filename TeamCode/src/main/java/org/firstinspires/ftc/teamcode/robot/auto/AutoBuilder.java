@@ -33,6 +33,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PU
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.REVERSE_INTAKE_GATE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_BRAKING_STRENGTH;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
@@ -99,7 +100,7 @@ public class AutoBuilder {
 
     private long waitBeforeShooting;
     public long prepareShootTimeBeforeReverseIntake = PrepareShootCommand.TIME_BEFORE_REVERSE_INTAKE;
-    public double shootBrakingStrength = Constants.pathConstraints.getBrakingStrength();
+    public double shootBrakingStrength = SHOOT_BRAKING_STRENGTH;
 
     public AutoBuilder(OneAutoToRuleThemAll auto, Robot robot, Team team, StartConfig initial) {
         this.auto = auto;
