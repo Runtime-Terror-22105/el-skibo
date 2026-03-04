@@ -96,8 +96,10 @@ public class AutoBuilder {
     public final boolean mirror;
     public final OneAutoToRuleThemAll auto;
     private PathChain lastPath = null;
+
     private long waitBeforeShooting;
     public long prepareShootTimeBeforeReverseIntake = PrepareShootCommand.TIME_BEFORE_REVERSE_INTAKE;
+    public double shootBrakingStrength = Constants.pathConstraints.getBrakingStrength();
 
     public AutoBuilder(OneAutoToRuleThemAll auto, Robot robot, Team team, StartConfig initial) {
         this.auto = auto;
@@ -413,9 +415,7 @@ public class AutoBuilder {
         double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
         long shootDelay = auto.wantsAutoSort() ? AutoConstants.SORTED_SHOOT_DELAY : 0;
         boolean holdEnd = auto.wantsAutoSort();
-        if (auto.wantsAutoSort()) {
-            shootPath.lastPath().setBrakingStrength(SORTED_BRAKING_STRENGTH);
-        }
+        shootPath.lastPath().setBrakingStrength(shootBrakingStrength);
 
         // TODO: possible race condition
         Supplier<Boolean> hasStartedPrepareShoot = () -> robot.robotState.equals(RobotState.READY_TO_SHOOT) || robot.robotState.equals(RobotState.TRANSFER);

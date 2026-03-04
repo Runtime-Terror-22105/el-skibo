@@ -7,6 +7,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.AutoConstants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
@@ -31,6 +32,7 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         builder.waitBeforeShooting(SHOOTING_DELAY);
+        builder.shootBrakingStrength = AutoConstants.SORTED_BRAKING_STRENGTH;
         return new SequentialCommandGroup(
                 builder.shootPreload(),
                 builder.cycleSpike(1),
