@@ -301,6 +301,7 @@ public class AutoBuilder {
                 return new ParallelCommandGroup(
                         new SequentialCommandGroup(
                                 new WaitForFlywheelCommand(robot.shooter).withTimeout(625),
+                                new WaitCommand(125),
                                 shootCommand(flags)
                         ),
                         new FollowPathCommand(robot.follower, path, false)
