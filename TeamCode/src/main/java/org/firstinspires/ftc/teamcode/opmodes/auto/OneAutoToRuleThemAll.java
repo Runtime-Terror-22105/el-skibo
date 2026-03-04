@@ -82,7 +82,11 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
     public void runOpMode() {
         Profiler.init();
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+        if (wantsAutoSort()) {
+            hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+        } else {
+            hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
+        }
 
         robot.init(hardware, this);
         robot.camera.disableRelocalization = true;
