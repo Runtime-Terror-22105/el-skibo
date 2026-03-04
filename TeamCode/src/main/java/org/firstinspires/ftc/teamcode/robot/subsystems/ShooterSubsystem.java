@@ -37,13 +37,14 @@ public class ShooterSubsystem extends SubsystemBase {
     // Small/large PID is for when error is small/large, respectively.
     //
     // kV should be the same for both PIDs. kP can be more aggressive for the large PID.
-    public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
+    public static PidfController.PidfCoefficients PID_COEFFICIENTS =
             new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
-    public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
-    private final PidfController shooterPID = new PidfController(SMALL_PID_COEFFICIENTS);
+//    public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
+//            new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
+    private final PidfController shooterPID = new PidfController(PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
+    // NOTE: THIS IS UNUSED
     public static double SHOOTER_PID_SWITCH = 800;  // Units are RPM
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
@@ -435,7 +436,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         shooterPID.setTargetPosition(getGoalVelocity());
         boolean useSmallPID = shooterPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_PID_SWITCH);
-        shooterPID.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
+//        shooterPID.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
+        shooterPID.setPidfCoefficients(PID_COEFFICIENTS);
 
         return hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
     }
