@@ -166,7 +166,7 @@ public class ShooterSubsystem extends SubsystemBase {
             double flightTime = FlightTimeLookupTable.get(distToGoal);
             Vector robotVel = robot.follower.getVelocity();
             if (useAccelCompensation) {
-                robotVel.minus(robot.follower.getAcceleration().times(ACCELERATION_COEFFICIENT));
+                robotVel = robotVel.add(robot.follower.getAcceleration().times(ACCELERATION_COEFFICIENT));
             }
             Vector goalAdjAmt = robotVel.times(flightTime);
             goalPos = Pose2d.minus(goalPos, goalAdjAmt);
