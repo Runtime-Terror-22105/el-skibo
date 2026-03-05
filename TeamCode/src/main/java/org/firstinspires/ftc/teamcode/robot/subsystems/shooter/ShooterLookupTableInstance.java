@@ -28,16 +28,20 @@ public class ShooterLookupTableInstance {
         }
     }
 
-    private VelocityLookupValue[] velocityPoints;
-    private HoodLookupValue[] hoodPoints;
+    private final VelocityLookupValue[] velocityPoints;
+    private final HoodLookupValue[] hoodPoints;
+    private final double constantVelTerm; // in/s, constant term added to velocity output
+    private final double constantHoodTerm; // constant term added to hood output
     private LinearInterpLUT velocityLut; // in/s
     private LinearInterpLUT hoodLut;
 
     public static boolean DEBUG = false;
 
-    public ShooterLookupTableInstance(VelocityLookupValue[] velocityPoints, HoodLookupValue[] hoodPoints) {
+    public ShooterLookupTableInstance(VelocityLookupValue[] velocityPoints, HoodLookupValue[] hoodPoints, double constantVelTerm, double constantHoodTerm) {
         this.velocityPoints = velocityPoints;
         this.hoodPoints = hoodPoints;
+        this.constantVelTerm = constantVelTerm;
+        this.constantHoodTerm = constantHoodTerm;
     }
 
     private void createLUTs() {
@@ -70,6 +74,6 @@ public class ShooterLookupTableInstance {
                                 distanceToGoalIn))
         );
 
-        return new ShooterSubsystem.ShooterValues(velocity, rad);
+        return new ShooterSubsystem.ShooterValues(velocity + constantVelTerm, rad + constantHoodTerm);
     }
 }
