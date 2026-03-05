@@ -264,10 +264,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         shoot3button.whenPressed(new ConditionalCommand(
                 new ConditionalCommand( // if we already did the transfer, just shoot immediately
-                        new ShootThreeBallsCommand(robot),
+                        new ShootThreeBallsCommand(robot,ShootThreeBallsCommand.SPINDEX_TRANSFER_POWER,true),
                         new SequentialCommandGroup(
                                 new PrepareShootCommand(robot, true),
-                                new ShootThreeBallsCommand(robot)
+                                new ShootThreeBallsCommand(robot,ShootThreeBallsCommand.SPINDEX_TRANSFER_POWER,true)
                         ),
                         () -> robot.robotState == READY_TO_SHOOT
                 ),
