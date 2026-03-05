@@ -61,6 +61,21 @@ public class CircularBuffer<T extends Number & Comparable<T>> {
         }
     }
 
+    public double getMean() {
+        if (size == 0) return 0;
+
+        T[] array = (T[]) new Number[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = (T) buffer[(index + i) % capacity];
+        }
+
+        double sum = 0;
+        for (int i = 0; i < size; i++) {
+            sum += array[i].doubleValue();
+        }
+        return sum/size;
+    }
+
     @NonNull
     @Override
     public String toString() {

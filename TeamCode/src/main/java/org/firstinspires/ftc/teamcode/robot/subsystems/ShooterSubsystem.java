@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.math.datastructures.CircularBuffer;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -26,7 +27,10 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+    public static int ACCEL_BUFFER_SZE = 3;
+    public static double ACCELERATION_COEFFICIENT = 0.12;
     public static boolean USE_SOTM = true;
+    public static boolean USE_SOTM_ACCEL = true;
 
     public static boolean debug = false;
     public static boolean telemetry = true;
@@ -112,6 +116,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // flag used for lighting feedback for driver
     public boolean turretInDeadzone = false;
 
+    private CircularBuffer<Double> accelBufferX = new CircularBuffer<>(ACCEL_BUFFER_SZE);
+    private CircularBuffer<Double> accelBufferY = new CircularBuffer<>(ACCEL_BUFFER_SZE);
+
     public static class ShooterValues {
         public double velocity;
         public double rad;
@@ -150,7 +157,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 
-    public void doAutoShoot(Pose botPos, boolean useVelocityCompensation) {
+    public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
@@ -162,7 +169,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if (useVelocityCompensation) {
             double flightTime = FlightTimeLookupTable.get(distToGoal);
-            Vector goalAdjAmt = robot.follower.getVelocity().times(flightTime);
+            Vector robotVel = robot.follower.getVelocity();
+            if (useAccelCompensation) {
+                Vector accel = robot.follower.getAcceleration();
+                accelBufferX.add(accel.getXComponent());
+                accelBufferY.add(accel.getYComponent());
+
+                Vector avgAccel = new Vector();
+                avgAccel.setOrthogonalComponents(accelBufferX.getMean(), accelBufferY.getMean());
+                robotVel = robotVel.plus(avgAccel.times(ACCELERATION_COEFFICIENT));
+            }
+            Vector goalAdjAmt = robotVel.times(flightTime);
             goalPos = Pose2d.minus(goalPos, goalAdjAmt);
             distToGoal = botPos.distanceFrom(goalPos.toPedro());
 
@@ -450,8 +467,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-//
+    public void periodic() {//
 //        if (robot.color == Team.BLUE){
 //            turretOffset = -0.04;
 //        }
@@ -493,7 +509,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     robotPos = this.robot.follower.getPose();
                     useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
 //                }
-                this.doAutoShoot(robotPos, useSotm);
+                this.doAutoShoot(robotPos, useSotm, USE_SOTM_ACCEL);
             }
             else if (robot.goalPos != null){
                 intermediateAim(this.robot.follower.getPose(), USE_SOTM);
