@@ -258,6 +258,7 @@ public class ShooterAimingTuner extends LinearOpMode {
             Profiler.pop();
 
             if (!testingAutoShoot) {
+                robot.shooter.isAutoAimOn = false;
 
                 if (autoTurret){
                     robot.shooter.manualAimAutoTurret(velocity, hoodAngle);

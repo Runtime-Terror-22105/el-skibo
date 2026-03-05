@@ -5,14 +5,12 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.util.MathUtils;
 
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
-import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
@@ -276,11 +274,12 @@ public class SpindexerSubsystem extends SubsystemBase {
         //-1 rotate forward
         //-2 rotate backward
 
-        double rotateAmount = Math.toRadians(120);
+        double rotateAmount = Math.toRadians(120) + SpindexerSubsystem.READY_POSITION;
 
         switch(ArrayUtil.indexOf(balls, BallColor.GREEN) - ArrayUtil.indexOf(glyphArr, BallColor.GREEN))
         {
             case 0:
+                this.rotate(READY_POSITION);
                 break;
 
             case 2:
@@ -297,54 +296,6 @@ public class SpindexerSubsystem extends SubsystemBase {
                 break;
         }
         return true;
-    }
-
-    public void sortBalls() {
-        Log.d("SpindexerSubsystem", "des ang before sort "+ this.desiredAngle);
-        Log.d("SpindexerSubsystem", "des ang before sort deg "+ this.desiredAngle * (180D/Math.PI));
-        this.goToAngle120(0);
-        Log.d("SpindexerSubsystem", "des ang aft 0 "+ this.desiredAngle);
-        int fullCount = 0;
-        double greenPos = 0.0;
-        int greenCount = 0;
-        int purpleCount = 0;
-        for (BallColor ball : this.getBallPositions()) {
-            Log.d("ball-thing", String.valueOf(ball.toChar()));
-            if (!BallColor.NONE.equals(ball)) {
-                fullCount += 1;
-                if (!BallColor.GREEN.equals(ball)) {
-                    greenCount += 1;
-                    greenPos = this.selectColor(BallColor.GREEN);
-                } else {
-                    purpleCount += 1;
-                }
-
-            }
-        }
-        Log.d("SpindexerSubsystem", "purple count" + purpleCount);
-        Log.d("SpindexerSubsystem", "green count" + greenCount);
-        Log.d("SpindexerSubsystem", "full count" + fullCount);
-        Log.d("SpindexerSubsystem", "greenPos" + greenPos);
-
-        if (purpleCount == 2 && greenCount == 1) {
-            if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.GPP) {
-                double normalizedError = MathUtils.normalizeRadians(-greenPos, false);
-                Log.d("SpindexerSubsystem", "glyph gpp normalized error" + normalizedError);
-                this.rotate(normalizedError);
-
-            } else if (robot.camera.gameGlyph == CameraSubsystem.GLYPH.PGP) {
-                double normalizedError = MathUtils.normalizeRadians((((2D / 3D) * Math.PI)) - greenPos, false);
-                Log.d("SpindexerSubsystem", "glyph pgp normalized error" + normalizedError);
-                this.rotate(normalizedError);
-
-            } else {
-                double normalizedError = MathUtils.normalizeRadians((((4D / 3D) * Math.PI)) - greenPos, false);
-                Log.d("SpindexerSubsystem", "glyph ppg normalized error" + normalizedError);
-                this.rotate(normalizedError);
-            }
-        }
-        Log.d("SpindexerSubsystem", "des ang after sort"+this.desiredAngle);
-
     }
 
     /**
