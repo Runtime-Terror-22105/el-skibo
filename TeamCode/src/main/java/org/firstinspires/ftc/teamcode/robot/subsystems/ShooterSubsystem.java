@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.math.datastructures.CircularBuffer;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -114,6 +115,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // flag used for lighting feedback for driver
     public boolean turretInDeadzone = false;
 
+    private CircularBuffer<Double> accelBufferX;
+    private CircularBuffer<Double> accelBufferY;
+
     public static class ShooterValues {
         public double velocity;
         public double rad;
@@ -166,7 +170,13 @@ public class ShooterSubsystem extends SubsystemBase {
             double flightTime = FlightTimeLookupTable.get(distToGoal);
             Vector robotVel = robot.follower.getVelocity();
             if (useAccelCompensation) {
-                robotVel.minus(robot.follower.getAcceleration().times(ACCELERATION_COEFFICIENT));
+                Vector accel = robot.follower.getAcceleration();
+                accelBufferX.add(accel.getXComponent());
+                accelBufferY.add(accel.getYComponent());
+
+                Vector avgAccel = new Vector();
+                avgAccel.setOrthogonalComponents(accelBufferX.getMean(), accelBufferY.getMean());
+                robotVel.minus(avgAccel.times(ACCELERATION_COEFFICIENT));
             }
             Vector goalAdjAmt = robotVel.times(flightTime);
             goalPos = Pose2d.minus(goalPos, goalAdjAmt);
