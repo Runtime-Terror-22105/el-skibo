@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 @Config
 public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SZE = 3;
-    public static double ACCELERATION_COEFFICIENT = 3;
+    public static double ACCELERATION_COEFFICIENT = 0.12;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = true;
 
