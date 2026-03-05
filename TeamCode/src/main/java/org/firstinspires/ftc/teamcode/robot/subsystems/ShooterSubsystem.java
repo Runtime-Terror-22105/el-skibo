@@ -411,6 +411,10 @@ public class ShooterSubsystem extends SubsystemBase {
         return velocity * 6.469;
     }
 
+    public static double rpmToVel(double rpm){
+        return rpm / 6.469;
+    }
+
     public boolean isFlywheelAtTarget() {
         return shooterPID.atTargetPositionWithTolerance(this.getVelocityRpm(), SHOOTER_VEL_TOLERANCE);
     }
