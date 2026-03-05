@@ -127,6 +127,7 @@ public class RobotHardware {
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
         // Initialize the turret
         this.turretYawLeft = new TerrorServo(hwMap, "turretYawLeft", 0.005);
