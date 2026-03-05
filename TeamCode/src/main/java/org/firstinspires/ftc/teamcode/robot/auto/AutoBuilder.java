@@ -132,7 +132,7 @@ public class AutoBuilder {
 
     // Flags defined in ShootPathFlags
     private Pose2d getShootPose(ShootPathType type, EnumSet<ShootPathFlag> flags) {
-        if (flags.contains(ShootPathFlag.LAST)) {
+        if (flags.contains(ShootPathFlag.LAST) && !auto.wantsAutoSort()) {
             return SHOOT_LAST_POSE;
         }
 
@@ -488,7 +488,15 @@ public class AutoBuilder {
         } else {
             path = shootSpikePath(flags);
         }
-        return createFollowShootPathAndShootCommand(waitBeforeShooting, path, flags);
+        return new SequentialCommandGroup(
+                createFollowShootPathAndShootCommand(waitBeforeShooting, path, flags),
+                new ConditionalCommand(
+                        parkSorted(),
+                        new InstantCommand(() -> {}),
+                        () -> (flags.contains(ShootPathFlag.LAST) && auto.wantsAutoSort())
+
+                )
+        );
     }
 
     public Command cycleSpike(int spikeNumber, ShootPathFlag... flags) {
@@ -496,6 +504,12 @@ public class AutoBuilder {
                 intakeSpike(spikeNumber),
                 shootSpike(spikeNumber, flags)
         );
+    }
+
+    public Command parkSorted(){
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, SHOOT_LAST_POSE, mirror, false, false).build();
+
+        return new FollowPathCommand(robot.follower, this.lastPath, true);
     }
 
     // For pushing the gate after a SPIKE STRIP. Not for cycling gate intake.
