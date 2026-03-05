@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+    public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 3;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = true;
@@ -115,8 +116,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // flag used for lighting feedback for driver
     public boolean turretInDeadzone = false;
 
-    private CircularBuffer<Double> accelBufferX;
-    private CircularBuffer<Double> accelBufferY;
+    private CircularBuffer<Double> accelBufferX = new CircularBuffer<>(ACCEL_BUFFER_SZE);
+    private CircularBuffer<Double> accelBufferY = new CircularBuffer<>(ACCEL_BUFFER_SZE);
 
     public static class ShooterValues {
         public double velocity;
@@ -466,8 +467,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-//
+    public void periodic() {//
 //        if (robot.color == Team.BLUE){
 //            turretOffset = -0.04;
 //        }
