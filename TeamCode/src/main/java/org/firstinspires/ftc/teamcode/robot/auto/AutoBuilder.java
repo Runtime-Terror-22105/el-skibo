@@ -488,14 +488,13 @@ public class AutoBuilder {
         } else {
             path = shootSpikePath(flags);
         }
+        Command endCommand = new InstantCommand(() -> {});
+        if (flags.contains(ShootPathFlag.LAST) && auto.wantsAutoSort()) {
+            endCommand = parkSorted();
+        }
         return new SequentialCommandGroup(
                 createFollowShootPathAndShootCommand(waitBeforeShooting, path, flags),
-                new ConditionalCommand(
-                        parkSorted(),
-                        new InstantCommand(() -> {}),
-                        () -> (flags.contains(ShootPathFlag.LAST) && auto.wantsAutoSort())
-
-                )
+                endCommand
         );
     }
 
