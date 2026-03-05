@@ -26,7 +26,9 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+    public static double ACCELERATION_COEFFICIENT = 3;
     public static boolean USE_SOTM = true;
+    public static boolean USE_SOTM_ACCEL = true;
 
     public static boolean debug = false;
     public static boolean telemetry = true;
@@ -150,7 +152,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 
-    public void doAutoShoot(Pose botPos, boolean useVelocityCompensation) {
+    public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
@@ -162,7 +164,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if (useVelocityCompensation) {
             double flightTime = FlightTimeLookupTable.get(distToGoal);
-            Vector goalAdjAmt = robot.follower.getVelocity().times(flightTime);
+            Vector robotVel = robot.follower.getVelocity();
+            if (useAccelCompensation) {
+                robotVel.minus(robot.follower.getAcceleration().times(ACCELERATION_COEFFICIENT));
+            }
+            Vector goalAdjAmt = robotVel.times(flightTime);
             goalPos = Pose2d.minus(goalPos, goalAdjAmt);
             distToGoal = botPos.distanceFrom(goalPos.toPedro());
 
@@ -493,7 +499,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     robotPos = this.robot.follower.getPose();
                     useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
 //                }
-                this.doAutoShoot(robotPos, useSotm);
+                this.doAutoShoot(robotPos, useSotm, USE_SOTM_ACCEL);
             }
             else if (robot.goalPos != null){
                 intermediateAim(this.robot.follower.getPose(), USE_SOTM);
