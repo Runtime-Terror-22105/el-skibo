@@ -24,7 +24,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
     public static double SPINDEX_TRANSFER_POWER = -1;
     public static int SPINDEX_TRANSFER_TIME = 700;  // milliseconds
 
-    public static int reverseIntakeTimeMS = 50;
+    public static int reverseIntakeTimeMS = 150;
     public static int SPINDEX_SORTING_TRANSFER_TIME = (int) (700/SpindexerSubsystem.MAX_POWER_SORTING);  // milliseconds
 
     private final Robot robot;
