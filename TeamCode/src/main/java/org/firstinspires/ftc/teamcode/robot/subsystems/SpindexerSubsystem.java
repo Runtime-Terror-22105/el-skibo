@@ -274,7 +274,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         //-1 rotate forward
         //-2 rotate backward
 
-        double rotateAmount = Math.toRadians(120) + SpindexerSubsystem.READY_POSITION;
+        double rotateAmount = Math.toRadians(120);
 
         switch(ArrayUtil.indexOf(balls, BallColor.GREEN) - ArrayUtil.indexOf(glyphArr, BallColor.GREEN))
         {
@@ -283,16 +283,13 @@ public class SpindexerSubsystem extends SubsystemBase {
                 break;
 
             case 2:
-
             case -1:
-
-                this.rotate(rotateAmount);
+                this.rotate(rotateAmount + SpindexerSubsystem.READY_POSITION);
                 break;
 
             case 1:
-
             case -2:
-                this.rotate(-rotateAmount);
+                this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
                 break;
         }
         return true;
