@@ -150,9 +150,9 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.autoSort = autoSort;
         this.spindexer.inferMissingColorToSort = inferMissingColor;
 
-//        if (autoSort) {
-//            this.shooter.shooterLookupTable = ShooterLookupTable.SORTED_TABLE;
-//        }
+        if (autoSort) {
+            this.shooter.shooterLookupTable = ShooterLookupTable.SORTED_TABLE;
+        }
     }
 
     public void setAutoSort(boolean autoSort) {
