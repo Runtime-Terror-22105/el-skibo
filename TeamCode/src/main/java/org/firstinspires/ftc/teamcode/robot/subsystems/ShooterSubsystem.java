@@ -112,6 +112,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // This is useful during auto to avoid dynamically updating the shooter while the robot moves.
     public Pose autoShootPoseOverride = null;
     public Boolean sotmOverride = null;
+    public Boolean sotmAccelOverride = null;
 
     // flag used for lighting feedback for driver
     public boolean turretInDeadzone = false;
@@ -500,16 +501,10 @@ public class ShooterSubsystem extends SubsystemBase {
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
             if (robot.goalPos != null && isAutoAimOn) {
-                Pose robotPos;
-                boolean useSotm;
-//                if (this.autoShootPoseOverride != null) {
-//                    robotPos = this.autoShootPoseOverride;
-//                    useSotm = false;
-//                } else {
-                    robotPos = this.robot.follower.getPose();
-                    useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
-//                }
-                this.doAutoShoot(robotPos, useSotm, USE_SOTM_ACCEL);
+                Pose robotPos = this.robot.follower.getPose();
+                boolean useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
+                boolean useSotmAccel = sotmAccelOverride != null ? sotmAccelOverride : USE_SOTM_ACCEL;
+                this.doAutoShoot(robotPos, useSotm, useSotmAccel);
             }
             else if (robot.goalPos != null){
                 intermediateAim(this.robot.follower.getPose(), USE_SOTM);
