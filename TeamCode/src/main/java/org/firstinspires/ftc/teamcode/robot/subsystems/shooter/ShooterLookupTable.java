@@ -77,12 +77,12 @@ public class ShooterLookupTable {
             new ShooterLookupTableInstance.HoodLookupValue(0, 0),
 
             new ShooterLookupTableInstance.HoodLookupValue(27.7,0),
-            new ShooterLookupTableInstance.HoodLookupValue(45.5,0.25),
-            new ShooterLookupTableInstance.HoodLookupValue(68.7,0.75),
-            new ShooterLookupTableInstance.HoodLookupValue(90.7,0.75),
-            new ShooterLookupTableInstance.HoodLookupValue(104.4,0.85),
-            new ShooterLookupTableInstance.HoodLookupValue(122.7,.92),
-            new ShooterLookupTableInstance.HoodLookupValue(140.2,.92),
+            new ShooterLookupTableInstance.HoodLookupValue(45.5,0.21),
+            new ShooterLookupTableInstance.HoodLookupValue(68.7,0.71),
+            new ShooterLookupTableInstance.HoodLookupValue(90.7,0.71),
+            new ShooterLookupTableInstance.HoodLookupValue(104.4,0.81),
+            new ShooterLookupTableInstance.HoodLookupValue(122.7,.88),
+            new ShooterLookupTableInstance.HoodLookupValue(140.2,.88),
             //endpoint
     };
     public static final ShooterLookupTableInstance SORTED_TABLE = new ShooterLookupTableInstance(SORTED_VEL_DATA_POINTS, SORTED_HOOD_DATA_POINTS);
