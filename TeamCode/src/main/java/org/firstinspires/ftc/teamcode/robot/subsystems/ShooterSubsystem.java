@@ -176,7 +176,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
                 Vector avgAccel = new Vector();
                 avgAccel.setOrthogonalComponents(accelBufferX.getMean(), accelBufferY.getMean());
-                robotVel.minus(avgAccel.times(ACCELERATION_COEFFICIENT));
+                robotVel = robotVel.plus(avgAccel.times(ACCELERATION_COEFFICIENT));
             }
             Vector goalAdjAmt = robotVel.times(flightTime);
             goalPos = Pose2d.minus(goalPos, goalAdjAmt);
