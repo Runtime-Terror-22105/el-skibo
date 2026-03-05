@@ -342,24 +342,28 @@ public class AutoBuilder {
     }
 
     private Command intakeSpike1() {
+        PathChain path = intakeSpike1Path();
+        Command followPathCommand = new FollowPathAndWaitForWallCommand(robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 3.0);
+        if (!auto.wantsAutoSort()) {
+            followPathCommand = followPathCommand.raceWith(new WaitForIntakeCommand(robot));
+        }
         return new SequentialCommandGroup(
                 new GoToIntakeStateCommand(robot),
-                new ParallelRaceGroup(
-                        new FollowPathAndWaitForWallCommand(robot, intakeSpike1Path(), true, MAX_DRIVETRAIN_POWER_INTAKING, 3.0),
-                        new WaitForIntakeCommand(robot)
-                ),
+                followPathCommand,
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
                 new SetIntakeSpeedCommand(robot.intake, 0)
         );
     }
 
     private Command intakeSpike2() {
+        PathChain path = intakeSpike2Path();
+        Command followPathCommand = new FollowPathAndWaitForWallCommand(robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 18.0);
+        if (!auto.wantsAutoSort()) {
+            followPathCommand = followPathCommand.raceWith(new WaitForIntakeCommand(robot));
+        }
         return new SequentialCommandGroup(
                 new GoToIntakeStateCommand(robot),
-                new ParallelRaceGroup(
-                        new FollowPathAndWaitForWallCommand(robot, intakeSpike2Path(), true, MAX_DRIVETRAIN_POWER_INTAKING, 18.0),
-                        new WaitForIntakeCommand(robot)
-                ),
+                followPathCommand,
                 new WaitForIntakeCommand(robot).withTimeout(INTAKE_DELAY),
                 new SetIntakeSpeedCommand(robot.intake, 0)
         );
