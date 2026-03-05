@@ -42,6 +42,7 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
                 new InstantCommand(() -> {
                     robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
                     robot.camera.setAprilTagsEnabled(false);
+                    robot.spindexer.overrideMaxPower = true;
                 }),
                 builder.cycleSpike(3, ShootPathFlag.LAST)
         );
