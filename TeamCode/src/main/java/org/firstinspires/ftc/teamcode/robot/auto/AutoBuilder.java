@@ -42,7 +42,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SORTED_BRAKING_STRENGTH;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
@@ -52,7 +51,6 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
-import com.pedropathing.paths.PathConstraints;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
@@ -69,7 +67,6 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.opmodes.auto.OneAutoToRuleThemAll;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
@@ -78,6 +75,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelComma
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.WaitForGlyphCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -272,7 +270,7 @@ public class AutoBuilder {
         }
 
         if (!flags.contains(ShootPathFlag.LAST)) {
-            command = command.andThen(new GoToIntakeStateCommand(robot),
+            command = command.andThen(new GoToRestingStateCommand(robot),
                     new LogCatCommand("AutoBuilder", "ending shoot"));
         }
 
@@ -525,6 +523,7 @@ public class AutoBuilder {
 
     public Command intakeGate() {
         return new SequentialCommandGroup(
+                new GoToIntakeStateCommand(robot),
                 new FollowPathCommand(robot.follower, intakeGatePath1(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                 new WaitCommand(250),
                 new FollowPathCommand(robot.follower, intakeGatePath2(), true, MAX_DRIVETRAIN_POWER_INTAKING),
@@ -577,6 +576,7 @@ public class AutoBuilder {
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
+                new GoToIntakeStateCommand(robot),
                 new ParallelRaceGroup(
                     new FollowPathAndWaitForWallCommand(robot, lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
                     new WaitForIntakeCommand(robot)
@@ -599,9 +599,15 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new ParallelRaceGroup(
-                        new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 12.0),
-                        new WaitForIntakeCommand(robot)
+                new ParallelCommandGroup(
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(() -> robot.spindexer.isWallDown()),
+                                new GoToIntakeStateCommand(robot)
+                        ),
+                        new ParallelRaceGroup(
+                                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 12.0),
+                                new WaitForIntakeCommand(robot)
+                        )
                 ),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
@@ -635,6 +641,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
+                new GoToIntakeStateCommand(robot),
                 new InstantCommand(() -> robot.camera.setBallPipelineEnabled(false)),
                 new FollowPathCommand(robot.follower, lastPath, true),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
@@ -659,9 +666,15 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
-                new ParallelRaceGroup(
-                        new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 20.0),
-                        new WaitForIntakeCommand(robot)
+                new ParallelCommandGroup(
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(() -> robot.spindexer.isWallDown()),
+                                new GoToIntakeStateCommand(robot)
+                        ),
+                        new ParallelRaceGroup(
+                                new FollowPathAndWaitForWallCommand(robot, lastPath, true, 1.0, 12.0),
+                                new WaitForIntakeCommand(robot)
+                        )
                 ),
                 new WaitForIntakeCommand(robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
@@ -728,6 +741,7 @@ public class AutoBuilder {
                 .setNoDeceleration()
                 .build();
         return new SequentialCommandGroup(
+                new GoToIntakeStateCommand(robot),
                 new FollowPathCommand(robot.follower, this.lastPath)
         );
     }
