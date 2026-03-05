@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.LightControl2;
 import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.FastTelemetryImpl;
 
@@ -148,6 +149,10 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public void setAutoSort(boolean autoSort, boolean inferMissingColor) {
         this.autoSort = autoSort;
         this.spindexer.inferMissingColorToSort = inferMissingColor;
+
+        if (autoSort) {
+            this.shooter.shooterLookupTable = ShooterLookupTable.SORTED_TABLE;
+        }
     }
 
     public void setAutoSort(boolean autoSort) {
@@ -155,7 +160,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     }
 
     public void toggleAutoSort() {
-        this.autoSort = !this.autoSort;
+        this.setAutoSort(!this.autoSort, this.spindexer.inferMissingColorToSort);
     }
 
     public boolean getAutoSort() {

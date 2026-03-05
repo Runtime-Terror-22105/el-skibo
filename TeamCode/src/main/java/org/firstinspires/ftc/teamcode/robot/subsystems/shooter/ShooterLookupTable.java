@@ -1,69 +1,36 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.shooter;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.seattlesolvers.solverslib.util.InterpLUT;
-
-import org.firstinspires.ftc.teamcode.math.LinearInterpLUT;
-import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 
 @Config
 public class ShooterLookupTable {
-    private static LinearInterpLUT FAR_VELOCITY_LUT; // in/s
-    private static LinearInterpLUT HOOD_LUT;
-
-    public static boolean debug = false;
-
-    public static class LookupValue {
-        public double distance;
-        public double speed;
-
-        public LookupValue(double d, double s) {
-            this.distance = d;
-            this.speed = s;
-        }
-    }
-
-    public static class HoodLookupValue {
-        public double distance;
-        public double rad;
-
-        public HoodLookupValue(double d, double r) {
-            this.distance = d;
-            this.rad = r;
-        }
-
-    }
-
-
-    public static LookupValue[] VEL_DATA_POINTS = new LookupValue[]{
+    public static ShooterLookupTableInstance.VelocityLookupValue[] NORMAL_VEL_DATA_POINTS = new ShooterLookupTableInstance.VelocityLookupValue[]{
             // endpoint (prevent crashing)
-            new LookupValue(0, 400),
+            new ShooterLookupTableInstance.VelocityLookupValue(0, 400),
 
-            new LookupValue(27.7,400),
-            new LookupValue(45.5,425),
-            new LookupValue(68.7,465),
-            new LookupValue(90.7,505),
-            new LookupValue(104.4,545),
-            new LookupValue(122.7,570),
-            new LookupValue(140.2,640),
+            new ShooterLookupTableInstance.VelocityLookupValue(27.7,400),
+            new ShooterLookupTableInstance.VelocityLookupValue(45.5,425),
+            new ShooterLookupTableInstance.VelocityLookupValue(68.7,465),
+            new ShooterLookupTableInstance.VelocityLookupValue(90.7,505),
+            new ShooterLookupTableInstance.VelocityLookupValue(104.4,545),
+            new ShooterLookupTableInstance.VelocityLookupValue(122.7,570),
+            new ShooterLookupTableInstance.VelocityLookupValue(140.2,640),
             // other endpoint (prevent crashing)
 
 //            new LookupValue(250, 960)
 //
     };
-    public static HoodLookupValue[] HOOD_DATA_POINTS = new HoodLookupValue[]{
+    public static ShooterLookupTableInstance.HoodLookupValue[] NORMAL_HOOD_DATA_POINTS = new ShooterLookupTableInstance.HoodLookupValue[]{
             //endpoint
-            new HoodLookupValue(0, 0),
+            new ShooterLookupTableInstance.HoodLookupValue(0, 0),
 
-            new HoodLookupValue(27.7,0),
-            new HoodLookupValue(45.5,0.25),
-            new HoodLookupValue(68.7,0.75),
-            new HoodLookupValue(90.7,0.75),
-            new HoodLookupValue(104.4,0.85),
-            new HoodLookupValue(122.7,.92),
-            new HoodLookupValue(140.2,.92),
+            new ShooterLookupTableInstance.HoodLookupValue(27.7,0),
+            new ShooterLookupTableInstance.HoodLookupValue(45.5,0.25),
+            new ShooterLookupTableInstance.HoodLookupValue(68.7,0.75),
+            new ShooterLookupTableInstance.HoodLookupValue(90.7,0.75),
+            new ShooterLookupTableInstance.HoodLookupValue(104.4,0.85),
+            new ShooterLookupTableInstance.HoodLookupValue(122.7,.92),
+            new ShooterLookupTableInstance.HoodLookupValue(140.2,.92),
             //endpoint
 
 //            //endpoint
@@ -87,43 +54,36 @@ public class ShooterLookupTable {
 //            new HoodLookupValue(87.56152811761086, 0.85),
     };
 
-    static {
-//        for (int i = 0; i < DATA_POINTS.size(); i++) {
-//            FAR_VELOCITY_LUT.add(DATA_POINTS.get(i).first, DATA_POINTS.get(i).second);
-//        }
-//        FAR_VELOCITY_LUT.createLUT();
-    }
+    public static final ShooterLookupTableInstance NORMAL_TABLE = new ShooterLookupTableInstance(NORMAL_VEL_DATA_POINTS, NORMAL_HOOD_DATA_POINTS);
 
-    public static ShooterSubsystem.ShooterValues get(double distanceToGoalIn) {
-        if (debug) Log.i("ShooterLookupTable", "distance to goal" +distanceToGoalIn);
-        // todo: temporarily putting this here so we can dashboard
-        FAR_VELOCITY_LUT = new LinearInterpLUT();
-        HOOD_LUT = new LinearInterpLUT();
-        for (LookupValue dataPoint : VEL_DATA_POINTS) {
-            FAR_VELOCITY_LUT.add(dataPoint.distance, dataPoint.speed);
-        }
-        FAR_VELOCITY_LUT.createLUT();
 
-        for (HoodLookupValue dataPoint : HOOD_DATA_POINTS) {
-            HOOD_LUT.add(dataPoint.distance, dataPoint.rad);
-        }
-        HOOD_LUT.createLUT();
 
-        double rad;
-        double velocity;
+    public static ShooterLookupTableInstance.VelocityLookupValue[] SORTED_VEL_DATA_POINTS = new ShooterLookupTableInstance.VelocityLookupValue[]{
+            // endpoint (prevent crashing)
+            new ShooterLookupTableInstance.VelocityLookupValue(0, 410),
 
-        velocity = FAR_VELOCITY_LUT.get(
-                Math.max(VEL_DATA_POINTS[0].distance,
-                        Math.min(VEL_DATA_POINTS[VEL_DATA_POINTS.length - 1].distance,
-                                distanceToGoalIn))
-        );
-        rad = HOOD_LUT.get(
-                Math.max(HOOD_DATA_POINTS[0].distance,
-                        Math.min(HOOD_DATA_POINTS[HOOD_DATA_POINTS.length - 1].distance,
-                                distanceToGoalIn))
-        );
+            new ShooterLookupTableInstance.VelocityLookupValue(27.7,415),
+            new ShooterLookupTableInstance.VelocityLookupValue(45.5,440),
+            new ShooterLookupTableInstance.VelocityLookupValue(68.7,480),
+            new ShooterLookupTableInstance.VelocityLookupValue(90.7,520),
+            new ShooterLookupTableInstance.VelocityLookupValue(104.4,560),
+            new ShooterLookupTableInstance.VelocityLookupValue(122.7,585),
+            new ShooterLookupTableInstance.VelocityLookupValue(140.2,655),
+            // other endpoint (prevent crashing)
+//
+    };
+    public static ShooterLookupTableInstance.HoodLookupValue[] SORTED_HOOD_DATA_POINTS = new ShooterLookupTableInstance.HoodLookupValue[]{
+            //endpoint
+            new ShooterLookupTableInstance.HoodLookupValue(0, 0),
 
-        return new ShooterSubsystem.ShooterValues(velocity, rad);
-        //return new ShooterSubsystem.ShooterValues(0,0);
-    }
+            new ShooterLookupTableInstance.HoodLookupValue(27.7,0),
+            new ShooterLookupTableInstance.HoodLookupValue(45.5,0.25),
+            new ShooterLookupTableInstance.HoodLookupValue(68.7,0.75),
+            new ShooterLookupTableInstance.HoodLookupValue(90.7,0.75),
+            new ShooterLookupTableInstance.HoodLookupValue(104.4,0.85),
+            new ShooterLookupTableInstance.HoodLookupValue(122.7,.92),
+            new ShooterLookupTableInstance.HoodLookupValue(140.2,.92),
+            //endpoint
+    };
+    public static final ShooterLookupTableInstance SORTED_TABLE = new ShooterLookupTableInstance(SORTED_VEL_DATA_POINTS, SORTED_HOOD_DATA_POINTS);
 }

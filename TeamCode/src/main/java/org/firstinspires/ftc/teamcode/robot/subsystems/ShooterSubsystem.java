@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.FlightTimeLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.GoalPosLookupTable;
 import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTable;
+import org.firstinspires.ftc.teamcode.robot.subsystems.shooter.ShooterLookupTableInstance;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
@@ -49,6 +50,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double SHOOTER_VEL_TOLERANCE = 30;  // Units are RPM
 
     public GoalPosLookupTable goalPosLookupTable;
+    public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
 
     // what the shooter should be at
     public double goalPitch; //hood - rad
@@ -176,7 +178,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         ShooterValues math;
-        math = ShooterLookupTable.get(distToGoal);
+        math = shooterLookupTable.get(distToGoal);
         //calcVelcoity - in/sec
 
         if (telemetry) Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", math.velocity);
@@ -219,16 +221,12 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         ShooterValues math;
-        math = ShooterLookupTable.get(distToGoal);
+        math = shooterLookupTable.get(distToGoal);
 
         if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
             this.goalPitch = math.rad;
             this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         }
-
-
-
-
     }
 
     public void setTurretAngle(double angleRad) {
