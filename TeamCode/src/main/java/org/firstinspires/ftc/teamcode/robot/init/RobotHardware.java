@@ -139,12 +139,12 @@ public class RobotHardware {
         // Initialize the shooter
         this.shooterLeft = new TerrorMotorNormal(
                 hwMap, "shooterLeft",
-                0.005,
+                0.0003,
                 1.0
         );
         this.shooterRight = new TerrorMotorNormal(
                 hwMap, "shooterRight",
-                0.005,
+                0.0003,
                 1.0
         );
         this.shooterEncoder = new TerrorEncoder(motorRearLeft);
@@ -157,7 +157,7 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterPitch = new TerrorServo(hwMap, "shooterHood", 0.005);
+        this.shooterPitch = new TerrorServo(hwMap, "shooterHood", 0.003);
         this.publisher.subscribe(5, shooterPitch);
 
 
