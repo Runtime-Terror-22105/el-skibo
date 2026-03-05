@@ -107,6 +107,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.camera.setBallPipelineEnabled(false);
         if (this.wantsAutoSort()) {
             robot.camera.startScanningForGlyphs();
+            robot.shooter.sotmOverride = false;
         } else {
             CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, false));
         }

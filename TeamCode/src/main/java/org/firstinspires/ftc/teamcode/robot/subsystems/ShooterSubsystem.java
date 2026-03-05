@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class ShooterSubsystem extends SubsystemBase {
     public static boolean USE_SOTM = true;
 
-
     public static boolean debug = false;
     public static boolean telemetry = true;
 
@@ -490,8 +489,7 @@ public class ShooterSubsystem extends SubsystemBase {
 //                    useSotm = false;
 //                } else {
                     robotPos = this.robot.follower.getPose();
-                    useSotm = USE_SOTM;
-//                    useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
+                    useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
 //                }
                 this.doAutoShoot(robotPos, useSotm);
             }
