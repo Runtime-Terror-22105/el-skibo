@@ -158,7 +158,8 @@ public class AutoBuilder {
     }
 
     private PathChain shootSpikePath(EnumSet<ShootPathFlag> flags) {
-        PathBuilder builder = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, true, true);
+        boolean useTangential = !auto.wantsAutoSort() || flags.contains(ShootPathFlag.LAST);
+        PathBuilder builder = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, getShootPose(ShootPathType.EDGE, flags), mirror, useTangential, useTangential);
         if (!auto.wantsAutoSort()) {
             builder = builder.setConstraintsForLast(RELAXED_CONSTRAINTS);
         }
