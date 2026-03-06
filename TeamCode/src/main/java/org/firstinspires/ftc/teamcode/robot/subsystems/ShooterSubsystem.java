@@ -480,7 +480,7 @@ public class ShooterSubsystem extends SubsystemBase {
             if (robot.robotState.isHang()) {
                 hardware.shooterLeft.setPower(0);
                 hardware.shooterRight.setPower(0);
-                double turretYaw = turretAngleToServoPos(Math.toRadians(90.0)) + this.turretOffset;
+                double turretYaw = turretAngleToServoPos(Math.toRadians(180.0)) + this.turretOffset;
                 hardware.turretYawLeft.setPosition(turretYaw);
                 hardware.turretYawRight.setPosition(turretYaw);
                 return;
