@@ -52,7 +52,17 @@ public class RampTest extends OpenCvPipeline
 
     Mat greenMask = new Mat();
 
+    public int ballsInRamp = 0;
 
+    public int getBallsInRamp()
+    {
+        return this.ballsInRamp;
+    }
+
+    private void setBallsInRamp(int amount)
+    {
+        this.ballsInRamp = amount;
+    }
 
     Mat cameraMatrix;
 
@@ -62,7 +72,7 @@ public class RampTest extends OpenCvPipeline
     public static double fy = 578.272;
     public static double cx = 402.145;
     public static double cy = 221.506;
-    private char[] rampBalls = {'N','N','N','N','N','N','N','N','N'};
+//    private char[] rampBalls = {'N','N','N','N','N','N','N','N','N'};
 
 
     private OpenCvCamera camera;
@@ -100,9 +110,6 @@ public class RampTest extends OpenCvPipeline
 
         double minArea = 500.0; // tune this for noise filtering
 
-
-
-
         for (MatOfPoint contour : contours) {
             double area = Imgproc.contourArea(contour);
             if (area > minArea) {
@@ -136,7 +143,16 @@ public class RampTest extends OpenCvPipeline
             }
         }
 
+        setBallsInRamp(detectedCenters.size());
 
+//        System.out.println(detectedCenters);
+
+//        blobs : [{1239.0, 818.0}, {1134.0, 788.0}, {1028.0, 758.0}, {934.0, 730.0}, {840.0, 706.0}, {737.0, 677.0}, {619.0, 644.0}, {526.0, 623.0}, {411.0, 585.0}]
+
+        if (telemetry != null) {
+            telemetry.addData("blobs", detectedCenters);
+        }
+//        telemetry.addData("blobs", detectedCenters);
         Mat masked = new Mat();
         Core.bitwise_and(input, input, masked, combinedMask);
 //        Imgproc.putText(input, "the", new Point(150,acceptPixelsAbove), Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 0,0), 2);
