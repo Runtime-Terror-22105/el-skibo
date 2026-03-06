@@ -137,7 +137,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 hub.clearBulkCache();
             }
 
-            CommandScheduler.getInstance().run();
+//            CommandScheduler.getInstance().run();
 
             robot.lightControl.setIsManualLighting(true);
             if(robot.color.equals(Team.RED))
