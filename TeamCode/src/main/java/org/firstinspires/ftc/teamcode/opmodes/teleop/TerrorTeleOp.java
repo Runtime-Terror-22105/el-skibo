@@ -193,8 +193,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
 
 //        GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
-        GamepadButton hangManualUpButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
-        GamepadButton hangManualDownButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
+        GamepadButton hangManualUpButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
+        GamepadButton hangManualDownButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
 
         GamepadButton headingLockButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
