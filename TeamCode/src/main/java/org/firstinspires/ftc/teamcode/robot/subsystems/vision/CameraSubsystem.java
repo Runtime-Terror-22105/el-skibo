@@ -201,7 +201,7 @@ public class CameraSubsystem extends SubsystemBase {
 //        setBallPipelineEnabled(false);
 
         if (!CameraUtil.setManualExposureMode(vPortalFront)) {
-            Log.e(TAG, "Failed to set manual exposure mode for front camera");
+//            Log.e(TAG, "Failed to set manual exposure mode for front camera");
         }
         exposureHasBeenSet = false;
         this.relocalizeTimer = new ElapsedTime();
@@ -376,16 +376,16 @@ public class CameraSubsystem extends SubsystemBase {
 //            if (!exposureHasBeenSet) {
 //                if (usingFrontCamera && vPortalFront != null) {
                     if (CameraUtil.setManualExposureMode(vPortalFront)) {
-                        Log.i(TAG, "Manual exposure mode set for front camera");
+//                        Log.i(TAG, "Manual exposure mode set for front camera");
                     } else {
-                        Log.e(TAG, "Failed to set manual exposure mode for front camera");
+//                        Log.e(TAG, "Failed to set manual exposure mode for front camera");
                     }
 
                     if (CameraUtil.setManualExposure(vPortalFront, (int)EXPOSURE_MICROSECONDS / 1000, GAIN)) {
-                        Log.i(TAG, "Manual exposure set for front camera");
+//                        Log.i(TAG, "Manual exposure set for front camera");
                         exposureHasBeenSet = true;
                     } else {
-                        Log.e(TAG, "Failed to set manual exposure for front camera");
+//                        Log.e(TAG, "Failed to set manual exposure for front camera");
                     }
 //                }
 //            }
@@ -510,21 +510,21 @@ public class CameraSubsystem extends SubsystemBase {
             }
 
 
-            Log.d("CameraSubsystem", "localizationTag != null: " + (localizationTag != null));
-            Log.d("CameraSubsystem", "localizationTag.robotPose != null: " + (localizationTag != null && localizationTag.robotPose != null));
-            Log.d("CameraSubsystem", "robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD: "
-                    + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
-            Log.d("CameraSubsystem", "Relocalization conditions met: " + ((localizationTag != null && localizationTag.robotPose != null)
-                    && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)));
+//            Log.d("CameraSubsystem", "localizationTag != null: " + (localizationTag != null));
+//            Log.d("CameraSubsystem", "localizationTag.robotPose != null: " + (localizationTag != null && localizationTag.robotPose != null));
+//            Log.d("CameraSubsystem", "robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD: "
+//                    + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
+//            Log.d("CameraSubsystem", "Relocalization conditions met: " + ((localizationTag != null && localizationTag.robotPose != null)
+//                    && (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD)));
 
 
 
 
             if(localizationTag != null)
             {
-            Log.d("YAEHEYAEYEAH.", (localizationTag != null) + String.valueOf(localizationTag.robotPose != null) + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
-                robot.telemetry.addData("isRobotPoseReal", localizationTag.robotPose != null);
-                robot.telemetry.addData("robotVelocityMag", robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD);
+//            Log.d("YAEHEYAEYEAH.", (localizationTag != null) + String.valueOf(localizationTag.robotPose != null) + (robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD));
+//                robot.telemetry.addData("isRobotPoseReal", localizationTag.robotPose != null);
+//                robot.telemetry.addData("robotVelocityMag", robot.follower.getVelocity().getMagnitude() < VELOCITY_THRESHOLD);
             }
 
 

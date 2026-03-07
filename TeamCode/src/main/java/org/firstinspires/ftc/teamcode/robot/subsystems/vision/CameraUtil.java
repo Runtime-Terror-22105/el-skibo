@@ -19,13 +19,13 @@ public class CameraUtil {
     static boolean setManualExposureMode(VisionPortal visionPortal) {
         // Ensure Vision Portal has been setup.
         if (visionPortal == null) {
-            Log.d(TAG, "setManualExposureMode: Vision Portal is null");
+//            Log.d(TAG, "setManualExposureMode: Vision Portal is null");
             return false;
         }
 
         // Wait for the camera to be open
         if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            Log.d(TAG, "setManualExposureMode: Camera is not streaming");
+//            Log.d(TAG, "setManualExposureMode: Camera is not streaming");
             return false;
         }
 
