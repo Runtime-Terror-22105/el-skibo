@@ -13,8 +13,8 @@ public class ShooterLookupTable {
             new ShooterLookupTableInstance.VelocityLookupValue(68.7,465),
             new ShooterLookupTableInstance.VelocityLookupValue(90.7,505),
             new ShooterLookupTableInstance.VelocityLookupValue(104.4,555),
-            new ShooterLookupTableInstance.VelocityLookupValue(122.7,580),
-            new ShooterLookupTableInstance.VelocityLookupValue(128.7,610),
+            new ShooterLookupTableInstance.VelocityLookupValue(122.7,590),
+            new ShooterLookupTableInstance.VelocityLookupValue(128.7,620),
             new ShooterLookupTableInstance.VelocityLookupValue(140.2,650),
             // other endpoint (prevent crashing)
 
