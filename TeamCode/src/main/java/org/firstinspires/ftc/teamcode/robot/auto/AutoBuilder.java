@@ -91,6 +91,8 @@ import java.util.function.Supplier;
 
 @Config
 public class AutoBuilder {
+    public static boolean TWO_SEGMENT_PARK_SORTED = false;
+
     public final Pose2d startPoseBlue;
     public final Robot robot;
     public final boolean mirror;
@@ -130,7 +132,7 @@ public class AutoBuilder {
 
     // Flags defined in ShootPathFlags
     private Pose2d getShootPose(ShootPathType type, EnumSet<ShootPathFlag> flags) {
-        if (flags.contains(ShootPathFlag.LAST) && !auto.wantsAutoSort()) {
+        if (flags.contains(ShootPathFlag.LAST) && (!auto.wantsAutoSort() || !TWO_SEGMENT_PARK_SORTED)) {
             return SHOOT_LAST_POSE;
         }
 
@@ -495,7 +497,7 @@ public class AutoBuilder {
             path = shootSpikePath(flags);
         }
         Command endCommand = new InstantCommand(() -> {});
-        if (flags.contains(ShootPathFlag.LAST) && auto.wantsAutoSort()) {
+        if (flags.contains(ShootPathFlag.LAST) && auto.wantsAutoSort() && TWO_SEGMENT_PARK_SORTED) {
             endCommand = parkSorted();
         }
         return new SequentialCommandGroup(
