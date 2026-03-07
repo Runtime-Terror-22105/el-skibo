@@ -6,11 +6,11 @@ import com.acmerobotics.dashboard.config.Config;
 public class ShooterLookupTable {
     public static ShooterLookupTableInstance.VelocityLookupValue[] NORMAL_VEL_DATA_POINTS = new ShooterLookupTableInstance.VelocityLookupValue[]{
             // endpoint (prevent crashing)
-            new ShooterLookupTableInstance.VelocityLookupValue(0, 400),
+            new ShooterLookupTableInstance.VelocityLookupValue(0, 405),
 
-            new ShooterLookupTableInstance.VelocityLookupValue(27.7,400),
-            new ShooterLookupTableInstance.VelocityLookupValue(45.5,425),
-            new ShooterLookupTableInstance.VelocityLookupValue(68.7,465),
+            new ShooterLookupTableInstance.VelocityLookupValue(27.7,405),
+            new ShooterLookupTableInstance.VelocityLookupValue(45.5,430),
+            new ShooterLookupTableInstance.VelocityLookupValue(68.7,470),
             new ShooterLookupTableInstance.VelocityLookupValue(90.7,505),
             new ShooterLookupTableInstance.VelocityLookupValue(104.4,555),
             new ShooterLookupTableInstance.VelocityLookupValue(122.7,610),
