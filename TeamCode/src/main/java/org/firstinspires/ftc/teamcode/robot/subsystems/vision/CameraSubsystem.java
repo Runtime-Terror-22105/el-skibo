@@ -56,7 +56,7 @@ public class CameraSubsystem extends SubsystemBase {
 //    private AprilTagProcessor frontTagProcessor;
     private AprilTagProcessor backTagProcessor;
 
-    private boolean shouldScanForGlyphs = true;
+    private boolean shouldScanForGlyphs = false;
     public boolean disableRelocalization = false;
     public boolean disableAprilTagsAfterGlyph = false;
 //    private BallDetectionPipeline ballPipeline;
@@ -195,9 +195,9 @@ public class CameraSubsystem extends SubsystemBase {
         }
 
 //        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
-        this.shouldScanForGlyphs = true;
+        this.shouldScanForGlyphs = false;
 
-        setAprilTagsEnabled(true);
+        setAprilTagsEnabled(false);
 //        setBallPipelineEnabled(false);
 
         if (!CameraUtil.setManualExposureMode(vPortalFront)) {
@@ -266,6 +266,7 @@ public class CameraSubsystem extends SubsystemBase {
         if (vPortalBack != null) {
             vPortalBack.setProcessorEnabled(backTagProcessor, enabled);
         }
+        shouldScanForGlyphs = enabled;
     }
 
 //    public void scheduleRelocalizeRequest()

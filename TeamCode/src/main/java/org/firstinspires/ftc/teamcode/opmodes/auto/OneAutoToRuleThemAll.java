@@ -104,10 +104,10 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         // todo do the rules require that we do ths after init?
         robot.setAutoSort(this.wantsAutoSort());
         robot.shooter.sotmAccelOverride = false;
-        robot.camera.setAprilTagsEnabled(this.wantsAutoSort());
+        robot.camera.setAprilTagsEnabled(false);
         robot.camera.setBallPipelineEnabled(false);
+        robot.camera.stopScanningForGlyphs();
         if (this.wantsAutoSort()) {
-            robot.camera.startScanningForGlyphs();
             robot.shooter.sotmOverride = false;
         } else {
             CommandScheduler.getInstance().schedule(new PrepareShootCommand(robot, false));

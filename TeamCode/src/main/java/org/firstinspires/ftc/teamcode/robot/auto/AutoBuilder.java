@@ -297,7 +297,11 @@ public class AutoBuilder {
         path.lastPath().setBrakingStrength(shootBrakingStrength);
         if (wantsAutoSort) {
             return new SequentialCommandGroup(
-                    new FollowPathCommand(robot.follower, path, true),
+                    new FollowPathCommand(robot.follower, path, true).alongWith(
+                            new WaitCommand(500).andThen(new InstantCommand(() -> {
+                                robot.camera.setAprilTagsEnabled(true);
+                            }))
+                    ),
                     new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                     new WaitForGlyphCommand(robot.camera).withTimeout(AutoConstants.WAIT_TIMEOUT_MOTIF),
 
