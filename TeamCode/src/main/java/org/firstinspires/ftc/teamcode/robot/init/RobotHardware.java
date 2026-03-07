@@ -236,7 +236,8 @@ public class RobotHardware {
     }
 
     public double getVoltageScale() {
-        return nominalVoltage / getCurrentVoltage();
+//        return nominalVoltage / getCurrentVoltage();
+        return 1.0;
     }
 
     public void write() {

@@ -34,6 +34,8 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     // only use for debug cus aadit says static vars are sus
     public static MultipleTelemetry debugTelemetry;
 
+    // No-op telemetry disables all telemetry output.
+    public static boolean USE_NOOP_TELEMETRY = false;
     public static boolean USE_FAST_TELEMETRY = true;
 
     // States
@@ -86,16 +88,21 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.hardware = hardware;
 
         // Set up dashboard stuff
-        Telemetry driverHubTelemetry;
-        if (USE_FAST_TELEMETRY) {
-            fastTelemetryImpl = new FastTelemetryImpl(opMode);
-            driverHubTelemetry = fastTelemetryImpl;
-        } else {
-            fastTelemetryImpl = null;
-            driverHubTelemetry = opMode.telemetry;
-        }
         this.dashboard = FtcDashboard.getInstance();
-        this.telemetry = new MultipleTelemetry(driverHubTelemetry, dashboard.getTelemetry());
+        if (USE_NOOP_TELEMETRY) {
+            fastTelemetryImpl = null;
+            telemetry = new MultipleTelemetry();
+        } else {
+            Telemetry driverHubTelemetry;
+            if (USE_FAST_TELEMETRY) {
+                fastTelemetryImpl = new FastTelemetryImpl(opMode);
+                driverHubTelemetry = fastTelemetryImpl;
+            } else {
+                fastTelemetryImpl = null;
+                driverHubTelemetry = opMode.telemetry;
+            }
+            this.telemetry = new MultipleTelemetry(driverHubTelemetry, dashboard.getTelemetry());
+        }
         debugTelemetry = telemetry;
 
         // Initialize the drivetrain

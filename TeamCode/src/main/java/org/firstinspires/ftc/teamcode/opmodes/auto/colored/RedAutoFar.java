@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.AutoFar;
 
 @Config
-@Autonomous(name="🟥 Red Far", group="Auto Far")
+@Autonomous(name="🟥 Red Far", group="Auto Far",preselectTeleOp = "🟥 Red RC TeleOp")
 public class RedAutoFar extends AutoFar {
     public RedAutoFar() {
         super(Team.RED);
