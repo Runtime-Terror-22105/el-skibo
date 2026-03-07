@@ -61,7 +61,7 @@ public class AutoConstants {
     public static int GATE_INTAKE_DELAY = 1200;
     public static int WALL_INTAKE_DELAY = 250;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
-    public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 1500;
+    public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 2500;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
     public static int INTAKE_DELAY_HORIZ = 1000;
