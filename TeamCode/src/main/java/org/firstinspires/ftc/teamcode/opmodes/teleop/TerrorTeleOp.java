@@ -363,7 +363,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             }
 
             if (!lastState.equals(READY_TO_SHOOT) && robot.robotState.equals(READY_TO_SHOOT)) {
-                robot.intake.setSpeed(IntakeSubsystem.REVERSE_SPEED_SLOW);
+//                robot.intake.setSpeed(IntakeSubsystem.REVERSE_SPEED_SLOW);
             }
 
             Profiler.pop();
