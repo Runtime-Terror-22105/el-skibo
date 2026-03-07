@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.LeaveAutoFar;
 
 @Config
-@Autonomous(name="Blue Side Leave Far Auto", group="Leave Auto",preselectTeleOp = "🟦 Blue RC TeleOp")
+@Autonomous(name="Blue Side Leave Far Auto", group="Leave Auto")
 public class BlueLeaveAutoFar extends LeaveAutoFar {
     public BlueLeaveAutoFar(){
         super(Team.BLUE);

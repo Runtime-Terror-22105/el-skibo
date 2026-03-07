@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.Auto18;
 
 @Config
-@Autonomous(name="Blue 18", group="Leave Auto", preselectTeleOp = "🟦 Blue RC TeleOp")
+@Autonomous(name="Blue 18", group="Leave Auto")
 public class Blue18 extends Auto18 {
     public Blue18(){
         super(Team.BLUE);

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.AutoSpamNoPushGate;
 
 @Config
-@Autonomous(name="🟥 Red Spam No Push Gate", group="15 Near Spam Auto",preselectTeleOp = "🟥 Red RC TeleOp")
+@Autonomous(name="🟥 Red Spam No Push Gate", group="15 Near Spam Auto")
 public class RedSpamNoPushGate extends AutoSpamNoPushGate {
     public RedSpamNoPushGate(){
         super(Team.RED);

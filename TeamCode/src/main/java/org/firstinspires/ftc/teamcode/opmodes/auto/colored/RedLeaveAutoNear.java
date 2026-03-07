@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.LeaveAutoNear;
 
 @Config
-@Autonomous(name="Red Leave Near Side Auto", group="Leave Auto",preselectTeleOp = "🟥 Red RC TeleOp")
+@Autonomous(name="Red Leave Near Side Auto", group="Leave Auto")
 public class RedLeaveAutoNear extends LeaveAutoNear {
     public RedLeaveAutoNear(){
         super(Team.RED);

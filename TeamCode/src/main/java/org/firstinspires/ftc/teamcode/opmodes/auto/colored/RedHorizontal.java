@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.AutoHorizontal;
 
 @Config
-@Autonomous(name="🟥 Red Horizontal", group="Auto Horizontal",preselectTeleOp = "🟥 Red RC TeleOp")
+@Autonomous(name="🟥 Red Horizontal", group="Auto Horizontal")
 public class RedHorizontal extends AutoHorizontal {
     public RedHorizontal() {
         super(Team.RED);
