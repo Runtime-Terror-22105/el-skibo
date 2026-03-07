@@ -17,7 +17,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(53, 98, Math.toRadians(-124.7));
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 120, Math.toRadians(-124.7));
-    public static Pose2d SHOOT_FAR_POSE = new Pose2d(51, 16, Math.toRadians(205));
+    public static Pose2d SHOOT_FAR_POSE = new Pose2d(53, 15, Math.toRadians(210));
     public static Pose2d SHOOT_SORTED_POSE = new Pose2d(54, 88, Math.toRadians(-124.7));
 
     public static Pose2d INTAKE_BEFORE_HORIZ_CONTROL = new Pose2d(21, 116, 0);
@@ -59,7 +59,7 @@ public class AutoConstants {
     public static int WAIT_TIMEOUT_MOTIF = 5000;
     public static int INTAKE_DELAY = 600;
     public static int GATE_INTAKE_DELAY = 1200;
-    public static int WALL_INTAKE_DELAY = 300;
+    public static int WALL_INTAKE_DELAY = 500;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 2500;
     public static int PRE_SHOOT_DELAY = 0;
