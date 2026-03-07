@@ -35,7 +35,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
     public static MultipleTelemetry debugTelemetry;
 
     // No-op telemetry disables all telemetry output.
-    public static boolean USE_NOOP_TELEMETRY = true;
+    public static boolean USE_NOOP_TELEMETRY = false;
     public static boolean USE_FAST_TELEMETRY = true;
 
     // States
