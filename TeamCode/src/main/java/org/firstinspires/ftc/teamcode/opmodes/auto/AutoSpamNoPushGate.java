@@ -28,12 +28,12 @@ public abstract class AutoSpamNoPushGate extends OneAutoToRuleThemAll {
     protected Command createAutoCommand(AutoBuilder builder) {
         builder.shootBrakingStrength = 0.7;
         return new SequentialCommandGroup(
-                builder.shootPreload(ShootPathFlag.EARLY_LEAVE),
-                builder.cycleSpike(1, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleSpike(2, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleGate(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleGate(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleGate(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
+                builder.shootPreload(),//ShootPathFlag.EARLY_LEAVE),
+                builder.cycleSpike(1), //ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleSpike(2), //ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleGate(true), //ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                builder.cycleGate(true) //ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                //builder.cycleGate(true) //ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
         ).alongWith(new KillTimerCommand(robot));
     }
 }

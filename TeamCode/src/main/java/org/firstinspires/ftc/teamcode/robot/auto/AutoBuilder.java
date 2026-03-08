@@ -535,7 +535,7 @@ public class AutoBuilder {
     public Command intakeGate() {
         return new SequentialCommandGroup(
                 new FollowPathCommand(robot.follower, intakeGatePath1(), true, MAX_DRIVETRAIN_POWER_INTAKING),
-                new WaitCommand(250),
+//                new WaitCommand(250),
                 new FollowPathCommand(robot.follower, intakeGatePath2(), true, MAX_DRIVETRAIN_POWER_INTAKING),
                 new WaitForIntakeCommand(robot).withTimeout(GATE_INTAKE_DELAY)
         );
