@@ -237,7 +237,8 @@ public class AutoBuilder {
 //                .setBrakingStrength(0.6)
 //                .build();
         this.lastPath = PathUtil.addPathBuilderCurve(robot, startPoseBlue, lastPath, GATE_CONTROL_POSE, HITTING_GATE, mirror, false, false)
-                .setBrakingStrength(0.6)
+//                .setBrakingStrength(0.6)
+                .setNoDeceleration()
                 .build();
         return lastPath;
     }
