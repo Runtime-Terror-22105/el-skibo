@@ -44,7 +44,7 @@ public class AutoConstants {
 
     // For CYCLING gate.
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 68.5, Math.toRadians(180));
-    public static Pose2d HITTING_GATE = new Pose2d(15, 67, Math.toRadians(180));
+    public static Pose2d HITTING_GATE = new Pose2d(15, 66, Math.toRadians(180));
     public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(15, 55.5);
     public static Pose2d AFTER_GATE = new Pose2d(10, 55.7, Math.toRadians(120));
 
@@ -58,7 +58,7 @@ public class AutoConstants {
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
     public static int INTAKE_DELAY = 600;
-    public static int GATE_INTAKE_DELAY = 1200;
+    public static int GATE_INTAKE_DELAY = 1000;
     public static int WALL_INTAKE_DELAY = 500;
     public static int PRELOAD_PRE_SHOOT_DELAY = 250;
     public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 2500;
@@ -67,14 +67,14 @@ public class AutoConstants {
     public static int INTAKE_DELAY_HORIZ = 1000;
     public static int REVERSE_INTAKE_GATE_DELAY = 250;
     public static int SORTED_SHOOT_DELAY = 800;
-    public static int NORMAL_SHOOT_DELAY = 100;
+    public static int NORMAL_SHOOT_DELAY = 0;
 
     public static double SHOOT_BRAKING_STRENGTH = 0.8;
     public static double SORTED_BRAKING_STRENGTH = 0.5;
 
     // Distance (in inches) from the target shoot pose for which early shoot begins
     // shooting
-    public static double EARLY_SHOOT_DISTANCE = 7.0;
+    public static double EARLY_SHOOT_DISTANCE = 15.0;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
