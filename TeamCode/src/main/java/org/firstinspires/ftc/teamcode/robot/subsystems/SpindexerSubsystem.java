@@ -214,8 +214,18 @@ public class SpindexerSubsystem extends SubsystemBase {
     public boolean newSort()
     {
         BallColor[] balls = getBallPositions();
-        Log.d("SpindexerSubsystem", "balls" + balls[0].toChar() + balls[1].toChar() +balls[2].toChar());
-        BallColor[] glyphArr = robot.camera.getGlyphCharArray();
+        BallColor[] glyphArr;
+        if(robot.camera.getRampCVEnabled())
+        {
+            glyphArr = robot.camera.getGlyphCharArray(
+                    robot.camera.getIdealBallPattern()
+            );
+        }
+        else
+        {
+            glyphArr = robot.camera.getGlyphCharArray();
+        }
+
         if (glyphArr == null) { return false; }
 
         Log.d("SpindexerSubsystem", "sorting with the following balls: " + balls[0] + ","+balls[1]+","+balls[2]);

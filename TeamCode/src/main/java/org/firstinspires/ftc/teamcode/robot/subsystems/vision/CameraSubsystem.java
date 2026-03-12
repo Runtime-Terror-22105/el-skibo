@@ -56,6 +56,8 @@ public class CameraSubsystem extends SubsystemBase {
 //    private AprilTagProcessor frontTagProcessor;
     private AprilTagProcessor backTagProcessor;
 
+    private RampPipeline rampPipline;
+
     private boolean shouldScanForGlyphs = false;
     public boolean disableRelocalization = false;
     public boolean disableAprilTagsAfterGlyph = false;
@@ -64,9 +66,11 @@ public class CameraSubsystem extends SubsystemBase {
     public static double MAX_CONTOUR_AREA = 100000;
 
     public enum GLYPH {
-        GPP(BallColor.GREEN, BallColor.PURPLE, BallColor.PURPLE),
+
+        PPG(BallColor.PURPLE, BallColor.PURPLE, BallColor.GREEN),
         PGP(BallColor.PURPLE, BallColor.GREEN, BallColor.PURPLE),
-        PPG(BallColor.PURPLE, BallColor.PURPLE, BallColor.GREEN);
+        GPP(BallColor.GREEN, BallColor.PURPLE, BallColor.PURPLE);
+
 
         public final BallColor[] colors;
 
@@ -92,9 +96,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     private Pose debugLastDetection = null; // for debug only
     private long debugDetectionTime = 0; // for debug only
-
-    private AprilTagDetection[] obeliskpair = {null,null};
-
     private Team team;
 
     private int[] visionPortalIDs;
@@ -102,7 +103,8 @@ public class CameraSubsystem extends SubsystemBase {
     public Pose2d ballGoal = new Pose2d(8, 24);
     public static Pose2d ballDefaultGoal = new Pose2d(8, 24);
 
-    private boolean doBallVision = false;
+    private boolean rampCVEnabled = false;
+    private boolean ballCVEnabled = false;
 
     public static double pixelValueLow = 70;
     public static double pixelValueHigh = 240;
@@ -207,6 +209,33 @@ public class CameraSubsystem extends SubsystemBase {
         this.relocalizeTimer = new ElapsedTime();
 //        vPortalBack.stopStreaming();
     }
+
+    public boolean getBallCVEnabled()
+    {
+        return this.ballCVEnabled;
+    }
+
+    public void setBallCVEnabled(boolean state)
+    {
+        this.ballCVEnabled = state;
+    }
+
+    public boolean getRampCVEnabled()
+    {
+        return this.rampCVEnabled;
+    }
+
+    public void setRampCVEnabled(boolean state)
+    {
+        this.rampCVEnabled = state;
+    }
+
+    public int getBallsSeen()
+    {
+        return rampPipline.getBallsInRamp();
+    }
+
+
 
     private AprilTagProcessor createAprilTagProcessor() {
         AprilTagProcessor processor = new AprilTagProcessor.Builder()
@@ -314,6 +343,10 @@ public class CameraSubsystem extends SubsystemBase {
         return gameGlyph == null ? null : gameGlyph.colors;
     }
 
+    public BallColor[] getGlyphCharArray(GLYPH glyph) {
+        return glyph == null ? null : glyph.colors;
+    }
+
     public void setGlyph(GLYPH glyph) {
         gameGlyph = glyph;
 //        // Log.i("CameraSubsystem", "Found glyph " + gameGlyph);
@@ -322,30 +355,6 @@ public class CameraSubsystem extends SubsystemBase {
     public void setTeam(Team team)
     {
         this.team = team;
-    }
-
-    public void setObeliskPairInAuto(AprilTagDetection[] pair)
-    {
-        Integer[] tags = {pair[0].id,pair[1].id};
-        Arrays.sort(tags);
-//        // Log.d(TAG,"redpair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(tags))));
-//        // Log.d(TAG,"bluepair: " + VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(tags))));
-        switch(team)
-        {
-            case RED:
-                gameGlyph = VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(Arrays.asList(tags)));
-//                gameGlyph = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(VisionConstants.APRILTAG.RedObeliskPairs.get(pair)));
-                break;
-
-            case BLUE:
-                gameGlyph = VisionConstants.APRILTAG.glyphMap.get(VisionConstants.APRILTAG.BlueObeliskPairs.get(Arrays.asList(tags)));
-                break;
-
-            default:
-                // Log.d("CameraSubsystem", "Can't do this, team unknown!");
-                break;
-        }
-
     }
 
     public Pose2d getBallCoords(){
@@ -359,6 +368,22 @@ public class CameraSubsystem extends SubsystemBase {
 //        tempPos.y += offset;
 //        return tempPos;
         return ballDefaultGoal;
+    }
+
+    //the ideal pattern to shoot to when using rampCV
+    public GLYPH getIdealBallPattern()
+    {
+        //this will cause a problem, too bad!
+        if(gameGlyph == null)
+        {
+            return null;
+        }
+
+        int ballsSeen = getBallsSeen() % 3;
+
+        GLYPH[] values = GLYPH.values();
+        int index = (gameGlyph.ordinal() + ballsSeen) % values.length;
+        return values[index];
     }
 
     @Override
@@ -431,22 +456,14 @@ public class CameraSubsystem extends SubsystemBase {
 
             }
 
-            if(usingFrontCamera && this.doBallVision){
-                //this.ballGoal = this.getBlobCoordinates();
-
-            }
-
             // Log.d(TAG, "shouldscanforglyph: " + shouldScanForGlyphs);
             //should only ever be the blue or red goal which is 20 and 24 respectively
             AprilTagDetection localizationTag = null;
-            int obeliskIndex = 0;
 
             robot.telemetry.addData("detections",detections);
 
             for (AprilTagDetection tag : detections) {
                 if (tag.id >= 21 && tag.id <= 23) {
-                    obeliskpair[obeliskIndex] = tag;
-                    obeliskIndex++;
                     if(shouldScanForGlyphs)
                     {
                         GLYPH glyphhh = GLYPH.valueOf(VisionConstants.APRILTAG.tagMap.get(tag.id));
