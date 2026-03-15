@@ -269,19 +269,21 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         Core.bitwise_or(colorMask, temp, colorMask);
 //        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
 
-        Bitmap maskBitmap = Bitmap.createBitmap(colorMask.width(), colorMask.height(), Bitmap.Config.RGB_565);
-        Utils.matToBitmap(colorMask, maskBitmap);
-        lastMask.set(maskBitmap);
-
         // Morphology cleans up the mask, erosion removes noise and dilation fills in gaps
-        Size smallKernel = new Size(3, 3);
+        // TODO: I made the kernel size very big which is a little sus, might have to tune a bit, the reason is that nearby balls should be connected into a clump
+        // even when there's a bit of a gap
+        Size smallKernel = new Size(5, 5);
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, smallKernel);
-        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
+//        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
         Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_CLOSE, kernel);
 
         // Apply ROI mask
         Core.bitwise_and(colorMask, roiMask, colorMask);
         Log.d(TAG, "Applied morphology operations and ROI masking");
+
+        Bitmap maskBitmap = Bitmap.createBitmap(colorMask.width(), colorMask.height(), Bitmap.Config.RGB_565);
+        Utils.matToBitmap(colorMask, maskBitmap);
+        lastMask.set(maskBitmap);
 
         // Find contours
         ArrayList<MatOfPoint> contours = new ArrayList<>();
