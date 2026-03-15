@@ -32,6 +32,7 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
@@ -59,7 +60,6 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     public static int COLOR_BIGGEST_BLOB = Color.GREEN;
     public static int COLOR_OTHER_BLOBS = Color.RED;
 
-    private ImageRegion roiImg; // the image within the roi
     private Rect roi; // roi = region of interest
 
     private int contourCode;
@@ -83,6 +83,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     private Mat temp = new Mat();
     private Mat roiMask = new Mat();
+    private final Mat colorMask = new Mat();
+    MatOfPoint maskShape;
 
     private final AtomicReference<Bitmap> lastFrame =
             new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
@@ -92,10 +94,12 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     // for now I just set it to the full thing, but still have it as an option just in case
     public static Point[] ROI_POINTS = {
-            new Point(0,0),
-            new Point(0,240),
-            new Point(320,240),
-            new Point(320,0),
+            new Point(30,0),
+            new Point(20,140),
+            new Point(50,140),
+            new Point(50,180),
+            new Point(280,180),
+            new Point(280,20),
     };
 
     private boolean flipped = false;
@@ -150,12 +154,11 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         }
     }
 
-    public BallDetectionPipeline(ImageRegion roiImg, ContourMode contourMode,
+    public BallDetectionPipeline(ContourMode contourMode,
                                       int erodeSize, int dilateSize, int blurSize,
                                       @ColorInt int boundingBoxColor, @ColorInt int roiColor, @ColorInt int contourColor)
     {
         Log.i(TAG, "Initializing BallDetectionPipeline");
-        this.roiImg = roiImg;
         this.boundingBoxColor = boundingBoxColor;
         this.roiColor = roiColor;
         this.contourColor = contourColor;
@@ -197,6 +200,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
         roiPaint = new Paint();
         roiPaint.setAntiAlias(true);
+        roiPaint.setStyle(Paint.Style.STROKE);
         roiPaint.setStrokeCap(Paint.Cap.BUTT);
         roiPaint.setColor(roiColor);
 
@@ -215,8 +219,15 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     public void init(int width, int height, CameraCalibration calibration) {
         lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
         lastMask.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
-        roi = roiImg.asOpenCvRect(width, height);
+
         roiMask = new Mat(height, width, 0);
+
+        maskShape = new MatOfPoint();
+        maskShape.fromArray(ROI_POINTS);
+
+        List<MatOfPoint> polygons = new ArrayList<>();
+        polygons.add(maskShape);
+        Imgproc.fillPoly(roiMask, polygons, new Scalar(255));
 
         this.frameWidth = width;
         this.frameHeight = height;
@@ -252,14 +263,11 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 //        applyBlurIfNeeded();
 
         // Create masks for all color types
-        Mat colorMask = new Mat();
 //        Core.inRange(this.roiMat, ColorRange.GREEN.min,  ColorRange.GREEN.max, colorMask);
-        Mat tmp = new Mat();
-        Core.inRange(this.roiMat, ColorRange.greenLow,  ColorRange.greenHigh, tmp);
+        Core.inRange(this.roiMat, ColorRange.greenLow,  ColorRange.greenHigh, temp);
         Core.inRange(this.roiMat, ColorRange.purpleLow1, ColorRange.purpleHigh1, colorMask);
-        Core.bitwise_or(colorMask, tmp, colorMask);
+        Core.bitwise_or(colorMask, temp, colorMask);
 //        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
-        tmp.release();
 
         Bitmap maskBitmap = Bitmap.createBitmap(colorMask.width(), colorMask.height(), Bitmap.Config.RGB_565);
         Utils.matToBitmap(colorMask, maskBitmap);
@@ -272,8 +280,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_CLOSE, kernel);
 
         // Apply ROI mask
-//        Core.bitwise_and(colorMask, roiMask, colorMask);
-//        Log.d(TAG, "Applied morphology operations and ROI masking");
+        Core.bitwise_and(colorMask, roiMask, colorMask);
+        Log.d(TAG, "Applied morphology operations and ROI masking");
 
         // Find contours
         ArrayList<MatOfPoint> contours = new ArrayList<>();
@@ -399,8 +407,6 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         boundingRectPaint.setStrokeWidth(scaleCanvasDensity * 2f);
         roiPaint.setStrokeWidth(scaleCanvasDensity * 0.5f);
 
-        android.graphics.Rect gfxRect = makeGraphicsRect(roi, scaleBmpPxToCanvasPx);
-
         Paint textPaint = new Paint();
         textPaint.setColor(contourColor);
         textPaint.setTextSize(scaleCanvasDensity * 5.0f);
@@ -458,13 +464,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
             path.lineTo((float) (contourPts[i].x) * scaleBmpPxToCanvasPx, (float) (contourPts[i].y) * scaleBmpPxToCanvasPx);
         }
         path.close();
-        canvas.drawPath(path, contourPaint);
-
-        canvas.drawLine(gfxRect.left, gfxRect.top, gfxRect.right, gfxRect.top, roiPaint);
-        canvas.drawLine(gfxRect.right, gfxRect.top, gfxRect.right, gfxRect.bottom, roiPaint);
-        canvas.drawLine(gfxRect.right, gfxRect.bottom, gfxRect.left, gfxRect.bottom, roiPaint);
-        canvas.drawLine(gfxRect.left, gfxRect.bottom, gfxRect.left, gfxRect.top, roiPaint);
-//
+        canvas.drawPath(path, roiPaint);
+        //
 //        // flip the camera
 //        canvas.scale(-1f, -1f, canvas.getWidth() / 2f, canvas.getHeight() / 2f);
     }

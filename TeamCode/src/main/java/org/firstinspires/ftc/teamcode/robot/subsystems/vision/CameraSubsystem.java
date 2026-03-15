@@ -264,8 +264,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     private BallDetectionPipeline createBallDetectionPipeline() {
         BallDetectionPipeline pipeline = new BallDetectionPipeline(
-                org.firstinspires.ftc.teamcode.robot.subsystems.vision.ImageRegion
-                        .asImageCoordinates(0, 0, 320, 240), // the roi
                 ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY, // don't do blobs from nested contours
                 -1, // erodesize
                 -1, // don't dilate the image

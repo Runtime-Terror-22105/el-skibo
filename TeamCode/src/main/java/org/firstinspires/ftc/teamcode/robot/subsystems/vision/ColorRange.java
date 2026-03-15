@@ -47,8 +47,8 @@ public class ColorRange
     public final Scalar min;
     public final Scalar max;
 
-    public static Scalar purpleLow1  = new Scalar(154, 10, 0);
-    public static Scalar purpleHigh1 = new Scalar(166, 255, 255);
+    public static Scalar purpleLow1  = new Scalar(140, 100, 80);
+    public static Scalar purpleHigh1 = new Scalar(160, 255, 255);
     public static Scalar purpleLow2  = new Scalar(255, 0, 0);
     public static Scalar purpleHigh2 = new Scalar(0, 255, 255);
 
