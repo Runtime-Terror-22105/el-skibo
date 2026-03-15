@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.BallColor;
 
 @Config
 public class TerrorColorSensor implements NormalizedColorSensor {
-    public static double MAX_DIST = 50;
+    public static double MAX_DIST = 43;
 
     private final RevColorSensorV3 sensor;
     private final BatchColorSensor reading = new BatchColorSensor();
