@@ -4,12 +4,15 @@ import android.graphics.Color;
 import android.util.Log;
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.SortOrder;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
@@ -28,6 +31,7 @@ import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
@@ -38,6 +42,8 @@ public class CameraSubsystem extends SubsystemBase {
      */
 
     public static String TAG = "CameraSubsystem";
+
+    public boolean doBallVision = false;
 
     public static boolean GLOBAL_DISABLE_RELOCALIZATION = false;
     public static boolean USE_LIVE_VIEW = false;
@@ -53,7 +59,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static int GAIN = 255;
 
     private AprilTagProcessorDash aTagProcessor;
-//    private AprilTagProcessor frontTagProcessor;
+    private AprilTagProcessor frontTagProcessor;
     private AprilTagProcessor backTagProcessor;
 
     private RampPipeline rampPipline;
@@ -61,7 +67,7 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean shouldScanForGlyphs = false;
     public boolean disableRelocalization = false;
     public boolean disableAprilTagsAfterGlyph = false;
-//    private BallDetectionPipeline ballPipeline;
+    private BallDetectionPipeline ballPipeline;
     public static double MIN_CONTOUR_AREA = 300;
     public static double MAX_CONTOUR_AREA = 100000;
 
@@ -150,27 +156,27 @@ public class CameraSubsystem extends SubsystemBase {
         this.robot = robot;
         this.hardware = hardware;
         this.detections = new ArrayList<>();
-//        this.frontTagProcessor = createAprilTagProcessor();
+        this.frontTagProcessor = createAprilTagProcessor();
         this.backTagProcessor = createAprilTagProcessor();
-//        this.ballPipeline = createBallDetectionPipeline();
-//        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
+        this.ballPipeline = createBallDetectionPipeline();
+        this.aTagProcessor = new AprilTagProcessorDash(createAprilTagProcessor());
 
         Log.d(TAG, "Vision portal IDs: " + Arrays.toString(visionPortalIDs));
-//        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
-//                .setCamera(hardware.frontCamera)
-//                .setCameraResolution(new Size(frontCameraWidth, 240))
-//                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-//                .setLiveViewContainerId(visionPortalIDs[0])
-//                .setAutoStartStreamOnBuild(true)
-//                .setAutoStopLiveView(false)
-//                .setShowStatsOverlay(true)
-//                .addProcessor(this.ballPipeline);
+        VisionPortal.Builder vPortalFrontBuilder = new VisionPortal.Builder()
+                .setCamera(hardware.frontCamera)
+                .setCameraResolution(new Size(frontCameraWidth, 240))
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setLiveViewContainerId(visionPortalIDs[1])
+                .setAutoStartStreamOnBuild(true)
+                .setAutoStopLiveView(false)
+                .setShowStatsOverlay(true)
+                .addProcessor(this.ballPipeline);
 
         VisionPortal.Builder vPortalBackBuilder = new VisionPortal.Builder()
                 .setCamera(hardware.backCamera)
                 .setCameraResolution(new Size(1280, 800))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .setLiveViewContainerId(visionPortalIDs[1])
+                .setLiveViewContainerId(visionPortalIDs[0])
                 .setAutoStartStreamOnBuild(true)
                 .setAutoStopLiveView(false)
                 .setShowStatsOverlay(true)
@@ -187,20 +193,20 @@ public class CameraSubsystem extends SubsystemBase {
         }
 
         if (hardware.frontCamera != null) {
-//            FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
-//            this.vPortalFront = vPortalFrontBuilder.build();
-//            if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
+            FtcDashboard.getInstance().startCameraStream(ballPipeline, 0);
+            this.vPortalFront = vPortalFrontBuilder.build();
+            if (!USE_LIVE_VIEW) vPortalFront.stopLiveView();
         }
         if (hardware.backCamera != null) {
             this.vPortalBack = vPortalBackBuilder.build();
             if (!USE_LIVE_VIEW) vPortalBack.stopLiveView();
         }
 
-//        FtcDashboard.getInstance().startCameraStream(vPortalField, 0);
+        FtcDashboard.getInstance().startCameraStream(vPortalFront, 0);
         this.shouldScanForGlyphs = false;
 
         setAprilTagsEnabled(false);
-//        setBallPipelineEnabled(false);
+        setBallPipelineEnabled(false);
 
         if (!CameraUtil.setManualExposureMode(vPortalFront)) {
 //            Log.e(TAG, "Failed to set manual exposure mode for front camera");
@@ -281,11 +287,11 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public void setBallPipelineEnabled(boolean enabled) {
-//        if (vPortalFront != null) {
-//            vPortalFront.setProcessorEnabled(ballPipeline, enabled);
-//        }
-//
-//        doBallVision = enabled;
+        if (vPortalFront != null) {
+            vPortalFront.setProcessorEnabled(ballPipeline, enabled);
+        }
+
+        doBallVision = enabled;
     }
 
     public void setAprilTagsEnabled(boolean enabled) {
@@ -358,16 +364,16 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public Pose2d getBallCoords(){
-//        BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
-//        if (blob == null) {
-//            return ballDefaultGoal;
-//        }
-//        Pose2d tempPos = ballDefaultGoal.copy();
-////        double offset = blob.getCenter().x;
-//        double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
-//        tempPos.y += offset;
-//        return tempPos;
-        return ballDefaultGoal;
+        BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
+        if (blob == null) {
+            return ballDefaultGoal;
+        }
+        Pose2d tempPos = ballDefaultGoal.copy();
+//        double offset = blob.getCenter().x;
+        double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
+        tempPos.y += offset;
+        return tempPos;
+
     }
 
     //the ideal pattern to shoot to when using rampCV
@@ -386,6 +392,7 @@ public class CameraSubsystem extends SubsystemBase {
         return values[index];
     }
 
+
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("CameraSubsystem")) {
@@ -399,45 +406,8 @@ public class CameraSubsystem extends SubsystemBase {
 
 
 
-//            if (!exposureHasBeenSet) {
-//                if (usingFrontCamera && vPortalFront != null) {
-                    if (CameraUtil.setManualExposureMode(vPortalFront)) {
-//                        Log.i(TAG, "Manual exposure mode set for front camera");
-                    } else {
-//                        Log.e(TAG, "Failed to set manual exposure mode for front camera");
-                    }
 
-                    if (CameraUtil.setManualExposure(vPortalFront, (int)EXPOSURE_MICROSECONDS / 1000, GAIN)) {
-//                        Log.i(TAG, "Manual exposure set for front camera");
-                        exposureHasBeenSet = true;
-                    } else {
-//                        Log.e(TAG, "Failed to set manual exposure for front camera");
-                    }
-//                }
-//            }
 
-            // Reference for Logitech C270:
-//        public void setDefaultExposure() {
-//            this.camera.getExposureControl().setMode(ExposureControl.Mode.AperturePriority);
-//            this.camera.getGainControl().setGain(64);
-//        }
-//
-//        public void setLowExposure() {
-//            this.camera.getExposureControl().setMode(ExposureControl.Mode.Manual);
-//            this.camera.getExposureControl().setExposure(100, TimeUnit.MICROSECONDS);
-//            this.camera.getGainControl().setGain(255);
-//        }
-//        try {
-//            ExposureControl exposure = vPortalField.getCameraControl(ExposureControl.class);
-//            GainControl gain = vPortalField.getCameraControl(GainControl.class);
-//            exposure.setMode(ExposureControl.Mode.Manual);
-//            exposure.setExposure(EXPOSURE_MICROSECONDS, TimeUnit.MICROSECONDS);
-//            gain.setGain(GAIN);
-//        } catch (IllegalStateException e) {
-//            // there's an error where it says that you cannot set controls until camera starts streaming
-//            // todo handle ths properly and don't just do a try-catch
-//            // Log.w("CameraSubsystem", e);
-//        }
 
             robot.telemetry.addData("backTagProcessor enabled", vPortalBack.getProcessorEnabled(backTagProcessor));
             if (!vPortalBack.getProcessorEnabled(backTagProcessor)) {
@@ -478,6 +448,18 @@ public class CameraSubsystem extends SubsystemBase {
                 } else {
                     localizationTag = tag;
                 }
+            }
+
+            try {
+                ExposureControl exposure = vPortalFront.getCameraControl(ExposureControl.class);
+                GainControl gain = vPortalFront.getCameraControl(GainControl.class);
+                exposure.setMode(ExposureControl.Mode.Manual);
+                exposure.setExposure(EXPOSURE_MICROSECONDS, TimeUnit.MICROSECONDS);
+                gain.setGain(GAIN);
+            } catch (IllegalStateException e) {
+                // there's an error where it says that you cannot set controls until camera starts streaming
+                // todo handle ths properly and don't just do a try-catch
+                // Log.w("CameraSubsystem", e);
             }
 //            if(isNearAuto) {
 //                if(obeliskIndex==1)
