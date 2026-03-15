@@ -116,7 +116,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         RAW, MASK, IMAGE_DRAWING
     }
 
-    public static StreamType streamType = StreamType.MASK;
+    public static StreamType streamType = StreamType.IMAGE_DRAWING;
 
     public Point pixelToRealCoords(Point pixelCoords) {
         // TODO
@@ -254,23 +254,22 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         // Create masks for all color types
         Mat colorMask = new Mat();
 //        Core.inRange(this.roiMat, ColorRange.GREEN.min,  ColorRange.GREEN.max, colorMask);
-        Core.inRange(this.roiMat, ColorRange.greenLow,  ColorRange.greenHigh, colorMask);
+        Mat tmp = new Mat();
+        Core.inRange(this.roiMat, ColorRange.greenLow,  ColorRange.greenHigh, tmp);
+        Core.inRange(this.roiMat, ColorRange.purpleLow1, ColorRange.purpleHigh1, colorMask);
+        Core.bitwise_or(colorMask, tmp, colorMask);
 //        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
+        tmp.release();
 
         Bitmap maskBitmap = Bitmap.createBitmap(colorMask.width(), colorMask.height(), Bitmap.Config.RGB_565);
         Utils.matToBitmap(colorMask, maskBitmap);
         lastMask.set(maskBitmap);
 
         // Morphology cleans up the mask, erosion removes noise and dilation fills in gaps
-//        Size smallKernel = new Size(3, 3);
-//        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, smallKernel);
-//        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
-//        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_CLOSE, kernel);
-//
-//        // Apply erosion if configured
-//        if (erodeElement != null) {
-//            Imgproc.erode(colorMask, colorMask, erodeElement);
-//        }
+        Size smallKernel = new Size(3, 3);
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, smallKernel);
+        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_OPEN, kernel);
+        Imgproc.morphologyEx(colorMask, colorMask, Imgproc.MORPH_CLOSE, kernel);
 
         // Apply ROI mask
 //        Core.bitwise_and(colorMask, roiMask, colorMask);
@@ -293,6 +292,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 //        applyFilters(blobs);
 
         if (blobs.isEmpty()) {
+            colorMask.release();
             Log.w(TAG, "No valid blobs found after processing.");
             userBlobs = new ArrayList<>();
             return userBlobs;
@@ -304,6 +304,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         Bitmap outputBitmap = createOutputBitmap(frame, colorMask, blobs);
         lastFrame.set(outputBitmap);
         Log.d(TAG, "Made bitmap stuff");
+
+        colorMask.release();
 
         userBlobs = new ArrayList<>(blobs);
         return userBlobs;
