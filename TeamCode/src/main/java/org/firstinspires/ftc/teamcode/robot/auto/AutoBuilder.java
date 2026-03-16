@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
@@ -633,13 +634,18 @@ public class AutoBuilder {
                         new InstantCommand(() -> robot.camera.setBallPipelineEnabled(true)),
                         new FollowPathCommand(robot.follower, lastPath, true, 0.9)
                 ),
-                new WaitUntilCommand(() -> robot.camera.hasBlob())
+                new LogCatCommand("AutoBuilder", "finished path to vision, waiting for blob"),
+                new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
+                new WaitUntilCommand(() -> robot.camera.hasBlob()),
+                new LogCatCommand("AutoBuilder", "blob found, preparing shoot")
         );
 
     }
 
     public Command intakeVision(boolean reverseIntake){
-        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, robot.camera.getBallCoords(), mirror, true, false)
+        Pose2d wallCoords = INTAKE_WALL_POSE.mirror(mirror);
+        // note: mirror is set to false since we mirror above!
+        this.lastPath = PathUtil.addPathBuilderLine(robot, startPoseBlue, lastPath, robot.camera.offsetByBallCoords(wallCoords), false, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
                 .build();

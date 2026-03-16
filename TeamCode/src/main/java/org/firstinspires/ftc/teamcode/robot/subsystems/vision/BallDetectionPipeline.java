@@ -137,13 +137,15 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
 
     public BlobImpl getChosenBlob() {
-        synchronized (chosenBlobThreadLock) {
-            if (this.chosenBlob != null) {
-                this.chosenBlobIsLocked = true;
-                this.chosenBlobSaved = chosenBlob;
-            }
-            return chosenBlobSaved;
-        }
+        return chosenBlob;
+        // todo: add back thread safety and locking the blob
+//        synchronized (chosenBlobThreadLock) {
+//            if (this.chosenBlob != null) {
+//                this.chosenBlobIsLocked = true;
+//                this.chosenBlobSaved = chosenBlob;
+//            }
+//            return chosenBlobSaved;
+//        }
     }
 
     public void unlockChosenBlob() {

@@ -25,6 +25,11 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
     }
 
     @Override
+    public boolean wantsBallCv() {
+        return true;
+    }
+
+    @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         builder.prepareShootTimeBeforeReverseIntake = 600;
         builder.shootBrakingStrength = 0.75;

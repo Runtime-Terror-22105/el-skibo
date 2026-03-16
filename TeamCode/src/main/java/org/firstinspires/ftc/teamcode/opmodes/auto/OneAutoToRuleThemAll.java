@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.MOTIF_DATA_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -68,6 +70,10 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
     public abstract boolean wantsAutoSort();
 
+    public boolean wantsBallCv() {
+        return false;
+    }
+
     protected abstract Command createAutoCommand(AutoBuilder builder);
 
     // Optional overrides:
@@ -82,7 +88,8 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
     public void runOpMode() {
         Profiler.init();
-        if (wantsAutoSort()) {
+        if (wantsAutoSort() || wantsBallCv()) {
+            Log.d("OneAutoToRuleThemAll", "Enabling camera in init due to auto sort or ball CV");
             hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
         } else {
             hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);

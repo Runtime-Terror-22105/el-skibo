@@ -361,15 +361,17 @@ public class CameraSubsystem extends SubsystemBase {
         this.team = team;
     }
 
-    public Pose2d getBallCoords(){
+    public Pose2d offsetByBallCoords(Pose2d pose){
         BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
         if (blob == null) {
-            return ballDefaultGoal;
+            return pose;
         }
-        Pose2d tempPos = ballDefaultGoal.copy();
+        Pose2d tempPos = pose.copy();
 //        double offset = blob.getCenter().x;
         double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
         tempPos.y += offset;
+        Log.d(TAG, "Ball Pixel Offset (in): " + offset);
+        Log.d(TAG, "New Pose: " + tempPos);
         return tempPos;
 
     }
@@ -540,8 +542,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     public boolean hasBlob()
     {
-        return false;
-//        return ballPipeline.getChosenBlob() != null;
+        return ballPipeline.getChosenBlob() != null;
     }
 
     public void resetBlob() {

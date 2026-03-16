@@ -79,6 +79,8 @@ public class AutoConstants {
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
 
+    public static long CAMERA_WAIT_MINIMUM_TIME = 500;
+
     public static PathConstraints RELAXED_CONSTRAINTS;
     static {
         RELAXED_CONSTRAINTS = Constants.pathConstraints.copy();

@@ -26,6 +26,12 @@ public class AutoFarVisionTest extends OneAutoToRuleThemAll {
         return false;
     }
 
+
+    @Override
+    public boolean wantsBallCv() {
+        return true;
+    }
+
     @Override
     protected Command createAutoCommand(AutoBuilder builder) {
         return new SequentialCommandGroup(
