@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
+import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
@@ -63,6 +64,7 @@ public class RobotHardware {
     public TerrorServo wallServoRight;
     public TerrorServo transferRampServo;
     public TerrorAnalogEncoder spindexerEncoder;
+    public TerrorEncoder spindexerMotorEncoder;
     public ColorSensorManager colorSensors;
 
     // Intake
@@ -129,8 +131,8 @@ public class RobotHardware {
         this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
         // Initialize the turret
-        this.turretYawLeft = new TerrorServo(hwMap, "turretYawLeft", 0.005);
-        this.turretYawRight = new TerrorServo(hwMap, "turretYawRight", 0.005);
+        this.turretYawLeft = new TerrorServo(hwMap, "turretLeft", 0.005);
+        this.turretYawRight = new TerrorServo(hwMap, "turretRight", 0.005);
         this.turretYawLeft.setPwmRange(500, 2500);
         this.turretYawRight.setPwmRange(500, 2500);
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
@@ -157,7 +159,7 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterPitch = new TerrorServo(hwMap, "shooterHood", 0.003);
+        this.shooterPitch = new TerrorServo(hwMap, "hood", 0.003);
         this.publisher.subscribe(5, shooterPitch);
 
 
@@ -182,7 +184,7 @@ public class RobotHardware {
 
         this.wallServoLeft = new TerrorServo(hwMap, "wallLeft");
         this.wallServoRight = new TerrorServo(hwMap, "wallRight");
-        this.transferRampServo = new TerrorServo(hwMap, "transferRamp");
+        this.transferRampServo = new TerrorServo(hwMap, "ramp");
         this.publisher.subscribe(10, wallServoLeft, wallServoRight, transferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
