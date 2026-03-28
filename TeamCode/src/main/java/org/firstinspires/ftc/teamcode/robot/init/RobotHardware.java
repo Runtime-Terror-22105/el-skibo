@@ -57,7 +57,7 @@ public class RobotHardware {
 
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET_DEGREES = -30;
-    public static boolean SPINDEXER_ENCODER_REVERSED = false;
+    public static boolean SPINDEXER_ENCODER_REVERSED = true;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo wallServoLeft;
     public TerrorServo wallServoRight;
@@ -151,8 +151,8 @@ public class RobotHardware {
         this.shooterEncoder.setDirection(TerrorEncoder.Direction.FORWARD);// TODO: figure out which motor has the encoder
         this.publisher.subscribe(5, shooterLeft, shooterRight);
 
-        this.shooterLeft.setDirection(REVERSE);
-        this.shooterRight.setDirection(FORWARD);
+        this.shooterLeft.setDirection(FORWARD);
+        this.shooterRight.setDirection(REVERSE);
 //        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
