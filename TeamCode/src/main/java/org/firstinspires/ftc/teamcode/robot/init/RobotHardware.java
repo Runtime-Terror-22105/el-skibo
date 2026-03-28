@@ -126,8 +126,10 @@ public class RobotHardware {
         );
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontRight.setDirection(REVERSE);
         motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRearRight.setDirection(REVERSE);
         this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
         // Initialize the turret
@@ -207,11 +209,9 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.hangLeft = new TerrorSwyftCRServo(hwMap, "hangLeft");
-        this.hangRight = new TerrorSwyftCRServo(hwMap, "hangRight");
-        this.hangLeft.setDirection(TerrorSwyftCRServo.Direction.REVERSE);
-        this.hangRight.setDirection(TerrorSwyftCRServo.Direction.FORWARD);
-        this.publisher.subscribe(10, hangLeft, hangRight);
+//        this.hangLeft.setDirection(TerrorSwyftCRServo.Direction.REVERSE);
+//        this.hangRight.setDirection(TerrorSwyftCRServo.Direction.FORWARD);
+        //this.publisher.subscribe(10, hangLeft, hangRight);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
