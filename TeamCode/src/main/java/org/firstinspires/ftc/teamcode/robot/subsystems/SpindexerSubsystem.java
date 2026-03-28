@@ -55,8 +55,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
     private RampState shooterRampPosition = RampState.DEACTIVE;
 
-    public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (225D/32D);
-
     public double spindexerPower = 0.0;
 
 
@@ -88,14 +86,6 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTargetPosition(0.0);
         this.angleLUT = new SpindexerEncoderLUT(this.robot);
         goToAngle120(0);
-    }
-
-    public static double ticksToRadians(double ticks) {
-        return (ticks / TICKS_PER_REVOLUTION) * 2.0 * Math.PI;
-    }
-
-    private static double radiansToTicks(double radians) {
-        return (radians / (2.0 * Math.PI)) * TICKS_PER_REVOLUTION;
     }
 
     public double getPositionRaw() {
