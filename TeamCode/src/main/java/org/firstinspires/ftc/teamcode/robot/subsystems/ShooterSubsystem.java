@@ -64,8 +64,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
-    public static double turretPosAt180 = 0.535; //pos pointed directly towards the back
-    public static double posChange90 = 0.36; //servo pos change that rotates turret 90 deg
+    public static double turretPosAt180 = 0.485; //pos pointed directly towards the back
+    public static double posChange90 = 0.28; //servo pos change that rotates turret 90 deg
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
@@ -79,8 +79,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretServoUpperBound = 1;
 
     // hood limits
-    public static double hoodPosMax = 0.9; //maximum position the servo can go to
-    public static double hoodPosMin = 0.14; //min position the servo can go to
+    public static double hoodPosMax = 0.72; //maximum position the servo can go to
+    public static double hoodPosMin = 0.1; //min position the servo can go to
     public static double hoodAngleMax = 1.0; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.0; //radian measure of hood at min pos
 
