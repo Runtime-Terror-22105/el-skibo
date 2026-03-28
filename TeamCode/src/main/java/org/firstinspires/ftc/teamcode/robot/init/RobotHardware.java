@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
@@ -60,8 +59,9 @@ public class RobotHardware {
     public static double SPINDEXER_ENCODER_OFFSET_DEGREES = -30;
     public static boolean SPINDEXER_ENCODER_REVERSED = false;
     public TerrorMotorNormal spindexerRotate;
-    public TerrorServo spindexerIntakeWallServo;
-    public TerrorServo spindexerTransferRampServo; // todo -- in position: 0, out position: 0.3
+    public TerrorServo wallServoLeft;
+    public TerrorServo wallServoRight;
+    public TerrorServo transferRampServo;
     public TerrorAnalogEncoder spindexerEncoder;
     public TerrorEncoder spindexerMotorEncoder;
     public ColorSensorManager colorSensors;
@@ -181,9 +181,10 @@ public class RobotHardware {
                 "rightSensor"
         );
 
-        this.spindexerIntakeWallServo = new TerrorServo(hwMap, "spindexerIntakeWall");
-        this.spindexerTransferRampServo = new TerrorServo(hwMap, "spindexerTransferRamp");
-        this.publisher.subscribe(10, spindexerIntakeWallServo, spindexerTransferRampServo);
+        this.wallServoLeft = new TerrorServo(hwMap, "wallLeft");
+        this.wallServoRight = new TerrorServo(hwMap, "wallRight");
+        this.transferRampServo = new TerrorServo(hwMap, "transferRamp");
+        this.publisher.subscribe(10, wallServoLeft, wallServoRight, transferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution

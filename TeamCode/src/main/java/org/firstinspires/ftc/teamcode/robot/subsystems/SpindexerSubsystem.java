@@ -32,8 +32,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double READY_POSITION = 0.52359877559829887307710723054658;
 
-    public static double INTAKE_WALL_DOWN = 0.8;
-    public static double INTAKE_WALL_UP = 0.1;
+    public static double INTAKE_WALL_LEFT_DOWN = 0.8;
+    public static double INTAKE_WALL_LEFT_UP = 0.1;
+    public static double INTAKE_WALL_RIGHT_DOWN = 0.8;
+    public static double INTAKE_WALL_RIGHT_UP = 0.1;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.3;
     public static double SHOOTER_RAMP_DEACTIVE = 0.00;
@@ -41,12 +43,22 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double MAX_POWER_SORTING = 0.6;
     public boolean useMaxPower = false;
 
-    public double intakeWallPosition = INTAKE_WALL_UP;
-    public double shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
+    private enum WallState {
+        UP,
+        DOWN
+    }
+    private WallState wallState = WallState.UP;
+
+    private enum RampState {
+        ACTIVE,
+        DEACTIVE
+    }
+    private RampState shooterRampPosition = RampState.DEACTIVE;
 
     public static double TICKS_PER_REVOLUTION = ((1D + (46D / 11D)) * 28D) * (225D/32D);
 
     public double spindexerPower = 0.0;
+
 
 //    public static double READY_POSITION = 0.52359877559829887307710723054658; //position for the first ball as the ramp goes down
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
@@ -173,7 +185,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     public boolean isWallDown() {
-        return this.intakeWallPosition == INTAKE_WALL_DOWN;
+        return this.wallState == WallState.DOWN;
     }
 
     public void setWallDown() {
@@ -184,15 +196,15 @@ public class SpindexerSubsystem extends SubsystemBase {
     public void setWallUp() {
         this.goingToMoveWallsDownButHaventMovedThemDownYet = false;
         this.goingToMoveWallsDownTimerStarted = false;
-        this.intakeWallPosition = INTAKE_WALL_UP;
+        this.wallState = WallState.UP;
     }
 
     public void enableRamp() {
-        shooterRampPosition = SHOOTER_RAMP_ACTIVE;
+        shooterRampPosition = RampState.ACTIVE;
     }
 
     public void disableRamp() {
-        shooterRampPosition = SHOOTER_RAMP_DEACTIVE;
+        shooterRampPosition = RampState.DEACTIVE;
     }
 
     public BallColor[] getBallPositions() {
@@ -384,7 +396,7 @@ public class SpindexerSubsystem extends SubsystemBase {
                 if (atTargetYaw()) {
                     if (goingToMoveWallsDownTimerStarted &&
                             goingToMoveWallsDownTimer.milliseconds() > TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX) {
-                        intakeWallPosition = INTAKE_WALL_DOWN;
+                        wallState = WallState.DOWN;
                         goingToMoveWallsDownButHaventMovedThemDownYet = false;
                     } else if (!goingToMoveWallsDownTimerStarted) {
                         goingToMoveWallsDownButHaventMovedThemDownYet = true;
@@ -397,8 +409,9 @@ public class SpindexerSubsystem extends SubsystemBase {
                 }
             }
 
-            this.hardware.spindexerIntakeWallServo.setPosition(intakeWallPosition);
-            this.hardware.spindexerTransferRampServo.setPosition(shooterRampPosition);
+            this.hardware.wallServoLeft.setPosition(isWallDown() ? INTAKE_WALL_LEFT_DOWN : INTAKE_WALL_LEFT_UP);
+            this.hardware.wallServoRight.setPosition(isWallDown() ? INTAKE_WALL_RIGHT_DOWN : INTAKE_WALL_RIGHT_UP);
+            this.hardware.transferRampServo.setPosition(shooterRampPosition.equals(RampState.ACTIVE) ? SHOOTER_RAMP_ACTIVE : SHOOTER_RAMP_DEACTIVE);
 
 
             if (telemetry) Robot.debugTelemetry.addData("Spindexer Power", clampedPower);
