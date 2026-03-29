@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
 @TeleOp
 @Config
@@ -25,13 +26,15 @@ public class HangTest extends LinearOpMode {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, this);
         robot.hang.setPTOEngagement(true);
-        robot.robotState = robot.robotState.HANGING;
+        robot.robotState = RobotState.HANGING;
         waitForStart();
 
         while (opModeIsActive())
         {
             CommandScheduler.getInstance().run();
         }
+
+        robot.hang.setPTOEngagement(false);
 
         robot.close();
     }
