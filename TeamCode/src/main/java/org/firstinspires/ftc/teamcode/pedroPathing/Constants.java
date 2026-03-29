@@ -40,13 +40,16 @@ public class Constants {
             .yVelocity(58.39);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(0) // todo: tune this
-            .strafePodX(0) // todo: tune this
+            .forwardPodY(-5.465)
+            .strafePodX(1.812)
+            // commented ones were measured physically, the ones above were obtained from pedro's offset tuner
+//             .forwardPodY(6.5)
+//            .strafePodX(-2)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1.4);
 
