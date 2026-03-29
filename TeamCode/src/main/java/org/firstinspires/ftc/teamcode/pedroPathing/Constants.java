@@ -40,11 +40,11 @@ public class Constants {
             .yVelocity(58.39);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-5.465)
-            .strafePodX(1.812)
-            // commented ones were measured physically, the ones above were obtained from pedro's offset tuner
-//             .forwardPodY(6.5)
-//            .strafePodX(-2)
+//            .forwardPodY(-5.465)
+//            .strafePodX(1.812)
+            // ones below were measured physically, the ones above were obtained from pedro's offset tuner
+            .forwardPodY(6.5)
+            .strafePodX(-2)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
