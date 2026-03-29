@@ -22,7 +22,13 @@
             <goBILDA5202SeriesMotor name="motorRearLeft" port="1" />
             <goBILDA5202SeriesMotor name="motorFrontRight" port="2" />
             <goBILDA5202SeriesMotor name="motorRearRight" port="3" />
-            <Servo name="pto" port="3" />
+
+            <!--these numbers are made up-->
+
+            <Servo name="hangLeft" port="3" />
+            <Servo name="hangRight" port="0"/>
+
+
             <Servo name="lights" port="4" />
             <AnalogInput name="spindexEncoder" port="0" />
             <RevColorSensorV3 name="rightSensor" port="0" bus="1" />
