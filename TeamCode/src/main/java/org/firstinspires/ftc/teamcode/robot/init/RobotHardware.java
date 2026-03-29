@@ -161,6 +161,7 @@ public class RobotHardware {
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterPitch = new TerrorServo(hwMap, "hood", 0.003);
+        this.shooterPitch.setPwmRange(500, 2500);
         this.publisher.subscribe(5, shooterPitch);
 
 
