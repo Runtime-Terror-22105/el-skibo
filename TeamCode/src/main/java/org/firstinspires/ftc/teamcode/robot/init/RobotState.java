@@ -17,8 +17,7 @@ public enum RobotState {
     INTAKING(new StateTag[] {INTAKE_DOWN, INTAKE_FORWARD, FLYWHEEL_ON, FUNNEL_READY}),
     READY_TO_SHOOT(new StateTag[] {INTAKE_DOWN, FLYWHEEL_ON, FUNNEL_READY}), //when we have 3 balls
     SHOOTING(new StateTag[] {INTAKE_DOWN, INTAKE_REVERSE, FLYWHEEL_ON}),
-    HANGING_90(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
-    HANGING_FINAL(new StateTag[] {INTAKE_UP, INTAKE_OFF, FLYWHEEL_OFF, CLIMB}),
+    HANGING(new StateTag[]{CLIMB}),
 
     TRANSFER(new StateTag[] {}),
 

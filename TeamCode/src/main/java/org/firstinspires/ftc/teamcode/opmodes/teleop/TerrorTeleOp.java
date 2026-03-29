@@ -6,7 +6,8 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.RED_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.TELEOP_ENDING_KEY;
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING_FINAL;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING;
+//import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING_FINAL;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
@@ -236,7 +237,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER && robot.robotState != HANGING_FINAL
+                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER && robot.robotState != HANGING
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(
@@ -349,18 +350,18 @@ public abstract class TerrorTeleOp extends LinearOpMode {
             Profiler.push("commands");
             CommandScheduler.getInstance().run();
 
-            if (hangManualUpButton.get()) {
-                robot.robotState = RobotState.HANGING_90;
-                hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.FORWARD);
-                hardware.hangRight.setPower(TerrorSwyftCRServo.Power.FORWARD);
-            } else if (hangManualDownButton.get()) {
-                robot.robotState = RobotState.HANGING_FINAL;
-                hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.HOME);
-                hardware.hangRight.setPower(TerrorSwyftCRServo.Power.HOME);
-            } else if (robot.getState() != HANGING_FINAL) { // don't disable the servos once we went to homing position
-                hardware.hangLeft.setPwmEnable(false);
-                hardware.hangRight.setPwmEnable(false);
-            }
+//            if (hangManualUpButton.get()) {
+//                robot.robotState = RobotState.HANGING_90;
+//                hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.FORWARD);
+//                hardware.hangRight.setPower(TerrorSwyftCRServo.Power.FORWARD);
+//            } else if (hangManualDownButton.get()) {
+//                robot.robotState = RobotState.HANGING_FINAL;
+//                hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.HOME);
+//                hardware.hangRight.setPower(TerrorSwyftCRServo.Power.HOME);
+//            } else if (robot.getState() != HANGING_FINAL) { // don't disable the servos once we went to homing position
+//                hardware.hangLeft.setPwmEnable(false);
+//                hardware.hangRight.setPwmEnable(false);
+//            }
 
             if (!lastState.equals(READY_TO_SHOOT) && robot.robotState.equals(READY_TO_SHOOT)) {
 //                robot.intake.setSpeed(IntakeSubsystem.REVERSE_SPEED_SLOW);
