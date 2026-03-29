@@ -42,9 +42,9 @@ public class ShooterSubsystem extends SubsystemBase {
     //
     // kV should be the same for both PIDs. kP can be more aggressive for the large PID.
     public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
+            new PidfController.PidfCoefficients(0.00043, 0, 0, 0.000188, 0);
     public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
+            new PidfController.PidfCoefficients(0.00043, 0, 0, 0.000188, 0);
     private final PidfController shooterPID = new PidfController(SMALL_PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
