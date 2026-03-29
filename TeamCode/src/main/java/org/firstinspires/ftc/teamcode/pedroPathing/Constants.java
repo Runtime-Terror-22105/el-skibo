@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Configurable
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(12.6)
+            .mass(14.33352)
             .forwardZeroPowerAcceleration(-44.16)
             .lateralZeroPowerAcceleration(-61.68)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0, 0))
@@ -40,8 +40,11 @@ public class Constants {
             .yVelocity(58.39);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(4.606)
-            .strafePodX(-5.118)
+//            .forwardPodY(-5.465)
+//            .strafePodX(1.812)
+            // ones below were measured physically, the ones above were obtained from pedro's offset tuner
+            .forwardPodY(6.5)
+            .strafePodX(-2)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)

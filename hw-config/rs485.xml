@@ -6,24 +6,24 @@
             <goBILDA5202SeriesMotor name="shooterRight" port="1" />
             <goBILDA5202SeriesMotor name="intake" port="2" />
             <goBILDA5202SeriesMotor name="spindexerRotate" port="3" />
-            <RevColorSensorV3 name="topSensor" port="0" bus="0" />
+            <RevColorSensorV3 name="topSensor" port="0" bus="2" />
             <RevColorSensorV3 name="leftSensor" port="0" bus="1" />
         </LynxModule>
         <ServoHub name="Servo Hub 3" port="3">
-            <Servo name="transferRamp" port="0" />
-            <Servo name="wallLeft" port="1" />
-            <Servo name="hangLeft" port="2" />
-            <Servo name="turretYawLeft" port="3" />
-            <Servo name="turretYawRight" port="4" />
-            <Servo name="hangRight" port="5" />
+            <Servo name="hood" port="0" />
+            <Servo name="turretLeft" port="1" />
+            <Servo name="turretRight" port="2" />
+            <Servo name="wallRight" port="3" />
+            <Servo name="wallLeft" port="4" />
+            <Servo name="ramp" port="5" />
         </ServoHub>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="motorFrontLeft" port="0" />
             <goBILDA5202SeriesMotor name="motorRearLeft" port="1" />
             <goBILDA5202SeriesMotor name="motorFrontRight" port="2" />
             <goBILDA5202SeriesMotor name="motorRearRight" port="3" />
-            <Servo name="shooterHood" port="0" />
-            <Servo name="lights" port="3" />
+            <Servo name="pto" port="3" />
+            <Servo name="lights" port="4" />
             <AnalogInput name="spindexEncoder" port="0" />
             <RevColorSensorV3 name="rightSensor" port="0" bus="1" />
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />

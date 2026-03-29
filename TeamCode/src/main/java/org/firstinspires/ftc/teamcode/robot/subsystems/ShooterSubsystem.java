@@ -29,8 +29,8 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.12;
-    public static boolean USE_SOTM = true;
-    public static boolean USE_SOTM_ACCEL = true;
+    public static boolean USE_SOTM = false;
+    public static boolean USE_SOTM_ACCEL = false;
 
     public static boolean debug = false;
     public static boolean telemetry = true;
@@ -42,9 +42,9 @@ public class ShooterSubsystem extends SubsystemBase {
     //
     // kV should be the same for both PIDs. kP can be more aggressive for the large PID.
     public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
+            new PidfController.PidfCoefficients(0.00043, 0, 0, 0.000188, 0);
     public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0035, 0, 0, 0.000196, 0);
+            new PidfController.PidfCoefficients(0.00043, 0, 0, 0.000188, 0);
     private final PidfController shooterPID = new PidfController(SMALL_PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
@@ -64,8 +64,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
-    public static double turretPosAt180 = 0.535; //pos pointed directly towards the back
-    public static double posChange90 = 0.36; //servo pos change that rotates turret 90 deg
+    public static double turretPosAt180 = 0.485; //pos pointed directly towards the back
+    public static double posChange90 = 0.28; //servo pos change that rotates turret 90 deg
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
@@ -79,8 +79,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretServoUpperBound = 1;
 
     // hood limits
-    public static double hoodPosMax = 0.9; //maximum position the servo can go to
-    public static double hoodPosMin = 0.14; //min position the servo can go to
+    public static double hoodPosMax = 0.82; //maximum position the servo can go to
+    public static double hoodPosMin = 0.25; //min position the servo can go to
     public static double hoodAngleMax = 1.0; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.0; //radian measure of hood at min pos
 
@@ -506,9 +506,9 @@ public class ShooterSubsystem extends SubsystemBase {
                 boolean useSotmAccel = sotmAccelOverride != null ? sotmAccelOverride : USE_SOTM_ACCEL;
                 this.doAutoShoot(robotPos, useSotm, useSotmAccel);
             }
-            else if (robot.goalPos != null){
-                intermediateAim(this.robot.follower.getPose(), USE_SOTM);
-            }
+//            else if (robot.goalPos != null){
+//                intermediateAim(this.robot.follower.getPose(), USE_SOTM);
+//            }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
             Profiler.pop();

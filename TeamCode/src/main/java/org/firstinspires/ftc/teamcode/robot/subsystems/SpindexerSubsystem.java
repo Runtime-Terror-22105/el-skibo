@@ -32,13 +32,13 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double READY_POSITION = 0.52359877559829887307710723054658;
 
-    public static double INTAKE_WALL_LEFT_DOWN = 0.8;
-    public static double INTAKE_WALL_LEFT_UP = 0.1;
+    public static double INTAKE_WALL_LEFT_DOWN = 0.05;
+    public static double INTAKE_WALL_LEFT_UP = 0.8;
     public static double INTAKE_WALL_RIGHT_DOWN = 0.8;
-    public static double INTAKE_WALL_RIGHT_UP = 0.1;
+    public static double INTAKE_WALL_RIGHT_UP = 0.05;
 
-    public static double SHOOTER_RAMP_ACTIVE = 0.3;
-    public static double SHOOTER_RAMP_DEACTIVE = 0.00;
+    public static double SHOOTER_RAMP_ACTIVE = 0.5;
+    public static double SHOOTER_RAMP_DEACTIVE = 0.8;
 
     public static double MAX_POWER_SORTING = 0.6;
     public boolean useMaxPower = false;
@@ -62,8 +62,8 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.27, 0, 0.005, 0, 0.01);
-    public static double yawPidTolerance = Math.toRadians(4); // radians
+            new PidfController.PidfCoefficients(0.58, 0, 0.016, 0, 0.0);
+    public static double yawPidTolerance = Math.toRadians(10); // radians
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
@@ -333,7 +333,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         if (telemetry) Robot.debugTelemetry.addData("Spindexer Corrected Target (deg)", Math.toDegrees(Angle.angleWrap(desAngle.correctedAngleRad)));
 
         this.yawPid.setTolerance(yawPidTolerance);
-        this.yawPid.setTargetPosition(desAngle.correctedAngleRad);
+        this.yawPid.setTargetPosition(Angle.angleWrap(desAngle.correctedAngleRad));
     }
 
     public void updateSpindexer() {
@@ -343,8 +343,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         if (pidEnabled) {
 //            double error = MathFunctions.getSmallestAngleDifference(desiredAngle, getPosition()) * MathFunctions.getTurnDirection(getPosition(), desiredAngle);
-            double tmp = yawPid.calculatePower(getPositionRaw(), 0, true);
-            this.spindexerPower = Math.copySign(Math.sqrt(Math.abs(tmp)), tmp);
+//            this.spindexerPower = Math.copySign(Math.sqrt(Math.abs(tmp)), tmp);
+            this.spindexerPower = yawPid.calculatePower(getPositionRaw(), 0, true);
         }
     }
 
@@ -394,7 +394,7 @@ public class SpindexerSubsystem extends SubsystemBase {
                         goingToMoveWallsDownTimer.reset();
                     }
                 } else {
-                    goingToMoveWallsDownButHaventMovedThemDownYet = true;
+                        goingToMoveWallsDownButHaventMovedThemDownYet = true;
                     goingToMoveWallsDownTimerStarted = false;
                 }
             }
