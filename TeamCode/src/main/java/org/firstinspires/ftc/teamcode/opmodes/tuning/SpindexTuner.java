@@ -44,12 +44,6 @@ public class SpindexTuner extends LinearOpMode {
 
             hardware.write();
 
-            try {
-                Thread.sleep(LOOP_DELAY);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
             robot.telemetry.addData("Yaw of Spindexer", GOAL_ANGLE);
             robot.telemetry.addData("Current angle (degrees)", Math.toDegrees(robot.spindexer.getPosition()));
             robot.telemetry.addData("Desired Angle (degrees)" , lut.get(robot.spindexer.desiredAngle).correctedAngleDeg);
@@ -58,6 +52,8 @@ public class SpindexTuner extends LinearOpMode {
             robot.telemetry.addData("Loop Time (ms)", time - lastTime);
             lastTime = time;
             robot.telemetry.update();
+
+            sleep(LOOP_DELAY);
 
         }
 

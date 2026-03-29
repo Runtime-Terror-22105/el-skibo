@@ -19,7 +19,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
@@ -58,7 +57,7 @@ public class RobotHardware {
 
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET_DEGREES = 77;
-    public static boolean SPINDEXER_ENCODER_REVERSED = true;
+    public static boolean SPINDEXER_ENCODER_REVERSED = false;
     public TerrorMotorNormal spindexerRotate;
     public TerrorServo wallServoLeft;
     public TerrorServo wallServoRight;
