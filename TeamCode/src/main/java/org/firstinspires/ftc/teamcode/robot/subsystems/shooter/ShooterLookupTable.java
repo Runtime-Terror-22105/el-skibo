@@ -8,9 +8,9 @@ public class ShooterLookupTable {
             // endpoint (prevent crashing)
             new ShooterLookupTableInstance.VelocityLookupValue(0, 405),
 
-<<<<<<< Updated upstream
+
             new ShooterLookupTableInstance.VelocityLookupValue(27.7,405),
-=======
+
             new ShooterLookupTableInstance.VelocityLookupValue(37.7,400),
             new ShooterLookupTableInstance.VelocityLookupValue(45.5,410),
             new ShooterLookupTableInstance.VelocityLookupValue(54,420),
@@ -20,7 +20,7 @@ public class ShooterLookupTable {
             new ShooterLookupTableInstance.VelocityLookupValue(130,630),
             new ShooterLookupTableInstance.VelocityLookupValue(134,640),
             new ShooterLookupTableInstance.VelocityLookupValue(143,660),
->>>>>>> Stashed changes
+
             // other endpoint (prevent crashing)
 
 //            new LookupValue(250, 960)
