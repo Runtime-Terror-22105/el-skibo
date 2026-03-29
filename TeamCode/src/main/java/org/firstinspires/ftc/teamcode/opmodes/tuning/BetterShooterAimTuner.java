@@ -73,7 +73,7 @@ public class BetterShooterAimTuner extends LinearOpMode {
     public static double turretPos = 0;
     public static boolean autoHood  = true;
     public static double spindexOffset = -0.3;
-    public static boolean useIntake = false;
+    public static boolean useIntake = true;
     public static boolean tuneGoalPos = false;
     public static double goalPosOffset = 0;
     public Team color;

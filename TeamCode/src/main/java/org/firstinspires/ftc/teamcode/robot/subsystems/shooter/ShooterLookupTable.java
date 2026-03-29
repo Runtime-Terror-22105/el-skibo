@@ -8,7 +8,19 @@ public class ShooterLookupTable {
             // endpoint (prevent crashing)
             new ShooterLookupTableInstance.VelocityLookupValue(0, 405),
 
+<<<<<<< Updated upstream
             new ShooterLookupTableInstance.VelocityLookupValue(27.7,405),
+=======
+            new ShooterLookupTableInstance.VelocityLookupValue(37.7,400),
+            new ShooterLookupTableInstance.VelocityLookupValue(45.5,410),
+            new ShooterLookupTableInstance.VelocityLookupValue(54,420),
+            new ShooterLookupTableInstance.VelocityLookupValue(67,450),
+            new ShooterLookupTableInstance.VelocityLookupValue(92.2,500),
+            new ShooterLookupTableInstance.VelocityLookupValue(126,600),
+            new ShooterLookupTableInstance.VelocityLookupValue(130,630),
+            new ShooterLookupTableInstance.VelocityLookupValue(134,640),
+            new ShooterLookupTableInstance.VelocityLookupValue(143,660),
+>>>>>>> Stashed changes
             // other endpoint (prevent crashing)
 
 //            new LookupValue(250, 960)
@@ -18,13 +30,13 @@ public class ShooterLookupTable {
             //endpoint
             new ShooterLookupTableInstance.HoodLookupValue(0, 0),
 
-            new ShooterLookupTableInstance.HoodLookupValue(27.7,0),
-            new ShooterLookupTableInstance.HoodLookupValue(45.5,0.25),
-            new ShooterLookupTableInstance.HoodLookupValue(68.7,0.74),
-            new ShooterLookupTableInstance.HoodLookupValue(90.7,0.74),
-            new ShooterLookupTableInstance.HoodLookupValue(104.4,0.85),
-            new ShooterLookupTableInstance.HoodLookupValue(122.7,.9),
-            new ShooterLookupTableInstance.HoodLookupValue(140.2,.9),
+            new ShooterLookupTableInstance.HoodLookupValue(37.7,0),
+            new ShooterLookupTableInstance.HoodLookupValue(47,0.2),
+            new ShooterLookupTableInstance.HoodLookupValue(54,0.35),
+            new ShooterLookupTableInstance.HoodLookupValue(67,0.4),
+            new ShooterLookupTableInstance.HoodLookupValue(97.7,0.6),
+            new ShooterLookupTableInstance.HoodLookupValue(126,.8),
+            new ShooterLookupTableInstance.HoodLookupValue(130,.9),
             //endpoint
 
 //            //endpoint

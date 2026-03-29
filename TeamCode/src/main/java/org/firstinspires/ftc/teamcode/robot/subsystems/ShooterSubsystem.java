@@ -506,9 +506,9 @@ public class ShooterSubsystem extends SubsystemBase {
                 boolean useSotmAccel = sotmAccelOverride != null ? sotmAccelOverride : USE_SOTM_ACCEL;
                 this.doAutoShoot(robotPos, useSotm, useSotmAccel);
             }
-            else if (robot.goalPos != null){
-                intermediateAim(this.robot.follower.getPose(), USE_SOTM);
-            }
+//            else if (robot.goalPos != null){
+//                intermediateAim(this.robot.follower.getPose(), USE_SOTM);
+//            }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
             Profiler.pop();
