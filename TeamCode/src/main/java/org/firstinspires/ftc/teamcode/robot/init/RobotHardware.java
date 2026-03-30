@@ -67,8 +67,7 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorServo hangLeft;
-    public TerrorServo hangRight;
+    public TerrorServo PTO;
 
     // Camera
     public int cameraMonitorViewId;
@@ -204,11 +203,9 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.hangLeft = new TerrorServo(hwMap, "hangLeft");
-        this.hangRight = new TerrorServo(hwMap, "hangRight");
-        this.hangLeft.setDirection(Servo.Direction.REVERSE);
-        this.hangRight.setDirection(Servo.Direction.FORWARD);
-        this.publisher.subscribe(10, hangLeft, hangRight);
+        this.PTO = new TerrorServo(hwMap, "pto");
+        this.PTO.setDirection(Servo.Direction.REVERSE);
+        this.publisher.subscribe(10, this.PTO);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {

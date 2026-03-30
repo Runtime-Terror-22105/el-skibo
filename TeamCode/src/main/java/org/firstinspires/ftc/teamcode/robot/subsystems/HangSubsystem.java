@@ -42,12 +42,10 @@ public class HangSubsystem extends SubsystemBase {
         isPTOEngaged = state;
         if(state)
         {
-            robot.hardware.hangLeft.setPosition(PTO_ENGAGE_POSITION);
-            robot.hardware.hangRight.setPosition(PTO_ENGAGE_POSITION);
+            robot.hardware.PTO.setPosition(PTO_ENGAGE_POSITION);
             return;
         }
-        robot.hardware.hangLeft.setPosition(PTO_DISENGAGE_POSITION);
-        robot.hardware.hangRight.setPosition(PTO_DISENGAGE_POSITION);
+        robot.hardware.PTO.setPosition(PTO_DISENGAGE_POSITION);
     }
     public boolean isPTOEngaged()
     {
