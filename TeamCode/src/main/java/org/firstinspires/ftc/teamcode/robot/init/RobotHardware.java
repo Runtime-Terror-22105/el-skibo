@@ -57,7 +57,7 @@ public class RobotHardware {
     // Spindexer
     public static double SPINDEXER_ENCODER_OFFSET_DEGREES = -30;
     public static boolean SPINDEXER_ENCODER_REVERSED = false;
-    public TerrorMotorNormal spindexerRotate;
+    public TerrorMotorNormal spindexer;
     public TerrorServo wallServoLeft;
     public TerrorServo wallServoRight;
     public TerrorServo transferRampServo;
@@ -67,7 +67,7 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorServo PTO;
+    public TerrorServo pto;
 
     // Camera
     public int cameraMonitorViewId;
@@ -127,8 +127,8 @@ public class RobotHardware {
         this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
         // Initialize the turret
-        this.turretYawLeft = new TerrorServo(hwMap, "turretYawLeft", 0.005);
-        this.turretYawRight = new TerrorServo(hwMap, "turretYawRight", 0.005);
+        this.turretYawLeft = new TerrorServo(hwMap, "turretLeft", 0.005);
+        this.turretYawRight = new TerrorServo(hwMap, "turretRight", 0.005);
         this.turretYawLeft.setPwmRange(500, 2500);
         this.turretYawRight.setPwmRange(500, 2500);
         this.publisher.subscribe(5, turretYawLeft, turretYawRight);
@@ -155,19 +155,19 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.shooterPitch = new TerrorServo(hwMap, "shooterHood", 0.003);
+        this.shooterPitch = new TerrorServo(hwMap, "hood", 0.003);
         this.publisher.subscribe(5, shooterPitch);
 
 
         // Initialize the spindexer
-        this.spindexerRotate = new TerrorMotorNormal(
-                hwMap, "spindexerRotate",
+        this.spindexer = new TerrorMotorNormal(
+                hwMap, "spindexer",
                 0.01,
                 1.0
         );
-        this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.publisher.subscribe(10, spindexerRotate);
+        this.spindexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.spindexer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.publisher.subscribe(10, spindexer);
 
         this.lights = new TerrorLight(hwMap.get(Servo.class, "lights"));
         this.publisher.subscribe(11, lights);
@@ -180,7 +180,7 @@ public class RobotHardware {
 
         this.wallServoLeft = new TerrorServo(hwMap, "wallLeft");
         this.wallServoRight = new TerrorServo(hwMap, "wallRight");
-        this.transferRampServo = new TerrorServo(hwMap, "transferRamp");
+        this.transferRampServo = new TerrorServo(hwMap, "ramp");
         this.publisher.subscribe(10, wallServoLeft, wallServoRight, transferRampServo);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
@@ -203,9 +203,9 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.PTO = new TerrorServo(hwMap, "pto");
-//        this.PTO.setDirection(Servo.Direction.REVERSE);
-        this.publisher.subscribe(10, this.PTO);
+        this.pto = new TerrorServo(hwMap, "pto");
+        this.pto.setDirection(Servo.Direction.REVERSE);
+        this.publisher.subscribe(10, this.pto);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {

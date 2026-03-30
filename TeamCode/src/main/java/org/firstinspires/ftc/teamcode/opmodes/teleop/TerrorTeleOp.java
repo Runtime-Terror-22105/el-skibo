@@ -42,7 +42,6 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -386,7 +385,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 double brc = hardware.motorRearRight.getCurrent(CurrentUnit.AMPS);
                 double sl = hardware.shooterLeft.getCurrent(CurrentUnit.AMPS);
                 double sr = hardware.shooterRight.getCurrent(CurrentUnit.AMPS);
-                double spr = hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS);
+                double spr = hardware.spindexer.getCurrent(CurrentUnit.AMPS);
                 double it = hardware.intake.getCurrent(CurrentUnit.AMPS);
 
 

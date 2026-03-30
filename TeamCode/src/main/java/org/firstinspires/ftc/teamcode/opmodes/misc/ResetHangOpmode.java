@@ -34,9 +34,9 @@ public class ResetHangOpmode extends LinearOpMode {
             telemetry.update();
 
             if (gamepad1.left_trigger > 0.3) {
-                hw.spindexerRotate.setPower(-HANG_LOWERING_POWER);
+                hw.spindexer.setPower(-HANG_LOWERING_POWER);
             } else {
-                hw.spindexerRotate.setPower(0);
+                hw.spindexer.setPower(0);
             }
 
             hw.write();
