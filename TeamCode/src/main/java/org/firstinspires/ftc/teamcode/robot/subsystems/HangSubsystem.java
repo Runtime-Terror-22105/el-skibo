@@ -38,12 +38,6 @@ public class HangSubsystem extends SubsystemBase {
     public void setPTOEngagement(boolean state)
     {
         isPTOEngaged = state;
-        if(state)
-        {
-//            robot.hardware.pto.setPosition(PTO_ENGAGE_POSITION);
-            return;
-        }
-//        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
     }
     public boolean isPTOEngaged()
     {
@@ -53,6 +47,14 @@ public class HangSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
 
+        if(isPTOEngaged)
+        {
+            robot.hardware.pto.setPosition(PTO_ENGAGE_POSITION);
+        }
+        else {
+            robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
+        }
+//        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
         if(!robot.robotState.isHang() || !isPTOEngaged())
         {
             hangTimer.reset(); //could be cooked, lifes tough
