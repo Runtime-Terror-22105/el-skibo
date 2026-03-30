@@ -356,7 +356,7 @@ public class SpindexerSubsystem extends SubsystemBase {
             // ensure we update the PID coefficients in case they were changed in dashboard
             this.yawPid.setPidfCoefficients(turningPidCoefficients);
 
-            if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
+            if (robot.robotState.equals(RobotState.HANGING)) {
                 hardware.spindexerRotate.setPower(0);
                 return;
             }
