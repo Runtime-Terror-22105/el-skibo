@@ -89,12 +89,9 @@ public class LightControl2 extends SubsystemBase {
                     hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
                     break;
 
-                case HANGING_90:
+                case HANGING:
+                    hardware.lights.setColor(TerrorLight.LightColors.AZURE);
                     break;
-
-                case HANGING_FINAL:
-                    break;
-
 
                 default:
                     hardware.lights.setColor(TerrorLight.LightColors.PINK);
