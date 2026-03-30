@@ -338,7 +338,7 @@ public class ShooterAimingTuner extends LinearOpMode {
                 double brc = hardware.motorRearRight.getCurrent(CurrentUnit.AMPS);
                 double sl = hardware.shooterLeft.getCurrent(CurrentUnit.AMPS);
                 double sr = hardware.shooterRight.getCurrent(CurrentUnit.AMPS);
-                double spr = hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS);
+                double spr = hardware.spindexer.getCurrent(CurrentUnit.AMPS);
                 double it = hardware.intake.getCurrent(CurrentUnit.AMPS);
 
 

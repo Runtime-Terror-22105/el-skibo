@@ -4,8 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
@@ -42,10 +40,10 @@ public class HangSubsystem extends SubsystemBase {
         isPTOEngaged = state;
         if(state)
         {
-            robot.hardware.PTO.setPosition(PTO_ENGAGE_POSITION);
+            robot.hardware.pto.setPosition(PTO_ENGAGE_POSITION);
             return;
         }
-        robot.hardware.PTO.setPosition(PTO_DISENGAGE_POSITION);
+        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
     }
     public boolean isPTOEngaged()
     {
