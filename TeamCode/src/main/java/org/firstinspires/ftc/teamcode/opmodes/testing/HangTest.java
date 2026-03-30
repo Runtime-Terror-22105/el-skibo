@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
-@TeleOp
+@TeleOp(name="Hang Test", group="Testing")
 @Config
 public class HangTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
