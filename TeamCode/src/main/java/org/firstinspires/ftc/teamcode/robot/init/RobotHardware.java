@@ -124,6 +124,10 @@ public class RobotHardware {
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontLeft.setDirection(FORWARD);
+        motorFrontRight.setDirection(REVERSE);
+        motorRearLeft.setDirection(FORWARD);
+        motorRearRight.setDirection(REVERSE);
         this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
         // Initialize the turret
