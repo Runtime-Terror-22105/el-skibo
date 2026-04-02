@@ -356,8 +356,8 @@ public class SpindexerSubsystem extends SubsystemBase {
             // ensure we update the PID coefficients in case they were changed in dashboard
             this.yawPid.setPidfCoefficients(turningPidCoefficients);
 
-            if (robot.robotState.equals(RobotState.HANGING_90) || robot.robotState.equals(RobotState.HANGING_FINAL)) {
-                hardware.spindexerRotate.setPower(0);
+            if (robot.robotState.equals(RobotState.HANGING)) {
+                hardware.spindexer.setPower(0);
                 return;
             }
 
@@ -374,7 +374,7 @@ public class SpindexerSubsystem extends SubsystemBase {
             }
 
 
-            this.hardware.spindexerRotate.setPower(clampedPower);
+            this.hardware.spindexer.setPower(clampedPower);
     //        this.hardware.spindexerRotate.setPower(pidEnabled ? spindexerPower : clampedPower);
 
             // basically this just makes it so that the walls go down at the right time after the

@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorServo;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorAnalogEncoder;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorEncoder;
 import org.firstinspires.ftc.teamcode.util.Profiler;
@@ -56,21 +55,19 @@ public class RobotHardware {
     public TerrorEncoder shooterEncoder;   // i forgot to write the comment
 
     // Spindexer
-    public static double SPINDEXER_ENCODER_OFFSET_DEGREES = 77;
+    public static double SPINDEXER_ENCODER_OFFSET_DEGREES = -30;
     public static boolean SPINDEXER_ENCODER_REVERSED = false;
-    public TerrorMotorNormal spindexerRotate;
+    public TerrorMotorNormal spindexer;
     public TerrorServo wallServoLeft;
     public TerrorServo wallServoRight;
     public TerrorServo transferRampServo;
     public TerrorAnalogEncoder spindexerEncoder;
-    public TerrorEncoder spindexerMotorEncoder;
     public ColorSensorManager colorSensors;
 
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorSwyftCRServo hangLeft;
-    public TerrorSwyftCRServo hangRight;
+    public TerrorServo pto;
 
     // Camera
     public int cameraMonitorViewId;
@@ -125,9 +122,11 @@ public class RobotHardware {
         );
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontRight.setDirection(REVERSE);
         motorRearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontLeft.setDirection(FORWARD);
+        motorFrontRight.setDirection(REVERSE);
+        motorRearLeft.setDirection(FORWARD);
         motorRearRight.setDirection(REVERSE);
         this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
@@ -151,29 +150,28 @@ public class RobotHardware {
                 1.0
         );
         this.shooterEncoder = new TerrorEncoder(motorFrontLeft);
-        this.shooterEncoder.setDirection(TerrorEncoder.Direction.REVERSE);// TODO: figure out which motor has the encoder
+        this.shooterEncoder.setDirection(TerrorEncoder.Direction.FORWARD);// TODO: figure out which motor has the encoder
         this.publisher.subscribe(5, shooterLeft, shooterRight);
 
-        this.shooterLeft.setDirection(FORWARD);
-        this.shooterRight.setDirection(REVERSE);
+        this.shooterLeft.setDirection(REVERSE);
+        this.shooterRight.setDirection(FORWARD);
 //        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterPitch = new TerrorServo(hwMap, "hood", 0.003);
-        this.shooterPitch.setPwmRange(500, 2500);
         this.publisher.subscribe(5, shooterPitch);
 
 
         // Initialize the spindexer
-        this.spindexerRotate = new TerrorMotorNormal(
-                hwMap, "spindexerRotate",
+        this.spindexer = new TerrorMotorNormal(
+                hwMap, "spindexer",
                 0.01,
                 1.0
         );
-        this.spindexerRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.spindexerRotate.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.publisher.subscribe(10, spindexerRotate);
+        this.spindexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.spindexer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.publisher.subscribe(10, spindexer);
 
         this.lights = new TerrorLight(hwMap.get(Servo.class, "lights"));
         this.publisher.subscribe(11, lights);
@@ -209,9 +207,9 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-//        this.hangLeft.setDirection(TerrorSwyftCRServo.Direction.REVERSE);
-//        this.hangRight.setDirection(TerrorSwyftCRServo.Direction.FORWARD);
-        //this.publisher.subscribe(10, hangLeft, hangRight);
+        this.pto = new TerrorServo(hwMap, "pto");
+        this.pto.setDirection(Servo.Direction.REVERSE);
+        this.publisher.subscribe(10, this.pto);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {

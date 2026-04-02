@@ -13,38 +13,28 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 
-@TeleOp(name="Camera Test", group="Testing")
+@TeleOp(name="Hang Test", group="Testing")
 @Config
-public class CameraTest extends LinearOpMode {
+public class HangTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
-
-    public static boolean isBlue = false;
-    public static boolean isInNearAuto = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, this);
-        robot.camera.setTeam(Team.RED);
-        if(isBlue)
-        {
-            robot.camera.setTeam(Team.BLUE);
-        }
-//        if(isInNearAuto)
-//        {
-//            robot.camera.setAuto(true,false);
-//        }
-        robot.camera.setBallPipelineEnabled(true);
+        robot.hang.setPTOEngagement(true);
+        robot.robotState = RobotState.HANGING;
         waitForStart();
 
         while (opModeIsActive())
         {
             CommandScheduler.getInstance().run();
-            robot.telemetry.addData("seenglyph",robot.camera.getGlyph());
-            robot.telemetry.update();
         }
+
+        robot.hang.setPTOEngagement(false);
 
         robot.close();
     }

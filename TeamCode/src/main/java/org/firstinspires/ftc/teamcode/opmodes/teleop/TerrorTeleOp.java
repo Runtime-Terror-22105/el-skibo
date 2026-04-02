@@ -6,7 +6,8 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.RED_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.TELEOP_ENDING_KEY;
-import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING_FINAL;
+import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING;
+//import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING_FINAL;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
@@ -41,7 +42,6 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
-import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorSwyftCRServo;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -236,7 +236,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
                 new GoToRestingStateCommand(robot),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER && robot.robotState != HANGING_FINAL
+                () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER && robot.robotState != HANGING
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(
@@ -385,7 +385,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 double brc = hardware.motorRearRight.getCurrent(CurrentUnit.AMPS);
                 double sl = hardware.shooterLeft.getCurrent(CurrentUnit.AMPS);
                 double sr = hardware.shooterRight.getCurrent(CurrentUnit.AMPS);
-                double spr = hardware.spindexerRotate.getCurrent(CurrentUnit.AMPS);
+                double spr = hardware.spindexer.getCurrent(CurrentUnit.AMPS);
                 double it = hardware.intake.getCurrent(CurrentUnit.AMPS);
 
 
