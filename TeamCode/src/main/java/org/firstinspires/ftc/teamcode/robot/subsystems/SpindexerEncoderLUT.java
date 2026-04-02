@@ -14,11 +14,11 @@ public class SpindexerEncoderLUT {
 
     public static boolean debug;
     public static int angle1 = 0;
-    public static double fixedAngle1 = 18;
+    public static double fixedAngle1 = 0;
     public static int angle2 = 120;
-    public static double fixedAngle2 = 125;
+    public static double fixedAngle2 = 115;
     public static int angle3 = 240;
-    public static double fixedAngle3 = 241.1;
+    public static double fixedAngle3 = 233;
 
     public static double fixedReady1 = 19.2;
     public static double fixedReady2 = 136.97;
