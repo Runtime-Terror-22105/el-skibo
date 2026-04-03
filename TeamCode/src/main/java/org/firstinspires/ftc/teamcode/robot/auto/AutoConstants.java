@@ -27,10 +27,10 @@ public class AutoConstants {
     public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(21, 34, Math.toRadians(263));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
-    public static Pose2d INTAKE_1_POSE = new Pose2d(22, 85.149, Math.toRadians(180));
+    public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
 
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(58, 58, 0);
-    public static Pose2d INTAKE_2_POSE = new Pose2d(17, 60, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE = new Pose2d(22, 60, Math.toRadians(180));
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 45.668);
