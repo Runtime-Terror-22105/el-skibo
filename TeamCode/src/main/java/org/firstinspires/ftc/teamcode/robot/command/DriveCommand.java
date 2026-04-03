@@ -19,8 +19,8 @@ public class DriveCommand extends CommandBase {
     public static double SLOW_SPEED_STRAFE = 0.35;
     public static double SLOW_SPEED_ROTATION = 0.5;
 
-    public static double ROTATION_MULTIPLIER_14V = 0.4315;
-    public static double ROTATION_MULTIPLIER_12V = 0.515;
+    public static double ROTATION_MULTIPLIER_14V = 0.6;
+    public static double ROTATION_MULTIPLIER_12V = 0.6;
 
     private final Robot robot;
     private final Supplier<Double> x, y, turn;
