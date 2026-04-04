@@ -115,10 +115,8 @@ public final class NearAutoBuilder {
 
     private static Command intakeSpike1(AutoBuildState state) {
         PathChain path = intakeSpike1Path(state);
-        Command followPathCommand = new FollowPathAndWaitForWallCommand(state.robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 3.0);
-        if (!state.auto.wantsAutoSort()) {
-            followPathCommand = followPathCommand.raceWith(new WaitForIntakeCommand(state.robot));
-        }
+        Command followPathCommand = new FollowPathAndWaitForWallCommand(state.robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 3.0)
+                .raceWith(new WaitForIntakeCommand(state.robot));
         return new SequentialCommandGroup(
                 new GoToIntakeStateCommand(state.robot),
                 followPathCommand,
@@ -129,10 +127,8 @@ public final class NearAutoBuilder {
 
     private static Command intakeSpike2(AutoBuildState state) {
         PathChain path = intakeSpike2Path(state);
-        Command followPathCommand = new FollowPathAndWaitForWallCommand(state.robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 18.0);
-        if (!state.auto.wantsAutoSort()) {
-            followPathCommand = followPathCommand.raceWith(new WaitForIntakeCommand(state.robot));
-        }
+        Command followPathCommand = new FollowPathAndWaitForWallCommand(state.robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 18.0)
+                .raceWith(new WaitForIntakeCommand(state.robot));
         return new SequentialCommandGroup(
                 new GoToIntakeStateCommand(state.robot),
                 followPathCommand,
@@ -152,7 +148,7 @@ public final class NearAutoBuilder {
     }
 
     public static Command shootPreload(AutoBuildState state, ShootPathFlag... flagArr) {
-        return SortedAutoBuilder.shootPreload(state, flagArr);
+        return UnsortedShootRoutines.shootPreload(state, flagArr);
     }
 
     public static Command intakeSpike(AutoBuildState state, int spikeNumber) {
@@ -197,7 +193,7 @@ public final class NearAutoBuilder {
     }
 
     public static Command shootSpike(AutoBuildState state, int spikeNumber, ShootPathFlag... flagArr) {
-        return SortedAutoBuilder.shootSpike(state, spikeNumber, flagArr);
+        return UnsortedShootRoutines.shootSpike(state, spikeNumber, flagArr);
     }
 
     public static Command cycleSpike(AutoBuildState state, int spikeNumber, ShootPathFlag... flags) {
@@ -208,7 +204,9 @@ public final class NearAutoBuilder {
     }
 
     public static Command parkSorted(AutoBuildState state) {
-        return SortedAutoBuilder.parkSorted(state);
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, AutoConstants.SHOOT_LAST_POSE, state.mirror, false, false)
+                .build();
+        return new FollowPathCommand(state.robot.follower, state.lastPath, true);
     }
 
     public static Command pushGate(AutoBuildState state) {
@@ -227,7 +225,7 @@ public final class NearAutoBuilder {
     }
 
     public static Command shootGate(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
-        return SortedAutoBuilder.shootGate(state, reverseIntake, flagArr);
+        return UnsortedShootRoutines.shootGate(state, reverseIntake, flagArr);
     }
 
     public static Command cycleGate(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flags) {

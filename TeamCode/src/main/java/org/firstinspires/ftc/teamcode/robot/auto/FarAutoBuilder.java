@@ -58,7 +58,7 @@ public final class FarAutoBuilder {
                                 new WaitCommand(250)
                         )
                 ),
-                SortedAutoBuilder.shootCommand(state, flags),
+                UnsortedShootRoutines.shootCommand(state, flags),
                 new StopScanningForGlyphsCommand(state.robot.camera)
         );
     }
@@ -98,7 +98,7 @@ public final class FarAutoBuilder {
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_FAR_POSE, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        return SortedAutoBuilder.createFollowShootPathAndShootCommand(state, 250, state.lastPath, flags);
+        return UnsortedShootRoutines.createFollowShootPathAndShootCommand(state, state.lastPath, flags);
     }
 
     public static Command intakeWall(AutoBuildState state, boolean reverseIntake) {
@@ -183,7 +183,7 @@ public final class FarAutoBuilder {
     }
 
     public static Command shootWall(AutoBuildState state, ShootPathFlag... flagArr) {
-        return SortedAutoBuilder.shootWall(state, flagArr);
+        return UnsortedShootRoutines.shootWall(state, flagArr);
     }
 
     public static Command cycleTunnel(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
@@ -254,7 +254,7 @@ public final class FarAutoBuilder {
                         )
                 )
                 .build();
-        return SortedAutoBuilder.createFollowShootPathAndShootCommand(state, 250, state.lastPath, flags);
+        return UnsortedShootRoutines.createFollowShootPathAndShootCommand(state, state.lastPath, flags);
     }
 
     public static Command cycleLong(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {

@@ -4,10 +4,11 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOO
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.REVERSE_INTAKE_GATE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_HORIZ_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_POSE;
 
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
@@ -25,11 +26,10 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
-import org.firstinspires.ftc.teamcode.robot.command.vision.WaitForGlyphCommand;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
@@ -39,47 +39,54 @@ import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
-public final class SortedAutoBuilder {
-    public static boolean TWO_SEGMENT_PARK_SORTED = false;
+public final class UnsortedShootRoutines {
+    private UnsortedShootRoutines() {
+    }
 
-    private SortedAutoBuilder() {
+    private enum ShootPathType {
+        PRELOAD(() -> SHOOT_PRELOAD_POSE, () -> SHOOT_PRELOAD_HORIZ_POSE),
+        EDGE(() -> SHOOT_EDGE_POSE, () -> SHOOT_EDGE_HORIZ_POSE);
+
+        public final Supplier<Pose2d> normal;
+        public final Supplier<Pose2d> horiz;
+
+        ShootPathType(Supplier<Pose2d> normal, Supplier<Pose2d> horiz) {
+            this.normal = normal;
+            this.horiz = horiz;
+        }
+    }
+
+    private static Pose2d getShootPose(ShootPathType type, EnumSet<ShootPathFlag> flags) {
+        if (flags.contains(ShootPathFlag.LAST)) {
+            return SHOOT_LAST_POSE;
+        }
+        boolean isHoriz = flags.contains(ShootPathFlag.NEXT_HORIZ);
+        return isHoriz ? type.horiz.get() : type.normal.get();
     }
 
     private static PathChain shootPreloadPath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
-        Pose2d shootPose = flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED
-                ? SHOOT_LAST_POSE
-                : SHOOT_SORTED_POSE;
-        PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, shootPose, state.mirror, false, false);
+        PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, getShootPose(ShootPathType.PRELOAD, flags), state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS);
         state.lastPath = builder.build();
         return state.lastPath;
     }
 
     private static PathChain shootSpikePath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
-        Pose2d shootPose = flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED
-                ? SHOOT_LAST_POSE
-                : SHOOT_SORTED_POSE;
-        boolean useTangential = flags.contains(ShootPathFlag.LAST);
-        PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, shootPose, state.mirror, useTangential, useTangential);
+        PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, getShootPose(ShootPathType.EDGE, flags), state.mirror, true, true)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS);
         state.lastPath = builder.build();
         return state.lastPath;
     }
 
     private static PathChain shootGatePath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
-        Pose2d shootPose = flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED
-                ? SHOOT_LAST_POSE
-                : SHOOT_SORTED_POSE;
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, shootPose, state.mirror, true, true)
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, getShootPose(ShootPathType.EDGE, flags), state.mirror, true, true)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
     }
 
     static Command shootCommand(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
-        Command command = new ShootThreeBallsCommand(state.robot)
-                .andThen(new SequentialCommandGroup(
-                        new WaitForSpindexerYawCommand(state.robot.spindexer).withTimeout(500),
-                        new WaitCommand(SHOOT_DELAY)
-                ));
+        Command command = new ShootThreeBallsCommand(state.robot);
 
         if (!flags.contains(ShootPathFlag.LAST)) {
             command = command.andThen(
@@ -99,12 +106,11 @@ public final class SortedAutoBuilder {
         return command.andThen(new IncrementNumCyclesCommand(state.auto));
     }
 
-    static Command createFollowShootPathAndShootCommand(AutoBuildState state, long prepareShootDelay, PathChain shootPath, EnumSet<ShootPathFlag> flags) {
+    static Command createFollowShootPathAndShootCommand(AutoBuildState state, PathChain shootPath, EnumSet<ShootPathFlag> flags) {
         AtomicBoolean hasFinishedPath = new AtomicBoolean(false);
         double distanceConstraint = flags.contains(ShootPathFlag.EARLY_SHOOT) ? EARLY_SHOOT_DISTANCE : 0.0;
         shootPath.lastPath().setBrakingStrength(state.shootBrakingStrength);
 
-        Supplier<Boolean> hasStartedPrepareShoot = () -> state.robot.robotState.equals(RobotState.READY_TO_SHOOT) || state.robot.robotState.equals(RobotState.TRANSFER);
         Supplier<Command> maybePrepareShootCommand = () -> new ConditionalCommand(
                 new PrepareShootCommand(state.robot, state.prepareShootTimeBeforeReverseIntake, true),
                 new InstantCommand(() -> {
@@ -114,23 +120,17 @@ public final class SortedAutoBuilder {
 
         return new ParallelCommandGroup(
                 new SequentialCommandGroup(
-                        new FollowPathCommand(state.robot.follower, shootPath, true),
+                        new FollowPathCommand(state.robot.follower, shootPath, false),
                         new InstantCommand(() -> hasFinishedPath.set(true))
                 ).andThen(new LogCatCommand("AutoBuilder", "follow path done, waiting for prepare shoot")),
 
-                new SequentialCommandGroup(
-                        new WaitUntilCommand(() ->
-                                hasStartedPrepareShoot.get()
-                                        || hasFinishedPath.get()
-                                        || !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
-                        ).withTimeout(prepareShootDelay),
-                        maybePrepareShootCommand.get()
-                ).andThen(new LogCatCommand("AutoBuilder", "prepare shoot done, waiting for path or distance")),
+                new SequentialCommandGroup(maybePrepareShootCommand.get())
+                        .andThen(new LogCatCommand("AutoBuilder", "prepare shoot done, waiting for path or distance")),
 
                 new SequentialCommandGroup(
                         new WaitUntilCommand(() -> state.robot.robotState.equals(RobotState.READY_TO_SHOOT)),
                         new WaitUntilCommand(() -> hasFinishedPath.get() || state.robot.follower.getDistanceRemaining() < distanceConstraint),
-                        new WaitCommand(AutoConstants.SORTED_SHOOT_DELAY),
+                        new WaitCommand(AutoConstants.NORMAL_SHOOT_DELAY),
                         shootCommand(state, flags)
                 ).andThen(new LogCatCommand("AutoBuilder", "shoot command done"))
         ).andThen(new LogCatCommand("AutoBuilder", "createFollow end"));
@@ -140,14 +140,21 @@ public final class SortedAutoBuilder {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         PathChain path = shootPreloadPath(state, flags);
         path.lastPath().setBrakingStrength(state.shootBrakingStrength);
+
+        if (flags.contains(ShootPathFlag.SOTM)) {
+            return new ParallelCommandGroup(
+                    new SequentialCommandGroup(
+                            new WaitForFlywheelCommand(state.robot.shooter).withTimeout(625),
+                            new WaitCommand(250),
+                            shootCommand(state, flags)
+                    ),
+                    new FollowPathCommand(state.robot.follower, path, false)
+            );
+        }
+
         return new SequentialCommandGroup(
-                new FollowPathCommand(state.robot.follower, path, true).alongWith(
-                        new WaitCommand(500).andThen(new InstantCommand(() -> state.robot.camera.setAprilTagsEnabled(true)))
-                ),
+                new FollowPathCommand(state.robot.follower, path, false),
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
-                new WaitForGlyphCommand(state.robot.camera).withTimeout(AutoConstants.WAIT_TIMEOUT_MOTIF),
-                new InstantCommand(() -> state.robot.camera.setAprilTagsEnabled(false)),
-                new PrepareShootCommand(state.robot),
                 shootCommand(state, flags)
         );
     }
@@ -158,22 +165,13 @@ public final class SortedAutoBuilder {
                 ? shootPreloadPath(state, flags)
                 : shootSpikePath(state, flags);
 
-        Command endCommand = new InstantCommand(() -> {
-        });
-        if (flags.contains(ShootPathFlag.LAST) && TWO_SEGMENT_PARK_SORTED) {
-            endCommand = parkSorted(state);
-        }
-
-        return new SequentialCommandGroup(
-                createFollowShootPathAndShootCommand(state, state.waitBeforeShooting, path, flags),
-                endCommand
-        );
+        return createFollowShootPathAndShootCommand(state, path, flags);
     }
 
     public static Command shootGate(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         return new ParallelCommandGroup(
-                createFollowShootPathAndShootCommand(state, 250, shootGatePath(state, flags), flags),
+                createFollowShootPathAndShootCommand(state, shootGatePath(state, flags), flags),
                 new SequentialCommandGroup(
                         new WaitCommand(REVERSE_INTAKE_GATE_DELAY),
                         new ConditionalCommand(
@@ -188,16 +186,10 @@ public final class SortedAutoBuilder {
 
     public static Command shootWall(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_EDGE_POSE, state.mirror, false, false)
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, AutoConstants.SHOOT_FAR_POSE, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-        return createFollowShootPathAndShootCommand(state, 250, state.lastPath, flags);
-    }
-
-    public static Command parkSorted(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_LAST_POSE, state.mirror, false, false)
-                .build();
-        return new FollowPathCommand(state.robot.follower, state.lastPath, true);
+        return createFollowShootPathAndShootCommand(state, state.lastPath, flags);
     }
 }
 
