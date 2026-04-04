@@ -33,6 +33,7 @@ public class HangTest extends LinearOpMode {
             robot.hang.setPTOEngagement(true);
             robot.hardware.motorRearRight.setPower(lowPower);
             robot.hardware.motorRearLeft.setPower(lowPower);
+            CommandScheduler.getInstance().run();
         }
 
         waitForStart();
