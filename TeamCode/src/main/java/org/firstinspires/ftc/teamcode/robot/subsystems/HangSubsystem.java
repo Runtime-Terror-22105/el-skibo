@@ -65,8 +65,11 @@ public class HangSubsystem extends SubsystemBase {
             robot.hardware.motorRearLeft.setPower(0);
             robot.hardware.motorRearRight.setPower(0);
         }
-        robot.hardware.motorRearRight.setPower(PTO_POWER);
-        robot.hardware.motorRearLeft.setPower(PTO_POWER);
+        else {
+            robot.hardware.motorRearRight.setPower(PTO_POWER);
+            robot.hardware.motorRearLeft.setPower(PTO_POWER);
+        }
+
 
 
         try (Profiler.Scope p = Profiler.enter("HangSubsystem")) {
