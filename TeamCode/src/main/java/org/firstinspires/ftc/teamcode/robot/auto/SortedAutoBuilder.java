@@ -44,6 +44,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 public final class SortedAutoBuilder {
+    public static boolean TWO_SEGMENT_PARK_SORTED = false;
+
     private SortedAutoBuilder() {
     }
 
@@ -61,7 +63,7 @@ public final class SortedAutoBuilder {
     }
 
     private static Pose2d getShootPose(AutoBuildState state, ShootPathType type, EnumSet<ShootPathFlag> flags) {
-        if (flags.contains(ShootPathFlag.LAST) && (!state.auto.wantsAutoSort() || !AutoBuilder.TWO_SEGMENT_PARK_SORTED)) {
+        if (flags.contains(ShootPathFlag.LAST) && (!state.auto.wantsAutoSort() || !TWO_SEGMENT_PARK_SORTED)) {
             return SHOOT_LAST_POSE;
         }
 
@@ -212,7 +214,7 @@ public final class SortedAutoBuilder {
 
         Command endCommand = new InstantCommand(() -> {
         });
-        if (flags.contains(ShootPathFlag.LAST) && state.auto.wantsAutoSort() && AutoBuilder.TWO_SEGMENT_PARK_SORTED) {
+        if (flags.contains(ShootPathFlag.LAST) && state.auto.wantsAutoSort() && TWO_SEGMENT_PARK_SORTED) {
             endCommand = parkSorted(state);
         }
 

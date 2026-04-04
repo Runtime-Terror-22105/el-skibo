@@ -4,7 +4,8 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
+import org.firstinspires.ftc.teamcode.robot.auto.NearAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
@@ -24,12 +25,12 @@ public abstract class AutoHorizontal extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected Command createAutoCommand(AutoBuilder builder) {
+    protected Command createAutoCommand(AutoBuildState state) {
         return new SequentialCommandGroup(
-                builder.shootPreload(ShootPathFlag.NEXT_HORIZ),
-                builder.intakeSpikeHorizontal(1), builder.shootSpike(1, ShootPathFlag.NEXT_HORIZ),
-                builder.intakeSpikeHorizontal(2), builder.shootSpike(2, ShootPathFlag.NEXT_HORIZ),
-                builder.intakeSpikeHorizontal(3), builder.shootSpike(3, ShootPathFlag.LAST)
+                NearAutoBuilder.shootPreload(state, ShootPathFlag.NEXT_HORIZ),
+                NearAutoBuilder.intakeSpikeHorizontal(state, 1), NearAutoBuilder.shootSpike(state, 1, ShootPathFlag.NEXT_HORIZ),
+                NearAutoBuilder.intakeSpikeHorizontal(state, 2), NearAutoBuilder.shootSpike(state, 2, ShootPathFlag.NEXT_HORIZ),
+                NearAutoBuilder.intakeSpikeHorizontal(state, 3), NearAutoBuilder.shootSpike(state, 3, ShootPathFlag.LAST)
         );
     }
 }

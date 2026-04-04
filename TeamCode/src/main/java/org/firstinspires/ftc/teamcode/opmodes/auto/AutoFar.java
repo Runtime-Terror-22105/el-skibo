@@ -4,7 +4,8 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
+import org.firstinspires.ftc.teamcode.robot.auto.FarAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.KillTimerCommand;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
@@ -30,22 +31,22 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected Command createAutoCommand(AutoBuilder builder) {
-        builder.prepareShootTimeBeforeReverseIntake = 600;
-        builder.shootBrakingStrength = 0.75;
+    protected Command createAutoCommand(AutoBuildState state) {
+        state.prepareShootTimeBeforeReverseIntake = 600;
+        state.shootBrakingStrength = 0.75;
         return new SequentialCommandGroup(
 //                new InstantCommand(() -> robot.spindexer.setTolerance(10)),
-                builder.shootPreloadFar(),
+                FarAutoBuilder.shootPreloadFar(state),
                 // Do not reverse intake on first since they're guaranteed
-                builder.cycleWall(false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.intakeSpike3Far(),
-                builder.shootSpike3Far(ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleTunnel(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleWall(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleTunnel(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleWall(true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
+                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.intakeSpike3Far(state),
+                FarAutoBuilder.shootSpike3Far(state, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.cycleWall(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.cycleTunnel(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.cycleWall(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.cycleWall(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.cycleTunnel(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.cycleWall(state, true, ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
         ).alongWith(new KillTimerCommand(robot));
     }
 }
