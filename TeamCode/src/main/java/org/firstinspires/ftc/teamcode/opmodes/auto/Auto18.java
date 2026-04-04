@@ -30,6 +30,7 @@ public abstract class Auto18 extends OneAutoToRuleThemAll {
                 builder.cycleSpike(2),
                 builder.cycleGate(true),
                 builder.cycleGate(true),
+                builder.cycleGate(true),
                 builder.cycleSpike(3),
                 builder.cycleSpike(1, ShootPathFlag.LAST)
         );
