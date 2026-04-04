@@ -40,14 +40,14 @@ public class GoalPosLookupTable {
 
 
 
-            new GoalLookupValue(0.3, 3),
-            new GoalLookupValue(0.6, 0),
-            new GoalLookupValue(0.7, -1),
-            new GoalLookupValue(0.85, 0),
-            new GoalLookupValue(0.92, 3),
-            new GoalLookupValue(1.09, -3),
-            new GoalLookupValue(1.18, -6),
-            new GoalLookupValue(1.2, -6),
+            new GoalLookupValue(0.3, 9),
+            new GoalLookupValue(0.6, 6),
+            new GoalLookupValue(0.7, 5),
+            new GoalLookupValue(0.85, 6),
+            new GoalLookupValue(0.92, 6),
+            new GoalLookupValue(1.09, 8),
+            new GoalLookupValue(1.18, 3),
+            new GoalLookupValue(1.2, 5),
             //Currently these are just guesses
 //            new GoalLookupValue(0.233, -12),
 //            new GoalLookupValue(0.29, -8),
