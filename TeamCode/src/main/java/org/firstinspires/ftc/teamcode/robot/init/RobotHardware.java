@@ -208,7 +208,7 @@ public class RobotHardware {
         this.publisher.subscribe(10, intake);
 
         this.pto = new TerrorServo(hwMap, "pto");
-        this.pto.setDirection(Servo.Direction.REVERSE);
+        this.pto.setDirection(Servo.Direction.FORWARD);
         this.publisher.subscribe(10, this.pto);
 
         // Other things
