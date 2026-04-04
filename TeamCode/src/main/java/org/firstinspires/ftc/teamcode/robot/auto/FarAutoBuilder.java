@@ -1,0 +1,280 @@
+package org.firstinspires.ftc.teamcode.robot.auto;
+
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.VISION_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
+
+import com.pedropathing.paths.HeadingInterpolator;
+import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.LogCatCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
+
+import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
+import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelCommand;
+import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
+import org.firstinspires.ftc.teamcode.util.ArrayUtil;
+import org.firstinspires.ftc.teamcode.util.BallColor;
+
+import java.util.EnumSet;
+
+public final class FarAutoBuilder {
+    private FarAutoBuilder() {
+    }
+
+    public static Command shootPreloadFar(AutoBuildState state, ShootPathFlag... flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_FAR_POSE, state.mirror, false, false)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
+                        new SequentialCommandGroup(
+                                new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY),
+                                new WaitCommand(250)
+                        )
+                ),
+                SortedAutoBuilder.shootCommand(state, flags),
+                new StopScanningForGlyphsCommand(state.robot.camera)
+        );
+    }
+
+    public static Command intakeSpike3Far(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_3_CONTROL_FAR, INTAKE_3_POSE, state.mirror, false, false)
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0.0, 0.25,
+                                        HeadingInterpolator.linear(state.lastPath.getFinalHeadingGoal(), INTAKE_3_POSE.mirror(state.mirror).heading)
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(0.25, 0.8,
+                                        HeadingInterpolator.constant(INTAKE_3_POSE.mirror(state.mirror).heading)
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(0.8, 1.0,
+                                        FixedHeadingInterpolator.linear(
+                                                INTAKE_3_POSE.mirror(state.mirror).heading,
+                                                INTAKE_3_POSE_FAR.mirror(state.mirror).heading,
+                                                0.8, 1.0
+                                        )
+                                )
+                        )
+                )
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelRaceGroup(
+                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
+                        new WaitForIntakeCommand(state.robot)
+                ),
+                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY)
+        );
+    }
+
+    public static Command shootSpike3Far(AutoBuildState state, ShootPathFlag... flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_FAR_POSE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return SortedAutoBuilder.createFollowShootPathAndShootCommand(state, 250, state.lastPath, flags);
+    }
+
+    public static Command intakeWall(AutoBuildState state, boolean reverseIntake) {
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, INTAKE_WALL_POSE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelRaceGroup(
+                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, 1.0, 12.0),
+                        new WaitForIntakeCommand(state.robot)
+                ),
+                new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {
+                        }),
+                        () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
+                )
+        );
+    }
+
+    public static Command prepareVision(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, VISION_POSE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(true)),
+                        new FollowPathCommand(state.robot.follower, state.lastPath, true, 0.9)
+                ),
+                new LogCatCommand("AutoBuilder", "finished path to vision, waiting for blob"),
+                new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
+                new WaitUntilCommand(() -> state.robot.camera.hasBlob()),
+                new LogCatCommand("AutoBuilder", "blob found, preparing shoot")
+        );
+    }
+
+    public static Command intakeVision(AutoBuildState state, boolean reverseIntake) {
+        Pose2d wallCoords = INTAKE_WALL_POSE.mirror(state.mirror);
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, state.robot.camera.offsetByBallCoords(wallCoords), false, true, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(false)),
+                new FollowPathCommand(state.robot.follower, state.lastPath, true),
+                new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {
+                        }),
+                        () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
+                ),
+                new InstantCommand(() -> {
+                    state.robot.camera.resetBlob();
+                    state.robot.camera.setBallPipelineEnabled(false);
+                })
+        );
+    }
+
+    public static Command intakeTunnel(AutoBuildState state, boolean reverseIntake) {
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, INTAKE_TUNNEL_POSE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelRaceGroup(
+                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, 1.0, 20.0),
+                        new WaitForIntakeCommand(state.robot)
+                ),
+                new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {
+                        }),
+                        () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
+                )
+        );
+    }
+
+    public static Command shootWall(AutoBuildState state, ShootPathFlag... flagArr) {
+        return SortedAutoBuilder.shootWall(state, flagArr);
+    }
+
+    public static Command cycleTunnel(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
+        return new SequentialCommandGroup(
+                intakeTunnel(state, reverseIntake),
+                shootWall(state, flagArr)
+        );
+    }
+
+    public static Command cycleWall(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
+        return new SequentialCommandGroup(
+                intakeWall(state, reverseIntake),
+                shootWall(state, flagArr)
+        );
+    }
+
+    public static Command cycleVision(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
+        return new DeferredCommand(() -> new SequentialCommandGroup(
+                intakeVision(state, reverseIntake),
+                shootWall(state, flagArr),
+                prepareVision(state)
+        ), null);
+    }
+
+    public static Command intakeWallLong(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, INTAKE_WALL_POSE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new GoToIntakeStateCommand(state.robot),
+                new FollowPathCommand(state.robot.follower, state.lastPath, true)
+        );
+    }
+
+    public static Command controlPathLong(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, CONTROL_POSE_LONG_INTAKE, START_POSE_LONG_INTAKE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(new FollowPathCommand(state.robot.follower, state.lastPath));
+    }
+
+    public static Command intakeTunnelLong(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, END_POSE_LONG_INTAKE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(new FollowPathCommand(state.robot.follower, state.lastPath));
+    }
+
+    public static Command shootWallLong(AutoBuildState state, ShootPathFlag... flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_FAR_POSE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0, 0.7,
+                                        FixedHeadingInterpolator.linearFromPoint(
+                                                () -> state.robot.follower.getHeading(),
+                                                SHOOT_FAR_POSE.heading,
+                                                0, 0.5
+                                        )
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0,
+                                        HeadingInterpolator.constant(SHOOT_FAR_POSE.heading)
+                                )
+                        )
+                )
+                .build();
+        return SortedAutoBuilder.createFollowShootPathAndShootCommand(state, 250, state.lastPath, flags);
+    }
+
+    public static Command cycleLong(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
+        return new SequentialCommandGroup(
+                new ParallelRaceGroup(
+                        new SequentialCommandGroup(
+                                intakeWallLong(state),
+                                controlPathLong(state),
+                                intakeTunnelLong(state)
+                        ),
+                        new WaitForIntakeCommand(state.robot)
+                ),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {
+                        }),
+                        () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
+                ),
+                shootWallLong(state, flagArr)
+        );
+    }
+}
+
