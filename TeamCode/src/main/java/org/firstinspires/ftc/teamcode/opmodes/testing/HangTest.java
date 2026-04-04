@@ -21,16 +21,25 @@ public class HangTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
+    public static double lowPower = 0.1;
+
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, this);
-        robot.hang.setPTOEngagement(true);
-        robot.robotState = RobotState.HANGING;
+
+        while(opModeInInit())
+        {
+            robot.hang.setPTOEngagement(true);
+            robot.hardware.motorRearRight.setPower(lowPower);
+            robot.hardware.motorRearLeft.setPower(lowPower);
+        }
+
         waitForStart();
 
         while (opModeIsActive())
         {
+            robot.robotState = RobotState.HANGING;
             CommandScheduler.getInstance().run();
         }
 
