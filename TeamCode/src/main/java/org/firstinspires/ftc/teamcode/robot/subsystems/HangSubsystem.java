@@ -55,7 +55,7 @@ public class HangSubsystem extends SubsystemBase {
             robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
         }
 //        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
-        if(!robot.robotState.isHang() || !isPTOEngaged())
+        if(!isPTOEngaged)//(!robot.robotState.isHang() || !isPTOEngaged())
         {
             hangTimer.reset(); //could be cooked, lifes tough
             return;
