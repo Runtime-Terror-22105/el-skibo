@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.12;
-    public static boolean USE_SOTM = true;
+    public static boolean USE_SOTM = false;
     public static boolean USE_SOTM_ACCEL = false;
 
     public static boolean debug = false;
@@ -88,6 +88,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double g = 386.08858267717; //in per sec^2
     public static double goalHeight = 40.0; //doesnt change no matter alliance color
     public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
+
+    public double manualAimVerticalOffset = 0;
+    public double manualAimHorizontalOffset = 0;
 
     private final RobotHardware hardware;
     private final Robot robot;
@@ -155,6 +158,18 @@ public class ShooterSubsystem extends SubsystemBase {
                 turretPosAt180-posChange90, turretPosAt180+posChange90
         );
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
+    }
+
+    public void setManualAimOffset(double vertical, double horizontal)
+    {
+        this.manualAimVerticalOffset = vertical;
+        this.manualAimHorizontalOffset = horizontal;
+    }
+
+    public void incrementManualAimOffset(double vertical, double horizontal)
+    {
+        this.manualAimVerticalOffset += vertical;
+        this.manualAimHorizontalOffset += horizontal;
     }
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation) {
@@ -465,6 +480,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double getGoalTurretYaw() {
         return this.goalTurretAngle;
+    }
+
+    public void toggleSOTMOverride()
+    {
+        if(sotmOverride == null)
+        {
+            sotmOverride = true;
+            return;
+        }
+        sotmOverride = !sotmOverride;
     }
 
     @Override
