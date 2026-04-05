@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.button.GamepadButton;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
@@ -22,32 +25,19 @@ public class HangTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    public static double lowPower = -0.5;
-
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         robot.init(hardware, this);
 
-        while(opModeInInit())
-        {
-            robot.hang.setPTOEngagement(true);
-            robot.robotState = RobotState.HANG_INIT;
-            CommandScheduler.getInstance().run();
-            hardware.write();
-        }
-
         waitForStart();
 
         while (opModeIsActive())
         {
-            robot.robotState = RobotState.HANGING;
+            robot.hang.beginHang();
             CommandScheduler.getInstance().run();
             hardware.write();
         }
-
-        hardware.pto.setPosition(HangSubsystem.PTO_DISENGAGE_POSITION);
-        hardware.write();
 
         robot.close();
     }
