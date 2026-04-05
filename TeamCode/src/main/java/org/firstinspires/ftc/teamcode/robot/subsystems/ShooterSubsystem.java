@@ -37,18 +37,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public static double TICKS_PER_REV = 28; // GoBilda yellowjacket encoder
 
-    // TODO: tune velocity pid coefficients + tolerance
-    // Small/large PID is for when error is small/large, respectively.
-    //
-    // kV should be the same for both PIDs. kP can be more aggressive for the large PID.
-    public static PidfController.PidfCoefficients SMALL_PID_COEFFICIENTS =
+    // Small/large PID is for when current velocity is small/large, respectively.
+    // From my observations, the flywheel is more sensitive at lower velocities, so we use a less
+    // aggressive feedforward at higher velocities to avoid overshooting and oscillation.
+    public static PidfController.PidfCoefficients NEAR_PID_COEFFICIENTS =
+            new PidfController.PidfCoefficients(0.0015, 0, 0, 0.000215, 0);
+    public static PidfController.PidfCoefficients FAR_PID_COEFFICIENTS =
             new PidfController.PidfCoefficients(0.00043, 0, 0, 0.000188, 0);
-    public static PidfController.PidfCoefficients LARGE_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.00043, 0, 0, 0.000188, 0);
-    private final PidfController shooterPID = new PidfController(SMALL_PID_COEFFICIENTS);
+    private final PidfController shooterPID = new PidfController(NEAR_PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
-    public static double SHOOTER_PID_SWITCH = 800;  // Units are RPM
+    public static double SHOOTER_PID_SWITCH = 3000;  // Units are RPM
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
     public static double SHOOTER_VEL_TOLERANCE = 30;  // Units are RPM
@@ -453,8 +452,9 @@ public class ShooterSubsystem extends SubsystemBase {
 //        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
 
         shooterPID.setTargetPosition(getGoalVelocity());
-        boolean useSmallPID = shooterPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_PID_SWITCH);
-        shooterPID.setPidfCoefficients(useSmallPID ? SMALL_PID_COEFFICIENTS : LARGE_PID_COEFFICIENTS);
+//        boolean useSmallPID = shooterPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_PID_SWITCH);
+        boolean useSmallPID = currentRpm < SHOOTER_PID_SWITCH;
+        shooterPID.setPidfCoefficients(useSmallPID ? NEAR_PID_COEFFICIENTS : FAR_PID_COEFFICIENTS);
 
         return hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
     }
