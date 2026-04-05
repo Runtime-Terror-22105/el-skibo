@@ -5,12 +5,16 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTR
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE_2;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.HITTING_GATE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_BEFORE_HORIZ_CONTROL;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
@@ -22,7 +26,9 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PU
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
+import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -162,30 +168,52 @@ public final class NearAutoBuilder {
     }
 
     public static Command intakeSpikeHorizontal(AutoBuildState state, int spikeNumber) {
+        // intakeBeforeHorizPath is necessary to be at the right x-value so we drive head-on into the balls
+        // or else we will hit it at an angle
         Pose2d intakePose;
+        Pose2d intakeBeforeHorizPose;
+        PathBuilder intakeBeforeHorizPath;
         if (spikeNumber == 1) {
             intakePose = INTAKE_1_HORIZ_POSE;
+            intakeBeforeHorizPose = INTAKE_1_BEFORE_HORIZ_POSE;
+            intakeBeforeHorizPath = PathUtil.addPathBuilderCurve(
+                    state.robot, state.startPoseBlue, state.lastPath,
+                    INTAKE_1_BEFORE_HORIZ_CONTROL, intakeBeforeHorizPose, state.mirror,
+                    false, false
+            );
         } else if (spikeNumber == 2) {
             intakePose = INTAKE_2_HORIZ_POSE;
+            intakeBeforeHorizPose = INTAKE_2_BEFORE_HORIZ_POSE;
+            intakeBeforeHorizPath = PathUtil.addPathBuilderLine(
+                    state.robot, state.startPoseBlue, state.lastPath,
+                    intakeBeforeHorizPose, state.mirror,
+                    false, false
+            );
         } else if (spikeNumber == 3) {
             intakePose = INTAKE_3_HORIZ_POSE;
+            intakeBeforeHorizPose = INTAKE_3_BEFORE_HORIZ_POSE;
+            intakeBeforeHorizPath = PathUtil.addPathBuilderLine(
+                    state.robot, state.startPoseBlue, state.lastPath,
+                    intakeBeforeHorizPose, state.mirror,
+                    false, false
+            );
         } else {
             throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
         }
 
-//        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_BEFORE_HORIZ_CONTROL, INTAKE_BEFORE_HORIZ_POSE, state.mirror, false, false)
-//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .addPath(new BezierLine(
-//                        INTAKE_BEFORE_HORIZ_POSE.mirror(state.mirror).toPedro(),
-//                        intakePose.mirror(state.mirror).toPedro()
-//                ))
-//                .setConstantHeadingInterpolation(INTAKE_BEFORE_HORIZ_POSE.mirror(state.mirror).heading)
-//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .build();
-
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, intakePose, state.mirror, false, false)
+        state.lastPath = intakeBeforeHorizPath
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .addPath(new BezierLine(
+                        intakeBeforeHorizPose.mirror(state.mirror).toPedro(),
+                        intakePose.mirror(state.mirror).toPedro()
+                ))
+                .setConstantHeadingInterpolation(INTAKE_1_BEFORE_HORIZ_POSE.mirror(state.mirror).heading)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
+
+//        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, intakePose, state.mirror, false, false)
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .build();
 
         return new SequentialCommandGroup(
                 new FollowPathCommand(state.robot.follower, state.lastPath, true, 0.9),
