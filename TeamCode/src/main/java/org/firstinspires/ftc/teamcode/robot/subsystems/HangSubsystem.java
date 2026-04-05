@@ -19,7 +19,7 @@ public class HangSubsystem extends SubsystemBase {
     public static double PTO_ENGAGE_POSITION = 0.6;
     public static double PTO_DISENGAGE_POSITION = 0;
 
-    public static double PTO_INIT_POWER = -0.5;
+    public static double PTO_INIT_POWER = -0.2;
     public static double PTO_RISE_POWER = -1;
 
     public static boolean debug = true;
