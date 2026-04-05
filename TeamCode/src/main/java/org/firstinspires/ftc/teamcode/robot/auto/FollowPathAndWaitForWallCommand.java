@@ -19,7 +19,7 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
     private final double maxPower;
     private final double wallTimeoutDistance;
 
-    private boolean wallDistanceIsForRemaining = false;
+    private boolean wallDistanceIsForRemaining;
 
     private State state = State.INITIAL_PATH;
 
@@ -35,6 +35,7 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
         this.holdEnd = holdEnd;
         this.maxPower = maxPower;
         this.wallTimeoutDistance = wallTimeoutDistance;
+        this.wallDistanceIsForRemaining = false;
     }
 
     /**

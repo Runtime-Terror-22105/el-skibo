@@ -227,11 +227,18 @@ public final class NearAutoBuilder {
 //                .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .build();
 
-        return new SequentialCommandGroup(
-                new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 20)
-                        .wallDistanceIsForRemaining(),
-                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_TIMEOUT_HORIZ)
-        );
+        if (spikeNumber == 1) {
+            return new SequentialCommandGroup(
+                    new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 20)
+                            .wallDistanceIsForRemaining(),
+                    new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_TIMEOUT_HORIZ)
+            );
+        } else {
+            return new SequentialCommandGroup(
+                    new FollowPathCommand(state.robot.follower, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                    new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_TIMEOUT_HORIZ)
+            );
+        }
     }
 
     public static Command shootSpike(AutoBuildState state, int spikeNumber, ShootPathFlag... flagArr) {
