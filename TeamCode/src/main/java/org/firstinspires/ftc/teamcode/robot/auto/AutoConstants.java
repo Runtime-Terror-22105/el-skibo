@@ -21,12 +21,12 @@ public class AutoConstants {
     public static Pose2d SHOOT_SORTED_POSE = new Pose2d(54, 88, Math.toRadians(-124.7));
 
     public static Pose2d INTAKE_1_BEFORE_HORIZ_CONTROL = new Pose2d(24, 116, 0);
-    public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(24, 102, Math.toRadians(263));
-    public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(24.67, 82, Math.toRadians(263));
-    public static Pose2d INTAKE_2_BEFORE_HORIZ_POSE = new Pose2d(24, 78, Math.toRadians(263));
-    public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(24.67, 58, Math.toRadians(263));
-    public static Pose2d INTAKE_3_BEFORE_HORIZ_POSE = new Pose2d(24, 54, Math.toRadians(263));
-    public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(24.67, 34, Math.toRadians(263));
+    public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(25.67, 102, Math.toRadians(263));
+    public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 82, Math.toRadians(263));
+    public static Pose2d INTAKE_2_BEFORE_HORIZ_POSE = new Pose2d(25.67, 78, Math.toRadians(263));
+    public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 58, Math.toRadians(263));
+    public static Pose2d INTAKE_3_BEFORE_HORIZ_POSE = new Pose2d(25.67, 54, Math.toRadians(263));
+    public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 34, Math.toRadians(263));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
@@ -46,7 +46,7 @@ public class AutoConstants {
 
     // For CYCLING gate.
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 68.5, Math.toRadians(180));
-    public static Pose2d HITTING_GATE = new Pose2d(15, 68, Math.toRadians(180));
+    public static Pose2d HITTING_GATE = new Pose2d(19, 69, Math.toRadians(180));
     public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(15, 55.5);
     public static Pose2d AFTER_GATE = new Pose2d(10, 55.7, Math.toRadians(120));
 
@@ -66,7 +66,8 @@ public class AutoConstants {
     public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 2500;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
-    public static int INTAKE_DELAY_HORIZ = 200;
+    public static int INTAKE_SPINDEX_TIMEOUT_HORIZ = 500;
+    public static int INTAKE_TIMEOUT_HORIZ = 200;
     public static int REVERSE_INTAKE_GATE_DELAY = 250;
     public static int SORTED_SHOOT_DELAY = 800;
     public static int NORMAL_SHOOT_DELAY = 0;
@@ -76,7 +77,7 @@ public class AutoConstants {
 
     // Distance (in inches) from the target shoot pose for which early shoot begins
     // shooting
-    public static double EARLY_SHOOT_DISTANCE = 15.0;
+    public static double EARLY_SHOOT_DISTANCE = 20.0;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;

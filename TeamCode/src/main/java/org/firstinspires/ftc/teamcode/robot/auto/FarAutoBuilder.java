@@ -130,7 +130,7 @@ public final class FarAutoBuilder {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(true)),
-                        new FollowPathCommand(state.robot.follower, state.lastPath, true, 0.9)
+                        new FollowPathCommand(state.robot.follower, state.lastPath, true, 1)
                 ),
                 new LogCatCommand("AutoBuilder", "finished path to vision, waiting for blob"),
                 new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),

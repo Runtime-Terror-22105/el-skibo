@@ -19,14 +19,14 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_C
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY_HORIZ;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_SPINDEX_TIMEOUT_HORIZ;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TIMEOUT_HORIZ;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 
 public final class NearAutoBuilder {
@@ -172,11 +173,11 @@ public final class NearAutoBuilder {
         // or else we will hit it at an angle
         Pose2d intakePose;
         Pose2d intakeBeforeHorizPose;
-        PathBuilder intakeBeforeHorizPath;
+        PathBuilder intakeBeforeHorizPathBuilder;
         if (spikeNumber == 1) {
             intakePose = INTAKE_1_HORIZ_POSE;
             intakeBeforeHorizPose = INTAKE_1_BEFORE_HORIZ_POSE;
-            intakeBeforeHorizPath = PathUtil.addPathBuilderCurve(
+            intakeBeforeHorizPathBuilder = PathUtil.addPathBuilderCurve(
                     state.robot, state.startPoseBlue, state.lastPath,
                     INTAKE_1_BEFORE_HORIZ_CONTROL, intakeBeforeHorizPose, state.mirror,
                     false, false
@@ -184,7 +185,7 @@ public final class NearAutoBuilder {
         } else if (spikeNumber == 2) {
             intakePose = INTAKE_2_HORIZ_POSE;
             intakeBeforeHorizPose = INTAKE_2_BEFORE_HORIZ_POSE;
-            intakeBeforeHorizPath = PathUtil.addPathBuilderLine(
+            intakeBeforeHorizPathBuilder = PathUtil.addPathBuilderLine(
                     state.robot, state.startPoseBlue, state.lastPath,
                     intakeBeforeHorizPose, state.mirror,
                     false, false
@@ -192,7 +193,7 @@ public final class NearAutoBuilder {
         } else if (spikeNumber == 3) {
             intakePose = INTAKE_3_HORIZ_POSE;
             intakeBeforeHorizPose = INTAKE_3_BEFORE_HORIZ_POSE;
-            intakeBeforeHorizPath = PathUtil.addPathBuilderLine(
+            intakeBeforeHorizPathBuilder = PathUtil.addPathBuilderLine(
                     state.robot, state.startPoseBlue, state.lastPath,
                     intakeBeforeHorizPose, state.mirror,
                     false, false
@@ -201,23 +202,37 @@ public final class NearAutoBuilder {
             throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
         }
 
-        state.lastPath = intakeBeforeHorizPath
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .addPath(new BezierLine(
-                        intakeBeforeHorizPose.mirror(state.mirror).toPedro(),
-                        intakePose.mirror(state.mirror).toPedro()
-                ))
-                .setConstantHeadingInterpolation(INTAKE_1_BEFORE_HORIZ_POSE.mirror(state.mirror).heading)
+        PathChain intakeBeforeHorizPath = intakeBeforeHorizPathBuilder
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
+
+        state.lastPath = PathUtil.addPathBuilderLine(
+                state.robot, state.startPoseBlue,
+                        intakeBeforeHorizPath, intakePose,
+                        state.mirror, false, false)
+                .setConstantHeadingInterpolation(intakeBeforeHorizPose.mirror(state.mirror).heading)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+
+//        state.lastPath = intakeBeforeHorizPathBuilder
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .addPath(new BezierLine(
+//                        intakeBeforeHorizPose.mirror(state.mirror).toPedro(),
+//                        intakePose.mirror(state.mirror).toPedro()
+//                ))
+//                .setConstantHeadingInterpolation(INTAKE_1_BEFORE_HORIZ_POSE.mirror(state.mirror).heading)
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .build();
 
 //        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, intakePose, state.mirror, false, false)
 //                .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .build();
 
         return new SequentialCommandGroup(
-                new FollowPathCommand(state.robot.follower, state.lastPath, true, 0.9),
-                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY_HORIZ)
+                new FollowPathCommand(state.robot.follower, intakeBeforeHorizPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new WaitForSpindexerYawCommand(state.robot.spindexer, intakePose.heading).withTimeout(INTAKE_SPINDEX_TIMEOUT_HORIZ),
+                new FollowPathCommand(state.robot.follower, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_TIMEOUT_HORIZ)
         );
     }
 
