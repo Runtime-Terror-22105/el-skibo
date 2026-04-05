@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.linearOpMode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,7 +22,8 @@ public class HangSubsystem extends SubsystemBase {
     public static double PTO_ENGAGE_POSITION = 0.6;
     public static double PTO_DISENGAGE_POSITION = 0;
 
-    public static double PTO_POWER = -1;
+    public static double PTO_INIT_POWER = -0.5;
+    public static double PTO_RISE_POWER = -1;
 
     public static boolean debug = true;
 
@@ -59,20 +61,39 @@ public class HangSubsystem extends SubsystemBase {
         else {
             hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
         }
-//        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
-        if(!isPTOEngaged)//(!robot.robotState.isHang() || !isPTOEngaged())
-        {
-            hangTimer.reset(); //could be cooked, lifes tough
-            return;
-        }
+//
+////        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
+//        if(!isPTOEngaged)//(!robot.robotState.isHang() || !isPTOEngaged())
+//        {
+//            hangTimer.reset(); //could be cooked, lifes tough
+//            return;
+//        }
 //        if(hangTimer.milliseconds() > HANG_TIMER_MILLISECONDS)
 //        {
 //            robot.hardware.motorRearLeft.setPower(0);
 //            robot.hardware.motorRearRight.setPower(0);
 //        }
 //        else {
-            hardware.motorRearRight.setPower(PTO_POWER);
-            hardware.motorRearLeft.setPower(PTO_POWER);
+        switch(robot.robotState)
+        {
+            case HANG_INIT:
+                hardware.motorRearRight.setPower(PTO_INIT_POWER);
+                hardware.motorRearLeft.setPower(PTO_INIT_POWER);
+                break;
+
+            case HANGING:
+                hardware.motorRearRight.setPower(PTO_RISE_POWER);
+                hardware.motorRearLeft.setPower(PTO_RISE_POWER);
+                break;
+
+            case HANG_FINISH: //probably best to not ever do this
+                hardware.motorRearRight.setPower(0);
+                hardware.motorRearLeft.setPower(0);
+                break;
+
+            default:
+                break;
+        }
 //        }
 
 

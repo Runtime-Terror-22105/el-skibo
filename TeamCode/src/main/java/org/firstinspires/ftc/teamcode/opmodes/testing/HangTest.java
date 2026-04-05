@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
+import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 
 @TeleOp(name="Hang Test", group="Testing")
 @Config
@@ -31,10 +32,9 @@ public class HangTest extends LinearOpMode {
         while(opModeInInit())
         {
             robot.hang.setPTOEngagement(true);
-//            hardware.motorRearRight.setPower(lowPower);
-//            hardware.motorRearLeft.setPower(lowPower);
-//            CommandScheduler.getInstance().run();
-//            hardware.write();
+            robot.robotState = RobotState.HANG_INIT;
+            CommandScheduler.getInstance().run();
+            hardware.write();
         }
 
         waitForStart();
@@ -46,7 +46,8 @@ public class HangTest extends LinearOpMode {
             hardware.write();
         }
 
-        robot.hang.setPTOEngagement(false);
+        hardware.pto.setPosition(HangSubsystem.PTO_DISENGAGE_POSITION);
+        hardware.write();
 
         robot.close();
     }
