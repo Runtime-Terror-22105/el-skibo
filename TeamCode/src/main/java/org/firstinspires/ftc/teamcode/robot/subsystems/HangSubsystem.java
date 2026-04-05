@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
+import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
@@ -29,15 +32,17 @@ public class HangSubsystem extends SubsystemBase {
     public static double HANG_TIMER_MILLISECONDS = 4000;
 
     private final Robot robot;
+    private final RobotHardware hardware;
 
-    public HangSubsystem(Robot robot) {
+    public HangSubsystem(RobotHardware hardware,Robot robot) {
         this.robot = robot;
+        this.hardware = hardware;
         setPTOEngagement(false);
     }
 
     public void setPTOEngagement(boolean state)
     {
-        isPTOEngaged = state;
+        this.isPTOEngaged = state;
     }
     public boolean isPTOEngaged()
     {
@@ -49,10 +54,10 @@ public class HangSubsystem extends SubsystemBase {
 
         if(isPTOEngaged)
         {
-            robot.hardware.pto.setPosition(PTO_ENGAGE_POSITION);
+            hardware.pto.setPosition(PTO_ENGAGE_POSITION);
         }
         else {
-            robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
+            hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
         }
 //        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
         if(!isPTOEngaged)//(!robot.robotState.isHang() || !isPTOEngaged())
@@ -66,8 +71,8 @@ public class HangSubsystem extends SubsystemBase {
 //            robot.hardware.motorRearRight.setPower(0);
 //        }
 //        else {
-            robot.hardware.motorRearRight.setPower(PTO_POWER);
-            robot.hardware.motorRearLeft.setPower(PTO_POWER);
+            hardware.motorRearRight.setPower(PTO_POWER);
+            hardware.motorRearLeft.setPower(PTO_POWER);
 //        }
 
 
