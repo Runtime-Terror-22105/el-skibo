@@ -22,7 +22,11 @@ public class ResetHangOpmode extends LinearOpMode {
 
         waitForStart();
 
-        hw.pto.setPosition(HangSubsystem.PTO_DISENGAGE_POSITION);
-        hw.write();
+        while(opModeIsActive())
+        {
+            hw.pto.setPosition(HangSubsystem.PTO_DISENGAGE_POSITION);
+            hw.write();
+        }
+
     }
 }
