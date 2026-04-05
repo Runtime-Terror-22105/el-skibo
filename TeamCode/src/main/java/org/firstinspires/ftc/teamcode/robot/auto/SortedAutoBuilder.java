@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.REVERSE_INTAKE_GATE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE;
 
@@ -23,7 +21,6 @@ import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
@@ -31,7 +28,6 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.WaitForGlyphCommand;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
-import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 
@@ -161,7 +157,7 @@ public final class SortedAutoBuilder {
         Command endCommand = new InstantCommand(() -> {
         });
         if (flags.contains(ShootPathFlag.LAST) && TWO_SEGMENT_PARK_SORTED) {
-            endCommand = parkSorted(state);
+            endCommand = park(state);
         }
 
         return new SequentialCommandGroup(
@@ -170,31 +166,7 @@ public final class SortedAutoBuilder {
         );
     }
 
-    public static Command shootGate(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
-        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        return new ParallelCommandGroup(
-                createFollowShootPathAndShootCommand(state, 250, shootGatePath(state, flags), flags),
-                new SequentialCommandGroup(
-                        new WaitCommand(REVERSE_INTAKE_GATE_DELAY),
-                        new ConditionalCommand(
-                                new SetIntakeSpeedCommand(state.robot.intake, IntakeSubsystem.REVERSE_SPEED),
-                                new InstantCommand(() -> {
-                                }),
-                                () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
-                        )
-                )
-        );
-    }
-
-    public static Command shootWall(AutoBuildState state, ShootPathFlag... flagArr) {
-        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_EDGE_POSE, state.mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
-        return createFollowShootPathAndShootCommand(state, 250, state.lastPath, flags);
-    }
-
-    public static Command parkSorted(AutoBuildState state) {
+    public static Command park(AutoBuildState state) {
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_LAST_POSE, state.mirror, false, false)
                 .build();
         return new FollowPathCommand(state.robot.follower, state.lastPath, true);

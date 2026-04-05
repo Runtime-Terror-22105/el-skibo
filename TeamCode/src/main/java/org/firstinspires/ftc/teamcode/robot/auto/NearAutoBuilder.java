@@ -203,12 +203,6 @@ public final class NearAutoBuilder {
         );
     }
 
-    public static Command parkSorted(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, AutoConstants.SHOOT_LAST_POSE, state.mirror, false, false)
-                .build();
-        return new FollowPathCommand(state.robot.follower, state.lastPath, true);
-    }
-
     public static Command pushGate(AutoBuildState state) {
         return new SequentialCommandGroup(
                 new FollowPathCommand(state.robot.follower, preparePushGatePath(state), true, MAX_DRIVETRAIN_POWER_INTAKING),
