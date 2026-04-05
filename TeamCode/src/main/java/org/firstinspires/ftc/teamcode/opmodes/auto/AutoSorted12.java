@@ -6,9 +6,11 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoConstants;
+import org.firstinspires.ftc.teamcode.robot.auto.NearAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
+import org.firstinspires.ftc.teamcode.robot.auto.SortedAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
@@ -31,20 +33,23 @@ public abstract class AutoSorted12 extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected Command createAutoCommand(AutoBuilder builder) {
-        builder.waitBeforeShooting(SHOOTING_DELAY);
-        builder.shootBrakingStrength = AutoConstants.SORTED_BRAKING_STRENGTH;
+    protected Command createAutoCommand(AutoBuildState state) {
+        state.waitBeforeShooting += SHOOTING_DELAY;
+        state.shootBrakingStrength = AutoConstants.SORTED_BRAKING_STRENGTH;
         return new SequentialCommandGroup(
-                builder.shootPreload(),
-                builder.cycleSpike(1),
-                builder.cycleSpike(2),
+                SortedAutoBuilder.shootPreload(state),
+                NearAutoBuilder.intakeSpike(state, 1),
+                SortedAutoBuilder.shootSpike(state, 1),
+                NearAutoBuilder.intakeSpike(state, 2),
+                SortedAutoBuilder.shootSpike(state, 2),
                 // ppg is more optimal in case we miss in earlier rounds by maximizing purples
                 new InstantCommand(() -> {
                     robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
                     robot.camera.setAprilTagsEnabled(false);
                     robot.spindexer.overrideMaxPower = true;
                 }),
-                builder.cycleSpike(3, ShootPathFlag.LAST)
+                NearAutoBuilder.intakeSpike(state, 3),
+                SortedAutoBuilder.shootSpike(state, 3, ShootPathFlag.LAST)
         );
     }
 }

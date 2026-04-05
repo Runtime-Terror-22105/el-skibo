@@ -17,7 +17,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoConstants;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
@@ -74,7 +74,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         return false;
     }
 
-    protected abstract Command createAutoCommand(AutoBuilder builder);
+    protected abstract Command createAutoCommand(AutoBuildState state);
 
     // Optional overrides:
 
@@ -101,7 +101,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // TODO: the autobuilder class currently does not handle the init logic.
         //  Does it need to?
-        AutoBuilder builder = new AutoBuilder(this, robot, this.team, this.getStartConfig());
+        AutoBuildState state = new AutoBuildState(this, robot, this.team, this.getStartConfig());
         robot.follower.setStartingPose(team.getStartPose(this.getStartConfig()).toPedro());
         robot.goalPos = team.getGoalPos();
 
@@ -160,7 +160,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        this.createAutoCommand(builder),
+                        this.createAutoCommand(state),
                         new InstantCommand(() -> this.hasFinished = true)
                 )
         );

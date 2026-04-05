@@ -7,7 +7,7 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
 import org.firstinspires.ftc.teamcode.robot.auto.PathUtil;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
@@ -31,14 +31,10 @@ public abstract class LeaveAutoFar extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected Command createAutoCommand(AutoBuilder builder) {
+    protected Command createAutoCommand(AutoBuildState state) {
+        state.lastPath = PathUtil.createLinePath(robot, state.startPoseBlue, PARK_END, state.mirror, false, false);
         return new ParallelCommandGroup(
-                new FollowPathCommand(
-                        robot.follower,
-                        builder.customPath(
-                            PathUtil.createLinePath(robot, builder.startPoseBlue, PARK_END, builder.mirror, false, false)
-                        )
-                ),
+                new FollowPathCommand(robot.follower, state.lastPath),
                 new GoToRestingStateCommand(robot)
         );
     }
