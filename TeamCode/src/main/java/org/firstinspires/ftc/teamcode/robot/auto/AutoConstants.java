@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class AutoConstants {
     // Unless otherwise specified, all poses are for NEAR ZONE.
     public static Pose2d SHOOT_PRELOAD_POSE = new Pose2d(53, 98, 4.2);
+    public static Pose2d SHOOT_PRELOAD_FAR_POSE = new Pose2d(48, 10, Math.toRadians(105));
     public static Pose2d SHOOT_PRELOAD_HORIZ_POSE = new Pose2d(24, 115, Math.toRadians(225));
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(53, 98, Math.toRadians(-124.7));
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
@@ -36,9 +37,10 @@ public class AutoConstants {
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 45.668);
-    public static Pose2d INTAKE_3_CONTROL_FAR = new Pose2d(56, 39);
     public static Pose2d INTAKE_3_POSE = new Pose2d(14, 37, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE_FAR = new Pose2d(17, 39, Math.toRadians(200));
+    public static Pose2d PREPARE_INTAKE_3_CONTROL_FAR = new Pose2d(50.0, 37.8);
+    public static Pose2d PREPARE_INTAKE_3_POSE_FAR = new Pose2d(36.42918454935622, 36, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE_FAR = new Pose2d(11, PREPARE_INTAKE_3_POSE_FAR.y, Math.toRadians(180));
 
     // For pushing gate after a SPIKE STRIP.
     public static Pose2d PREPARE_PUSH_GATE_POSE = new Pose2d(25, 65, Math.toRadians(180));

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 
@@ -14,7 +13,7 @@ public class FieldConstants {
     // start poses.
     public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-132));
 //    public static Pose2d RED_START_POS_NEAR = BLUE_START_POS_NEAR.mirror();
-    public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 8, Math.toRadians(180));
+    public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 8, Math.toRadians(90));
 //    public static Pose2d RED_START_POS_FAR = new Pose2d(96, 0, 1D / 2D * Math.PI);
 
     public static String MOTIF_DATA_KEY = "motif";
