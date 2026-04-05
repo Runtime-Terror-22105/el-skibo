@@ -60,15 +60,15 @@ public class HangSubsystem extends SubsystemBase {
             hangTimer.reset(); //could be cooked, lifes tough
             return;
         }
-        if(hangTimer.milliseconds() > HANG_TIMER_MILLISECONDS)
-        {
-            robot.hardware.motorRearLeft.setPower(0);
-            robot.hardware.motorRearRight.setPower(0);
-        }
-        else {
+//        if(hangTimer.milliseconds() > HANG_TIMER_MILLISECONDS)
+//        {
+//            robot.hardware.motorRearLeft.setPower(0);
+//            robot.hardware.motorRearRight.setPower(0);
+//        }
+//        else {
             robot.hardware.motorRearRight.setPower(PTO_POWER);
             robot.hardware.motorRearLeft.setPower(PTO_POWER);
-        }
+//        }
 
 
 
