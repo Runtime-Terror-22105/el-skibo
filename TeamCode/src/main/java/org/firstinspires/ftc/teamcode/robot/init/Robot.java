@@ -114,7 +114,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
         this.shooter = new ShooterSubsystem(hardware, this);
         this.spindexer = new SpindexerSubsystem(hardware, this);
         this.intake = new IntakeSubsystem(this);
-        this.hang = new HangSubsystem(this);
+        this.hang = new HangSubsystem(hardware,this);
         this.lightControl = new LightControl(hardware,this);
 
         // Other
