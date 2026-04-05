@@ -19,7 +19,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_C
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_SPINDEX_TIMEOUT_HORIZ;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TIMEOUT_HORIZ;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
@@ -27,6 +26,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PU
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
@@ -38,7 +38,6 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
-import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 
 public final class NearAutoBuilder {
@@ -201,37 +200,36 @@ public final class NearAutoBuilder {
         } else {
             throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
         }
+//
+//        PathChain intakeBeforeHorizPath = intakeBeforeHorizPathBuilder
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .build();
+//
+//        state.lastPath = PathUtil.addPathBuilderLine(
+//                state.robot, state.startPoseBlue,
+//                        intakeBeforeHorizPath, intakePose,
+//                        state.mirror, false, false)
+//                .setConstantHeadingInterpolation(intakeBeforeHorizPose.mirror(state.mirror).heading)
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .build();
 
-        PathChain intakeBeforeHorizPath = intakeBeforeHorizPathBuilder
+        state.lastPath = intakeBeforeHorizPathBuilder
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
-
-        state.lastPath = PathUtil.addPathBuilderLine(
-                state.robot, state.startPoseBlue,
-                        intakeBeforeHorizPath, intakePose,
-                        state.mirror, false, false)
+                .addPath(new BezierLine(
+                        intakeBeforeHorizPose.mirror(state.mirror).toPedro(),
+                        intakePose.mirror(state.mirror).toPedro()
+                ))
                 .setConstantHeadingInterpolation(intakeBeforeHorizPose.mirror(state.mirror).heading)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
-
-//        state.lastPath = intakeBeforeHorizPathBuilder
-//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .addPath(new BezierLine(
-//                        intakeBeforeHorizPose.mirror(state.mirror).toPedro(),
-//                        intakePose.mirror(state.mirror).toPedro()
-//                ))
-//                .setConstantHeadingInterpolation(INTAKE_1_BEFORE_HORIZ_POSE.mirror(state.mirror).heading)
-//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-//                .build();
 
 //        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, intakePose, state.mirror, false, false)
 //                .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .build();
 
         return new SequentialCommandGroup(
-                new FollowPathCommand(state.robot.follower, intakeBeforeHorizPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
-                new WaitForSpindexerYawCommand(state.robot.spindexer, intakePose.heading).withTimeout(INTAKE_SPINDEX_TIMEOUT_HORIZ),
-                new FollowPathCommand(state.robot.follower, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 20)
+                        .wallDistanceIsForRemaining(),
                 new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_TIMEOUT_HORIZ)
         );
     }
