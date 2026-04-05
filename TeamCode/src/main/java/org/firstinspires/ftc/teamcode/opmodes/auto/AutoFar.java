@@ -35,12 +35,13 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
         state.prepareShootTimeBeforeReverseIntake = 0;
         state.shootBrakingStrength = 0.75;
         return new SequentialCommandGroup(
-//                new InstantCommand(() -> robot.spindexer.setTolerance(10)),
                 FarAutoBuilder.shootPreloadFar(state),
+
                 // Do not reverse intake on first since they're guaranteed
                 FarAutoBuilder.intakeSpike3Far(state),
-                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.shootSpike3Far(state, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+
+                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.cycleWall(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.cycleTunnel(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.cycleWall(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
