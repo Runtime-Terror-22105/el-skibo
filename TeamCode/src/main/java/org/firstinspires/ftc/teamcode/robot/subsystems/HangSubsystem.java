@@ -6,6 +6,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
@@ -28,6 +29,7 @@ public class HangSubsystem extends SubsystemBase {
 
     public ElapsedTime hangTimer = new ElapsedTime();
 
+    public static double INIT_HANG_TIMER_MILLISECONDS = 250;
     public static double HANG_TIMER_MILLISECONDS = 4000;
 
     private final Robot robot;
@@ -48,6 +50,12 @@ public class HangSubsystem extends SubsystemBase {
         return isPTOEngaged;
     }
 
+    public void beginHang()
+    {
+        setPTOEngagement(true);
+        robot.robotState = RobotState.HANG_INIT;
+    }
+
     @Override
     public void periodic() {
 
@@ -58,29 +66,32 @@ public class HangSubsystem extends SubsystemBase {
         else {
             hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
         }
+
+        if(!robot.robotState.isHang() || !isPTOEngaged())
+        {
+            hangTimer.reset(); //could be cooked, lifes tough
+            return;
+        }
 //
-////        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
-//        if(!isPTOEngaged)//(!robot.robotState.isHang() || !isPTOEngaged())
-//        {
-//            hangTimer.reset(); //could be cooked, lifes tough
-//            return;
-//        }
-//        if(hangTimer.milliseconds() > HANG_TIMER_MILLISECONDS)
-//        {
-//            robot.hardware.motorRearLeft.setPower(0);
-//            robot.hardware.motorRearRight.setPower(0);
-//        }
-//        else {
         switch(robot.robotState)
         {
             case HANG_INIT:
                 hardware.motorRearRight.setPower(PTO_INIT_POWER);
                 hardware.motorRearLeft.setPower(PTO_INIT_POWER);
+                if(hangTimer.milliseconds() > INIT_HANG_TIMER_MILLISECONDS)
+                {
+                    this.robot.robotState =  RobotState.HANGING;
+                    hangTimer.reset();
+                }
                 break;
 
             case HANGING:
                 hardware.motorRearRight.setPower(PTO_RISE_POWER);
                 hardware.motorRearLeft.setPower(PTO_RISE_POWER);
+                if(hangTimer.milliseconds() > HANG_TIMER_MILLISECONDS)
+                {
+                    this.robot.robotState = RobotState.HANG_FINISH;
+                }
                 break;
 
             case HANG_FINISH: //probably best to not ever do this
