@@ -31,10 +31,10 @@ public class HangTest extends LinearOpMode {
         robot.init(hardware, this);
 
         waitForStart();
+        robot.hang.beginHang();
 
         while (opModeIsActive())
         {
-            robot.hang.beginHang();
             CommandScheduler.getInstance().run();
             hardware.write();
         }
