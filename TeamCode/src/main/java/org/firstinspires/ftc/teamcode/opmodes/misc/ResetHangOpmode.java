@@ -8,12 +8,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.subsystems.HangSubsystem;
 
 @Config
 @TeleOp(name = "Reset Hang", group = "TeleOp")
 public class ResetHangOpmode extends LinearOpMode {
-    public static volatile double HANG_LOWERING_POWER = 1.0;
-
     private final RobotHardware hw = new RobotHardware();
 
     @Override
@@ -23,23 +22,7 @@ public class ResetHangOpmode extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
-            for (LynxModule hub : hw.allHubs) {
-                hub.clearBulkCache();
-            }
-
-            telemetry.addLine("Time to reset hang!");
-            telemetry.addLine("Hold the left trigger (LT) to lower the robot.");
-            telemetry.addLine("Press (A) to reset the PTO.");
-            telemetry.update();
-
-            if (gamepad1.left_trigger > 0.3) {
-                hw.spindexer.setPower(-HANG_LOWERING_POWER);
-            } else {
-                hw.spindexer.setPower(0);
-            }
-
-            hw.write();
-        }
+        hw.pto.setPosition(HangSubsystem.PTO_DISENGAGE_POSITION);
+        hw.write();
     }
 }
