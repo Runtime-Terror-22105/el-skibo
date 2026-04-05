@@ -90,6 +90,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double goalHeight = 40.0; //doesnt change no matter alliance color
     public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
 
+    public double manualAimVerticalOffset = 0;
+    public double manualAimHorizontalOffset = 0;
+
     private final RobotHardware hardware;
     private final Robot robot;
 
@@ -156,6 +159,18 @@ public class ShooterSubsystem extends SubsystemBase {
                 turretPosAt180-posChange90, turretPosAt180+posChange90
         );
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
+    }
+
+    public void setManualAimOffset(double vertical, double horizontal)
+    {
+        this.manualAimVerticalOffset = vertical;
+        this.manualAimHorizontalOffset = horizontal;
+    }
+
+    public void incrementManualAimOffset(double vertical, double horizontal)
+    {
+        this.manualAimVerticalOffset += vertical;
+        this.manualAimHorizontalOffset += horizontal;
     }
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation) {
