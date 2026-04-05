@@ -22,8 +22,6 @@ public class HangTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    public static double lowPower = -0.5;
-
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
