@@ -196,7 +196,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton hangManualUpButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
         GamepadButton hangManualDownButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
 
-        GamepadButton headingLockButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
         GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
         Trigger threeBallsAreInside = new Trigger(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE));
@@ -260,7 +259,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         manualSpindexRight.whileHeld(new AdjustTurretOffsetCommand(robot, false));
 
         slowSpeedButton.whenPressed(() -> robot.drive.toggleSlowSpeed());
-        headingLockButton.whenPressed(() -> robot.drive.toggleHeadingLock());
 
         shoot3button.whenPressed(new ConditionalCommand(
                 new ConditionalCommand( // if we already did the transfer, just shoot immediately
@@ -313,6 +311,29 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton motifPGPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.X);
         GamepadButton motifGPPButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.Y);
         GamepadButton motifPPGButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
+
+        GamepadButton adjustGoalUp = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_UP);
+        GamepadButton adjustGoalLeft = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_LEFT);
+        GamepadButton adjustGoalRight = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_RIGHT);
+        GamepadButton adjustGoalDown = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_DOWN);
+
+        //this sounds like a lot of work
+
+        GamepadButton headingLockButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
+        GamepadButton toggleSOTM = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
+        toggleSOTM.whenPressed(() -> robot.shooter.toggleSOTMOverride());
+
+        headingLockButton.whenPressed(() -> robot.drive.toggleHeadingLock());
+
+        /*
+        toggle SOTM
+Heading Lock to 45 degrees (not to current angle like it currently is)
+Goal pos adjustment via dpads
+Sort -> Driver 2 should be able to select the
+amount of balls in the ramp mod 3 (since that determines the next 3 colors).
+\Then, next time it is in ready state, scan the colors and figure out the orientation that results in
+most sorted correctly (brute force)
+         */
 
 
 //        motifPGPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PGP ));

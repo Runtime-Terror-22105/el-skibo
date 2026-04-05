@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.12;
-    public static boolean USE_SOTM = true;
+    public static boolean USE_SOTM = false;
     public static boolean USE_SOTM_ACCEL = false;
 
     public static boolean debug = false;
@@ -465,6 +465,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double getGoalTurretYaw() {
         return this.goalTurretAngle;
+    }
+
+    public void toggleSOTMOverride()
+    {
+        if(sotmOverride == null)
+        {
+            sotmOverride = true;
+            return;
+        }
+        sotmOverride = !sotmOverride;
     }
 
     @Override
