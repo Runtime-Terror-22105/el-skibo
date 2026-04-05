@@ -19,12 +19,15 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
     private final double maxPower;
     private final double wallTimeoutDistance;
 
+    private boolean wallDistanceIsForRemaining;
+
     private State state = State.INITIAL_PATH;
 
     /**
      * @param wallTimeoutDistance The wall must be down after this many inches have
      *                            been traveled, otherwise we cancel the path and hold
-     *                            until it is down.
+     *                            until it is down. Call wallDistanceIsForRemaining()
+     *                            if you want this to be based on distance remaining instead of distance traveled.
      */
     public FollowPathAndWaitForWallCommand(Robot robot, PathChain pathChain, boolean holdEnd, double maxPower, double wallTimeoutDistance) {
         this.robot = robot;
@@ -32,6 +35,16 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
         this.holdEnd = holdEnd;
         this.maxPower = maxPower;
         this.wallTimeoutDistance = wallTimeoutDistance;
+        this.wallDistanceIsForRemaining = false;
+    }
+
+    /**
+     * If this is set, then wallTimeOutDistance will instead be based on the distance remaining rather than distance traveled.
+     * This is useful in paths where we're more uncertain of the distance travelled.
+     */
+    public FollowPathAndWaitForWallCommand wallDistanceIsForRemaining() {
+        this.wallDistanceIsForRemaining = true;
+        return this;
     }
 
     @Override
@@ -44,7 +57,13 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
     public void execute() {
         switch (state) {
             case INITIAL_PATH:
-                if (robot.follower.getDistanceTraveledOnPath() >= wallTimeoutDistance) {
+                boolean timeToCheckForWall;
+                if (wallDistanceIsForRemaining) {
+                    timeToCheckForWall = robot.follower.getDistanceRemaining() <= wallTimeoutDistance;
+                } else {
+                    timeToCheckForWall = robot.follower.getDistanceTraveledOnPath() >= wallTimeoutDistance;
+                }
+                if (timeToCheckForWall) {
                     if (robot.spindexer.isWallDown()) {
                         state = State.FINAL_PATH;
                     } else {

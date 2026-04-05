@@ -19,7 +19,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_C
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY_HORIZ;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TIMEOUT_HORIZ;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
@@ -172,11 +172,11 @@ public final class NearAutoBuilder {
         // or else we will hit it at an angle
         Pose2d intakePose;
         Pose2d intakeBeforeHorizPose;
-        PathBuilder intakeBeforeHorizPath;
+        PathBuilder intakeBeforeHorizPathBuilder;
         if (spikeNumber == 1) {
             intakePose = INTAKE_1_HORIZ_POSE;
             intakeBeforeHorizPose = INTAKE_1_BEFORE_HORIZ_POSE;
-            intakeBeforeHorizPath = PathUtil.addPathBuilderCurve(
+            intakeBeforeHorizPathBuilder = PathUtil.addPathBuilderCurve(
                     state.robot, state.startPoseBlue, state.lastPath,
                     INTAKE_1_BEFORE_HORIZ_CONTROL, intakeBeforeHorizPose, state.mirror,
                     false, false
@@ -184,7 +184,7 @@ public final class NearAutoBuilder {
         } else if (spikeNumber == 2) {
             intakePose = INTAKE_2_HORIZ_POSE;
             intakeBeforeHorizPose = INTAKE_2_BEFORE_HORIZ_POSE;
-            intakeBeforeHorizPath = PathUtil.addPathBuilderLine(
+            intakeBeforeHorizPathBuilder = PathUtil.addPathBuilderLine(
                     state.robot, state.startPoseBlue, state.lastPath,
                     intakeBeforeHorizPose, state.mirror,
                     false, false
@@ -192,7 +192,7 @@ public final class NearAutoBuilder {
         } else if (spikeNumber == 3) {
             intakePose = INTAKE_3_HORIZ_POSE;
             intakeBeforeHorizPose = INTAKE_3_BEFORE_HORIZ_POSE;
-            intakeBeforeHorizPath = PathUtil.addPathBuilderLine(
+            intakeBeforeHorizPathBuilder = PathUtil.addPathBuilderLine(
                     state.robot, state.startPoseBlue, state.lastPath,
                     intakeBeforeHorizPose, state.mirror,
                     false, false
@@ -200,14 +200,26 @@ public final class NearAutoBuilder {
         } else {
             throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
         }
+//
+//        PathChain intakeBeforeHorizPath = intakeBeforeHorizPathBuilder
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .build();
+//
+//        state.lastPath = PathUtil.addPathBuilderLine(
+//                state.robot, state.startPoseBlue,
+//                        intakeBeforeHorizPath, intakePose,
+//                        state.mirror, false, false)
+//                .setConstantHeadingInterpolation(intakeBeforeHorizPose.mirror(state.mirror).heading)
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .build();
 
-        state.lastPath = intakeBeforeHorizPath
+        state.lastPath = intakeBeforeHorizPathBuilder
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .addPath(new BezierLine(
                         intakeBeforeHorizPose.mirror(state.mirror).toPedro(),
                         intakePose.mirror(state.mirror).toPedro()
                 ))
-                .setConstantHeadingInterpolation(INTAKE_1_BEFORE_HORIZ_POSE.mirror(state.mirror).heading)
+                .setConstantHeadingInterpolation(intakeBeforeHorizPose.mirror(state.mirror).heading)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
 
@@ -215,10 +227,18 @@ public final class NearAutoBuilder {
 //                .setConstraintsForLast(RELAXED_CONSTRAINTS)
 //                .build();
 
-        return new SequentialCommandGroup(
-                new FollowPathCommand(state.robot.follower, state.lastPath, true, 0.9),
-                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY_HORIZ)
-        );
+        if (spikeNumber == 1) {
+            return new SequentialCommandGroup(
+                    new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 20)
+                            .wallDistanceIsForRemaining(),
+                    new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_TIMEOUT_HORIZ)
+            );
+        } else {
+            return new SequentialCommandGroup(
+                    new FollowPathCommand(state.robot.follower, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                    new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_TIMEOUT_HORIZ)
+            );
+        }
     }
 
     public static Command shootSpike(AutoBuildState state, int spikeNumber, ShootPathFlag... flagArr) {

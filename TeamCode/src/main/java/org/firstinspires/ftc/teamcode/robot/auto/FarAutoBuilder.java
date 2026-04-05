@@ -3,20 +3,22 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL_FAR;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_CONTROL_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_PRELOAD_FAR_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
@@ -48,7 +50,7 @@ public final class FarAutoBuilder {
 
     public static Command shootPreloadFar(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_FAR_POSE, state.mirror, false, false)
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_PRELOAD_FAR_POSE, state.mirror, false, false)
                 .build();
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
@@ -64,23 +66,9 @@ public final class FarAutoBuilder {
     }
 
     public static Command intakeSpike3Far(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_3_CONTROL_FAR, INTAKE_3_POSE, state.mirror, false, false)
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.25,
-                                        HeadingInterpolator.linear(state.lastPath.getFinalHeadingGoal(), INTAKE_3_POSE.mirror(state.mirror).heading)
-                                ),
-                                new HeadingInterpolator.PiecewiseNode(0.25, 0.8,
-                                        HeadingInterpolator.constant(INTAKE_3_POSE.mirror(state.mirror).heading)
-                                ),
-                                new HeadingInterpolator.PiecewiseNode(0.8, 1.0,
-                                        FixedHeadingInterpolator.linear(
-                                                INTAKE_3_POSE.mirror(state.mirror).heading,
-                                                INTAKE_3_POSE_FAR.mirror(state.mirror).heading,
-                                                0.8, 1.0
-                                        )
-                                )
-                        )
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, PREPARE_INTAKE_3_CONTROL_FAR, PREPARE_INTAKE_3_POSE_FAR, state.mirror, false, false)
+                .addPath(
+                        new BezierLine(PREPARE_INTAKE_3_POSE_FAR.toPedro(state.mirror), INTAKE_3_POSE_FAR.toPedro(state.mirror))
                 )
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
@@ -130,7 +118,7 @@ public final class FarAutoBuilder {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(true)),
-                        new FollowPathCommand(state.robot.follower, state.lastPath, true, 0.9)
+                        new FollowPathCommand(state.robot.follower, state.lastPath, true, 1)
                 ),
                 new LogCatCommand("AutoBuilder", "finished path to vision, waiting for blob"),
                 new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
