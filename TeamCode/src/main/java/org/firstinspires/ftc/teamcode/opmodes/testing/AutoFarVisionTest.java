@@ -6,7 +6,8 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.opmodes.auto.OneAutoToRuleThemAll;
-import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
+import org.firstinspires.ftc.teamcode.robot.auto.FarAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
@@ -33,11 +34,11 @@ public class AutoFarVisionTest extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected Command createAutoCommand(AutoBuilder builder) {
+    protected Command createAutoCommand(AutoBuildState state) {
         return new SequentialCommandGroup(
-                builder.shootPreloadFar(ShootPathFlag.EARLY_LEAVE),
-                builder.prepareVision(),
-                builder.cycleVision(true, ShootPathFlag.EARLY_LEAVE)
+                FarAutoBuilder.shootPreloadFar(state, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.prepareVision(state),
+                FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE)
         );
 
 

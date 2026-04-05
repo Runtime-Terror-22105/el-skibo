@@ -4,8 +4,9 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
-import org.firstinspires.ftc.teamcode.robot.auto.AutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
 import org.firstinspires.ftc.teamcode.robot.auto.KillTimerCommand;
+import org.firstinspires.ftc.teamcode.robot.auto.NearAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
@@ -25,14 +26,14 @@ public abstract class AutoSpamNoPushGate extends OneAutoToRuleThemAll {
     }
 
     @Override
-    protected Command createAutoCommand(AutoBuilder builder) {
-        builder.shootBrakingStrength = 0.7;
+    protected Command createAutoCommand(AutoBuildState state) {
+        state.shootBrakingStrength = 0.7;
         return new SequentialCommandGroup(
-                builder.shootPreload(ShootPathFlag.EARLY_LEAVE),
-                builder.cycleSpike(1, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleSpike(2, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleGate(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-                builder.cycleGate(true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.LAST)
+                NearAutoBuilder.shootPreload(state, ShootPathFlag.EARLY_LEAVE),
+                NearAutoBuilder.cycleSpike(state, 1, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                NearAutoBuilder.cycleSpike(state, 2, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.LAST)
                 //builder.cycleGate(true) //ShootPathFlag.LAST, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
         ).alongWith(new KillTimerCommand(robot));
     }
