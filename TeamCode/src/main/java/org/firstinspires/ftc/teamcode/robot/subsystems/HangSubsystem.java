@@ -55,20 +55,20 @@ public class HangSubsystem extends SubsystemBase {
             robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
         }
 //        robot.hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
-        if(!robot.robotState.isHang() || !isPTOEngaged())
+        if(!isPTOEngaged)//(!robot.robotState.isHang() || !isPTOEngaged())
         {
             hangTimer.reset(); //could be cooked, lifes tough
             return;
         }
-        if(hangTimer.milliseconds() > HANG_TIMER_MILLISECONDS)
-        {
-            robot.hardware.motorRearLeft.setPower(0);
-            robot.hardware.motorRearRight.setPower(0);
-        }
-        else {
+//        if(hangTimer.milliseconds() > HANG_TIMER_MILLISECONDS)
+//        {
+//            robot.hardware.motorRearLeft.setPower(0);
+//            robot.hardware.motorRearRight.setPower(0);
+//        }
+//        else {
             robot.hardware.motorRearRight.setPower(PTO_POWER);
             robot.hardware.motorRearLeft.setPower(PTO_POWER);
-        }
+//        }
 
 
 
