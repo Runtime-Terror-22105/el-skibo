@@ -14,8 +14,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_P
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_CONTROL;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY_HORIZ;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
@@ -24,7 +22,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PU
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -176,13 +173,17 @@ public final class NearAutoBuilder {
             throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
         }
 
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_BEFORE_HORIZ_CONTROL, INTAKE_BEFORE_HORIZ_POSE, state.mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .addPath(new BezierLine(
-                        INTAKE_BEFORE_HORIZ_POSE.mirror(state.mirror).toPedro(),
-                        intakePose.mirror(state.mirror).toPedro()
-                ))
-                .setConstantHeadingInterpolation(INTAKE_BEFORE_HORIZ_POSE.mirror(state.mirror).heading)
+//        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_BEFORE_HORIZ_CONTROL, INTAKE_BEFORE_HORIZ_POSE, state.mirror, false, false)
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .addPath(new BezierLine(
+//                        INTAKE_BEFORE_HORIZ_POSE.mirror(state.mirror).toPedro(),
+//                        intakePose.mirror(state.mirror).toPedro()
+//                ))
+//                .setConstantHeadingInterpolation(INTAKE_BEFORE_HORIZ_POSE.mirror(state.mirror).heading)
+//                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+//                .build();
+
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, intakePose, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
 
