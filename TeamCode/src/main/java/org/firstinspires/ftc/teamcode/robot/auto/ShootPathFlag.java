@@ -20,5 +20,5 @@ public enum ShootPathFlag {
     PRELOAD_SHOOT_SPOT,
 
     //shoot from the tip of the near zone intead of the usual spot. Only for near
-    TIP_SHOOT_SPOT
+    TIP_SHOOT_SPOT,
 }

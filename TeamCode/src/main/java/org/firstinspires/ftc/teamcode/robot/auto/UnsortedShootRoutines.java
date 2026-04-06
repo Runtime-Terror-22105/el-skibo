@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.FLLYWHEEL_SPIN_UP_TIMEOUT_MS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.REVERSE_INTAKE_GATE_DELAY;
@@ -144,7 +145,7 @@ public final class UnsortedShootRoutines {
         if (flags.contains(ShootPathFlag.SOTM)) {
             return new ParallelCommandGroup(
                     new SequentialCommandGroup(
-                            new WaitForFlywheelCommand(state.robot.shooter).withTimeout(625),
+                            new WaitForFlywheelCommand(state.robot.shooter).withTimeout(FLLYWHEEL_SPIN_UP_TIMEOUT_MS),
                             new WaitCommand(250),
                             shootCommand(state, flags)
                     ),
@@ -154,7 +155,8 @@ public final class UnsortedShootRoutines {
 
         return new SequentialCommandGroup(
                 new FollowPathCommand(state.robot.follower, path, false),
-                new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
+//                new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
+                new WaitForFlywheelCommand(state.robot.shooter).withTimeout(FLLYWHEEL_SPIN_UP_TIMEOUT_MS),
                 shootCommand(state, flags)
         );
     }
