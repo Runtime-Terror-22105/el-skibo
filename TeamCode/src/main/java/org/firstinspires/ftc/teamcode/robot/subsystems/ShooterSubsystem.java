@@ -50,7 +50,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double SHOOTER_PID_SWITCH = 3000;  // Units are RPM
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
-    public static double SHOOTER_VEL_TOLERANCE = 30;  // Units are RPM
+    public static double SHOOTER_VEL_TOLERANCE = 50;  // Units are RPM
 
     public GoalPosLookupTable goalPosLookupTable;
     public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
