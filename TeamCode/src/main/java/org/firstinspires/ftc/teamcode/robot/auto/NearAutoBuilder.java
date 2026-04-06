@@ -20,17 +20,23 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_H
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TIMEOUT_HORIZ;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_CONTORL_NEAR_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
@@ -39,6 +45,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
+import org.firstinspires.ftc.teamcode.util.ArrayUtil;
+import org.firstinspires.ftc.teamcode.util.BallColor;
 
 public final class NearAutoBuilder {
     private NearAutoBuilder() {
@@ -147,6 +155,28 @@ public final class NearAutoBuilder {
                 new FollowPathCommand(state.robot.follower, intakeSpike3Path(state), true),
                 new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY),
                 new SetIntakeSpeedCommand(state.robot.intake, 0)
+        );
+    }
+
+    public static Command intakeWall(AutoBuildState state, boolean reverseIntake){
+
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_WALL_CONTORL_NEAR_POSE, INTAKE_WALL_POSE, state.mirror, true, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .setNoDeceleration()
+                .build();
+
+        return new SequentialCommandGroup(
+                new ParallelRaceGroup(
+                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, 1.0, 12.0),
+                        new WaitForIntakeCommand(state.robot)
+                ),
+                new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {
+                        }),
+                        () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
+                )
         );
     }
 

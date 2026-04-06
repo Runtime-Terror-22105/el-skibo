@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CO
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_TIP_POSE;
 
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
@@ -51,9 +52,16 @@ public final class SortedAutoBuilder {
     }
 
     private static PathChain shootSpikePath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
-        Pose2d shootPose = flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED
-                ? SHOOT_LAST_POSE
-                : SHOOT_SORTED_POSE;
+        Pose2d shootPose;
+        if (flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED){
+            shootPose = SHOOT_LAST_POSE;
+        }
+        else if (flags.contains(ShootPathFlag.TIP_SHOOT_SPOT)){
+            shootPose = SHOOT_TIP_POSE;
+        }
+        else {
+            shootPose = SHOOT_SORTED_POSE;
+        }
         boolean useTangential = flags.contains(ShootPathFlag.LAST);
         PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, shootPose, state.mirror, useTangential, useTangential);
         state.lastPath = builder.build();
