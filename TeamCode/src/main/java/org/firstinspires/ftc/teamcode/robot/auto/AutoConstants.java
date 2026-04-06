@@ -88,6 +88,8 @@ public class AutoConstants {
 
     public static long CAMERA_WAIT_MINIMUM_TIME = 500;
 
+    public static int FLLYWHEEL_SPIN_UP_TIMEOUT_MS = 1500;
+
     public static PathConstraints RELAXED_CONSTRAINTS;
     static {
         RELAXED_CONSTRAINTS = Constants.pathConstraints.copy();
