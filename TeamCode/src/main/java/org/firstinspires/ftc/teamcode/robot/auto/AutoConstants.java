@@ -25,7 +25,7 @@ public class AutoConstants {
     public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(25.67, 97, Math.toRadians(263));
     public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 82, Math.toRadians(263));
     public static Pose2d INTAKE_2_BEFORE_HORIZ_POSE = new Pose2d(25.67, 78, Math.toRadians(263));
-    public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 58, Math.toRadians(263));
+    public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 63, Math.toRadians(263));
     public static Pose2d INTAKE_3_BEFORE_HORIZ_POSE = new Pose2d(25.67, 54, Math.toRadians(263));
     public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 34, Math.toRadians(263));
 
@@ -49,7 +49,7 @@ public class AutoConstants {
     // For CYCLING gate.
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 68.5, Math.toRadians(180));
     public static Pose2d HITTING_GATE = new Pose2d(19, 69, Math.toRadians(180));
-    public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(15, 55.5);
+    public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(12.6, 60);
     public static Pose2d AFTER_GATE = new Pose2d(10, 55.7, Math.toRadians(120));
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(11, 8, Math.toRadians(180));
