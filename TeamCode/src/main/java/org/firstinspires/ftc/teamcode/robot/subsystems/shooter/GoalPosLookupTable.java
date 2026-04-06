@@ -19,6 +19,7 @@ public class GoalPosLookupTable {
     public static double X_OFFSET = 6.0;
 
     public static boolean debug;
+    public static boolean telemetry = true;
 
     private final Robot robot;
     public Pose2d ogGoalPoint;
@@ -94,6 +95,7 @@ public class GoalPosLookupTable {
 
         if (debug) Log.d("GoalPosLookupTable","robot vector" + goalToRobot);
         if (debug) Log.d("GoalPosLookupTable","angle" + angle);
+        if (telemetry) robot.telemetry.addData("robot angle", angle);
 
         return angle;
     }
