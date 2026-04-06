@@ -27,11 +27,11 @@ public abstract class AutoVisionFar extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuildState state) {
         return new SequentialCommandGroup(
-                FarAutoBuilder.shootPreloadFar(state, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.shootPreload(state, ShootPathFlag.EARLY_LEAVE),
                 // Do not reverse intake on first since they're guaranteed
                 FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_LEAVE),
-                FarAutoBuilder.intakeSpike3Far(state),
-                FarAutoBuilder.shootSpike3Far(state, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.intakeSpike3(state),
+                FarAutoBuilder.shootSpike3(state, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.prepareVision(state),
                 FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),

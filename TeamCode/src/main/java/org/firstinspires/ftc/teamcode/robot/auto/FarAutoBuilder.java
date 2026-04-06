@@ -48,7 +48,7 @@ public final class FarAutoBuilder {
     private FarAutoBuilder() {
     }
 
-    public static Command shootPreloadFar(AutoBuildState state, ShootPathFlag... flagArr) {
+    public static Command shootPreload(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_PRELOAD_FAR_POSE, state.mirror, false, false)
                 .build();
@@ -65,7 +65,7 @@ public final class FarAutoBuilder {
         );
     }
 
-    public static Command intakeSpike3Far(AutoBuildState state) {
+    public static Command intakeSpike3(AutoBuildState state) {
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, PREPARE_INTAKE_3_CONTROL_FAR, PREPARE_INTAKE_3_POSE_FAR, state.mirror, false, false)
                 .addPath(
                         new BezierLine(PREPARE_INTAKE_3_POSE_FAR.toPedro(state.mirror), INTAKE_3_POSE_FAR.toPedro(state.mirror))
@@ -81,7 +81,7 @@ public final class FarAutoBuilder {
         );
     }
 
-    public static Command shootSpike3Far(AutoBuildState state, ShootPathFlag... flagArr) {
+    public static Command shootSpike3(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_FAR_POSE, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)

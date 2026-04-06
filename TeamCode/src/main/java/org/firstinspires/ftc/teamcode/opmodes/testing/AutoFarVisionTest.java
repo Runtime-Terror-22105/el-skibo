@@ -36,7 +36,7 @@ public class AutoFarVisionTest extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuildState state) {
         return new SequentialCommandGroup(
-                FarAutoBuilder.shootPreloadFar(state, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.shootPreload(state, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.prepareVision(state),
                 FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE)
         );
