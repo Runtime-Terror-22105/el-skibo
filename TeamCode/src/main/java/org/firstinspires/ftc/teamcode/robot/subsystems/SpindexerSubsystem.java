@@ -62,8 +62,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficients =
-            new PidfController.PidfCoefficients(0.25, 0, 0.0065, 0, 0.09);
-    public static double yawPidTolerance = Math.toRadians(4); // radians
+            new PidfController.PidfCoefficients(0.25, 0, 0.0065, 0, 0.1);
+    public static double yawPidTolerance = 0.035; // radians, used for kstatic
+    public static double CHECKING_TOLERANCE = Math.toRadians(4); // radians, only for checking if at target, not for PID tolerance
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficients);
 
@@ -111,7 +112,7 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public boolean atTargetYaw() {
         this.updateSpindexerPid();
-        return this.yawPid.atTargetPosition(getPositionRaw(), true);
+        return this.yawPid.atTargetPositionWithTolerance(getPositionRaw(), CHECKING_TOLERANCE, true);
     }
 
     public void setHomedSpindexerOffset(double offset) {
