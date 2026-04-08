@@ -43,7 +43,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static PidfController.PidfCoefficients NEAR_PID_COEFFICIENTS =
             new PidfController.PidfCoefficients(0.00062, 0, 0, 0.000225, 0);
     public static PidfController.PidfCoefficients FAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0009, 0, 0, 0.00021, 0);
+            new PidfController.PidfCoefficients(0.0012, 0, 0, 0.00021, 0);
     private final PidfController shooterPID = new PidfController(NEAR_PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
