@@ -66,7 +66,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static PidfController.PidfCoefficients turningPidCoefficientsCw =
             new PidfController.PidfCoefficients(0.25, 0, 0.009, 0, 0.18);
     public static double yawPidTolerance = 0.035; // radians, used for kstatic
-    public static double CHECKING_TOLERANCE = 0.08; // radians, only for checking if at target, not for PID tolerance
+    public static double CHECKING_TOLERANCE = 0.09; // radians, only for checking if at target, not for PID tolerance
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficientsCcw);
 
