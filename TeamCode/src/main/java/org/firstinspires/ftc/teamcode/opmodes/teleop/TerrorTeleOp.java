@@ -279,7 +279,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         transferButton.whenPressed(new ConditionalCommand(
                 new PrepareShootCommand(robot, true),
                 new InstantCommand(() -> {} ),
-                () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
+                () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER && robot.robotState != READY_TO_SHOOT
         ));
 
         relocalizeButton.whenPressed(new InstantCommand(()->{
