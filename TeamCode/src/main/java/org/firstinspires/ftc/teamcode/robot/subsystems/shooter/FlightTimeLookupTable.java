@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.math.InterpLUTSafe;
  *     https://docs.google.com/spreadsheets/d/1CEbROaETZ4tHwI0i-Auwu_BmmQuECb6BZe-rCCeP_FA/edit?gid=0#gid=0</a></p>
  */
 public class FlightTimeLookupTable {
-    // distance (in) -> flight time (ms)
+    // distance (in) -> flight time (s)
     // Distance	Flight time
     //     33	0.51
     //     51.1	0.68
@@ -33,13 +33,14 @@ public class FlightTimeLookupTable {
     }
 
     public static FlightTimeLookupValue[] DATA_POINTS = new FlightTimeLookupValue[]{
-            new FlightTimeLookupValue(27.7,0.62),
-            new FlightTimeLookupValue(45.5,0.66), //im sorry aadit
-            new FlightTimeLookupValue(68.7,0.68), //im sorry aadit
-            new FlightTimeLookupValue(90.7,0.68),
-            new FlightTimeLookupValue(104.4,0.68),
-            new FlightTimeLookupValue(122.7,0.72),
-            new FlightTimeLookupValue(140.2,0.76),
+            new FlightTimeLookupValue(83.5,1.530-.690)
+//            new FlightTimeLookupValue(27.7,0.62),
+//            new FlightTimeLookupValue(45.5,0.66), //im sorry aadit
+//            new FlightTimeLookupValue(68.7,0.68), //im sorry aadit
+//            new FlightTimeLookupValue(90.7,0.68),
+//            new FlightTimeLookupValue(104.4,0.68),
+//            new FlightTimeLookupValue(122.7,0.72),
+//            new FlightTimeLookupValue(140.2,0.76),
 
     };
 
