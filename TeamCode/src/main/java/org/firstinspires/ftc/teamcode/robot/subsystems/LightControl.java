@@ -49,7 +49,9 @@ public class LightControl extends SubsystemBase {
             }
             switch (robot.robotState) {
                 case RESTING:
-                    hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                    // if wall hasn't gone down yet, make it red
+                    if (robot.spindexer.isWallDown()) hardware.lights.setColor(TerrorLight.LightColors.PINK);
+                    else hardware.lights.setColor(TerrorLight.LightColors.RED);
                     break;
 
                 case INTAKING:
