@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.math.controllers;
 
+import androidx.annotation.NonNull;
+
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
@@ -168,6 +170,12 @@ public class PidfController {
 
         public PidfCoefficients(double Kp, double Ki, double Kd, double Kv) {
             this(Kp, Ki, Kd, Kv, 0);
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return String.format("Kp: %.4f, Ki: %.4f, Kd: %.4f, Kv: %.4f, Kstatic: %.4f", Kp, Ki, Kd, Kv, Kstatic);
         }
     }
 }

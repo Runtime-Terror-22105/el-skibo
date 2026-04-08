@@ -62,9 +62,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficientsCcw =
-            new PidfController.PidfCoefficients(0.25, 0, 0.0065, 0, 0.1);
+            new PidfController.PidfCoefficients(0.25, 0, 0.009, 0, 0.1);
     public static PidfController.PidfCoefficients turningPidCoefficientsCw =
-            new PidfController.PidfCoefficients(0, 0, 0, 0, 0);
+            new PidfController.PidfCoefficients(0.25, 0, 0.009, 0, 0.18);
     public static double yawPidTolerance = 0.035; // radians, used for kstatic
     public static double CHECKING_TOLERANCE = Math.toRadians(4); // radians, only for checking if at target, not for PID tolerance
     private boolean pidEnabled = true;
@@ -340,7 +340,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         boolean turningCcw = wrappedError >= 0;
         this.yawPid.setPidfCoefficients(turningCcw ? turningPidCoefficientsCcw : turningPidCoefficientsCw);
         Robot.debugTelemetry.addData("Spindexer PID Mode", turningCcw ? "CCW" : "CW");
-        Log.d("SpindexerSubsystem", "setting PID coefficients to " + (turningCcw ? turningPidCoefficientsCcw : turningPidCoefficientsCw));
+        if (debug) Log.d("SpindexerSubsystem", "setting PID coefficients to " + (turningCcw ? turningPidCoefficientsCcw : turningPidCoefficientsCw));
 
         this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(Angle.angleWrap(desAngle.correctedAngleRad));
