@@ -546,7 +546,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // flywheel pids
             Profiler.push("flywheel");
-            double shooterPower = this.updateShooter();
+            double shooterPower = this.updateShooter() * hardware.getVoltageScale();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
             hardware.shooterLeft.setPower(shooterPower);
             hardware.shooterRight.setPower(shooterPower);
