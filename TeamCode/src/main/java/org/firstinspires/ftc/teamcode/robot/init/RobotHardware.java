@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
+import org.firstinspires.ftc.teamcode.math.NumCompare;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorPublisher;
 import org.firstinspires.ftc.teamcode.robot.hardware.motors.TerrorMotorNormal;
@@ -87,7 +88,7 @@ public class RobotHardware {
     private final TerrorPublisher publisher = new TerrorPublisher();
 
     // Voltage monitoring
-    public double nominalVoltage = 12.0;
+    public double nominalVoltage = 12.5;
     public double initialVoltage;
     private double currentVoltage = Double.NaN;
     private long lastVoltageTime = -1;
@@ -232,8 +233,7 @@ public class RobotHardware {
     }
 
     public double getVoltageScale() {
-//        return nominalVoltage / getCurrentVoltage();
-        return 1.0;
+        return nominalVoltage / NumCompare.clamp(getCurrentVoltage(), 11.0, 14.0);
     }
 
     public void write() {
