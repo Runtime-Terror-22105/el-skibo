@@ -9,6 +9,7 @@ import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.Coordinate;
@@ -89,10 +90,16 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double robotHeight = 14.0; //in
     public static double g = 386.08858267717; //in per sec^2
     public static double goalHeight = 40.0; //doesnt change no matter alliance color
+    public static final double GOAL_HEIGHT_RETURN = goalHeight;
     public static double apexHeight = 60.0; //what the apex of the balls path is going to try to be
+
+    private Pose2d center = new Pose2d(72,72,0);
 
     public double manualAimVerticalOffset = 0;
     public double manualAimHorizontalOffset = 0;
+
+    Pose2d horizontalOffet = new Pose2d(0,0,0);
+    Pose2d verticalOffset = new Pose2d(0,0,0);
 
     private final RobotHardware hardware;
     private final Robot robot;
@@ -166,12 +173,28 @@ public class ShooterSubsystem extends SubsystemBase {
     {
         this.manualAimVerticalOffset = vertical;
         this.manualAimHorizontalOffset = horizontal;
+        goalHeight = GOAL_HEIGHT_RETURN;
     }
 
     public void incrementManualAimOffset(double vertical, double horizontal)
     {
         this.manualAimVerticalOffset += vertical;
         this.manualAimHorizontalOffset += horizontal;
+        goalHeight += vertical;
+    }
+
+    public Pose2d recalculateGoalPosWithManualAim(Pose2d goalPos)
+    {
+        double xShift = manualAimHorizontalOffset*(goalPos.x-center.x);
+        double yShift = manualAimHorizontalOffset*(goalPos.y-center.y);
+
+        verticalOffset.x = xShift;
+        verticalOffset.y = yShift;
+
+        horizontalOffet.x = yShift;
+        horizontalOffet.y = -xShift;
+
+        return goalPos.plus(horizontalOffet).plus(verticalOffset);
     }
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation) {
@@ -179,6 +202,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = true;
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
+        goalPos = recalculateGoalPosWithManualAim(goalPos);
         //Pose2d goalPos = this.robot.color.getGoalPos();
         double distToGoal = botPos.distanceFrom(goalPos.toPedro());
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
@@ -302,7 +326,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), goalPosLookupTable.get()));
+        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithManualAim(goalPosLookupTable.get())));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {
