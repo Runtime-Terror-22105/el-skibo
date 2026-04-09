@@ -334,7 +334,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         //consider making this a trigger so its harder to misinput
         GamepadButton resetGoalPos = new GamepadButton(gamepad2ex, GamepadKeys.Button.A);
 
-        resetGoalPos.whenPressed(() -> robot.shooter.setManualAimOffset(0,0));
+        resetGoalPos.whenPressed(() -> robot.shooter.resetManualAim());
         //this sounds like a lot of work
 
         GamepadButton headingLockButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);

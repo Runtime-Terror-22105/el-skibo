@@ -175,6 +175,13 @@ public class ShooterSubsystem extends SubsystemBase {
         goalHeight = GOAL_HEIGHT_RETURN;
     }
 
+    public void resetManualAim()
+    {
+        this.manualAimVerticalOffset = 0;
+        this.manualAimHorizontalOffset = 0;
+        goalHeight = GOAL_HEIGHT_RETURN;
+    }
+
     public void incrementManualAimOffset(double vertical, double horizontal)
     {
         this.manualAimVerticalOffset += vertical;
