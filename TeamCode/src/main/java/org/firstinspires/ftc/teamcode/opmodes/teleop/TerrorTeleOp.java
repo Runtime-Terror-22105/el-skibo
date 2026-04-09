@@ -312,8 +312,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton ballsMod2Button = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
         //we should lowk get some tape and label which button does what cause this is gonna suck later on
 
-        GamepadButton cameraRelocalizeButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
-        GamepadButton cornerRelocalizeButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
+        Trigger cameraRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
+        Trigger cornerRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
 
         GamepadButton adjustGoalUp = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_UP);
         GamepadButton adjustGoalLeft = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_LEFT);
@@ -325,9 +325,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         adjustGoalRight.whenPressed(() -> robot.shooter.incrementManualAimOffset(0,MANUAL_AIM_INCREMENT_HORIZONTAL));
         adjustGoalDown.whenPressed(() -> robot.shooter.incrementManualAimOffset(-MANUAL_AIM_INCREMENT_VERTICAL,0));
 
-        cameraRelocalizeButton.whenPressed(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
+        cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
 
-        cornerRelocalizeButton.whenPressed(new InstantCommand(()->{
+        cornerRelocalizeButton.whenActive(new InstantCommand(()->{
             robot.follower.poseTracker.setCurrentPoseWithOffset(FieldConstants.BLUE_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.RED)));
         }));
 
