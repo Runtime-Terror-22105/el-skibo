@@ -51,7 +51,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
     public static double SHOOTER_VEL_TOLERANCE = 50;  // Units are RPM
-    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 200;  // Units are RPM, used for quicker recovery while shooting multiple balls
+    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 100;  // Units are RPM, used for quicker recovery while shooting multiple balls
 
     public GoalPosLookupTable goalPosLookupTable;
     public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
@@ -474,9 +474,9 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterPID.setPidfCoefficients(useSmallPID ? NEAR_PID_COEFFICIENTS : FAR_PID_COEFFICIENTS);
 
         double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
-//        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE && robot.robotState.equals(RobotState.SHOOTING)) {
-//            shooterPower = 1.0; // if we're too far from the target, just go full power to get there faster
-//        }
+        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+            shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
+        }
         return shooterPower;
     }
 
