@@ -51,6 +51,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
     public static double SHOOTER_VEL_TOLERANCE = 50;  // Units are RPM
+    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 200;  // Units are RPM, used for quicker recovery while shooting multiple balls
 
     public GoalPosLookupTable goalPosLookupTable;
     public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
@@ -472,7 +473,11 @@ public class ShooterSubsystem extends SubsystemBase {
         boolean useSmallPID = currentRpm < SHOOTER_PID_SWITCH;
         shooterPID.setPidfCoefficients(useSmallPID ? NEAR_PID_COEFFICIENTS : FAR_PID_COEFFICIENTS);
 
-        return /* hardware.getVoltageScale() * */ shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
+        double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
+        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE && robot.robotState.equals(RobotState.SHOOTING)) {
+            shooterPower = 1.0; // if we're too far from the target, just go full power to get there faster
+        }
+        return shooterPower;
     }
 
     public void addTurretOffset(double change){
@@ -546,7 +551,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // flywheel pids
             Profiler.push("flywheel");
-            double shooterPower = this.updateShooter() * hardware.getVoltageScale();
+            double shooterPower = this.updateShooter();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
             hardware.shooterLeft.setPower(shooterPower);
             hardware.shooterRight.setPower(shooterPower);
