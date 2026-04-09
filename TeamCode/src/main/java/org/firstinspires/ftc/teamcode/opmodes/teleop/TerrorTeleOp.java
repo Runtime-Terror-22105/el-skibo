@@ -328,7 +328,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
 
         cornerRelocalizeButton.whenActive(new InstantCommand(()->{
-            robot.follower.poseTracker.setCurrentPoseWithOffset(FieldConstants.BLUE_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.RED)));
+            robot.follower.poseTracker.setPose(FieldConstants.RED_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.BLUE)));
         }));
 
         //consider making this a trigger so its harder to misinput
