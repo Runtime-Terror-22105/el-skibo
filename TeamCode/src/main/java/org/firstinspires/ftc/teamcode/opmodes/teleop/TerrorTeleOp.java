@@ -312,8 +312,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton ballsMod2Button = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
         //we should lowk get some tape and label which button does what cause this is gonna suck later on
 
-        GamepadButton cameraRelocalizeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
-        GamepadButton cornerRelocalizeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
+        GamepadButton cameraRelocalizeButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
+        GamepadButton cornerRelocalizeButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
 
         GamepadButton adjustGoalUp = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_UP);
         GamepadButton adjustGoalLeft = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_LEFT);
