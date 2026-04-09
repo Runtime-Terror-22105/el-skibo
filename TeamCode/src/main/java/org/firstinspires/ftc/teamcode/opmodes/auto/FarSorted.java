@@ -19,7 +19,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
 
     @Override
     public StartConfig getStartConfig() {
-        return StartConfig.FAR;
+        return StartConfig.FAR_SORTED;
     }
 
     @Override
