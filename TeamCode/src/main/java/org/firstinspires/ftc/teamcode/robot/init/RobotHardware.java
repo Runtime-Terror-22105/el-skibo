@@ -233,7 +233,7 @@ public class RobotHardware {
     }
 
     public double getVoltageScale() {
-        return nominalVoltage / NumCompare.clamp(getCurrentVoltage(), 11.0, 14.0);
+        return nominalVoltage / NumCompare.clamp(getCurrentVoltage(), 9.5, 14.0);
     }
 
     public void write() {

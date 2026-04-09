@@ -7,7 +7,8 @@ import java.util.function.Supplier;
 
 public enum StartConfig {
     NEAR(() -> FieldConstants.BLUE_START_POS_NEAR),
-    FAR(() -> FieldConstants.BLUE_START_POS_FAR);
+    FAR(() -> FieldConstants.BLUE_START_POS_FAR),
+    FAR_SORTED(() -> FieldConstants.BLUE_START_POS_FAR_SORTED);
 
     // Returns the start pose for BLUE team only.
     private final Supplier<Pose2d> startPoseBlue;

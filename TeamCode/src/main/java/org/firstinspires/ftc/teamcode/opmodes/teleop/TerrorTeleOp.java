@@ -182,7 +182,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
         Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
-        GamepadButton relocalizeButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
 
         GamepadButton shoot3button = new GamepadButton(gamepad1ex, GamepadKeys.Button.RIGHT_BUMPER);
         GamepadButton transferButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
@@ -282,10 +281,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER && robot.robotState != READY_TO_SHOOT
         ));
 
-        relocalizeButton.whenPressed(new InstantCommand(()->{
-            robot.robotState = RobotState.SCANNING;
-        }));
-
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
 
 //        double hangPos = 0.0;
@@ -317,6 +312,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton ballsMod2Button = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
         //we should lowk get some tape and label which button does what cause this is gonna suck later on
 
+        GamepadButton cameraRelocalizeButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
+        GamepadButton cornerRelocalizeButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
+
         GamepadButton adjustGoalUp = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_UP);
         GamepadButton adjustGoalLeft = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_LEFT);
         GamepadButton adjustGoalRight = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_RIGHT);
@@ -326,6 +324,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         adjustGoalLeft.whenPressed(() -> robot.shooter.incrementManualAimOffset(0,-MANUAL_AIM_INCREMENT_HORIZONTAL));
         adjustGoalRight.whenPressed(() -> robot.shooter.incrementManualAimOffset(0,MANUAL_AIM_INCREMENT_HORIZONTAL));
         adjustGoalDown.whenPressed(() -> robot.shooter.incrementManualAimOffset(-MANUAL_AIM_INCREMENT_VERTICAL,0));
+
+        cameraRelocalizeButton.whenPressed(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
+
+        cornerRelocalizeButton.whenPressed(new InstantCommand(()->{
+            robot.follower.poseTracker.setCurrentPoseWithOffset(FieldConstants.BLUE_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.RED)));
+        }));
 
         //consider making this a trigger so its harder to misinput
         GamepadButton resetGoalPos = new GamepadButton(gamepad2ex, GamepadKeys.Button.A);
