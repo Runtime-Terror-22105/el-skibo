@@ -209,14 +209,15 @@ public class SpindexerSubsystem extends SubsystemBase {
         return yawOffsets[nearestIndex];
     }
 
-    public String bruteSort(String idealPattern, int numBalls, String letters) {
+    public String bruteSort(String motif, int numBalls, String letters) {
 
         if(letters.equals("PPP") || letters.equals("GGG"))
         {
+            //idt this works long term maybe it does idk just make sure to keep track of this
             return letters;
         }
 
-        char[] ideal = idealPattern.toCharArray();
+        char[] ideal = motif.toCharArray();
         char[] base = letters.toCharArray();
 
         int bestScore = -1;
