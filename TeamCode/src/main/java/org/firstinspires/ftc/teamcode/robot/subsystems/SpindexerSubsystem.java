@@ -209,6 +209,38 @@ public class SpindexerSubsystem extends SubsystemBase {
         return yawOffsets[nearestIndex];
     }
 
+    public String bruteSort(String motif, int numBalls, String letters) {
+
+        if(letters.equals("PPP") || letters.equals("GGG"))
+        {
+            //idt this works long term maybe it does idk just make sure to keep track of this
+            return letters;
+        }
+
+        char[] ideal = motif.toCharArray();
+        char[] base = letters.toCharArray();
+
+        int bestScore = -1;
+        int bestRotation = 0;
+
+        for (int r = 0; r < 3; r++) {
+            int score = 0;
+
+            if (base[r % 3] == ideal[(numBalls) % 3]) score++;
+            if (base[(r + 1) % 3] == ideal[(numBalls + 1) % 3]) score++;
+            if (base[(r + 2) % 3] == ideal[(numBalls + 2) % 3]) score++;
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestRotation = r;
+            }
+        }
+
+        return "" + base[bestRotation % 3]
+                + base[(bestRotation + 1) % 3]
+                + base[(bestRotation + 2) % 3];
+    }
+
     /**
      * <p>PLEASE DO NOT USE THIS WILLY NILLY!!!
      * you gotta use the command because it only can do the senses when the balls get aligned</p>
