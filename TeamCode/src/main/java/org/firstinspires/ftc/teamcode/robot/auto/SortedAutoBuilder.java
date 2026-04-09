@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CO
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_TIP_POSE;
 
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
@@ -55,9 +54,6 @@ public final class SortedAutoBuilder {
         Pose2d shootPose;
         if (flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED){
             shootPose = SHOOT_LAST_POSE;
-        }
-        else if (flags.contains(ShootPathFlag.TIP_SHOOT_SPOT)){
-            shootPose = SHOOT_TIP_POSE;
         }
         else {
             shootPose = SHOOT_SORTED_POSE;
