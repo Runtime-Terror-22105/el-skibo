@@ -94,8 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private Pose2d center = new Pose2d(72,72,0);
 
-    public double manualAimVerticalOffset = 0;
-    public double manualAimHorizontalOffset = 0;
+    public double goalPosVerticalOffset = 0;
+    public double goalPosHorizontalOffset = 0;
 
     Pose2d horizontalOffet = new Pose2d(0,0,0);
     Pose2d verticalOffset = new Pose2d(0,0,0);
@@ -168,33 +168,33 @@ public class ShooterSubsystem extends SubsystemBase {
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 
-    public void setManualAimOffset(double vertical, double horizontal)
+    public void setGoalPosOffset(double vertical, double horizontal)
     {
-        this.manualAimVerticalOffset = vertical;
-        this.manualAimHorizontalOffset = horizontal;
+        this.goalPosVerticalOffset = vertical;
+        this.goalPosHorizontalOffset = horizontal;
         goalHeight = GOAL_HEIGHT_RETURN;
     }
 
-    public void resetManualAim()
+    public void resetGoalPosOffset()
     {
-        this.manualAimVerticalOffset = 0;
-        this.manualAimHorizontalOffset = 0;
+        this.goalPosVerticalOffset = 0;
+        this.goalPosHorizontalOffset = 0;
         goalHeight = GOAL_HEIGHT_RETURN;
     }
 
-    public void incrementManualAimOffset(double vertical, double horizontal)
+    public void incrementGoalPosOffset(double vertical, double horizontal)
     {
-        this.manualAimVerticalOffset += vertical;
-        this.manualAimHorizontalOffset += horizontal;
+        this.goalPosVerticalOffset += vertical;
+        this.goalPosHorizontalOffset += horizontal;
         goalHeight += vertical;
     }
 
-    public Pose2d recalculateGoalPosWithManualAim(Pose2d goalPos)
+    public Pose2d recalculateGoalPosWithOffsets(Pose2d goalPos)
     {
         double goalPosMagnitude = Math.hypot(goalPos.x-center.x,goalPos.y-center.y);
         Pose2d normalizedGoalPos = new Pose2d((goalPos.x-center.x)/ goalPosMagnitude,(goalPos.y-center.y) / goalPosMagnitude);
-        double xShift = manualAimHorizontalOffset*normalizedGoalPos.x;
-        double yShift = manualAimVerticalOffset*normalizedGoalPos.y;
+        double xShift = goalPosHorizontalOffset *normalizedGoalPos.x;
+        double yShift = goalPosVerticalOffset *normalizedGoalPos.y;
 
         verticalOffset.x = xShift;
         verticalOffset.y = yShift;
@@ -210,7 +210,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = true;
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
-        goalPos = recalculateGoalPosWithManualAim(goalPos);
+        goalPos = recalculateGoalPosWithOffsets(goalPos);
         //Pose2d goalPos = this.robot.color.getGoalPos();
         double distToGoal = botPos.distanceFrom(goalPos.toPedro());
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
@@ -334,7 +334,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithManualAim(goalPosLookupTable.get())));
+        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithOffsets(goalPosLookupTable.get())));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {
@@ -348,30 +348,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         this.setTurretAngle(turretYaw);
     }
-
-
-    public void manualAimAutoHood (double velocity, double turretYaw) {
-
-        Pose botPosTemp = this.robot.follower.getPose();
-        Pose2d botPos = new Pose2d(botPosTemp.getX(), botPosTemp.getY(), botPosTemp.getHeading());
-        Pose2d goalPos = this.goalPosLookupTable.get();
-
-        this.isAutoAimOn = false;
-        this.setSpeed(this.velToRPM(velocity));
-
-        if (this.isAutoHoodOn) {
-            calcHoodPod(botPos, goalPos, apexHeight);
-        }
-        if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
-
-        if (debug) Log.d("ShooterSubsystem", "Calculated flywheel velocity: " + this.getGoalVelocity() + " rpm");
-        if (debug) Log.d("ShooterSubsystem", "Calculated hood pitch (rad)" + this.goalPitch);
-
-
-        this.setTurretAngle(turretYaw);
-    }
-
-
 
     private double findYawAngle(Pose botPos, Pose2d goalPos){
         /** all in rad **/
@@ -389,9 +365,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         double botHeading = botPos.getHeading();
         if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180D/Math.PI );
-
-
-
 
         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
 
@@ -497,8 +470,6 @@ public class ShooterSubsystem extends SubsystemBase {
         double currentRpm = this.getVelocityRpm();
         if (telemetry) Robot.debugTelemetry.addData("Shooter RPM", currentRpm);
         if (telemetry) Robot.debugTelemetry.addData("Shooter in/s", currentRpm / 6.469);
-//        Robot.debugTelemetry.addData("Shooter left (mA)", this.hardware.shooterLeft.getCurrent(CurrentUnit.MILLIAMPS));
-//        Robot.debugTelemetry.addData("Shooter right (mA)", this.hardware.shooterRight.getCurrent(CurrentUnit.MILLIAMPS));
 
         shooterPID.setTargetPosition(getGoalVelocity());
 //        boolean useSmallPID = shooterPID.atTargetPositionWithTolerance(currentRpm, SHOOTER_PID_SWITCH);
@@ -531,14 +502,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {//
-//        if (robot.color == Team.BLUE){
-//            turretOffset = -0.04;
-//        }
-//        else{
-//            turretOffset = 0.04;
-//        }
-
+    public void periodic() {
         try (Profiler.Scope p = Profiler.enter("ShooterSubsystem")) {
             if (robot.robotState.isHang()) {
                 hardware.shooterLeft.setPower(0);
@@ -569,9 +533,6 @@ public class ShooterSubsystem extends SubsystemBase {
                 boolean useSotmAccel = sotmAccelOverride != null ? sotmAccelOverride : USE_SOTM_ACCEL;
                 this.doAutoShoot(robotPos, useSotm, useSotmAccel);
             }
-//            else if (robot.goalPos != null){
-//                intermediateAim(this.robot.follower.getPose(), USE_SOTM);
-//            }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
             Profiler.pop();

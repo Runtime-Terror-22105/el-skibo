@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_B
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_PUSH_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_HORIZ_POSE;
@@ -61,6 +62,13 @@ public final class NearAutoBuilder {
 
     private static PathChain intakeSpike2Path(AutoBuildState state) {
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return state.lastPath;
+    }
+
+    private static PathChain intakeSpike2PathPushGate(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE_PUSH_GATE, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
@@ -124,8 +132,7 @@ public final class NearAutoBuilder {
         return state.lastPath;
     }
 
-    private static Command intakeSpike1(AutoBuildState state) {
-        PathChain path = intakeSpike1Path(state);
+    private static Command intakeSpikeFollowingPath(AutoBuildState state, PathChain path) {
         Command followPathCommand = new FollowPathAndWaitForWallCommand(state.robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 3.0)
                 .raceWith(new WaitForIntakeCommand(state.robot));
         return new SequentialCommandGroup(
@@ -136,16 +143,19 @@ public final class NearAutoBuilder {
         );
     }
 
+    private static Command intakeSpike1(AutoBuildState state) {
+        PathChain path = intakeSpike1Path(state);
+        return intakeSpikeFollowingPath(state, path);
+    }
+
     private static Command intakeSpike2(AutoBuildState state) {
         PathChain path = intakeSpike2Path(state);
-        Command followPathCommand = new FollowPathAndWaitForWallCommand(state.robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 18.0)
-                .raceWith(new WaitForIntakeCommand(state.robot));
-        return new SequentialCommandGroup(
-                new GoToIntakeStateCommand(state.robot),
-                followPathCommand,
-                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY),
-                new SetIntakeSpeedCommand(state.robot.intake, 0)
-        );
+        return intakeSpikeFollowingPath(state, path);
+    }
+
+    public static Command intakeSpike2AndPushGate(AutoBuildState state) {
+        PathChain path = intakeSpike2PathPushGate(state);
+        return intakeSpikeFollowingPath(state, path);
     }
 
     private static Command intakeSpike3(AutoBuildState state) {

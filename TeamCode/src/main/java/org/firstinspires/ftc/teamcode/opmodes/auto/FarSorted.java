@@ -34,8 +34,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
 
                 FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
 
-                NearAutoBuilder.intakeSpike(state, 2),
-                NearAutoBuilder.pushGate(state),
+                NearAutoBuilder.intakeSpike2AndPushGate(state),
                 SortedAutoBuilder.shootSpike(state, 2),
 
                 NearAutoBuilder.intakeSpike(state, 1),

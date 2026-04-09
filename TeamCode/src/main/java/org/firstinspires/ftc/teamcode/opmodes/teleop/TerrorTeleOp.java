@@ -320,22 +320,22 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton adjustGoalRight = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_RIGHT);
         GamepadButton adjustGoalDown = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_DOWN);
 
-        adjustGoalUp.whenPressed(() -> robot.shooter.incrementManualAimOffset(MANUAL_AIM_INCREMENT_VERTICAL,0));
-        adjustGoalLeft.whenPressed(() -> robot.shooter.incrementManualAimOffset(0,-MANUAL_AIM_INCREMENT_HORIZONTAL));
-        adjustGoalRight.whenPressed(() -> robot.shooter.incrementManualAimOffset(0,MANUAL_AIM_INCREMENT_HORIZONTAL));
-        adjustGoalDown.whenPressed(() -> robot.shooter.incrementManualAimOffset(-MANUAL_AIM_INCREMENT_VERTICAL,0));
+        adjustGoalUp.whenPressed(() -> robot.shooter.incrementGoalPosOffset(MANUAL_AIM_INCREMENT_VERTICAL,0));
+        adjustGoalLeft.whenPressed(() -> robot.shooter.incrementGoalPosOffset(0,-MANUAL_AIM_INCREMENT_HORIZONTAL));
+        adjustGoalRight.whenPressed(() -> robot.shooter.incrementGoalPosOffset(0,MANUAL_AIM_INCREMENT_HORIZONTAL));
+        adjustGoalDown.whenPressed(() -> robot.shooter.incrementGoalPosOffset(-MANUAL_AIM_INCREMENT_VERTICAL,0));
 
         cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
 
         cornerRelocalizeButton.whenActive(new InstantCommand(()->{
             robot.follower.poseTracker.setPose(FieldConstants.RED_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.BLUE)));
-            robot.shooter.resetManualAim();
+            robot.shooter.resetGoalPosOffset();
         }));
 
         //consider making this a trigger so its harder to misinput
         GamepadButton resetGoalPos = new GamepadButton(gamepad2ex, GamepadKeys.Button.A);
 
-        resetGoalPos.whenPressed(() -> robot.shooter.resetManualAim());
+        resetGoalPos.whenPressed(() -> robot.shooter.resetGoalPosOffset());
         //this sounds like a lot of work
 
         GamepadButton headingLockButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
