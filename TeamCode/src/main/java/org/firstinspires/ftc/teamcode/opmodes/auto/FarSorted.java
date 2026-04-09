@@ -31,17 +31,23 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
     protected Command createAutoCommand(AutoBuildState state) {
         return new SequentialCommandGroup(
                 FarAutoBuilder.shootPreload(state, ShootPathFlag.SOTM, ShootPathFlag.EARLY_LEAVE),
+
                 FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+
                 NearAutoBuilder.intakeSpike(state, 2),
                 NearAutoBuilder.pushGate(state),
-                SortedAutoBuilder.shootSpike(state, 2, ShootPathFlag.TIP_SHOOT_SPOT),
+                SortedAutoBuilder.shootSpike(state, 2),
+
                 NearAutoBuilder.intakeSpike(state, 1),
-                SortedAutoBuilder.shootSpike(state, 1, ShootPathFlag.TIP_SHOOT_SPOT),
+                SortedAutoBuilder.shootSpike(state, 1),
+
                 NearAutoBuilder.intakeSpike(state, 3),
-                SortedAutoBuilder.shootSpike(state, 3, ShootPathFlag.TIP_SHOOT_SPOT),
+                SortedAutoBuilder.shootSpike(state, 3),
+
                 //needs to be changed to use vision in the future
                 NearAutoBuilder.intakeWall(state, true),
                 FarAutoBuilder.shootWall(state, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+
                 FarAutoBuilder.cycleWall(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
 
 
