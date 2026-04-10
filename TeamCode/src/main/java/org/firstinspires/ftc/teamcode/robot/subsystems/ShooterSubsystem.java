@@ -191,6 +191,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Pose2d recalculateGoalPosWithOffsets(Pose2d goalPos)
     {
+        if(manualAimHorizontalOffset == 0 && manualAimVerticalOffset == 0)
+        {
+            return goalPos;
+        }
         double goalPosMagnitude = Math.hypot(goalPos.x-center.x,goalPos.y-center.y);
         Pose2d normalizedGoalPos = new Pose2d((goalPos.x-center.x)/ goalPosMagnitude,(goalPos.y-center.y) / goalPosMagnitude);
         double xShift = goalPosHorizontalOffset *normalizedGoalPos.x;
