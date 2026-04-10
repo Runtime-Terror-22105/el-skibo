@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_H
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL_PUSH_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_PUSH_GATE;
@@ -37,6 +38,7 @@ import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
@@ -68,7 +70,7 @@ public final class NearAutoBuilder {
     }
 
     private static PathChain intakeSpike2PathPushGate(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE_PUSH_GATE, state.mirror, false, false)
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL_PUSH_GATE, INTAKE_2_POSE_PUSH_GATE, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
@@ -136,8 +138,10 @@ public final class NearAutoBuilder {
         Command followPathCommand = new FollowPathAndWaitForWallCommand(state.robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, 3.0)
                 .raceWith(new WaitForIntakeCommand(state.robot));
         return new SequentialCommandGroup(
-                new GoToIntakeStateCommand(state.robot),
-                followPathCommand,
+                new ParallelCommandGroup(
+                    new GoToIntakeStateCommand(state.robot),
+                    followPathCommand
+                ),
                 new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY),
                 new SetIntakeSpeedCommand(state.robot.intake, 0)
         );
