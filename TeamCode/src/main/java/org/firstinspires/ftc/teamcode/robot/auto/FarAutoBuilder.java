@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_P
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_TIMEOUT_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_CONTROL_FAR;
@@ -95,7 +96,7 @@ public final class FarAutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new ParallelRaceGroup(
-                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, 1.0, 12.0),
+                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, 1.0, INTAKE_WALL_TIMEOUT_DISTANCE),
                         new WaitForIntakeCommand(state.robot)
                 ),
                 new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
