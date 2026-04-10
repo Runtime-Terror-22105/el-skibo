@@ -329,7 +329,7 @@ public class ShooterAimingTuner extends LinearOpMode {
             robot.telemetry.addData("Current velocity rpm", robot.shooter.getVelocityRpm());
 
             robot.telemetry.addData("Goal Pitch", robot.shooter.goalPitch);
-            robot.telemetry.addData("Goal Hood Pos", robot.shooter.goalPitchPos);
+            robot.telemetry.addData("Goal Hood Pos", ShooterSubsystem.hoodAngleToServoPos(robot.shooter.goalPitch));
 
             if (LOG_MOTOR_CURRENT) {
                 double flc = hardware.motorFrontLeft.getCurrent(CurrentUnit.AMPS);

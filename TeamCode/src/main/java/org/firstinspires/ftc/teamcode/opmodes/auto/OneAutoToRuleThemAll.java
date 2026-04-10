@@ -122,6 +122,8 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // we can't spin shooter in init bc it's illegal
         robot.shooter.disableFlywheel = true;
+        robot.shooter.isAutoHoodOn = false;
+        robot.shooter.setHoodServoPosition(0.5);
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
@@ -155,6 +157,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
         robot.shooter.isAutoTurretOn = true;
+        robot.shooter.isAutoHoodOn = true;
         robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
 

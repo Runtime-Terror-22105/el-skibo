@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.12;
-    public static boolean USE_SOTM = false;
+    public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = false;
 
     public static boolean debug = false;
@@ -57,10 +57,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
 
     // what the shooter should be at
-    public double goalPitch; //hood - rad
+    public double goalPitch; //hood - angle (0.0 to 1.0)
     public double goalVelocity; //flywheel - rpm
     public double goalTurretAngle; //turret - rad
-    public double goalPitchPos; //hood - servo pos todo: remove, only have goalPitch
 
     // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
@@ -259,8 +258,7 @@ public class ShooterSubsystem extends SubsystemBase {
             this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
         }
         if (this.isAutoHoodOn) {
-            this.goalPitch = math.rad;
-            this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+            this.setHoodAngle(math.rad);
         }
         if (telemetry) Robot.debugTelemetry.addData("Calculated Pitch (rad)", this.goalPitch);
 
@@ -294,9 +292,20 @@ public class ShooterSubsystem extends SubsystemBase {
         math = shooterLookupTable.get(distToGoal);
 
         if (this.isAutoHoodOn && robot.robotState != RobotState.SHOOTING) {
-            this.goalPitch = math.rad;
-            this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+            this.setHoodAngle(math.rad);
         }
+    }
+
+    public static double hoodAngleToServoPos(double angle) {
+        return Algebra.mapRange(angle, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+    }
+
+    public void setHoodAngle(double angle) {
+        this.goalPitch = angle;
+    }
+
+    public void setHoodServoPosition(double servoPos) {
+        this.goalPitch = Algebra.mapRange(servoPos, hoodPosMin, hoodPosMax, hoodAngleMin, hoodAngleMax);
     }
 
     public void setTurretAngle(double angleRad) {
@@ -315,9 +324,8 @@ public class ShooterSubsystem extends SubsystemBase {
         double verDist = goalHeight - robotHeight; // delta y at the goal
         double theta = Math.atan(((2*h)/horDist) *
                 (1 + Math.sqrt(1 - (verDist/h)))); //in radians, from math
-        this.goalPitch = theta;
-        this.goalPitchPos = Algebra.mapRange(theta, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
-        if (debug) Log.d("ShooterSubsystem", "goal hood pos" + this.goalPitchPos);
+        this.setHoodAngle(theta);
+        if (debug) Log.d("ShooterSubsystem", "goal hood pos" + hoodAngleToServoPos(this.goalPitch));
     }
 
     /** lets you set a velocity and angle manually*/
@@ -325,8 +333,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = false;
         this.setSpeed(this.velToRPM(velocity));
 
-        this.goalPitch = pitch;
-        this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        this.setHoodAngle(pitch);
 
         this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), goalPos));
     }
@@ -335,8 +342,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = false;
         this.setSpeed(this.velToRPM(velocity));
 
-        this.goalPitch = pitch;
-        this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        this.setHoodAngle(pitch);
 
         this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithOffsets(goalPosLookupTable.get())));
     }
@@ -347,8 +353,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = false;
         this.setSpeed(this.velToRPM(velocity));
 
-        this.goalPitch = pitch;
-        this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+        this.setHoodAngle(pitch);
 
         this.setTurretAngle(turretYaw);
     }
@@ -543,7 +548,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
             // shooter pitch
             Profiler.push("pitch");
-            hardware.shooterPitch.setPosition(this.goalPitchPos);
+            hardware.shooterPitch.setPosition(hoodAngleToServoPos(this.goalPitch));
             Profiler.pop();
 
             // flywheel pids
