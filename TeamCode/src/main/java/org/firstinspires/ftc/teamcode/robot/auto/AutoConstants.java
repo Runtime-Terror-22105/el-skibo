@@ -20,7 +20,9 @@ public class AutoConstants {
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 120, Math.toRadians(-124.7));
     public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 8, Math.toRadians(180));
-    public static Pose2d SHOOT_SORTED_POSE = new Pose2d(62, 72, Math.toRadians(180));
+    public static Pose2d SHOOT_SORTED_POSE_2 = new Pose2d(62, 72, Math.toRadians(-124.7));
+    public static Pose2d SHOOT_SORTED_POSE_3 = new Pose2d(62, 72, Math.toRadians(180));
+    public static Pose2d SHOOT_SORTED_POSE_1 = new Pose2d(62, 72, Math.toRadians(235));
 
     public static Pose2d INTAKE_1_BEFORE_HORIZ_CONTROL = new Pose2d(24, 111, 0);
     public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(25.67, 97, Math.toRadians(263));
@@ -57,7 +59,8 @@ public class AutoConstants {
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(11, 8, Math.toRadians(180));
     public static double INTAKE_WALL_TIMEOUT_DISTANCE = 18.0;  // if the spindex walls don't go down after 18 in on the path to the wall, we stop and wait
-    public static Pose2d INTAKE_WALL_CONTORL_NEAR_POSE = new Pose2d(86, 14, Math.toRadians(180));
+    public static Pose2d INTAKE_WALL_CONTROL_NEAR_POSE = new Pose2d(5, 32, Math.toRadians(-90));
+    public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(8, 8, Math.toRadians(180));
     public static Pose2d INTAKE_TUNNEL_POSE = new Pose2d(11, 32, Math.toRadians(180));
     public static Pose2d VISION_POSE = new Pose2d(42, 18, Math.toRadians(180));
 

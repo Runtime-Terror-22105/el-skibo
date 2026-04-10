@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE_1;
 
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
@@ -44,33 +43,30 @@ public final class SortedAutoBuilder {
     private static PathChain shootPreloadPath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
         Pose2d shootPose = flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED
                 ? SHOOT_LAST_POSE
-                : SHOOT_SORTED_POSE;
+                : SHOOT_SORTED_POSE_1;
         PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, shootPose, state.mirror, false, false);
         state.lastPath = builder.build();
         return state.lastPath;
     }
 
-    private static PathChain shootSpikePath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
+    private static PathChain shootSpikePath(AutoBuildState state, int spikeNumber, EnumSet<ShootPathFlag> flags) {
         Pose2d shootPose;
         if (flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED){
             shootPose = SHOOT_LAST_POSE;
         }
-        else {
-            shootPose = SHOOT_SORTED_POSE;
+        else if (spikeNumber == 1) {
+            shootPose = SHOOT_SORTED_POSE_1;
+        } else if (spikeNumber == 2) {
+            shootPose = AutoConstants.SHOOT_SORTED_POSE_2;
+        } else if (spikeNumber == 3) {
+            shootPose = AutoConstants.SHOOT_SORTED_POSE_3;
+        } else {
+            throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
         }
+
         boolean useTangential = flags.contains(ShootPathFlag.LAST);
         PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, shootPose, state.mirror, useTangential, useTangential);
         state.lastPath = builder.build();
-        return state.lastPath;
-    }
-
-    private static PathChain shootGatePath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
-        Pose2d shootPose = flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED
-                ? SHOOT_LAST_POSE
-                : SHOOT_SORTED_POSE;
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, shootPose, state.mirror, true, true)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
         return state.lastPath;
     }
 
@@ -156,7 +152,7 @@ public final class SortedAutoBuilder {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         PathChain path = flags.contains(ShootPathFlag.PRELOAD_SHOOT_SPOT)
                 ? shootPreloadPath(state, flags)
-                : shootSpikePath(state, flags);
+                : shootSpikePath(state, spikeNumber, flags);
 
         Command endCommand = new InstantCommand(() -> {
         });
