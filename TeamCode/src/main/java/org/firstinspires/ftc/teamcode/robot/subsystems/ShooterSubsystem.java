@@ -191,7 +191,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Pose2d recalculateGoalPosWithOffsets(Pose2d goalPos)
     {
-        if(manualAimHorizontalOffset == 0 && manualAimVerticalOffset == 0)
+        if(goalPosHorizontalOffset == 0 && goalPosVerticalOffset == 0)
         {
             return goalPos;
         }
