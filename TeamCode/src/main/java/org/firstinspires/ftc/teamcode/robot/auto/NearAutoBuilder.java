@@ -25,14 +25,12 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TIM
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_CONTORL_NEAR_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -44,7 +42,6 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -56,14 +53,14 @@ public final class NearAutoBuilder {
     }
 
     private static PathChain intakeSpike1Path(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_1_CONTROL, INTAKE_1_POSE, state.mirror, false, false)
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_1_CONTROL, INTAKE_1_POSE, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
     }
 
     private static PathChain intakeSpike2Path(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE, state.mirror, false, false)
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL, INTAKE_2_POSE, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
@@ -76,30 +73,8 @@ public final class NearAutoBuilder {
         return state.lastPath;
     }
 
-    private static PathChain prepareIntakeSpike3Path(AutoBuildState state) {
-        Pose2d prepareIntakePose = PREPARE_INTAKE_3_POSE.mirror(state.mirror);
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_3_CONTROL, PREPARE_INTAKE_3_POSE, state.mirror, false, false)
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.4, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(0.4, 0.7,
-                                        FixedHeadingInterpolator.linearFromPoint(
-                                                () -> state.robot.follower.getHeading(),
-                                                prepareIntakePose.heading,
-                                                0.4, 0.7
-                                        )
-                                ),
-                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0,
-                                        HeadingInterpolator.constant(prepareIntakePose.heading)
-                                )
-                        )
-                )
-                .build();
-        return state.lastPath;
-    }
-
     private static PathChain intakeSpike3Path(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, INTAKE_3_POSE, state.mirror, false, false)
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_3_CONTROL, INTAKE_3_POSE, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
@@ -163,13 +138,8 @@ public final class NearAutoBuilder {
     }
 
     private static Command intakeSpike3(AutoBuildState state) {
-        return new SequentialCommandGroup(
-                new GoToIntakeStateCommand(state.robot),
-                new FollowPathAndWaitForWallCommand(state.robot, prepareIntakeSpike3Path(state), true, MAX_DRIVETRAIN_POWER_INTAKING, 36.0),
-                new FollowPathCommand(state.robot.follower, intakeSpike3Path(state), true),
-                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY),
-                new SetIntakeSpeedCommand(state.robot.intake, 0)
-        );
+        PathChain path = intakeSpike3Path(state);
+        return intakeSpikeFollowingPath(state, path);
     }
 
     public static Command intakeWall(AutoBuildState state, boolean reverseIntake){
