@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.command.shooter;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.LogCatCommand;
@@ -15,10 +16,11 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
+@Config
 public class SortedShootCommand extends SequentialCommandGroup {
     public static double SPINDEX_TRANSFER_POWER = -1;
-    public static int SPINDEX_SHOOT_TIME = 100;  // milliseconds
-    public static int SPINDEX_PAUSE_TIME = 50;  // milliseconds
+    public static int SPINDEX_SHOOT_TIME = 150;  // milliseconds
+    public static int SPINDEX_PAUSE_TIME = 500;  // milliseconds
 
     public static int reverseIntakeTimeMS = 150;
     public static int SPINDEX_SORTING_TRANSFER_TIME = 1366;//(int) (700/SpindexerSubsystem.MAX_POWER_SORTING);  // milliseconds
