@@ -11,6 +11,7 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerWallCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -40,23 +41,20 @@ public class SortedShootCommand extends SequentialCommandGroup {
 //                new WaitCommand(200),
 
                 // Phase 5: transfer balls
-                new InstantCommand(() -> {
-                    robot.spindexer.setPidEnabled(false);
-                    robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
-                }),
-                new WaitCommand(SPINDEX_SHOOT_TIME),
-                new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
+                new SetSpindexerYawCommand(robot.spindexer, robot.spindexer.getPosition()+120, false),
                 new WaitCommand(SPINDEX_PAUSE_TIME),
-                new InstantCommand(() -> {robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));}),
-                new WaitCommand(SPINDEX_SHOOT_TIME),
-                new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
+                new SetSpindexerYawCommand(robot.spindexer, robot.spindexer.getPosition()+120, false),
                 new WaitCommand(SPINDEX_PAUSE_TIME),
-                new InstantCommand(() -> {robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));}),
+                new InstantCommand(() -> robot.spindexer.setPidEnabled(true)),
+                new InstantCommand(() -> robot.spindexer.setSpindexerPower(1.0)),
                 new WaitCommand(SPINDEX_SHOOT_TIME),
+
+
 
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
                 new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
-                // reset spindexer, intake, shooter
+
+            // reset spindexer, intake, shooter
                 new ParallelCommandGroup(
                         new SetIntakeSpeedCommand(robot.intake, 0),
                         new SetSpindexerRampActive(robot.spindexer, false),
