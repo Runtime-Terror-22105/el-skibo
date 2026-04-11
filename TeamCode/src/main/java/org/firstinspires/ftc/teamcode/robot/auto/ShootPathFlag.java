@@ -18,4 +18,6 @@ public enum ShootPathFlag {
 
     // Shoot from the preload position
     PRELOAD_SHOOT_SPOT,
+
+    LONG_GATE_PAUSE
 }

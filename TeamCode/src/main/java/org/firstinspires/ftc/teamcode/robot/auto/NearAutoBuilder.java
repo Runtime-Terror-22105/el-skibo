@@ -29,6 +29,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PU
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag.LONG_GATE_PAUSE;
 
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathBuilder;
@@ -39,6 +40,7 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -47,6 +49,8 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
+
+import java.util.EnumSet;
 
 public final class NearAutoBuilder {
     private NearAutoBuilder() {
@@ -280,11 +284,12 @@ public final class NearAutoBuilder {
         );
     }
 
-    public static Command intakeGate(AutoBuildState state) {
+    public static Command intakeGate(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
         return new SequentialCommandGroup(
                 new FollowPathCommand(state.robot.follower, intakeGatePath1(state), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new ConditionalCommand(new WaitCommand(200), new InstantCommand(()->{}), () -> flags.contains(LONG_GATE_PAUSE) ),
                 new FollowPathCommand(state.robot.follower, intakeGatePath2(state), true, MAX_DRIVETRAIN_POWER_INTAKING),
-                new WaitForIntakeCommand(state.robot).withTimeout(GATE_INTAKE_DELAY)
+                new WaitForIntakeCommand(state.robot).withTimeout(flags.contains(LONG_GATE_PAUSE) ? (GATE_INTAKE_DELAY + 500) : GATE_INTAKE_DELAY)
         );
     }
 
@@ -293,8 +298,9 @@ public final class NearAutoBuilder {
     }
 
     public static Command cycleGate(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flags) {
+        EnumSet<ShootPathFlag> flagArray = ArrayUtil.toEnumSet(flags, ShootPathFlag.class);
         return new SequentialCommandGroup(
-                intakeGate(state),
+                intakeGate(state, flagArray),
                 shootGate(state, reverseIntake, flags)
         );
     }
