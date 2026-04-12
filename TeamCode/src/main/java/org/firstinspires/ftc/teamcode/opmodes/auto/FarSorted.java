@@ -41,7 +41,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
                 NearAutoBuilder.intakeSpike(state, 3),
                 SortedAutoBuilder.shootSpike(state, 3),
 
-                NearAutoBuilder.intakeSpike(state, 1),
+                NearAutoBuilder.intakeSpike(state, 1, ShootPathFlag.SORTING),
                 SortedAutoBuilder.shootSpike(state, 1),
 
                 //needs to be changed to use vision in the future

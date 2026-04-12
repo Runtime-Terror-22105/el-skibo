@@ -33,6 +33,7 @@ public class AutoConstants {
     public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 34, Math.toRadians(263));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
+    public static Pose2d SORTED_INTAKE_1_CONTROL = new Pose2d(40, 83, 0);
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
 
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(58, 58, 0);

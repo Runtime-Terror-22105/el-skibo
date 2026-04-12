@@ -28,6 +28,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVET
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SORTED_INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag.LONG_GATE_PAUSE;
 
@@ -56,8 +57,9 @@ public final class NearAutoBuilder {
     private NearAutoBuilder() {
     }
 
-    private static PathChain intakeSpike1Path(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_1_CONTROL, INTAKE_1_POSE, state.mirror, true, false)
+    private static PathChain intakeSpike1Path(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
+        Pose2d control = flags.contains(ShootPathFlag.SORTING) ? SORTED_INTAKE_1_CONTROL: INTAKE_1_CONTROL;
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, control, INTAKE_1_POSE, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
@@ -130,8 +132,8 @@ public final class NearAutoBuilder {
         return intakeSpikeFollowingPath(state, path, 3.0);
     }
 
-    private static Command intakeSpike1(AutoBuildState state) {
-        PathChain path = intakeSpike1Path(state);
+    private static Command intakeSpike1(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
+        PathChain path = intakeSpike1Path(state, flags);
         return intakeSpikeFollowingPath(state, path);
     }
 
@@ -179,10 +181,11 @@ public final class NearAutoBuilder {
         return UnsortedShootRoutines.shootPreload(state, flagArr);
     }
 
-    public static Command intakeSpike(AutoBuildState state, int spikeNumber) {
+    public static Command intakeSpike(AutoBuildState state, int spikeNumber, ShootPathFlag... flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         switch (spikeNumber) {
             case 1:
-                return intakeSpike1(state);
+                return intakeSpike1(state, flags);
             case 2:
                 return intakeSpike2(state);
             case 3:
