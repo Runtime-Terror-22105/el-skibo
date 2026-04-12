@@ -224,9 +224,13 @@ public class SpindexerSubsystem extends SubsystemBase {
                 .map(b -> String.valueOf(b.toChar()))
                 .collect(Collectors.joining());
 
+        robot.telemetry.addData("i saw ",letters);
+
         String motif = Arrays.stream(glyphArr)
                 .map(b -> String.valueOf(b.toChar()))
                 .collect(Collectors.joining());
+
+        robot.telemetry.addData("with motif ",motif);
 
         if(letters.equals("PPP") || letters.equals("GGG"))
         {
@@ -256,6 +260,8 @@ public class SpindexerSubsystem extends SubsystemBase {
         String result = "" + base[bestRotation % 3]
                 + base[(bestRotation + 1) % 3]
                 + base[(bestRotation + 2) % 3];
+
+        robot.telemetry.addData("attempting to do pattern",result);
 
         String ccw = letters.substring(1) + letters.charAt(0);
         String cw  = letters.charAt(2) + letters.substring(0, 2);
