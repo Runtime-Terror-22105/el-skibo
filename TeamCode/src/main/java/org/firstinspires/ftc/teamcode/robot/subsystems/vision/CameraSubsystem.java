@@ -119,6 +119,8 @@ public class CameraSubsystem extends SubsystemBase {
 
     private boolean exposureHasBeenSet = false;
 
+    public int numBalls = 0;
+
 
 
     //roi
@@ -376,21 +378,21 @@ public class CameraSubsystem extends SubsystemBase {
 
     }
 
-    //the ideal pattern to shoot to when using rampCV
-    public GLYPH getIdealBallPattern()
-    {
-        //this will cause a problem, too bad!
-        if(gameGlyph == null)
-        {
-            return null;
-        }
-
-        int ballsSeen = getBallsSeen() % 3;
-
-        GLYPH[] values = GLYPH.values();
-        int index = (gameGlyph.ordinal() + ballsSeen) % values.length;
-        return values[index];
-    }
+    //how it FEELS to lie to people
+//    public GLYPH getIdealBallPattern()
+//    {
+//        //this will cause a problem, too bad!
+//        if(gameGlyph == null)
+//        {
+//            return null;
+//        }
+//
+//        int ballsSeen = getBallsSeen() % 3;
+//
+//        GLYPH[] values = GLYPH.values();
+//        int index = (gameGlyph.ordinal() + ballsSeen) % values.length;
+//        return values[index];
+//    }
 
 
     @Override

@@ -25,6 +25,7 @@ public class SortTest extends LinearOpMode {
     private final Robot robot = new Robot();
 
     public static String glyphChoice = "PGP";
+    public static int numBalls = 0;
 
 //    public static CameraSubsystem.GLYPH glyph=CameraSubsystem.GLYPH.GPP;
 
@@ -46,6 +47,7 @@ public class SortTest extends LinearOpMode {
         {
             robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
         }
+        robot.camera.numBalls = numBalls;
 
         CommandScheduler.getInstance().schedule(new WaitCommand(500).andThen(new SortCommand(robot)));
         while (opModeIsActive()) {
