@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
-@TeleOp(name=" V Test", group="Testing")
+@TeleOp(name="CV Test", group="Testing")
 @Config
 public class CVTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
