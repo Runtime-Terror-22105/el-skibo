@@ -135,7 +135,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 //        } else {
 //            this.camera = new CameraSubsystem();
 //        }
-        this.camera = new CameraSubsystem(this,hardware,CameraSubsystem.LiveViewSettings.FIELD);
+        this.camera = new CameraSubsystem(this,hardware);
     }
 
     /**
