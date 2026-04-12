@@ -122,6 +122,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // we can't spin shooter in init bc it's illegal
         robot.shooter.disableFlywheel = true;
+        robot.shooter.isAutoHoodOn = true;
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
