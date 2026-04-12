@@ -10,7 +10,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
@@ -18,11 +17,7 @@ import java.util.List;
 
 public class RampPipeline extends OpenCvPipeline
 {
-
-
-
     private final Mat hsv = new Mat();
-    private Mat output = new Mat();
 
     public static double acceptPixelsAbove = 820;
 
@@ -30,11 +25,7 @@ public class RampPipeline extends OpenCvPipeline
     public static Scalar purpleHigh1 = new Scalar(121.8, 68, 255);
     public static Scalar purpleLow2  = new Scalar(120.4, 76.5, 48.2);
     public static Scalar purpleHigh2 = new Scalar(165.8, 255, 255);
-
-    //    public static Scalar greenLow  = new Scalar(29.8, 89.3, 19.8);
-//    public static Scalar greenHigh = new Scalar(59.5, 144.5, 158.7);
     public static Scalar greenLow  = new Scalar(46, 0, 0);
-    // Upper bound for green
     public static Scalar greenHigh = new Scalar(102, 255, 250);
     Mat purpleMask1 = new Mat();
     Mat purpleMask2 = new Mat();
@@ -44,38 +35,15 @@ public class RampPipeline extends OpenCvPipeline
 
     public int ballsInRamp = 0;
 
-    public int getBallsInRamp()
-    {
-        return this.ballsInRamp;
-    }
-
     private void setBallsInRamp(int amount)
     {
         this.ballsInRamp = amount;
     }
-
-    Mat cameraMatrix;
-
-    private Mat grey = new Mat();
-
-    public static double fx = 578.272;
-    public static double fy = 578.272;
-    public static double cx = 402.145;
-    public static double cy = 221.506;
-//    private char[] rampBalls = {'N','N','N','N','N','N','N','N','N'};
-
-
-    private OpenCvCamera camera;
-
-    private float decimation;
-    private boolean needToSetDecimation;
-    private final Object decimationSync = new Object();
-
     private final List<Point> detectedCenters = new ArrayList<>();
     Telemetry telemetry;
 
-    public RampPipeline(Telemetry telemetry) {
-        this.telemetry = telemetry;
+    public RampPipeline() {
+
     }
     private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
 
@@ -135,17 +103,8 @@ public class RampPipeline extends OpenCvPipeline
 
         setBallsInRamp(detectedCenters.size());
 
-//        System.out.println(detectedCenters);
-
-//        blobs : [{1239.0, 818.0}, {1134.0, 788.0}, {1028.0, 758.0}, {934.0, 730.0}, {840.0, 706.0}, {737.0, 677.0}, {619.0, 644.0}, {526.0, 623.0}, {411.0, 585.0}]
-
-        if (telemetry != null) {
-            telemetry.addData("blobs", detectedCenters);
-        }
-//        telemetry.addData("blobs", detectedCenters);
         Mat masked = new Mat();
         Core.bitwise_and(input, input, masked, combinedMask);
-//        Imgproc.putText(input, "the", new Point(150,acceptPixelsAbove), Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 0,0), 2);
         return masked;
     }
 }

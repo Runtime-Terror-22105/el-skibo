@@ -59,7 +59,7 @@ public class LightControl extends SubsystemBase {
                     break;
 
                 case SCANNING:
-                    if(robot.camera.getRelocalizeSucceeded())
+                    if(robot.camera.didRelocalize())
                     {
                         hardware.lights.setColor(TerrorLight.LightColors.GREEN);
                     }

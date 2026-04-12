@@ -27,11 +27,11 @@ public class CameraTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, this);
-        robot.camera.setTeam(Team.RED);
-        if(isBlue)
-        {
-            robot.camera.setTeam(Team.BLUE);
-        }
+//        robot.camera.setTeam(Team.RED);
+//        if(isBlue)
+//        {
+//            robot.camera.setTeam(Team.BLUE);
+//        }
 //        if(isInNearAuto)
 //        {
 //            robot.camera.setAuto(true,false);

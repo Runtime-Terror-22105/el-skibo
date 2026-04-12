@@ -247,9 +247,9 @@ public class SpindexerSubsystem extends SubsystemBase {
         for (int r = 0; r < 3; r++) {
             int score = 0;
 
-            if (base[r % 3] == ideal[(robot.camera.numBalls) % 3]) score++;
-            if (base[(r + 1) % 3] == ideal[(robot.camera.numBalls + 1) % 3]) score++;
-            if (base[(r + 2) % 3] == ideal[(robot.camera.numBalls + 2) % 3]) score++;
+            if (base[r % 3] == ideal[(robot.camera.getBallsSeen()) % 3]) score++;
+            if (base[(r + 1) % 3] == ideal[(robot.camera.getBallsSeen() + 1) % 3]) score++;
+            if (base[(r + 2) % 3] == ideal[(robot.camera.getBallsSeen() + 2) % 3]) score++;
 
             if (score > bestScore) {
                 bestScore = score;

@@ -8,7 +8,7 @@ public class StopScanningForGlyphsCommand extends InstantCommand {
     public StopScanningForGlyphsCommand(CameraSubsystem camera) {
         super(() -> {
             if (camera != null && camera.getGlyph() != null)
-                camera.stopScanningForGlyphs();
+                camera.setGlyphScanningEnabled(false);
         });
     }
 }
