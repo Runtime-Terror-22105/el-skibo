@@ -42,23 +42,15 @@ public class SortedShootCommand extends SequentialCommandGroup {
 //                new WaitCommand(200),
 
                 // Phase 5: transfer balls
-                new LogCatCommand("SortedShootCommand", "before 1"),
-                new LogCatCommand("SortedShootCommand", "spindex target yaw: "+robot.spindexer.getTargetYaw()),
-                new LogCatCommand("SortedShootCommand", "spindex current yaw: "+robot.spindexer.getPosition()),
-                new SetSpindexerYawCommand(robot.spindexer, robot.spindexer.getTargetYaw()+Math.toRadians(120), false),
+
+                new InstantCommand(() -> robot.spindexer.rotate(-Math.toRadians(120))),
                 new WaitForSpindexerYawCommand(robot.spindexer),
-                new LogCatCommand("SortedShootCommand", "after 1"),
-                new LogCatCommand("SortedShootCommand", "spindex target yaw: "+robot.spindexer.getTargetYaw()),
-                new LogCatCommand("SortedShootCommand", "spindex current yaw: "+robot.spindexer.getPosition()),
                 new WaitCommand(SPINDEX_PAUSE_TIME),
-                new SetSpindexerYawCommand(robot.spindexer, robot.spindexer.getTargetYaw()+Math.toRadians(120), false),
+                new InstantCommand(() -> robot.spindexer.rotate(-Math.toRadians(120))),
                 new WaitForSpindexerYawCommand(robot.spindexer),
-                new LogCatCommand("SortedShootCommand", "after 2"),
-                new LogCatCommand("SortedShootCommand", "spindex target yaw: "+robot.spindexer.getTargetYaw()),
-                new LogCatCommand("SortedShootCommand", "spindex current yaw: "+robot.spindexer.getPosition()),
                 new WaitCommand(SPINDEX_PAUSE_TIME),
                 new InstantCommand(() -> robot.spindexer.setPidEnabled(false)),
-                new InstantCommand(() -> robot.spindexer.setSpindexerPower(1.0)),
+                new InstantCommand(() -> robot.spindexer.setSpindexerPower(-1.0)),
                 new WaitCommand(SPINDEX_SHOOT_TIME),
 
 
