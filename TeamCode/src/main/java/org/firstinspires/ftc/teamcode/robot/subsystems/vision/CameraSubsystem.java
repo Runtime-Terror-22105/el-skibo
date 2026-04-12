@@ -55,6 +55,7 @@ public class CameraSubsystem extends SubsystemBase {
     // =======================
     private boolean scanForGlyphs = false;
     private boolean relocalizeSucceeded = false;
+    public boolean relocalizationEnabled = false;
 
     private GLYPH gameGlyph;
 
@@ -102,6 +103,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         this.tagProcessor = createAprilTagProcessor();
         this.ballPipeline = createBallPipeline();
+        this.rampPipeline = createRampPipeline();
 
         this.visionPortalIDs =  VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
 
@@ -178,6 +180,11 @@ public class CameraSubsystem extends SubsystemBase {
         return pipeline;
     }
 
+    private RampPipeline createRampPipeline()
+    {
+        return new RampPipeline();
+    }
+
     // =======================
     // periodic
     // =======================
@@ -249,7 +256,7 @@ public class CameraSubsystem extends SubsystemBase {
 
 
     private void handleRelocalization(AprilTagDetection tag) {
-        if (!robot.getState().equals(RobotState.SCANNING) || tag == null) {
+        if (!robot.getState().equals(RobotState.SCANNING) || tag == null || !relocalizationEnabled) {
             relocalizeSucceeded = false;
             relocalizeTimer.reset();
             return;
@@ -322,11 +329,6 @@ public class CameraSubsystem extends SubsystemBase {
     // =======================
     // getter setter
     // =======================
-    public void setBallEnabled(boolean enabled) {
-        if (frontPortal != null) {
-            frontPortal.setProcessorEnabled(ballPipeline, enabled);
-        }
-    }
 
     public BallColor[] getGlyphCharArray() {
         return gameGlyph == null ? null : gameGlyph.colors;
@@ -336,7 +338,6 @@ public class CameraSubsystem extends SubsystemBase {
         if (backPortal != null) {
             backPortal.setProcessorEnabled(tagProcessor, enabled);
         }
-        scanForGlyphs = enabled;
     }
 
     public void setBallPipelineEnabled(boolean state)
@@ -363,5 +364,10 @@ public class CameraSubsystem extends SubsystemBase {
 
     public int getBallsSeen(){
         return ballsSeen;
+    }
+
+    public void setGlyphScanningEnabled(boolean state)
+    {
+        this.scanForGlyphs = state;
     }
 }

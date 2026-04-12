@@ -96,8 +96,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         }
 
         robot.init(hardware, this);
-        robot.camera.disableRelocalization = true;
-        robot.camera.disableAprilTagsAfterGlyph = true;
+        robot.camera.relocalizationEnabled = false;
 
         // TODO: the autobuilder class currently does not handle the init logic.
         //  Does it need to?
@@ -113,7 +112,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.shooter.sotmAccelOverride = false;
         robot.camera.setAprilTagsEnabled(false);
         robot.camera.setBallPipelineEnabled(false);
-        robot.camera.stopScanningForGlyphs();
+        robot.camera.setGlyphScanningEnabled(false);
         if (this.wantsAutoSort()) {
             robot.shooter.sotmOverride = false;
         } else {
