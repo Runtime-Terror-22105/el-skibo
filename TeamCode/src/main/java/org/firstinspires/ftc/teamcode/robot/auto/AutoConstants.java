@@ -73,9 +73,9 @@ public class AutoConstants {
     public static Pose2d END_POSE_LONG_INTAKE = new Pose2d(12, 40, Math.toRadians(120));
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
-    public static int INTAKE_DELAY = 400;
+    public static int INTAKE_DELAY = 200;
     public static int GATE_INTAKE_DELAY = 600;
-    public static int WALL_INTAKE_DELAY = 500;
+    public static int WALL_INTAKE_DELAY = 300;
     public static int PRELOAD_PRE_SHOOT_DELAY = 0;
     public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 2500;
     public static int PRE_SHOOT_DELAY = 0;
