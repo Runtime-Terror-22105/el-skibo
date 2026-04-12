@@ -1,23 +1,20 @@
-package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
-
-import android.graphics.Canvas;
+package org.firstinspires.ftc.teamcode.robot.subsystems.vision.ramptest;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
-import org.firstinspires.ftc.vision.VisionProcessor;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.imgproc.Moments;
+import org.firstinspires.ftc.vision.VisionPortal;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RampPipeline implements VisionProcessor
+public class EOCV_Ramp extends OpenCvPipeline
 {
     private final Mat hsv = new Mat();
 
@@ -44,18 +41,14 @@ public class RampPipeline implements VisionProcessor
     private final List<Point> detectedCenters = new ArrayList<>();
     Telemetry telemetry;
 
-    public RampPipeline() {
+    public EOCV_Ramp() {
 
     }
+    private final VisionPortal.Builder vPortalBuilder = new VisionPortal.Builder();
 
     @Override
-    public void init(int width, int height, CameraCalibration calibration) {
-
-    }
-
-    @Override
-    public Object processFrame(Mat frame, long captureTimeNanos) {
-        Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
+    public Mat processFrame(Mat input) {
+        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
         Core.inRange(hsv, purpleLow1, purpleHigh1, purpleMask1);
         Core.inRange(hsv, purpleLow2, purpleHigh2, purpleMask2);
         Core.bitwise_or(purpleMask1, purpleMask2, purpleMask);
@@ -96,8 +89,8 @@ public class RampPipeline implements VisionProcessor
 
                     // Save center
                     detectedCenters.add(center);
-                    Imgproc.circle(frame, center, 5, new Scalar(255, 255, 255), -1);
-                    Imgproc.putText(frame, colorLabel, center, Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255), 2);
+                    Imgproc.circle(input, center, 5, new Scalar(255, 255, 255), -1);
+                    Imgproc.putText(input, colorLabel, center, Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255), 2);
 
 
                     if (telemetry != null) {
@@ -110,13 +103,7 @@ public class RampPipeline implements VisionProcessor
         setBallsInRamp(detectedCenters.size());
 
         Mat masked = new Mat();
-        Core.bitwise_and(frame, frame, masked, combinedMask);
+        Core.bitwise_and(input, input, masked, combinedMask);
         return masked;
-    }
-
-
-    @Override
-    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-
     }
 }

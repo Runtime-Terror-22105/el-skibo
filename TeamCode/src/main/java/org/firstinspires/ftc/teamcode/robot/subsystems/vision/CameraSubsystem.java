@@ -42,13 +42,13 @@ public class CameraSubsystem extends SubsystemBase {
     private VisionPortal backPortal;
 
     private AprilTagProcessor tagProcessor;
-    private BallDetectionPipeline ballPipeline;
+    private final BallDetectionPipeline ballPipeline;
 
-    private RampPipeline rampPipeline;
+    private final RampPipeline rampPipeline;
 
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
-    private int[] visionPortalIDs;
+    private final int[] visionPortalIDs;
 
     // =======================
     // state
@@ -58,6 +58,7 @@ public class CameraSubsystem extends SubsystemBase {
     public boolean relocalizationEnabled = false;
 
     public GLYPH gameGlyph;
+    public FRONT_CV_MODE CVMode = FRONT_CV_MODE.NONE;
 
     private int ballsSeen = 0;
     private final ElapsedTime relocalizeTimer = new ElapsedTime();
@@ -94,6 +95,11 @@ public class CameraSubsystem extends SubsystemBase {
         }
     }
 
+    public enum FRONT_CV_MODE
+    {
+        RAMP,FAR,NONE
+    }
+
     // =======================
     // init
     // =======================
@@ -121,6 +127,7 @@ public class CameraSubsystem extends SubsystemBase {
                     .setAutoStopLiveView(false)
                     .setShowStatsOverlay(true)
                     .addProcessor(this.ballPipeline)
+                    .addProcessor(this.rampPipeline)
                     .build();
         }
 
@@ -190,6 +197,10 @@ public class CameraSubsystem extends SubsystemBase {
     // =======================
     @Override
     public void periodic() {
+
+        frontPortal.setProcessorEnabled(ballPipeline,CVMode.equals(FRONT_CV_MODE.FAR));
+        frontPortal.setProcessorEnabled(rampPipeline,CVMode.equals(FRONT_CV_MODE.RAMP));
+
         if (backPortal == null || tagProcessor == null) return;
 
         detections = tagProcessor.getDetections();
@@ -251,7 +262,7 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public void resetBlob() {
-//        ballPipeline.unlockChosenBlob();
+        ballPipeline.unlockChosenBlob();
     }
 
 
@@ -332,6 +343,16 @@ public class CameraSubsystem extends SubsystemBase {
 
     public BallColor[] getGlyphCharArray() {
         return gameGlyph == null ? null : gameGlyph.colors;
+    }
+
+    public FRONT_CV_MODE getCVMode()
+    {
+        return CVMode;
+    }
+
+    public void setCVMode(FRONT_CV_MODE mode)
+    {
+        CVMode = mode;
     }
 
     public void setAprilTagsEnabled(boolean enabled) {
