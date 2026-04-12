@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -31,6 +33,8 @@ public class CameraSubsystem extends SubsystemBase {
     private final Robot robot;
     private final RobotHardware hardware;
 
+    public static String TAG = "CameraSubsystem";
+
     // =======================
     // portal
     // ======================
@@ -43,6 +47,8 @@ public class CameraSubsystem extends SubsystemBase {
     private RampPipeline rampPipeline;
 
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
+
+    private int[] visionPortalIDs;
 
     // =======================
     // state
@@ -97,6 +103,8 @@ public class CameraSubsystem extends SubsystemBase {
         this.tagProcessor = createAprilTagProcessor();
         this.ballPipeline = createBallPipeline();
 
+        this.visionPortalIDs =  VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
+
         initCameras();
     }
 
@@ -105,7 +113,12 @@ public class CameraSubsystem extends SubsystemBase {
             frontPortal = new VisionPortal.Builder()
                     .setCamera(hardware.frontCamera)
                     .setCameraResolution(new Size(320, 240))
-                    .addProcessor(ballPipeline)
+                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                    .setLiveViewContainerId(visionPortalIDs[1])
+                    .setAutoStartStreamOnBuild(true)
+                    .setAutoStopLiveView(false)
+                    .setShowStatsOverlay(true)
+                    .addProcessor(this.ballPipeline)
                     .build();
         }
 
@@ -113,6 +126,11 @@ public class CameraSubsystem extends SubsystemBase {
             backPortal = new VisionPortal.Builder()
                     .setCamera(hardware.backCamera)
                     .setCameraResolution(new Size(1280, 800))
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                    .setLiveViewContainerId(visionPortalIDs[0])
+                    .setAutoStartStreamOnBuild(true)
+                    .setAutoStopLiveView(false)
+                    .setShowStatsOverlay(true)
                     .addProcessor(tagProcessor)
                     .build();
         }
@@ -180,11 +198,6 @@ public class CameraSubsystem extends SubsystemBase {
 
         }
 
-        if(localizationTag == null)
-        {
-            return;
-        }
-
         handleRelocalization(localizationTag);
 
         //add some check here on which pieplines running or smth
@@ -210,8 +223,33 @@ public class CameraSubsystem extends SubsystemBase {
         robot.telemetry.addData("Glyph", gameGlyph);
     }
 
+    public Pose2d offsetByBallCoords(Pose2d pose){
+        BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
+        if (blob == null) {
+            return pose;
+        }
+        Pose2d tempPos = pose.copy();
+//        double offset = blob.getCenter().x;
+        double offset = ballPipeline.pixelToRealCoords(blob.getCircle().getCenter()).x;
+        tempPos.y += offset;
+        Log.d(TAG, "Ball Pixel Offset (in): " + offset);
+        Log.d(TAG, "New Pose: " + tempPos);
+        return tempPos;
+
+    }
+
+    public boolean hasBlob()
+    {
+        return ballPipeline.getChosenBlob() != null;
+    }
+
+    public void resetBlob() {
+//        ballPipeline.unlockChosenBlob();
+    }
+
+
     private void handleRelocalization(AprilTagDetection tag) {
-        if (!robot.getState().equals(RobotState.SCANNING)) {
+        if (!robot.getState().equals(RobotState.SCANNING) || tag == null) {
             relocalizeSucceeded = false;
             relocalizeTimer.reset();
             return;
@@ -299,6 +337,20 @@ public class CameraSubsystem extends SubsystemBase {
             backPortal.setProcessorEnabled(tagProcessor, enabled);
         }
         scanForGlyphs = enabled;
+    }
+
+    public void setBallPipelineEnabled(boolean state)
+    {
+        if (frontPortal != null) {
+            frontPortal.setProcessorEnabled(ballPipeline, state);
+        }
+    }
+
+    public void setRampPipelineEnabled(boolean state)
+    {
+        if (frontPortal != null) {
+//
+        }
     }
 
     public GLYPH getGlyph() {
