@@ -57,7 +57,7 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean relocalizeSucceeded = false;
     public boolean relocalizationEnabled = false;
 
-    private GLYPH gameGlyph;
+    public GLYPH gameGlyph;
 
     private int ballsSeen = 0;
     private final ElapsedTime relocalizeTimer = new ElapsedTime();
