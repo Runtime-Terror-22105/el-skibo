@@ -129,7 +129,7 @@ public final class NearAutoBuilder {
     }
 
     private static Command intakeSpikeFollowingPath(AutoBuildState state, PathChain path) {
-        return intakeSpikeFollowingPath(state, path, 3.0);
+        return intakeSpikeFollowingPath(state, path, 12.0);
     }
 
     private static Command intakeSpike1(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
