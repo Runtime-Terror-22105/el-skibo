@@ -177,9 +177,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void resetGoalPosOffset()
     {
-        this.goalPosVerticalOffset = 0;
-        this.goalPosHorizontalOffset = 0;
-        goalHeight = GOAL_HEIGHT_RETURN;
+        setGoalPosOffset(0,0);
     }
 
     public void incrementGoalPosOffset(double vertical, double horizontal)
