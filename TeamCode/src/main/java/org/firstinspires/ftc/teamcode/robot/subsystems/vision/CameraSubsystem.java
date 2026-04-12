@@ -406,6 +406,8 @@ public class CameraSubsystem extends SubsystemBase {
                 return;
             }
 
+            robot.telemetry.addData("ballsseen", this::getBallsSeen);
+
 
 
 
