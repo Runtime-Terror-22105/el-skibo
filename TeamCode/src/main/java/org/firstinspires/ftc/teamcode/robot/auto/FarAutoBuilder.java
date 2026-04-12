@@ -85,7 +85,7 @@ public final class FarAutoBuilder {
     }
 
     public static Command intakeSpike2AndPushGate(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, PREPARE_INTAKE_2_CONTROL_FAR, PREPARE_INTAKE_2_POSE_FAR, state.mirror, false, false)
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, PREPARE_INTAKE_2_CONTROL_FAR, PREPARE_INTAKE_2_POSE_FAR, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
