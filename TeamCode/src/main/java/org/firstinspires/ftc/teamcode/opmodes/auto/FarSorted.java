@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
@@ -34,7 +35,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
 
                 FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
 
-                NearAutoBuilder.intakeSpike2AndPushGate(state, 28),
+                FarAutoBuilder.intakeSpike2AndPushGate(state),
                 SortedAutoBuilder.shootSpike(state, 2),
 
                 NearAutoBuilder.intakeSpike(state, 3),

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_PUSH_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
@@ -10,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WAL
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_TIMEOUT_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_2_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
@@ -70,6 +72,19 @@ public final class FarAutoBuilder {
                 .addPath(
                         new BezierLine(PREPARE_INTAKE_3_POSE_FAR.toPedro(state.mirror), INTAKE_3_POSE_FAR.toPedro(state.mirror))
                 )
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelRaceGroup(
+                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
+                        new WaitForIntakeCommand(state.robot)
+                ),
+                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY)
+        );
+    }
+
+    public static Command intakeSpike2AndPushGate(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, PREPARE_INTAKE_2_CONTROL_FAR, INTAKE_2_POSE_PUSH_GATE, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
