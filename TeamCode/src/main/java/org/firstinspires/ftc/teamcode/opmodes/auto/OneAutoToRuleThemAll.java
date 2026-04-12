@@ -154,6 +154,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.shooter.disableFlywheel = false;
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
+        robot.shooter.isAutoHoodOn = true;
         robot.shooter.isAutoTurretOn = true;
         robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();
