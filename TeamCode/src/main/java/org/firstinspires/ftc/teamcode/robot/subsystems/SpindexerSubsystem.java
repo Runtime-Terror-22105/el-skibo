@@ -294,12 +294,12 @@ public class SpindexerSubsystem extends SubsystemBase {
 
         if (result.equals(ccw))
         {
-            this.rotate(rotateAmount + SpindexerSubsystem.READY_POSITION);
+            this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
             return;
         }
         if (result.equals(cw))
         {
-            this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
+            this.rotate(rotateAmount + SpindexerSubsystem.READY_POSITION);
             return;
         }
         //no rotation
