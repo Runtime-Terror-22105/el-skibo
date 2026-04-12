@@ -229,10 +229,6 @@ public class ShooterAimingTuner extends LinearOpMode {
         GamepadButton motifPPGButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
 
 
-        motifPGPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PGP ));
-        motifGPPButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.GPP ));
-        motifPPGButton.whenPressed(new InstantCommand(() -> robot.camera.gameGlyph= CameraSubsystem.GLYPH.PPG ));
-
         //homing command executing here
 
 //        SpindexerHoming homing = new SpindexerHoming(robot.spindexer);

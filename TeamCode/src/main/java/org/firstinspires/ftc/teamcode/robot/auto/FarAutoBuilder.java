@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_PUSH_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
@@ -90,11 +92,21 @@ public final class FarAutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new ParallelRaceGroup(
-                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
+                        new SequentialCommandGroup(
+                                new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
+                                intakeSpike2(state)
+                        ),
                         new WaitForIntakeCommand(state.robot)
                 ),
                 new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY)
         );
+    }
+
+    public static Command intakeSpike2(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL_FAR, INTAKE_2_POSE_FAR, state.mirror, false, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return new FollowPathCommand(state.robot.follower, state.lastPath, false, MAX_DRIVETRAIN_POWER_INTAKING);
     }
 
     public static Command shootSpike3(AutoBuildState state, ShootPathFlag... flagArr) {
