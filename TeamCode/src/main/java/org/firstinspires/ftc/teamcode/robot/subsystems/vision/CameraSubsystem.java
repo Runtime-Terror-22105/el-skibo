@@ -197,9 +197,10 @@ public class CameraSubsystem extends SubsystemBase {
     // =======================
     @Override
     public void periodic() {
-
-        frontPortal.setProcessorEnabled(ballPipeline,CVMode.equals(FRONT_CV_MODE.FAR));
-        frontPortal.setProcessorEnabled(rampPipeline,CVMode.equals(FRONT_CV_MODE.RAMP));
+        if(frontPortal != null) {
+            frontPortal.setProcessorEnabled(ballPipeline, CVMode.equals(FRONT_CV_MODE.FAR));
+            frontPortal.setProcessorEnabled(rampPipeline, CVMode.equals(FRONT_CV_MODE.RAMP));
+        }
 
         if (backPortal == null || tagProcessor == null) return;
 
@@ -350,6 +351,9 @@ public class CameraSubsystem extends SubsystemBase {
         return CVMode;
     }
 
+    //if you are looking for where setBallPipeline went its now set CV mode
+    //set it to be either far, ramp, or none
+
     public void setCVMode(FRONT_CV_MODE mode)
     {
         CVMode = mode;
@@ -358,20 +362,6 @@ public class CameraSubsystem extends SubsystemBase {
     public void setAprilTagsEnabled(boolean enabled) {
         if (backPortal != null) {
             backPortal.setProcessorEnabled(tagProcessor, enabled);
-        }
-    }
-
-    public void setBallPipelineEnabled(boolean state)
-    {
-        if (frontPortal != null) {
-            frontPortal.setProcessorEnabled(ballPipeline, state);
-        }
-    }
-
-    public void setRampPipelineEnabled(boolean state)
-    {
-        if (frontPortal != null) {
-//
         }
     }
 

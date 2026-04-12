@@ -13,21 +13,30 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
-@TeleOp(name="Ramp CV Test", group="Testing")
+@TeleOp(name=" V Test", group="Testing")
 @Config
-public class RampCVTest extends LinearOpMode {
+public class CVTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    public static boolean isBlue = false;
-    public static boolean isInNearAuto = false;
+    public static boolean isRamp = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.AUTO, RobotHardware.HardwareOptions.CAMERA);
         robot.init(hardware, this);
-        robot.camera.setBallPipelineEnabled(true);
+        robot.camera.setAprilTagsEnabled(false);
+        if(isRamp)
+        {
+            robot.camera.setCVMode(CameraSubsystem.FRONT_CV_MODE.RAMP);
+        }
+        else
+        {
+            robot.camera.setCVMode(CameraSubsystem.FRONT_CV_MODE.FAR);
+        }
+
         waitForStart();
 
         while (opModeIsActive())
