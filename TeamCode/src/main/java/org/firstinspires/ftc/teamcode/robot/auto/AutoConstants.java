@@ -41,11 +41,11 @@ public class AutoConstants {
     public static Pose2d INTAKE_2_CONTROL_PUSH_GATE = new Pose2d(49, 53, 0);
     public static Pose2d INTAKE_2_POSE_PUSH_GATE = new Pose2d(22, 65, Math.toRadians(180));
 
-    public static Pose2d PREPARE_INTAKE_2_CONTROL_FAR = new Pose2d(40, 58, Math.toRadians(180));
-    public static Pose2d PREPARE_INTAKE_2_POSE_FAR = new Pose2d(50, 44, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_2_POSE_FAR = new Pose2d(50, 55, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_2_CONTROL_FAR = new Pose2d(50, 44, Math.toRadians(180));
 
-    public static Pose2d INTAKE_2_CONTROL_FAR = new Pose2d(22, 61, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(20, 67, Math.toRadians(180));
+    public static Pose2d INTAKE_2_CONTROL_FAR = new Pose2d(20, 61, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(18, 69, Math.toRadians(180));
 
 
 

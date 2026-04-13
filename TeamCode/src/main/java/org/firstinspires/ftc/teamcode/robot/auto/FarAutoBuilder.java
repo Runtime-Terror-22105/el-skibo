@@ -104,6 +104,7 @@ public final class FarAutoBuilder {
 
     public static Command intakeSpike2(AutoBuildState state) {
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL_FAR, INTAKE_2_POSE_FAR, state.mirror, false, false)
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new FollowPathCommand(state.robot.follower, state.lastPath, false, MAX_DRIVETRAIN_POWER_INTAKING);
