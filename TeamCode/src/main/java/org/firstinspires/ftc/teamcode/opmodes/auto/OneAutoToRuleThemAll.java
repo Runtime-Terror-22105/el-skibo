@@ -109,7 +109,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
         // todo do the rules require that we do ths after init?
         robot.setAutoSort(this.wantsAutoSort());
-        robot.shooter.sotmAccelOverride = false;
+        //robot.shooter.sotmAccelOverride = false;
         robot.camera.setAprilTagsEnabled(false);
         robot.camera.setBallPipelineEnabled(false);
         robot.camera.setGlyphScanningEnabled(false);
