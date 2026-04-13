@@ -188,9 +188,18 @@ public final class UnsortedShootRoutines {
 
     public static Command shootWall(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, AutoConstants.SHOOT_FAR_POSE, state.mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .build();
+        if (flags.contains(ShootPathFlag.FIRST_WALL_SORTED)){
+            state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, AutoConstants.INTAKE_WALL_CONTROL_POSE, AutoConstants.SHOOT_FAR_POSE, state.mirror, false, false)
+                    .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                    .build();
+
+        }
+        else{
+            state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, AutoConstants.SHOOT_FAR_POSE, state.mirror, false, false)
+                    .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                    .build();
+        }
+
         return createFollowShootPathAndShootCommand(state, state.lastPath, flags);
     }
 }

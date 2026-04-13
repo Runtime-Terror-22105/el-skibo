@@ -30,6 +30,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SORTED_INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag.FIRST_WALL_SORTED;
 import static org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag.LONG_GATE_PAUSE;
 
 import com.pedropathing.geometry.BezierLine;
@@ -156,7 +157,8 @@ public final class NearAutoBuilder {
         return intakeSpikeFollowingPath(state, path);
     }
 
-    public static Command intakeWall(AutoBuildState state, boolean reverseIntake) {
+    public static Command intakeWall(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flags) {
+        EnumSet<ShootPathFlag> flagArray = ArrayUtil.toEnumSet(flags, ShootPathFlag.class);
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_WALL_CONTROL_NEAR_POSE, INTAKE_WALL_POSE_2, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
@@ -167,7 +169,11 @@ public final class NearAutoBuilder {
                         new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, 1.0, 12.0),
                         new WaitForIntakeCommand(state.robot)
                 ),
-                new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new InstantCommand(()->{}),
+                        new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                        () -> flagArray.contains(FIRST_WALL_SORTED)),
+
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
                         new InstantCommand(() -> {

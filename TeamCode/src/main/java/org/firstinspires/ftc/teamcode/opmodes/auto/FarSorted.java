@@ -46,7 +46,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
 
                 //needs to be changed to use vision in the future
                 NearAutoBuilder.intakeWall(state, true),
-                FarAutoBuilder.shootWall(state, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.shootWall(state, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.FIRST_WALL_SORTED),
 
                 FarAutoBuilder.cycleWall(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE)
 
