@@ -301,7 +301,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         }
 
         // Apply filters to all blobs
-//        applyFilters(blobs);
+        applyFilters(blobs);
 
         if (blobs.isEmpty()) {
             colorMask.release();
