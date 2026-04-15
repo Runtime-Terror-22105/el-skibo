@@ -118,11 +118,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     private void initCameras() {
         if (hardware.frontCamera != null) {
+            Log.i("CameraSubsytem", "fornt camera built" );
             frontPortal = new VisionPortal.Builder()
                     .setCamera(hardware.frontCamera)
                     .setCameraResolution(new Size(320, 240))
                     .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                    .setLiveViewContainerId(visionPortalIDs[1])
+                    .setLiveViewContainerId(visionPortalIDs[0])
                     .setAutoStartStreamOnBuild(true)
                     .setAutoStopLiveView(false)
                     .setShowStatsOverlay(true)
@@ -132,12 +133,13 @@ public class CameraSubsystem extends SubsystemBase {
         }
 
         if (hardware.backCamera != null) {
+            Log.i("CameraSubsytem", "back camera built" );
             backPortal = new VisionPortal.Builder()
                     .setCamera(hardware.backCamera)
                     .setCameraResolution(new Size(1280, 800))
                     .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                    .setLiveViewContainerId(visionPortalIDs[0])
-                    .setAutoStartStreamOnBuild(true)
+                    .setLiveViewContainerId(visionPortalIDs[1])
+                    .setAutoStartStreamOnBuild(false)
                     .setAutoStopLiveView(false)
                     .setShowStatsOverlay(true)
                     .addProcessor(tagProcessor)
@@ -320,6 +322,8 @@ public class CameraSubsystem extends SubsystemBase {
         } catch (Exception ignored) {}
     }
     public void setBallPipelineEnabled(boolean x){
+
+    }
 
     public void close() {
         if (frontPortal != null) {
