@@ -319,6 +319,7 @@ public class CameraSubsystem extends SubsystemBase {
             gain.setGain(GAIN);
         } catch (Exception ignored) {}
     }
+    public void setBallPipelineEnabled(boolean x){
 
     public void close() {
         if (frontPortal != null) {
