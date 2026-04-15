@@ -11,6 +11,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DEL
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_TIMEOUT_DISTANCE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_2_CONTROL_FAR;
@@ -157,7 +158,7 @@ public final class FarAutoBuilder {
     }
 
     public static Command intakeVision(AutoBuildState state, boolean reverseIntake) {
-        Pose2d wallCoords = INTAKE_WALL_POSE.mirror(state.mirror);
+        Pose2d wallCoords = INTAKE_WALL_VISION_POSE.mirror(state.mirror);
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, state.robot.camera.offsetByBallCoords(wallCoords), false, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
@@ -219,6 +220,7 @@ public final class FarAutoBuilder {
 
     public static Command cycleVision(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
         return new DeferredCommand(() -> new SequentialCommandGroup(
+                new LogCatCommand("FarAutoBuilder", "running cycle vision!!!"),
                 intakeVision(state, reverseIntake),
                 shootWall(state, flagArr),
                 prepareVision(state)
