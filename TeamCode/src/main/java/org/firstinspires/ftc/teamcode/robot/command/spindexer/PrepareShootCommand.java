@@ -55,8 +55,10 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 // Phase 2/3: Sort the balls, spin to pre-transfer yaw
                 new ConditionalCommand(
                         new SequentialCommandGroup(
-                                new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING), // todo: adjust this delay based on how long it takes for these two servos
+                                new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING),
+                                new InstantCommand(() -> {robot.spindexer.useMaxPower = true;}),// todo: adjust this delay based on how long it takes for these two servos
                                 new SortCommand(robot),
+                                new InstantCommand(() -> {robot.spindexer.useMaxPower = false;}),
                                 new SetSpindexerRampActive(robot.spindexer, true),
                                 new InstantCommand(() -> robot.spindexer.useMaxPower = true)
                         ),
