@@ -31,6 +31,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CO
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.seattlesolvers.solverslib.command.Command;
@@ -68,6 +69,14 @@ public final class NearAutoBuilder {
 
     private static PathChain intakeSpike2PathPushGate(AutoBuildState state) {
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL_PUSH_GATE, INTAKE_2_POSE_PUSH_GATE, state.mirror, false, false)
+                .setHeadingInterpolation(HeadingInterpolator.piecewise(
+                        new HeadingInterpolator.PiecewiseNode(0d, .7d,
+                                HeadingInterpolator.constant(INTAKE_2_CONTROL_PUSH_GATE.heading)
+                        ),
+                        new HeadingInterpolator.PiecewiseNode(.7d, 1d,
+                            HeadingInterpolator.linear(INTAKE_2_CONTROL_PUSH_GATE.mirror(state.mirror).heading, INTAKE_2_POSE_PUSH_GATE.mirror(state.mirror).heading)
+                        )
+                ))
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
