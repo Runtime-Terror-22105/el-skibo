@@ -321,8 +321,15 @@ public class CameraSubsystem extends SubsystemBase {
             gain.setGain(GAIN);
         } catch (Exception ignored) {}
     }
-    public void setBallPipelineEnabled(boolean x){
-
+    public void setBallPipelineEnabled(boolean state){
+        if(state) {
+            setCVMode(FRONT_CV_MODE.FAR);
+            return;
+        }
+        if(CVMode.equals(FRONT_CV_MODE.FAR))
+        {
+            CVMode = FRONT_CV_MODE.NONE;
+        }
     }
 
     public void close() {
