@@ -21,7 +21,7 @@ public class CVTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();
 
-    public static boolean isRamp = false;
+    public static boolean isRamp = true;
 
     @Override
     public void runOpMode() throws InterruptedException {

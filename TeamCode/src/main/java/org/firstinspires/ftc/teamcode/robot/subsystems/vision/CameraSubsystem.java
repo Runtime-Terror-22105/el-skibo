@@ -118,7 +118,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     private void initCameras() {
         if (hardware.frontCamera != null) {
-            Log.i("CameraSubsytem", "fornt camera built" );
+            Log.i("CameraSubsytem", "front camera built" );
             frontPortal = new VisionPortal.Builder()
                     .setCamera(hardware.frontCamera)
                     .setCameraResolution(new Size(320, 240))
