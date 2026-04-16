@@ -28,9 +28,9 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 @Config
 public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SZE = 3;
-    public static double ACCELERATION_COEFFICIENT = 0.12;
+    public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
-    public static boolean USE_SOTM_ACCEL = false;
+    public static boolean USE_SOTM_ACCEL = true;
 
     public static boolean debug = false;
     public static boolean telemetry = true;
@@ -80,8 +80,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretServoUpperBound = 1;
 
     // hood limits
-    public static double hoodPosMax = 0.82; //maximum position the servo can go to
-    public static double hoodPosMin = 0.25; //min position the servo can go to
+    public static double hoodPosMax = 1.0; //maximum position the servo can go to
+    public static double hoodPosMin = 0.38; //min position the servo can go to
     public static double hoodAngleMax = 1.0; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.0; //radian measure of hood at min pos
 
@@ -177,9 +177,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void resetGoalPosOffset()
     {
-        this.goalPosVerticalOffset = 0;
-        this.goalPosHorizontalOffset = 0;
-        goalHeight = GOAL_HEIGHT_RETURN;
+        setGoalPosOffset(0,0);
     }
 
     public void incrementGoalPosOffset(double vertical, double horizontal)

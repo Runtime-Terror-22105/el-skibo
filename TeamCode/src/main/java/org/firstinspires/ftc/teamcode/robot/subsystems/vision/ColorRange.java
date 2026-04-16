@@ -47,14 +47,14 @@ public class ColorRange
     public final Scalar min;
     public final Scalar max;
 
-    public static Scalar purpleLow1  = new Scalar(140, 100, 80);
-    public static Scalar purpleHigh1 = new Scalar(160, 255, 255);
+    public static Scalar purpleLow1  = new Scalar(136, 60, 0);
+    public static Scalar purpleHigh1 = new Scalar(149, 255, 255);
     public static Scalar purpleLow2  = new Scalar(255, 0, 0);
     public static Scalar purpleHigh2 = new Scalar(0, 255, 255);
 
-    public static Scalar greenLow  = new Scalar(46, 0, 0);
+    public static Scalar greenLow  = new Scalar(71, 200, 0);
     // Upper bound for green
-    public static Scalar greenHigh = new Scalar(102, 255, 250);
+    public static Scalar greenHigh = new Scalar(94, 255, 250);
 
     // todo: temporary values
     public static final ColorRange GREEN = new ColorRange(

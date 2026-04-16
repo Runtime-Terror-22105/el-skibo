@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.robot.auto.NearAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
-public abstract class AutoHorizontalSpam extends OneAutoToRuleThemAll {
-    protected AutoHorizontalSpam(Team team) {
+public abstract class AutoHorizontalSpam18 extends OneAutoToRuleThemAll {
+    protected AutoHorizontalSpam18(Team team) {
         super(team);
     }
 
@@ -27,15 +27,15 @@ public abstract class AutoHorizontalSpam extends OneAutoToRuleThemAll {
 
     @Override
     protected Command createAutoCommand(AutoBuildState state) {
-        robot.shooter.sotmOverride = false;
+        //robot.shooter.sotmOverride = false;
         return new SequentialCommandGroup(
                 NearAutoBuilder.shootPreload(state, ShootPathFlag.NEXT_HORIZ, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.intakeSpikeHorizontal(state, 1), NearAutoBuilder.shootSpike(state, 1, ShootPathFlag.NEXT_HORIZ, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.intakeSpikeHorizontal(state, 2), NearAutoBuilder.shootSpike(state, 2, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LAST)
+                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LONG_GATE_PAUSE),
+                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LONG_GATE_PAUSE),
+                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LONG_GATE_PAUSE, ShootPathFlag.LAST)
+
         ).alongWith(new KillTimerCommand(robot));
     }
 }

@@ -51,6 +51,7 @@ public final class SortedAutoBuilder {
 
     private static PathChain shootSpikePath(AutoBuildState state, int spikeNumber, EnumSet<ShootPathFlag> flags) {
         Pose2d shootPose;
+        boolean useTangential = flags.contains(ShootPathFlag.LAST);
         if (flags.contains(ShootPathFlag.LAST) && !TWO_SEGMENT_PARK_SORTED){
             shootPose = SHOOT_LAST_POSE;
         }
@@ -60,11 +61,12 @@ public final class SortedAutoBuilder {
             shootPose = AutoConstants.SHOOT_SORTED_POSE_2;
         } else if (spikeNumber == 3) {
             shootPose = AutoConstants.SHOOT_SORTED_POSE_3;
+            useTangential = true;
         } else {
             throw new IllegalArgumentException("Invalid spike number: " + spikeNumber);
         }
 
-        boolean useTangential = flags.contains(ShootPathFlag.LAST);
+
         PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, shootPose, state.mirror, useTangential, useTangential);
         state.lastPath = builder.build();
         return state.lastPath;

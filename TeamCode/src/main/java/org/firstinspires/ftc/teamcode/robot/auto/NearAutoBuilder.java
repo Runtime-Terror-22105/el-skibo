@@ -28,7 +28,10 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVET
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SORTED_INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag.FIRST_WALL_SORTED;
+import static org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag.LONG_GATE_PAUSE;
 
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
@@ -40,6 +43,7 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -49,12 +53,15 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 
+import java.util.EnumSet;
+
 public final class NearAutoBuilder {
     private NearAutoBuilder() {
     }
 
-    private static PathChain intakeSpike1Path(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_1_CONTROL, INTAKE_1_POSE, state.mirror, true, false)
+    private static PathChain intakeSpike1Path(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
+        Pose2d control = flags.contains(ShootPathFlag.SORTING) ? SORTED_INTAKE_1_CONTROL: INTAKE_1_CONTROL;
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, control, INTAKE_1_POSE, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return state.lastPath;
@@ -132,11 +139,11 @@ public final class NearAutoBuilder {
     }
 
     private static Command intakeSpikeFollowingPath(AutoBuildState state, PathChain path) {
-        return intakeSpikeFollowingPath(state, path, 3.0);
+        return intakeSpikeFollowingPath(state, path, 12.0);
     }
 
-    private static Command intakeSpike1(AutoBuildState state) {
-        PathChain path = intakeSpike1Path(state);
+    private static Command intakeSpike1(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
+        PathChain path = intakeSpike1Path(state, flags);
         return intakeSpikeFollowingPath(state, path);
     }
 
@@ -159,7 +166,8 @@ public final class NearAutoBuilder {
         return intakeSpikeFollowingPath(state, path);
     }
 
-    public static Command intakeWall(AutoBuildState state, boolean reverseIntake) {
+    public static Command intakeWall(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flags) {
+        EnumSet<ShootPathFlag> flagArray = ArrayUtil.toEnumSet(flags, ShootPathFlag.class);
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_WALL_CONTROL_NEAR_POSE, INTAKE_WALL_POSE_2, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
@@ -170,7 +178,11 @@ public final class NearAutoBuilder {
                         new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, 1.0, 12.0),
                         new WaitForIntakeCommand(state.robot)
                 ),
-                new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                new ConditionalCommand(
+                        new InstantCommand(()->{}),
+                        new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                        () -> flagArray.contains(FIRST_WALL_SORTED)),
+
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
                         new InstantCommand(() -> {
@@ -184,10 +196,11 @@ public final class NearAutoBuilder {
         return UnsortedShootRoutines.shootPreload(state, flagArr);
     }
 
-    public static Command intakeSpike(AutoBuildState state, int spikeNumber) {
+    public static Command intakeSpike(AutoBuildState state, int spikeNumber, ShootPathFlag... flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         switch (spikeNumber) {
             case 1:
-                return intakeSpike1(state);
+                return intakeSpike1(state, flags);
             case 2:
                 return intakeSpike2(state);
             case 3:
@@ -289,11 +302,12 @@ public final class NearAutoBuilder {
         );
     }
 
-    public static Command intakeGate(AutoBuildState state) {
+    public static Command intakeGate(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
         return new SequentialCommandGroup(
                 new FollowPathCommand(state.robot.follower, intakeGatePath1(state), true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new ConditionalCommand(new WaitCommand(200), new InstantCommand(()->{}), () -> flags.contains(LONG_GATE_PAUSE) ),
                 new FollowPathCommand(state.robot.follower, intakeGatePath2(state), true, MAX_DRIVETRAIN_POWER_INTAKING),
-                new WaitForIntakeCommand(state.robot).withTimeout(GATE_INTAKE_DELAY)
+                new WaitForIntakeCommand(state.robot).withTimeout(flags.contains(LONG_GATE_PAUSE) ? (GATE_INTAKE_DELAY + 500) : GATE_INTAKE_DELAY)
         );
     }
 
@@ -302,8 +316,9 @@ public final class NearAutoBuilder {
     }
 
     public static Command cycleGate(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flags) {
+        EnumSet<ShootPathFlag> flagArray = ArrayUtil.toEnumSet(flags, ShootPathFlag.class);
         return new SequentialCommandGroup(
-                intakeGate(state),
+                intakeGate(state, flagArray),
                 shootGate(state, reverseIntake, flags)
         );
     }

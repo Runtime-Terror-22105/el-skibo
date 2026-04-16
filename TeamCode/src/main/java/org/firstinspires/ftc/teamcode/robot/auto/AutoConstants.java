@@ -33,6 +33,7 @@ public class AutoConstants {
     public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 34, Math.toRadians(263));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
+    public static Pose2d SORTED_INTAKE_1_CONTROL = new Pose2d(40, 83, 0);
     public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
 
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(58, 58, 0);
@@ -40,9 +41,17 @@ public class AutoConstants {
     public static Pose2d INTAKE_2_CONTROL_PUSH_GATE = new Pose2d(49, 53, Math.toRadians(50));
     public static Pose2d INTAKE_2_POSE_PUSH_GATE = new Pose2d(22, 65, Math.toRadians(180));
 
+    public static Pose2d PREPARE_INTAKE_2_POSE_FAR = new Pose2d(50, 55, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_2_CONTROL_FAR = new Pose2d(50, 44, Math.toRadians(180));
+
+    public static Pose2d INTAKE_2_CONTROL_FAR = new Pose2d(20, 61, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(18, 69, Math.toRadians(180));
+
+
+
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 45.668);
-    public static Pose2d INTAKE_3_POSE = new Pose2d(14, 37, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(18, 37, Math.toRadians(180));
     public static Pose2d PREPARE_INTAKE_3_CONTROL_FAR = new Pose2d(50.0, 37.8);
     public static Pose2d PREPARE_INTAKE_3_POSE_FAR = new Pose2d(36.42918454935622, 36, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE_FAR = new Pose2d(11, PREPARE_INTAKE_3_POSE_FAR.y, Math.toRadians(180));
@@ -54,10 +63,12 @@ public class AutoConstants {
     // For CYCLING gate.
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 68.5, Math.toRadians(180));
     public static Pose2d HITTING_GATE = new Pose2d(18, 69, Math.toRadians(180));
-    public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(15, 60);
-    public static Pose2d AFTER_GATE = new Pose2d(11, 55.7, Math.toRadians(120));
+    public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(12, 65);
+    public static Pose2d AFTER_GATE = new Pose2d(10, 58.7, Math.toRadians(120));
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(11, 8, Math.toRadians(180));
+    public static Pose2d INTAKE_WALL_VISION_POSE = new Pose2d(11, 18, Math.toRadians(180));
+    public static Pose2d INTAKE_WALL_CONTROL_POSE = new Pose2d(20, 14, Math.toRadians(180));
     public static double INTAKE_WALL_TIMEOUT_DISTANCE = 18.0;  // if the spindex walls don't go down after 18 in on the path to the wall, we stop and wait
     public static Pose2d INTAKE_WALL_CONTROL_NEAR_POSE = new Pose2d(5, 32, Math.toRadians(-90));
     public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(8, 8, Math.toRadians(180));
@@ -69,9 +80,9 @@ public class AutoConstants {
     public static Pose2d END_POSE_LONG_INTAKE = new Pose2d(12, 40, Math.toRadians(120));
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
-    public static int INTAKE_DELAY = 400;
+    public static int INTAKE_DELAY = 200;
     public static int GATE_INTAKE_DELAY = 600;
-    public static int WALL_INTAKE_DELAY = 500;
+    public static int WALL_INTAKE_DELAY = 300;
     public static int PRELOAD_PRE_SHOOT_DELAY = 0;
     public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 2500;
     public static int PRE_SHOOT_DELAY = 0;
@@ -79,7 +90,7 @@ public class AutoConstants {
     public static int INTAKE_SPINDEX_TIMEOUT_HORIZ = 500;
     public static int INTAKE_TIMEOUT_HORIZ = 200;
     public static int REVERSE_INTAKE_GATE_DELAY = 250;
-    public static int SORTED_SHOOT_DELAY = 800;
+    public static int SORTED_SHOOT_DELAY = 400;
     public static int NORMAL_SHOOT_DELAY = 0;
 
     public static double SHOOT_BRAKING_STRENGTH = 0.8;

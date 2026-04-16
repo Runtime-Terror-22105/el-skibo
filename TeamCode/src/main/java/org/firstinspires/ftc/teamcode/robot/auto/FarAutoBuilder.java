@@ -3,13 +3,19 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_PUSH_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_TIMEOUT_DISTANCE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_2_CONTROL_FAR;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_2_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
@@ -81,6 +87,30 @@ public final class FarAutoBuilder {
         );
     }
 
+    public static Command intakeSpike2AndPushGate(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, PREPARE_INTAKE_2_CONTROL_FAR, PREPARE_INTAKE_2_POSE_FAR, state.mirror, true, false)
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelRaceGroup(
+                        new SequentialCommandGroup(
+                                new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
+                                intakeSpike2(state)
+                        ),
+                        new WaitForIntakeCommand(state.robot)
+                ),
+                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY)
+        );
+    }
+
+    public static Command intakeSpike2(AutoBuildState state) {
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL_FAR, INTAKE_2_POSE_FAR, state.mirror, false, false)
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setConstraintsForLast(RELAXED_CONSTRAINTS)
+                .build();
+        return new FollowPathCommand(state.robot.follower, state.lastPath, false, MAX_DRIVETRAIN_POWER_INTAKING);
+    }
+
     public static Command shootSpike3(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_FAR_POSE, state.mirror, false, false)
@@ -128,7 +158,7 @@ public final class FarAutoBuilder {
     }
 
     public static Command intakeVision(AutoBuildState state, boolean reverseIntake) {
-        Pose2d wallCoords = INTAKE_WALL_POSE.mirror(state.mirror);
+        Pose2d wallCoords = INTAKE_WALL_VISION_POSE.mirror(state.mirror);
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, state.robot.camera.offsetByBallCoords(wallCoords), false, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
@@ -190,6 +220,7 @@ public final class FarAutoBuilder {
 
     public static Command cycleVision(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
         return new DeferredCommand(() -> new SequentialCommandGroup(
+                new LogCatCommand("FarAutoBuilder", "running cycle vision!!!"),
                 intakeVision(state, reverseIntake),
                 shootWall(state, flagArr),
                 prepareVision(state)

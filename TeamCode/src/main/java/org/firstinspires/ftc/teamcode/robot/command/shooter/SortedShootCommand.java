@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.command.shooter;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.LogCatCommand;
@@ -10,15 +11,18 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerWallCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
+@Config
 public class SortedShootCommand extends SequentialCommandGroup {
     public static double SPINDEX_TRANSFER_POWER = -1;
-    public static int SPINDEX_SHOOT_TIME = 100;  // milliseconds
-    public static int SPINDEX_PAUSE_TIME = 50;  // milliseconds
+    public static int SPINDEX_SHOOT_TIME = 150;  // milliseconds
+    public static int SPINDEX_PAUSE_TIME = 500;  // milliseconds
 
     public static int reverseIntakeTimeMS = 150;
     public static int SPINDEX_SORTING_TRANSFER_TIME = 1366;//(int) (700/SpindexerSubsystem.MAX_POWER_SORTING);  // milliseconds
@@ -38,23 +42,23 @@ public class SortedShootCommand extends SequentialCommandGroup {
 //                new WaitCommand(200),
 
                 // Phase 5: transfer balls
-                new InstantCommand(() -> {
-                    robot.spindexer.setPidEnabled(false);
-                    robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
-                }),
-                new WaitCommand(SPINDEX_SHOOT_TIME),
-                new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
+
+                new InstantCommand(() -> robot.spindexer.rotate(-Math.toRadians(120))),
+                new WaitForSpindexerYawCommand(robot.spindexer),
                 new WaitCommand(SPINDEX_PAUSE_TIME),
-                new InstantCommand(() -> {robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));}),
-                new WaitCommand(SPINDEX_SHOOT_TIME),
-                new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
+                new InstantCommand(() -> robot.spindexer.rotate(-Math.toRadians(120))),
+                new WaitForSpindexerYawCommand(robot.spindexer),
                 new WaitCommand(SPINDEX_PAUSE_TIME),
-                new InstantCommand(() -> {robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));}),
+                new InstantCommand(() -> robot.spindexer.setPidEnabled(false)),
+                new InstantCommand(() -> robot.spindexer.setSpindexerPower(-1.0)),
                 new WaitCommand(SPINDEX_SHOOT_TIME),
+
+
 
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
                 new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
-                // reset spindexer, intake, shooter
+
+            // reset spindexer, intake, shooter
                 new ParallelCommandGroup(
                         new SetIntakeSpeedCommand(robot.intake, 0),
                         new SetSpindexerRampActive(robot.spindexer, false),

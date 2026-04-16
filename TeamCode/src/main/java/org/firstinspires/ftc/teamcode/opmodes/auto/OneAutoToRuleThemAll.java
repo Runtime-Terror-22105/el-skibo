@@ -96,8 +96,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         }
 
         robot.init(hardware, this);
-        robot.camera.disableRelocalization = true;
-        robot.camera.disableAprilTagsAfterGlyph = true;
+        robot.camera.relocalizationEnabled = false;
 
         // TODO: the autobuilder class currently does not handle the init logic.
         //  Does it need to?
@@ -110,10 +109,10 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         // todo note that this will mean we always sort, for 9 balls this is ok but for 12+ we want this to be only in certain cases
         // todo do the rules require that we do ths after init?
         robot.setAutoSort(this.wantsAutoSort());
-        robot.shooter.sotmAccelOverride = false;
+        //robot.shooter.sotmAccelOverride = false;
         robot.camera.setAprilTagsEnabled(false);
         robot.camera.setBallPipelineEnabled(false);
-        robot.camera.stopScanningForGlyphs();
+        robot.camera.setGlyphScanningEnabled(false);
         if (this.wantsAutoSort()) {
             robot.shooter.sotmOverride = false;
         } else {
@@ -122,6 +121,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // we can't spin shooter in init bc it's illegal
         robot.shooter.disableFlywheel = true;
+        robot.shooter.isAutoHoodOn = true;
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();
@@ -154,6 +154,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         robot.shooter.disableFlywheel = false;
         robot.shooter.isAutoVelOn = true;
         robot.shooter.isAutoAimOn = true;
+        robot.shooter.isAutoHoodOn = true;
         robot.shooter.isAutoTurretOn = true;
         robot.shooter.alwaysUpdateTurret = true;
         startTime = System.currentTimeMillis();

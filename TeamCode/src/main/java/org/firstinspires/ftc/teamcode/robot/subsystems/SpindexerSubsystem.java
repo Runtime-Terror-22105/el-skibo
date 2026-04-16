@@ -15,6 +15,9 @@ import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 @Config
 public class SpindexerSubsystem extends SubsystemBase {
 
@@ -25,6 +28,8 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static boolean debug = false;
     public static boolean telemetry = true;
+
+//    public static int NUM_BALLS = 0;
 
     public static double TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX = 150; // milliseconds
 
@@ -209,12 +214,28 @@ public class SpindexerSubsystem extends SubsystemBase {
         return yawOffsets[nearestIndex];
     }
 
-    public String bruteSort(String motif, int numBalls, String letters) {
+    public void bruteSort() {
+
+        BallColor[] balls = getBallPositions();
+        BallColor[] glyphArr = robot.camera.getGlyphCharArray();
+
+
+        String letters = Arrays.stream(balls)
+                .map(b -> String.valueOf(b.toChar()))
+                .collect(Collectors.joining());
+
+        robot.telemetry.addData("i saw ",letters);
+
+        String motif = Arrays.stream(glyphArr)
+                .map(b -> String.valueOf(b.toChar()))
+                .collect(Collectors.joining());
+
+        robot.telemetry.addData("with motif ",motif);
 
         if(letters.equals("PPP") || letters.equals("GGG"))
         {
             //idt this works long term maybe it does idk just make sure to keep track of this
-            return letters;
+            return;
         }
 
         char[] ideal = motif.toCharArray();
@@ -226,9 +247,9 @@ public class SpindexerSubsystem extends SubsystemBase {
         for (int r = 0; r < 3; r++) {
             int score = 0;
 
-            if (base[r % 3] == ideal[(numBalls) % 3]) score++;
-            if (base[(r + 1) % 3] == ideal[(numBalls + 1) % 3]) score++;
-            if (base[(r + 2) % 3] == ideal[(numBalls + 2) % 3]) score++;
+            if (base[r % 3] == ideal[(robot.camera.getBallsSeen()) % 3]) score++;
+            if (base[(r + 1) % 3] == ideal[(robot.camera.getBallsSeen() + 1) % 3]) score++;
+            if (base[(r + 2) % 3] == ideal[(robot.camera.getBallsSeen() + 2) % 3]) score++;
 
             if (score > bestScore) {
                 bestScore = score;
@@ -236,92 +257,24 @@ public class SpindexerSubsystem extends SubsystemBase {
             }
         }
 
-        return "" + base[bestRotation % 3]
+        String result = "" + base[bestRotation % 3]
                 + base[(bestRotation + 1) % 3]
                 + base[(bestRotation + 2) % 3];
-    }
 
-    /**
-     * <p>PLEASE DO NOT USE THIS WILLY NILLY!!!
-     * you gotta use the command because it only can do the senses when the balls get aligned</p>
-     *
-     * Newsort returns a boolean indicating whether or not the motif was detected.
-     * If it was detected, it returns true (99.99% of cases)
-     * */
-    public boolean newSort()
-    {
-        BallColor[] balls = getBallPositions();
-        BallColor[] glyphArr;
-        if(robot.camera.getRampCVEnabled())
-        {
-            glyphArr = robot.camera.getGlyphCharArray(
-                    robot.camera.getIdealBallPattern()
-            );
-        }
-        else
-        {
-            glyphArr = robot.camera.getGlyphCharArray();
-        }
+        robot.telemetry.addData("attempting to do pattern",result);
 
-        if (glyphArr == null) { return false; }
+        String ccw = letters.substring(1) + letters.charAt(0);
+        String cw  = letters.charAt(2) + letters.substring(0, 2);
 
-        Log.d("SpindexerSubsystem", "sorting with the following balls: " + balls[0] + ","+balls[1]+","+balls[2]);
+        double rotateAmount = Math.toRadians(120);
 
-        // todo: test if this works and isn't sus
-        // we assume there are always 2 purples and 1 green, so even if one is none, we can infer what it is
-        // if there's two purples and one none, we can infer the none is green
-        // if there's one purple and one green, we can infer the none is purple
-        if (inferMissingColorToSort && ArrayUtil.count(balls, BallColor.NONE) == 1) {
-            if (ArrayUtil.count(balls, BallColor.PURPLE) == 2) {
-                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
-                balls[noneIndex] = BallColor.GREEN;
-            } else if (ArrayUtil.count(balls, BallColor.PURPLE) == 1 &&
-                    ArrayUtil.count(balls, BallColor.GREEN) == 1) {
-                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
-                balls[noneIndex] = BallColor.PURPLE;
-            }
-        }
+        /*
 
-        if (ArrayUtil.contains(balls, BallColor.NONE) ||
-                !ArrayUtil.contains(balls, BallColor.GREEN) ||
-                !ArrayUtil.contains(balls, BallColor.PURPLE))
-        {
-            Log.d("SpindexerSubsystem", "not enough balls to run logic");
-            return true;
-        }
-
-        if(ArrayUtil.count(balls, BallColor.GREEN) != 1)
-        {
-            Log.d("SpindexerSubsystem", "too many greens to run logic");
-            return true;
-        }
-
-        //# = ours-game
-
-        //OURS: PPG
-        //GAME: GPP
-        //+2 rotate forward
-
-        //OURS: PPG
-        //GAME: PGP
-        //+1 rotate backward
-
-        //OURS GPP
-        //GAME: PGP
-        //-1 rotate forward
-
-        //OURS GPP
-        //GAME PPG
-        //-2 rotate backward
-
-
-        //rule
+          //rule
         //+2: rotate forward
         //+1 rotate backward
         //-1 rotate forward
         //-2 rotate backward
-
-        double rotateAmount = Math.toRadians(120);
 
         switch(ArrayUtil.indexOf(balls, BallColor.GREEN) - ArrayUtil.indexOf(glyphArr, BallColor.GREEN))
         {
@@ -337,10 +290,123 @@ public class SpindexerSubsystem extends SubsystemBase {
             case 1:
             case -2:
                 this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
-                break;
+         */
+
+        if (result.equals(ccw))
+        {
+            this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
+            return;
         }
-        return true;
+        if (result.equals(cw))
+        {
+            this.rotate(rotateAmount + SpindexerSubsystem.READY_POSITION);
+            return;
+        }
+        //no rotation
+        this.rotate(READY_POSITION);
+        return;
     }
+
+    /**
+     * <p>PLEASE DO NOT USE THIS WILLY NILLY!!!
+     * you gotta use the command because it only can do the senses when the balls get aligned</p>
+     *
+     * Newsort returns a boolean indicating whether or not the motif was detected.
+     * If it was detected, it returns true (99.99% of cases)
+//     * */
+//    public boolean newSort()
+//    {
+//        BallColor[] balls = getBallPositions();
+//        BallColor[] glyphArr;
+//        if(robot.camera.getRampCVEnabled())
+//        {
+//            glyphArr = robot.camera.getGlyphCharArray(
+//                    robot.camera.getIdealBallPattern()
+//            );
+//        }
+//        else
+//        {
+//            glyphArr = robot.camera.getGlyphCharArray();
+//        }
+//
+//        if (glyphArr == null) { return false; }
+//
+//        Log.d("SpindexerSubsystem", "sorting with the following balls: " + balls[0] + ","+balls[1]+","+balls[2]);
+//
+//        // todo: test if this works and isn't sus
+//        // we assume there are always 2 purples and 1 green, so even if one is none, we can infer what it is
+//        // if there's two purples and one none, we can infer the none is green
+//        // if there's one purple and one green, we can infer the none is purple
+//        if (inferMissingColorToSort && ArrayUtil.count(balls, BallColor.NONE) == 1) {
+//            if (ArrayUtil.count(balls, BallColor.PURPLE) == 2) {
+//                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
+//                balls[noneIndex] = BallColor.GREEN;
+//            } else if (ArrayUtil.count(balls, BallColor.PURPLE) == 1 &&
+//                    ArrayUtil.count(balls, BallColor.GREEN) == 1) {
+//                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
+//                balls[noneIndex] = BallColor.PURPLE;
+//            }
+//        }
+//
+//        if (ArrayUtil.contains(balls, BallColor.NONE) ||
+//                !ArrayUtil.contains(balls, BallColor.GREEN) ||
+//                !ArrayUtil.contains(balls, BallColor.PURPLE))
+//        {
+//            Log.d("SpindexerSubsystem", "not enough balls to run logic");
+//            return true;
+//        }
+//
+//        if(ArrayUtil.count(balls, BallColor.GREEN) != 1)
+//        {
+//            Log.d("SpindexerSubsystem", "too many greens to run logic");
+//            return true;
+//        }
+//
+//        //# = ours-game
+//
+//        //OURS: PPG
+//        //GAME: GPP
+//        //+2 rotate forward
+//
+//        //OURS: PPG
+//        //GAME: PGP
+//        //+1 rotate backward
+//
+//        //OURS GPP
+//        //GAME: PGP
+//        //-1 rotate forward
+//
+//        //OURS GPP
+//        //GAME PPG
+//        //-2 rotate backward
+//
+//
+//        //rule
+//        //+2: rotate forward
+//        //+1 rotate backward
+//        //-1 rotate forward
+//        //-2 rotate backward
+//
+//        double rotateAmount = Math.toRadians(120);
+//
+//        switch(ArrayUtil.indexOf(balls, BallColor.GREEN) - ArrayUtil.indexOf(glyphArr, BallColor.GREEN))
+//        {
+//            case 0:
+//                this.rotate(READY_POSITION);
+//                break;
+//
+//            case 2:
+//            case -1:
+//                this.rotate(rotateAmount + SpindexerSubsystem.READY_POSITION);
+//                break;
+//
+//            case 1:
+//            case -2:
+//                this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
+//                break;
+//        }
+//        return true;
+//    }
 
     /**
      * <p>Directly sets the angle of the spindexer.</p>
