@@ -16,7 +16,9 @@ public class SortCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(()->robot.spindexer.goToNearestSide()),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(alignTimeMS),
+                new InstantCommand(() -> {robot.spindexer.useMaxPower = true;}),
                 new InstantCommand(()->robot.spindexer.bruteSort()),
+                new InstantCommand(() -> {robot.spindexer.useMaxPower = false;}),
                 new WaitForSpindexerYawCommand(robot.spindexer).withTimeout(SPINDEXER_TIMEOUT)
         );
     }
