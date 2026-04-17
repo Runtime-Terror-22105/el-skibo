@@ -316,6 +316,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton ballsMod2Button = new GamepadButton(gamepad2ex, GamepadKeys.Button.B);
         //we should lowk get some tape and label which button does what cause this is gonna suck later on
 
+        ballsMod0Button.whenPressed(()->robot.camera.setGameGlyph(robot.camera.getBaseGlyph()));
+        ballsMod1Button.whenPressed(()->robot.camera.setGameGlyph(robot.camera.getBaseGlyph().rotate(1)));
+        ballsMod2Button.whenPressed(()->robot.camera.setGameGlyph(robot.camera.getBaseGlyph().rotate(2)));
+
         Trigger cameraRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
         Trigger cornerRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
 
