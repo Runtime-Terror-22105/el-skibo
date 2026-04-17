@@ -106,7 +106,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     private final Object chosenBlobThreadLock = new Object();
     private BlobImpl chosenBlobSaved;
-    private BlobImpl chosenBlob;
+    private volatile BlobImpl chosenBlob;
     private boolean chosenBlobIsLocked;
 
     private Mat roiMat;
@@ -309,6 +309,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
             userBlobs = new ArrayList<>();
             return userBlobs;
         }
+
+        Log.d(TAG, "Found " + blobs.size() + " BLOBS ");
 
         sort(blobs);
         chosenBlob = (BlobImpl) blobs.get(0);

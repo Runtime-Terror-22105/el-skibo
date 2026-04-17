@@ -45,7 +45,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.55;
     public static double SHOOTER_RAMP_DEACTIVE = 0.8;
 
-    public static double MAX_POWER_SORTING = 0.6;
+    public static double MAX_POWER_SORTING = 0.8;
     public boolean useMaxPower = false;
 
     private enum WallState {
