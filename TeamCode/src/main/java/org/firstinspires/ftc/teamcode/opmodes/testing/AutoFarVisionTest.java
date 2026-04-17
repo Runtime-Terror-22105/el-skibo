@@ -17,9 +17,10 @@ public class AutoFarVisionTest extends OneAutoToRuleThemAll {
         super(Team.RED);
     }
 
+    // start the robot facing towards the wall
     @Override
     public StartConfig getStartConfig() {
-        return StartConfig.FAR;
+        return StartConfig.FAR_SORTED;
     }
 
     @Override

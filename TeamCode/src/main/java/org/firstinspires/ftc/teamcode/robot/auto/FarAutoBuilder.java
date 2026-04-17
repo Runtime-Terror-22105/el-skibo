@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_PO
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_FAR;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_PUSH_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_TUNNEL_POSE;
@@ -220,10 +219,11 @@ public final class FarAutoBuilder {
 
     public static Command cycleVision(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
         return new DeferredCommand(() -> new SequentialCommandGroup(
-                new LogCatCommand("FarAutoBuilder", "running cycle vision!!!"),
+                new LogCatCommand("AutoBuilder", "running cycle vision!!!"),
                 intakeVision(state, reverseIntake),
-                shootWall(state, flagArr),
-                prepareVision(state)
+                new WaitCommand(1000), // todo: remove later, using for testing rn
+                shootWall(state, flagArr)
+//                prepareVision(state)
         ), null);
     }
 

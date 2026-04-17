@@ -51,7 +51,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     //use a set multiplier to calculate pixels off center into inches off center
     //return position with the offset of the balls
 
-    public static double PIXEL_TO_INCHES_SCALE = (double) 1 /3; // pixels * 1/3 = inches
+    public static double PIXEL_TO_INCHES_SCALE = (double) 0.3; // pixels * 1/3 = inches
 
     // Configuration options
     public static boolean DRAW_CONTOURS = false;
@@ -120,7 +120,11 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         RAW, MASK, IMAGE_DRAWING
     }
 
-    public static StreamType streamType = StreamType.IMAGE_DRAWING;
+    public static StreamType streamType = StreamType.MASK;
+
+    public double pixelXtoRealX(double pixelX) {
+        return (pixelX - ((double) frameWidth)/2) * PIXEL_TO_INCHES_SCALE;
+    }
 
     public Point pixelToRealCoords(Point pixelCoords) {
         // TODO
@@ -447,7 +451,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
             if (DRAW_COORDS_TEXT && blob == chosenBlob) {
                 Point centerPx = blob.getBoxFit().center;
-                Point centerIrl = pixelToRealCoords(centerPx);
+//                Point centerIrl = pixelToRealCoords(centerPx);
                 float pxX = (float) (centerPx.x * scaleBmpPxToCanvasPx);
                 float pxY = (float) (centerPx.y * scaleBmpPxToCanvasPx);
                 canvas.drawText(
@@ -455,11 +459,11 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
                         pxX, pxY,
                         textPaint
                 );
-                canvas.drawText(
-                        String.format("irl:(%.1f,%.1f)", centerIrl.x, centerIrl.y),
-                        pxX, pxY + textPaint.getTextSize(),
-                        textPaint
-                );
+//                canvas.drawText(
+//                        String.format("irl:(%.1f,%.1f)", centerIrl.x, centerIrl.y),
+//                        pxX, pxY + textPaint.getTextSize(),
+//                        textPaint
+//                );
             }
         }
 
@@ -607,7 +611,6 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
         public Pose2d getCenter(){
             Moments m = Imgproc.moments(contour);
-
 
             if (m.m00 != 0) {
                 int cX = (int) (m.m10 / m.m00);
