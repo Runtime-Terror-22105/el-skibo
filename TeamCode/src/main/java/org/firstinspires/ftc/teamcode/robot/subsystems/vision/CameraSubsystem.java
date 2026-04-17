@@ -390,6 +390,10 @@ public class CameraSubsystem extends SubsystemBase {
         return ballsSeen;
     }
 
+    public void setBallsSeen(int ballsOnRamp){
+        this.ballsSeen = ballsOnRamp;
+    }
+
     public void setGlyphScanningEnabled(boolean state)
     {
         this.scanForGlyphs = state;
