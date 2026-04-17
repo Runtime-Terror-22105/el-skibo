@@ -23,6 +23,7 @@ public class SortedShootCommand extends SequentialCommandGroup {
     public static double SPINDEX_TRANSFER_POWER = -1;
     public static int SPINDEX_SHOOT_TIME = 150;  // milliseconds
     public static int SPINDEX_PAUSE_TIME = 500;  // milliseconds
+    public static int DEGREE_CHANGE = 60;
 
     public static int reverseIntakeTimeMS = 150;
     public static int SPINDEX_SORTING_TRANSFER_TIME = 1366;//(int) (700/SpindexerSubsystem.MAX_POWER_SORTING);  // milliseconds
@@ -43,10 +44,10 @@ public class SortedShootCommand extends SequentialCommandGroup {
 
                 // Phase 5: transfer balls
 
-                new InstantCommand(() -> robot.spindexer.rotate(-Math.toRadians(120))),
+                new InstantCommand(() -> robot.spindexer.rotate(-Math.toRadians(40))),
                 new WaitForSpindexerYawCommand(robot.spindexer),
                 new WaitCommand(SPINDEX_PAUSE_TIME),
-                new InstantCommand(() -> robot.spindexer.rotate(-Math.toRadians(120))),
+                new InstantCommand(() -> robot.spindexer.rotate(-Math.toRadians(DEGREE_CHANGE))),
                 new WaitForSpindexerYawCommand(robot.spindexer),
                 new WaitCommand(SPINDEX_PAUSE_TIME),
                 new InstantCommand(() -> robot.spindexer.setPidEnabled(false)),
