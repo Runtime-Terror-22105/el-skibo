@@ -68,10 +68,19 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 //                new WaitCommand(200),
 
                 // Phase 5: transfer balls
+
+                new ConditionalCommand(
+                        new InstantCommand(() -> {robot.spindexer.useMaxPower = true;}),
+                        new InstantCommand(() -> {}), robot::getAutoSort),
+
                 new InstantCommand(() -> {
                     robot.spindexer.setPidEnabled(false);
                     robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
                 }),
+                new ConditionalCommand(
+                        new InstantCommand(() -> {robot.spindexer.useMaxPower = false;}),
+                        new InstantCommand(() -> {}), robot::getAutoSort),
+
                 new ConditionalCommand(new WaitCommand(SPINDEX_SORTING_TRANSFER_TIME),
                         new WaitCommand(SPINDEX_TRANSFER_TIME),
                         () -> robot.getAutoSort()),
