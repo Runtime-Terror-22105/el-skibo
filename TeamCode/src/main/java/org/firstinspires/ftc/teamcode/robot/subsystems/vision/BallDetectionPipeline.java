@@ -94,12 +94,12 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     // for now I just set it to the full thing, but still have it as an option just in case
     public static Point[] ROI_POINTS = {
-            new Point(30,0),
-            new Point(20,140),
+            new Point(40,100),
+            new Point(40,140),
             new Point(50,140),
             new Point(50,180),
             new Point(280,180),
-            new Point(280,20),
+            new Point(250,70),
     };
 
     private boolean flipped = false;
