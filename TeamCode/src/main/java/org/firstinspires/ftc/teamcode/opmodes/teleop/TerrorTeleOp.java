@@ -47,6 +47,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
@@ -131,6 +132,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         else {
             robot.follower.setStartingPose(color.getStartPosNear().toPedro());
         }
+        robot.camera.gameGlyph = CameraSubsystem.GLYPH.PGP;
+
 //        if (spindexerPosition != null) {
 //            robot.spindexer.setHomedSpindexerOffset(-((double) spindexerPosition));
 //            blackboard.put(SPINDEXER_POSITION_KEY, null);
