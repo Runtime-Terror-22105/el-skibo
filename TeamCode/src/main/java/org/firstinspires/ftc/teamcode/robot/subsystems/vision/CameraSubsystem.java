@@ -247,16 +247,9 @@ public class CameraSubsystem extends SubsystemBase {
 //        setCameraSettings();
 
         try {
+            // todo: move this stuff to setcamerasettings and only call it when we need to change settings, not every frame
             frontPortal.getCameraControl(ExposureControl.class).setMode(ExposureControl.Mode.Auto);
             frontPortal.getCameraControl(WhiteBalanceControl.class).setMode(WhiteBalanceControl.Mode.AUTO);
-            Log.i(TAG, "Exposure control mode: " + frontPortal.getCameraControl(ExposureControl.class).getMode().toString());
-            Log.i(TAG, "White balance mode: " + frontPortal.getCameraControl(WhiteBalanceControl.class).getMode());
-            if (frontPortal.getCameraControl(ExposureControl.class).getMode().equals(ExposureControl.Mode.Manual)) {
-                Log.w(TAG, "Exposure control is not in manual mode!");
-            }
-            if (frontPortal.getCameraControl(WhiteBalanceControl.class).getMode().equals(WhiteBalanceControl.Mode.MANUAL)) {
-                Log.w(TAG, "White balance control is not in manual mode!");
-            }
         } catch (Exception e) {
             Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
         }
@@ -315,6 +308,7 @@ public class CameraSubsystem extends SubsystemBase {
         double pixelX = blob.getCenter().x;
         double offset = ballPipeline.pixelXtoRealX(pixelX);
         tempPos.y += offset;
+        Log.d(TAG, "Ball Pixel Offset (in): " + offset);
         Log.d(TAG, "Ball Pixel Offset (in): " + offset);
         Log.d(TAG, "New Pose: " + tempPos);
         return tempPos;

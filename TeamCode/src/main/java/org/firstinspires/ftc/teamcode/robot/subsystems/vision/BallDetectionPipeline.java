@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.Circle;
@@ -50,6 +51,9 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     //choose the contour one with the largest area
     //use a set multiplier to calculate pixels off center into inches off center
     //return position with the offset of the balls
+
+    public static double LEFT_SIDE_PIXEL_VAL = 70;
+    public static double RIGHT_SIDE_PIXEL_VAL = 270;
 
     public static double PIXEL_TO_INCHES_SCALE = (double) 0.3; // pixels * 1/3 = inches
 
@@ -123,7 +127,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     public static volatile StreamType streamType = StreamType.IMAGE_DRAWING;
 
     public double pixelXtoRealX(double pixelX) {
-        return (pixelX - ((double) frameWidth)/2) * PIXEL_TO_INCHES_SCALE;
+        return Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 24, -24);
     }
 
     public Point pixelToRealCoords(Point pixelCoords) {
