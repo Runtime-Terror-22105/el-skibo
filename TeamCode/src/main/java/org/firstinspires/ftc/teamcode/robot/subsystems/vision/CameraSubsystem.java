@@ -12,6 +12,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
@@ -29,6 +30,11 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 public class CameraSubsystem extends SubsystemBase {
+
+    // NOTE: This will need to be adjusted depending on the lighting conditions of the field. The value is set to a default that should work in most conditions, but may need to be tweaked.
+    public static int WHITE_BALANCE_TEMPERATURE = 3000; // front camera: 2800-6500K
+    public static long EXPOSURE_US = 250000; // front camera: 200 - 1000000us (1s)
+    public static int GAIN = 50; // front camera: 0-128
 
     private final Robot robot;
     private final RobotHardware hardware;
@@ -81,8 +87,9 @@ public class CameraSubsystem extends SubsystemBase {
 
     public static double VELOCITY_THRESHOLD = 5.0;
 
-    public static long EXPOSURE_US = 200;
-    public static int GAIN = 255;
+    private boolean isManualWhiteBalanceSet;
+    private boolean isManualExposureSet;
+    private boolean isManualGainSet;
 
     public enum GLYPH {
         PPG(BallColor.PURPLE, BallColor.PURPLE, BallColor.GREEN),
@@ -213,6 +220,21 @@ public class CameraSubsystem extends SubsystemBase {
             frontPortal.setProcessorEnabled(rampPipeline, CVMode.equals(FRONT_CV_MODE.RAMP));
         }
 
+        if (!isManualWhiteBalanceSet && frontPortal != null) {
+            this.isManualWhiteBalanceSet = setManualWhiteBalance();
+            if (this.isManualWhiteBalanceSet) Log.i(TAG, "Manual white balance set successfully");
+        }
+
+        this.isManualExposureSet = setManualExposure();;
+        if (!isManualExposureSet && frontPortal != null) {
+            if (this.isManualExposureSet) Log.i(TAG, "Manual exposure settings applied");
+        }
+
+        if (!isManualGainSet && frontPortal != null) {
+            this.isManualGainSet = setManualGain();
+            if (this.isManualGainSet) Log.i(TAG, "Manual gain settings applied");
+        }
+
         if (backPortal == null || tagProcessor == null) return;
 
         detections = tagProcessor.getDetections();
@@ -336,16 +358,65 @@ public class CameraSubsystem extends SubsystemBase {
         robot.follower.poseTracker.setCurrentPoseWithOffset(finalPose);
     }
 
-    private void applyCameraExposureSettings() {
-        try {
-            ExposureControl exposure = frontPortal.getCameraControl(ExposureControl.class);
-            GainControl gain = frontPortal.getCameraControl(GainControl.class);
+    private boolean setManualWhiteBalance() {
+        WhiteBalanceControl whiteBalanceControl = frontPortal.getCameraControl(WhiteBalanceControl.class);
+        if (whiteBalanceControl == null) {
+            Log.w(TAG, "Camera does not support white balance control");
+            return false;
+        }
+        boolean success = whiteBalanceControl.setMode(WhiteBalanceControl.Mode.MANUAL);
+        if (!success) {
+            Log.w(TAG, "Failed to set white balance mode to manual");
+            return false;
+        }
 
-            exposure.setMode(ExposureControl.Mode.Manual);
-            exposure.setExposure(EXPOSURE_US, TimeUnit.MICROSECONDS);
-            gain.setGain(GAIN);
-        } catch (Exception ignored) {}
+        Log.d(TAG, "Minimum and maximum white balance temperatures: " + whiteBalanceControl.getMinWhiteBalanceTemperature() + "K - " + whiteBalanceControl.getMaxWhiteBalanceTemperature() + "K");
+
+        success = whiteBalanceControl.setWhiteBalanceTemperature(WHITE_BALANCE_TEMPERATURE);
+        if (!success) {
+            Log.w(TAG, "Failed to set white balance temperature");
+            return false;
+        }
+        return true;
     }
+
+    private boolean setManualExposure() {
+        ExposureControl exposure = frontPortal.getCameraControl(ExposureControl.class);
+        GainControl gain = frontPortal.getCameraControl(GainControl.class);
+
+        boolean success = exposure.setMode(ExposureControl.Mode.Manual);
+        if (!success) {
+            Log.w(TAG, "Camera does not support manual exposure control");
+            return false;
+        }
+
+        Log.d(TAG, "Minimum and maximum exposure (us): " + exposure.getMinExposure(TimeUnit.MICROSECONDS) + " - " + exposure.getMaxExposure(TimeUnit.MICROSECONDS));
+
+        success = exposure.setExposure(EXPOSURE_US, TimeUnit.MICROSECONDS);
+        if (!success) {
+            Log.w(TAG, "Failed to set manual exposure");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean setManualGain() {
+        GainControl gain = frontPortal.getCameraControl(GainControl.class);
+        if (gain == null) {
+            Log.w(TAG, "Camera does not support gain control");
+            return false;
+        }
+
+        Log.d(TAG, "Minimum and maximum gain: " + gain.getMinGain() + " - " + gain.getMaxGain());
+
+        boolean success = gain.setGain(GAIN);
+        if (!success) {
+            Log.w(TAG, "Failed to set manual gain");
+            return false;
+        }
+        return true;
+    }
+
     public void setBallPipelineEnabled(boolean state){
         if(state) {
             setCVMode(FRONT_CV_MODE.FAR);

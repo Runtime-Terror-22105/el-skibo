@@ -26,9 +26,9 @@ public class ShooterLookupTable {
     };
     public static ShooterLookupTableInstance.HoodLookupValue[] NORMAL_HOOD_DATA_POINTS = new ShooterLookupTableInstance.HoodLookupValue[]{
             //endpoint
-            new ShooterLookupTableInstance.HoodLookupValue(0, 0),
+            new ShooterLookupTableInstance.HoodLookupValue(0, 0.05),
 
-            new ShooterLookupTableInstance.HoodLookupValue(37.7,0),
+            new ShooterLookupTableInstance.HoodLookupValue(37.7,0.05),
             new ShooterLookupTableInstance.HoodLookupValue(47,0.25),
             new ShooterLookupTableInstance.HoodLookupValue(54,0.4),
             new ShooterLookupTableInstance.HoodLookupValue(67,0.45),
