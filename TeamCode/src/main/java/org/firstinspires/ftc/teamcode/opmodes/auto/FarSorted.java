@@ -34,7 +34,11 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
                 FarAutoBuilder.shootPreload(state, ShootPathFlag.SOTM, ShootPathFlag.EARLY_LEAVE),
 
                 FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
-
+                new InstantCommand(() -> {
+                    //robot.shooter.USE_SOTM = false;
+                    //robot.shooter.USE_SOTM_ACCEL = false;
+                    //robot.setAutoSort(true);
+                }),
                 FarAutoBuilder.intakeSpike2AndPushGate(state),
                 SortedAutoBuilder.shootSpike(state, 2),
 
@@ -43,6 +47,12 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
 
                 NearAutoBuilder.intakeSpike(state, 1, ShootPathFlag.SORTING),
                 SortedAutoBuilder.shootSpike(state, 1),
+
+                new InstantCommand(() -> {
+                    //robot.shooter.USE_SOTM = true;
+                    //robot.shooter.USE_SOTM_ACCEL = true;
+                    //robot.setAutoSort(false);
+                }),
 
                 //needs to be changed to use vision in the future
                 NearAutoBuilder.intakeWall(state, true),
