@@ -267,7 +267,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         // Create masks for all color types
 //        Core.inRange(this.roiMat, ColorRange.GREEN.min,  ColorRange.GREEN.max, colorMask);
         Core.inRange(this.roiMat, ColorRange.greenLow,  ColorRange.greenHigh, temp);
-        Core.inRange(this.roiMat, ColorRange.purpleLow1, ColorRange.purpleHigh1, colorMask);
+        Core.inRange(this.roiMat, ColorRange.purpleLow, ColorRange.purpleHigh, colorMask);
         Core.bitwise_or(colorMask, temp, colorMask);
 //        Mat colorMask = createColorMask(ColorRange.GREEN, ColorRange.PURPLE_1, ColorRange.PURPLE_2);
 

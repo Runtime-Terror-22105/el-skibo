@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 
 import android.graphics.Canvas;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
@@ -17,18 +19,13 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
+@Config
 public class RampPipeline implements VisionProcessor
 {
     private final Mat hsv = new Mat();
 
     public static double acceptPixelsAbove = 820;
 
-//    public static Scalar purpleLow1  = new Scalar(45.3, 77.9, 155.8);
-//    public static Scalar purpleHigh1 = new Scalar(121.8, 68, 255);
-    public static Scalar purpleLow  = new Scalar(147.3,83.6,45.3);
-    public static Scalar purpleHigh = new Scalar(255, 255, 255);
-    public static Scalar greenLow  = new Scalar(46.8, 109.1, 39.7);
-    public static Scalar greenHigh = new Scalar(87.8,255,184.2);
 //    Mat purpleMask1 = new Mat();
 //    Mat purpleMask2 = new Mat();
     Mat purpleMask = new Mat();
@@ -77,9 +74,9 @@ public class RampPipeline implements VisionProcessor
 
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
 //        Core.inRange(hsv, purpleLow1, purpleHigh1, purpleMask1);
-        Core.inRange(hsv, purpleLow, purpleHigh, purpleMask);
+        Core.inRange(hsv, ColorRange.purpleLow, ColorRange.purpleHigh, purpleMask);
 //        Core.bitwise_or(purpleMask1, purpleMask2, purpleMask);
-        Core.inRange(hsv, greenLow, greenHigh, greenMask);
+        Core.inRange(hsv, ColorRange.greenLow, ColorRange.greenHigh, greenMask);
 
         Mat combinedMask = new Mat();
         Core.bitwise_or(purpleMask, greenMask, combinedMask);

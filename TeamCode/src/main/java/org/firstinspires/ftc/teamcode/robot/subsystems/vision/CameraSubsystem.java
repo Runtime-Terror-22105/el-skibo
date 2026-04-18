@@ -33,7 +33,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     // NOTE: This will need to be adjusted depending on the lighting conditions of the field. The value is set to a default that should work in most conditions, but may need to be tweaked.
     public static int WHITE_BALANCE_TEMPERATURE = 3000; // front camera: 2800-6500K
-    public static long EXPOSURE_US = 250000; // front camera: 200 - 1000000us (1s)
+    public static long EXPOSURE_US = 166666; // front camera: 200 - 1000000us (1s)
     public static int GAIN = 50; // front camera: 0-128
 
     private final Robot robot;
@@ -146,6 +146,7 @@ public class CameraSubsystem extends SubsystemBase {
                     .addProcessor(this.ballPipeline)
                     .addProcessor(this.rampPipeline)
                     .build();
+//            setCameraSettings();
         }
 
         if (hardware.backCamera != null) {
@@ -160,6 +161,25 @@ public class CameraSubsystem extends SubsystemBase {
                     .setShowStatsOverlay(true)
                     .addProcessor(tagProcessor)
                     .build();
+        }
+    }
+
+    public void setCameraSettings() {
+        if (frontPortal == null) return;
+
+        if (!isManualWhiteBalanceSet) {
+            this.isManualWhiteBalanceSet = setManualWhiteBalance();
+            if (this.isManualWhiteBalanceSet) Log.i(TAG, "Manual white balance set successfully");
+        }
+
+        if (!isManualExposureSet) {
+            this.isManualExposureSet = setManualExposure();;
+            if (this.isManualExposureSet) Log.i(TAG, "Manual exposure settings applied");
+        }
+
+        if (!isManualGainSet) {
+            this.isManualGainSet = setManualGain();
+            if (this.isManualGainSet) Log.i(TAG, "Manual gain settings applied");
         }
     }
 
@@ -220,19 +240,14 @@ public class CameraSubsystem extends SubsystemBase {
             frontPortal.setProcessorEnabled(rampPipeline, CVMode.equals(FRONT_CV_MODE.RAMP));
         }
 
-        if (!isManualWhiteBalanceSet && frontPortal != null) {
-            this.isManualWhiteBalanceSet = setManualWhiteBalance();
-            if (this.isManualWhiteBalanceSet) Log.i(TAG, "Manual white balance set successfully");
-        }
+        // ensures camera settings are set in case they weren't already
+        setCameraSettings();
 
-        this.isManualExposureSet = setManualExposure();;
-        if (!isManualExposureSet && frontPortal != null) {
-            if (this.isManualExposureSet) Log.i(TAG, "Manual exposure settings applied");
+        if (frontPortal.getCameraControl(ExposureControl.class).getMode() != ExposureControl.Mode.Manual) {
+            Log.w(TAG, "Exposure control is not in manual mode!");
         }
-
-        if (!isManualGainSet && frontPortal != null) {
-            this.isManualGainSet = setManualGain();
-            if (this.isManualGainSet) Log.i(TAG, "Manual gain settings applied");
+        if (frontPortal.getCameraControl(WhiteBalanceControl.class).getMode() != WhiteBalanceControl.Mode.MANUAL) {
+            Log.w(TAG, "White balance control is not in manual mode!");
         }
 
         if (backPortal == null || tagProcessor == null) return;
@@ -382,7 +397,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     private boolean setManualExposure() {
         ExposureControl exposure = frontPortal.getCameraControl(ExposureControl.class);
-        GainControl gain = frontPortal.getCameraControl(GainControl.class);
 
         boolean success = exposure.setMode(ExposureControl.Mode.Manual);
         if (!success) {
