@@ -127,7 +127,10 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     public static volatile StreamType streamType = StreamType.IMAGE_DRAWING;
 
     public double pixelXtoRealX(double pixelX) {
-        return Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 24, -24);
+        return Math.max(
+                Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 24, -24),
+                -24+12 // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
+        );
     }
 
     public Point pixelToRealCoords(Point pixelCoords) {

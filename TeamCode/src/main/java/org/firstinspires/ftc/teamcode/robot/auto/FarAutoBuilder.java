@@ -164,6 +164,7 @@ public final class FarAutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(false)),
+                new GoToIntakeStateCommand(state.robot),
                 new FollowPathCommand(state.robot.follower, state.lastPath, true),
                 new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
@@ -218,13 +219,17 @@ public final class FarAutoBuilder {
     }
 
     public static Command cycleVision(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
-        return new DeferredCommand(() -> new SequentialCommandGroup(
-                new LogCatCommand("AutoBuilder", "running cycle vision!!!"),
-                intakeVision(state, reverseIntake),
-                new WaitCommand(1000), // todo: remove later, using for testing rn
-                shootWall(state, flagArr)
-//                prepareVision(state)
-        ), null);
+        return new SequentialCommandGroup(
+                FarAutoBuilder.prepareVision(state),
+
+                new DeferredCommand(() -> new SequentialCommandGroup(
+                    new LogCatCommand("AutoBuilder", "running cycle vision!!!"),
+                    intakeVision(state, reverseIntake),
+                    new WaitCommand(1000), // todo: remove later, using for testing rn
+                    shootWall(state, flagArr)
+    //                prepareVision(state)
+            ), null)
+        );
     }
 
     public static Command intakeWallLong(AutoBuildState state) {
