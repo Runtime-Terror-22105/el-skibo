@@ -33,6 +33,7 @@ public abstract class AutoVisionFar extends OneAutoToRuleThemAll {
                 FarAutoBuilder.intakeSpike3(state),
                 FarAutoBuilder.shootSpike3(state, ShootPathFlag.EARLY_LEAVE),
 
+                FarAutoBuilder.prepareVision(state),
                 FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),

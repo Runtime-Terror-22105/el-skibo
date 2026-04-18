@@ -219,17 +219,13 @@ public final class FarAutoBuilder {
     }
 
     public static Command cycleVision(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
-        return new SequentialCommandGroup(
-                FarAutoBuilder.prepareVision(state),
-
-                new DeferredCommand(() -> new SequentialCommandGroup(
-                    new LogCatCommand("AutoBuilder", "running cycle vision!!!"),
-                    intakeVision(state, reverseIntake),
-                    new WaitCommand(1000), // todo: remove later, using for testing rn
-                    shootWall(state, flagArr)
-    //                prepareVision(state)
-            ), null)
-        );
+        return new DeferredCommand(() -> new SequentialCommandGroup(
+                new LogCatCommand("AutoBuilder", "running cycle vision!!!"),
+                intakeVision(state, reverseIntake),
+                new WaitCommand(1000), // todo: remove later, using for testing rn
+                shootWall(state, flagArr),
+                prepareVision(state)
+        ), null);
     }
 
     public static Command intakeWallLong(AutoBuildState state) {
