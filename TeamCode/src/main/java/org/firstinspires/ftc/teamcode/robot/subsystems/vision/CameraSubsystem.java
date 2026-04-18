@@ -58,7 +58,6 @@ public class CameraSubsystem extends SubsystemBase {
     public boolean relocalizationEnabled = false;
 
     public GLYPH gameGlyph;
-    public GLYPH baseGlyph;
     public FRONT_CV_MODE CVMode = FRONT_CV_MODE.NONE;
 
     private int ballsSeen = 0;
@@ -242,17 +241,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setGlyph(GLYPH glyph) {
         gameGlyph = glyph;
-        baseGlyph = glyph;
-    }
-
-    public void setBaseGlyph(GLYPH glyph)
-    {
-        baseGlyph = glyph;
-    }
-
-    public GLYPH getBaseGlyph()
-    {
-        return baseGlyph;
     }
 
     public void setGameGlyph(GLYPH glyph) {
