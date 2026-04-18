@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.FLLYWHEEL_SPIN_UP_TIMEOUT_MS;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.REVERSE_INTAKE_GATE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_EDGE_HORIZ_POSE;
@@ -192,10 +191,12 @@ public final class UnsortedShootRoutines {
             state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, AutoConstants.INTAKE_WALL_CONTROL_POSE, AutoConstants.SHOOT_FAR_POSE, state.mirror, false, false)
                     .setConstraintsForLast(RELAXED_CONSTRAINTS)
                     .build();
-
         }
-        else{
-            state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, AutoConstants.SHOOT_FAR_POSE, state.mirror, false, false)
+        else {
+            Pose2d pose;
+            if (flags.contains(ShootPathFlag.FORWARD_FACING_SHOOT_SPOT)) pose = AutoConstants.SHOOT_FAR_POSE_FORWARD_FACING;
+            else pose = AutoConstants.SHOOT_FAR_POSE;
+            state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, pose, state.mirror, false, false)
                     .setConstraintsForLast(RELAXED_CONSTRAINTS)
                     .build();
         }

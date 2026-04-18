@@ -20,6 +20,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 120, Math.toRadians(-124.7));
     public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 8, Math.toRadians(180));
+    public static Pose2d SHOOT_FAR_POSE_FORWARD_FACING = new Pose2d(48, 8, Math.toRadians(135));
     public static Pose2d SHOOT_SORTED_POSE_2 = new Pose2d(62, 72, Math.toRadians(-124.7));
     public static Pose2d SHOOT_SORTED_POSE_3 = new Pose2d(62, 72, Math.toRadians(180));
     public static Pose2d SHOOT_SORTED_POSE_1 = new Pose2d(62, 72, Math.toRadians(235));
