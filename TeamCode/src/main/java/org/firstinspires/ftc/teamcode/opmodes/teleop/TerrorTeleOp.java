@@ -7,7 +7,6 @@ import static org.firstinspires.ftc.teamcode.FieldConstants.SPINDEXER_POSITION_K
 import static org.firstinspires.ftc.teamcode.FieldConstants.TEAM_COLOR_KEY;
 import static org.firstinspires.ftc.teamcode.FieldConstants.TELEOP_ENDING_KEY;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING;
-//import static org.firstinspires.ftc.teamcode.robot.init.RobotState.HANGING_FINAL;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.INTAKING;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.READY_TO_SHOOT;
 import static org.firstinspires.ftc.teamcode.robot.init.RobotState.RESTING;
@@ -38,7 +37,6 @@ import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.AdjustTurretOffsetCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
-import org.firstinspires.ftc.teamcode.robot.command.shooter.SortedShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
@@ -47,6 +45,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 import org.firstinspires.ftc.teamcode.util.Profiler;
@@ -163,6 +162,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         waitForStart();
         lastState = robot.robotState;
 //        robot.camera.stopCamera();
+
+        robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
 
         robot.lightControl.setIsManualLighting(false);
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);

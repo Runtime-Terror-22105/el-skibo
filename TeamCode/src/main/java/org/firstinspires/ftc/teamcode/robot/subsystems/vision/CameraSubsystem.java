@@ -244,13 +244,17 @@ public class CameraSubsystem extends SubsystemBase {
         }
 
         // ensures camera settings are set in case they weren't already
-        setCameraSettings();
+//        setCameraSettings();
 
         try {
-            if (frontPortal.getCameraControl(ExposureControl.class).getMode() != ExposureControl.Mode.Manual) {
+            frontPortal.getCameraControl(ExposureControl.class).setMode(ExposureControl.Mode.Auto);
+            frontPortal.getCameraControl(WhiteBalanceControl.class).setMode(WhiteBalanceControl.Mode.AUTO);
+            Log.i(TAG, "Exposure control mode: " + frontPortal.getCameraControl(ExposureControl.class).getMode().toString());
+            Log.i(TAG, "White balance mode: " + frontPortal.getCameraControl(WhiteBalanceControl.class).getMode());
+            if (frontPortal.getCameraControl(ExposureControl.class).getMode().equals(ExposureControl.Mode.Manual)) {
                 Log.w(TAG, "Exposure control is not in manual mode!");
             }
-            if (frontPortal.getCameraControl(WhiteBalanceControl.class).getMode() != WhiteBalanceControl.Mode.MANUAL) {
+            if (frontPortal.getCameraControl(WhiteBalanceControl.class).getMode().equals(WhiteBalanceControl.Mode.MANUAL)) {
                 Log.w(TAG, "White balance control is not in manual mode!");
             }
         } catch (Exception e) {

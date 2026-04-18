@@ -120,7 +120,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         RAW, MASK, IMAGE_DRAWING
     }
 
-    public static volatile StreamType streamType = StreamType.MASK;
+    public static volatile StreamType streamType = StreamType.IMAGE_DRAWING;
 
     public double pixelXtoRealX(double pixelX) {
         return (pixelX - ((double) frameWidth)/2) * PIXEL_TO_INCHES_SCALE;
