@@ -222,7 +222,6 @@ public final class FarAutoBuilder {
         return new DeferredCommand(() -> new SequentialCommandGroup(
                 new LogCatCommand("AutoBuilder", "running cycle vision!!!"),
                 intakeVision(state, reverseIntake),
-                new WaitCommand(1000), // todo: remove later, using for testing rn
                 shootWall(state, flagArr),
                 prepareVision(state)
         ), null);
