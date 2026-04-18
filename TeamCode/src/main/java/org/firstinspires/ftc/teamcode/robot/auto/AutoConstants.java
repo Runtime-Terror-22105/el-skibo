@@ -45,15 +45,15 @@ public class AutoConstants {
     public static Pose2d PREPARE_INTAKE_2_CONTROL_FAR = new Pose2d(50, 44, Math.toRadians(180));
 
     public static Pose2d INTAKE_2_CONTROL_FAR = new Pose2d(20, 61, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(18, 69, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(18, 67, Math.toRadians(180));
 
 
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));
-    public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 45.668);
+    public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 40);
     public static Pose2d INTAKE_3_POSE = new Pose2d(18, 37, Math.toRadians(180));
     public static Pose2d PREPARE_INTAKE_3_CONTROL_FAR = new Pose2d(50.0, 37.8);
-    public static Pose2d PREPARE_INTAKE_3_POSE_FAR = new Pose2d(36.42918454935622, 34, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_3_POSE_FAR = new Pose2d(36.42918454935622, 36, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE_FAR = new Pose2d(11, PREPARE_INTAKE_3_POSE_FAR.y, Math.toRadians(180));
 
     // For pushing gate after a SPIKE STRIP.
@@ -90,7 +90,7 @@ public class AutoConstants {
     public static int INTAKE_SPINDEX_TIMEOUT_HORIZ = 500;
     public static int INTAKE_TIMEOUT_HORIZ = 200;
     public static int REVERSE_INTAKE_GATE_DELAY = 250;
-    public static int SORTED_SHOOT_DELAY = 400;
+    public static int SORTED_SHOOT_DELAY = 0;
     public static int NORMAL_SHOOT_DELAY = 0;
 
     public static double SHOOT_BRAKING_STRENGTH = 0.8;
