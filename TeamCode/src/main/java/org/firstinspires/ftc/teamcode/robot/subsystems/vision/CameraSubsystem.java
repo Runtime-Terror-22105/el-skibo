@@ -96,15 +96,6 @@ public class CameraSubsystem extends SubsystemBase {
         GPP(BallColor.GREEN, BallColor.PURPLE, BallColor.PURPLE);
 
         public final BallColor[] colors;
-
-        public GLYPH rotate(int offset) {
-            GLYPH[] vals = GLYPH.values();
-            int newIndex = (this.ordinal() + offset) % vals.length;
-
-            if (newIndex < 0) newIndex += vals.length;
-
-            return vals[newIndex];
-        }
         GLYPH(BallColor... colors) {
             this.colors = colors;
         }
@@ -282,10 +273,6 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public void setGlyph(GLYPH glyph) {
-        gameGlyph = glyph;
-    }
-
-    public void setGameGlyph(GLYPH glyph) {
         gameGlyph = glyph;
     }
 
