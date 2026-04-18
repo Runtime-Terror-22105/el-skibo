@@ -35,6 +35,18 @@ public class RampPipeline implements VisionProcessor
 
     Mat greenMask = new Mat();
 
+    private Mat roiMask = new Mat();
+
+    private MatOfPoint maskShape;
+    public static Point[] ROI_POINTS = {
+            new Point(40,100),
+            new Point(40,140),
+            new Point(50,140),
+            new Point(50,180),
+            new Point(280,180),
+            new Point(250,70),
+    };
+
     public int ballsInRamp = 0;
 
     private void setBallsInRamp(int amount)
@@ -50,11 +62,20 @@ public class RampPipeline implements VisionProcessor
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
+        roiMask = new Mat(height, width, 0);
 
+        maskShape = new MatOfPoint();
+        maskShape.fromArray(ROI_POINTS);
+
+        List<MatOfPoint> polygons = new ArrayList<>();
+        polygons.add(maskShape);
+        Imgproc.fillPoly(roiMask, polygons, new Scalar(255));
     }
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+
+
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
         Core.inRange(hsv, purpleLow1, purpleHigh1, purpleMask1);
         Core.inRange(hsv, purpleLow2, purpleHigh2, purpleMask2);
@@ -63,6 +84,7 @@ public class RampPipeline implements VisionProcessor
 
         Mat combinedMask = new Mat();
         Core.bitwise_or(purpleMask, greenMask, combinedMask);
+        Core.bitwise_and(combinedMask, roiMask, combinedMask);
 
         // Find contours (blobs)
         List<MatOfPoint> contours = new ArrayList<>();
