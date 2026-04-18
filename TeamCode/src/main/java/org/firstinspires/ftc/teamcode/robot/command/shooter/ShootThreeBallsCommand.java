@@ -9,6 +9,8 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexPidEnabledCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexPowerCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
@@ -29,60 +31,25 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
     private final Robot robot;
 
-    public ShootThreeBallsCommand(Robot robot, double transferPower) {
-        super(
-                new LogCatCommand("ShootThreeBallsCommand", "starting shoot"),
-                new InstantCommand(() -> robot.robotState = RobotState.SHOOTING),
-                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
-//                new WaitCommand(200),
-
-                // Phase 5: transfer balls
-                new InstantCommand(() -> {
-                    robot.spindexer.setPidEnabled(false);
-                    robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
-                }),
-                new ConditionalCommand(new WaitCommand(SPINDEX_SORTING_TRANSFER_TIME),
-                        new WaitCommand(SPINDEX_TRANSFER_TIME),
-                        () -> robot.getAutoSort()),
-
-                new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
-                new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
-                // reset spindexer, intake, shooter
-                new ParallelCommandGroup(
-                        new SetIntakeSpeedCommand(robot.intake, 0),
-                        new SetSpindexerRampActive(robot.spindexer, false),
-                        new SetSpindexerYawCommand(robot.spindexer, 0.0),
-                        new InstantCommand(() -> robot.spindexer.setPidEnabled(true))
-                ),
-                new GoToRestingStateCommand(robot),
-                new InstantCommand(() -> robot.spindexer.useMaxPower = false)
-        );
-        this.robot = robot;
-    }
-
     public ShootThreeBallsCommand(Robot robot, double transferPower, boolean isTeleop) {
         super(
                 new LogCatCommand("ShootThreeBallsCommand", "starting shoot"),
                 new InstantCommand(() -> robot.robotState = RobotState.SHOOTING),
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
-//                new WaitCommand(200),
 
-                // Phase 5: transfer balls
+                new SetSpindexPidEnabledCommand(robot.spindexer, false),
+                new ConditionalCommand(
+                        new SetSpindexPowerCommand(robot.spindexer, Math.copySign(SpindexerSubsystem.MAX_POWER_SORTING, SPINDEX_TRANSFER_POWER)),
+                        new SetSpindexPowerCommand(robot.spindexer, Math.copySign(transferPower, SPINDEX_TRANSFER_POWER)),
+                        robot::getAutoSort
+                ),
+
 
                 new ConditionalCommand(
-                        new InstantCommand(() -> {
-                            robot.spindexer.setPidEnabled(false);
-                            robot.spindexer.setSpindexerPower(Math.copySign(robot.spindexer.MAX_POWER_SORTING, SPINDEX_TRANSFER_POWER));
-                        }),
-                        new InstantCommand(() -> {
-                            robot.spindexer.setPidEnabled(false);
-                            robot.spindexer.setSpindexerPower(Math.copySign(transferPower, SPINDEX_TRANSFER_POWER));
-                        }), robot::getAutoSort),
-
-
-                new ConditionalCommand(new WaitCommand(SPINDEX_SORTING_TRANSFER_TIME),
+                        new WaitCommand(SPINDEX_SORTING_TRANSFER_TIME),
                         new WaitCommand(SPINDEX_TRANSFER_TIME),
-                        () -> robot.getAutoSort()),
+                        robot::getAutoSort
+                ),
 
                 new InstantCommand(() -> robot.spindexer.setSpindexerPower(0.0)),
                 new InstantCommand(() -> robot.spindexer.goToAngle120(0)),
@@ -93,12 +60,14 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                         new SetSpindexerYawCommand(robot.spindexer, 0.0),
                         new InstantCommand(() -> robot.spindexer.setPidEnabled(true))
                 ),
-                new ConditionalCommand(new SequentialCommandGroup(
-                        new SetIntakeSpeedCommand(robot.intake,IntakeSubsystem.REVERSE_SPEED),
-                        new WaitCommand(reverseIntakeTimeMS)
-                ),
+                new ConditionalCommand( // reverse intake briefly in tele
+                        new SequentialCommandGroup(
+                                new SetIntakeSpeedCommand(robot.intake,IntakeSubsystem.REVERSE_SPEED),
+                                new WaitCommand(reverseIntakeTimeMS)
+                        ),
                         new InstantCommand(),
-                        () -> isTeleop),
+                        () -> isTeleop
+                ),
                 new GoToRestingStateCommand(robot),
             new InstantCommand(() -> robot.spindexer.useMaxPower = false)
         );
