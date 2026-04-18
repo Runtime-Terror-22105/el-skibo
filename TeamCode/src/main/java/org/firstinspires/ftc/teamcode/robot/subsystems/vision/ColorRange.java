@@ -52,26 +52,6 @@ public class ColorRange
     public static Scalar greenLow  = new Scalar(46.8, 109.1, 39.7);
     public static Scalar greenHigh = new Scalar(87.8,255,184.2);
 
-    public static volatile Scalar greenLow  = new Scalar(71, 200, 0);
-    // Upper bound for green
-    public static volatile Scalar greenHigh = new Scalar(94, 255, 250);
-
-    // todo: temporary values
-    public static final ColorRange GREEN = new ColorRange(
-            greenLow,
-            greenHigh
-    );
-
-    public static final ColorRange PURPLE_1 = new ColorRange(
-            purpleLow1,
-            purpleHigh1
-    );
-
-    public static final ColorRange PURPLE_2 = new ColorRange(
-            purpleLow2,
-            purpleHigh2
-    );
-
     public ColorRange(Scalar min, Scalar max)
     {
         this.min = min;

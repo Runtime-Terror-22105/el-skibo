@@ -164,21 +164,25 @@ public class CameraSubsystem extends SubsystemBase {
     }
 
     public void setCameraSettings() {
-        if (frontPortal == null) return;
+        try {
+            if (frontPortal == null) return;
 
-        if (!isManualWhiteBalanceSet) {
-            this.isManualWhiteBalanceSet = setManualWhiteBalance();
-            if (this.isManualWhiteBalanceSet) Log.i(TAG, "Manual white balance set successfully");
-        }
+            if (!isManualWhiteBalanceSet) {
+                this.isManualWhiteBalanceSet = setManualWhiteBalance();
+                if (this.isManualWhiteBalanceSet) Log.i(TAG, "Manual white balance set successfully");
+            }
 
-        if (!isManualExposureSet) {
-            this.isManualExposureSet = setManualExposure();;
-            if (this.isManualExposureSet) Log.i(TAG, "Manual exposure settings applied");
-        }
+            if (!isManualExposureSet) {
+                this.isManualExposureSet = setManualExposure();;
+                if (this.isManualExposureSet) Log.i(TAG, "Manual exposure settings applied");
+            }
 
-        if (!isManualGainSet) {
-            this.isManualGainSet = setManualGain();
-            if (this.isManualGainSet) Log.i(TAG, "Manual gain settings applied");
+            if (!isManualGainSet) {
+                this.isManualGainSet = setManualGain();
+                if (this.isManualGainSet) Log.i(TAG, "Manual gain settings applied");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting camera settings: " + e.getMessage());
         }
     }
 
@@ -242,11 +246,15 @@ public class CameraSubsystem extends SubsystemBase {
         // ensures camera settings are set in case they weren't already
         setCameraSettings();
 
-        if (frontPortal.getCameraControl(ExposureControl.class).getMode() != ExposureControl.Mode.Manual) {
-            Log.w(TAG, "Exposure control is not in manual mode!");
-        }
-        if (frontPortal.getCameraControl(WhiteBalanceControl.class).getMode() != WhiteBalanceControl.Mode.MANUAL) {
-            Log.w(TAG, "White balance control is not in manual mode!");
+        try {
+            if (frontPortal.getCameraControl(ExposureControl.class).getMode() != ExposureControl.Mode.Manual) {
+                Log.w(TAG, "Exposure control is not in manual mode!");
+            }
+            if (frontPortal.getCameraControl(WhiteBalanceControl.class).getMode() != WhiteBalanceControl.Mode.MANUAL) {
+                Log.w(TAG, "White balance control is not in manual mode!");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
         }
 
         if (backPortal == null || tagProcessor == null) return;
