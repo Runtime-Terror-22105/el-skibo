@@ -33,7 +33,8 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
         return new SequentialCommandGroup(
                 FarAutoBuilder.shootPreload(state, ShootPathFlag.SOTM, ShootPathFlag.EARLY_LEAVE),
 
-                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                // we shoot at a different spot that goes better into the 2nd spike mark
+                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.FORWARD_FACING_SHOOT_SPOT),
                 new InstantCommand(() -> {
                     //robot.shooter.USE_SOTM = false;
                     //robot.shooter.USE_SOTM_ACCEL = false;
