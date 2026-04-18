@@ -34,11 +34,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import android.util.Size;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.util.Locale;
@@ -58,7 +59,7 @@ import java.util.Locale;
  */
 
 @TeleOp(name = "Utility: Camera Frame Capture", group = "Utility")
-public class camcalib extends LinearOpMode
+public class UtilityCameraFrameCapture extends LinearOpMode
 {
     /*
      * EDIT THESE PARAMETERS AS NEEDED
@@ -68,8 +69,8 @@ public class camcalib extends LinearOpMode
      */
     final boolean USING_WEBCAM = true;
     final BuiltinCameraDirection INTERNAL_CAM_DIR = BuiltinCameraDirection.BACK;
-    final int RESOLUTION_WIDTH = 1280;
-    final int RESOLUTION_HEIGHT = 800;
+    final int RESOLUTION_WIDTH = 320;
+    final int RESOLUTION_HEIGHT = 240;
 
     // Internal state
     boolean lastX;
@@ -84,7 +85,7 @@ public class camcalib extends LinearOpMode
         if (USING_WEBCAM)
         {
             portal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .setCamera(hardwareMap.get(WebcamName.class, RobotHardware.FRONT_WEBCAM_NAME))
                     .setCameraResolution(new Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                     .build();
         }

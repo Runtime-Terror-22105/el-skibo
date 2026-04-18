@@ -34,6 +34,9 @@ import java.util.List;
  */
 @Config
 public class RobotHardware {
+    public static String FRONT_WEBCAM_NAME = "Front Webcam";
+    public static String BACK_WEBCAM_NAME = "Back Webcam";
+
     // Drivetrain motors & servos
     // NB: Use pedro pathing's Follower rather than access these directly.
     public TerrorMotorNormal motorFrontLeft;
@@ -263,8 +266,8 @@ public class RobotHardware {
                         "id",
                         hwMap.appContext.getPackageName()
                 );
-        this.frontCamera = hwMap.get(WebcamName.class, "Front Webcam");
-        this.backCamera = hwMap.get(WebcamName.class, "Back Webcam");
+        this.frontCamera = hwMap.get(WebcamName.class, FRONT_WEBCAM_NAME);
+        this.backCamera = hwMap.get(WebcamName.class, BACK_WEBCAM_NAME);
 
 //        this.camera = new TerrorCameraVisionPortal.Builder()
 //                .setCamera(fieldCamera)
