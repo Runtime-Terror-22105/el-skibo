@@ -217,10 +217,6 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         this.chosenBlobIsLocked = false;
     }
 
-    public void init(int width, int height, CameraCalibration calibration, boolean hiHowsItGoing) {
-        init(width, height, calibration);
-    }
-
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
         lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));

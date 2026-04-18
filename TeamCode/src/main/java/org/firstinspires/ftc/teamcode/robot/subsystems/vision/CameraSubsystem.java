@@ -487,6 +487,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setBallsSeen(int ballsOnRamp){
         this.ballsSeen = ballsOnRamp;
+        robot.telemetry.addData("Balls Seen", ballsOnRamp);
     }
 
     public void setGlyphScanningEnabled(boolean state)

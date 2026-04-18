@@ -23,17 +23,28 @@ public class RampPipeline implements VisionProcessor
 
     public static double acceptPixelsAbove = 820;
 
-    public static Scalar purpleLow1  = new Scalar(45.3, 77.9, 155.8);
-    public static Scalar purpleHigh1 = new Scalar(121.8, 68, 255);
-    public static Scalar purpleLow2  = new Scalar(120.4, 76.5, 48.2);
-    public static Scalar purpleHigh2 = new Scalar(165.8, 255, 255);
-    public static Scalar greenLow  = new Scalar(46, 0, 0);
-    public static Scalar greenHigh = new Scalar(102, 255, 250);
-    Mat purpleMask1 = new Mat();
-    Mat purpleMask2 = new Mat();
+//    public static Scalar purpleLow1  = new Scalar(45.3, 77.9, 155.8);
+//    public static Scalar purpleHigh1 = new Scalar(121.8, 68, 255);
+    public static Scalar purpleLow  = new Scalar(147.3,83.6,45.3);
+    public static Scalar purpleHigh = new Scalar(255, 255, 255);
+    public static Scalar greenLow  = new Scalar(46.8, 109.1, 39.7);
+    public static Scalar greenHigh = new Scalar(87.8,255,184.2);
+//    Mat purpleMask1 = new Mat();
+//    Mat purpleMask2 = new Mat();
     Mat purpleMask = new Mat();
 
     Mat greenMask = new Mat();
+
+    private Mat roiMask = new Mat();
+
+    public static Point[] ROI_POINTS = {
+            new Point(40,100),
+            new Point(40,140),
+            new Point(50,140),
+            new Point(50,180),
+            new Point(280,180),
+            new Point(250,70),
+    };
 
     public int ballsInRamp = 0;
 
@@ -50,19 +61,29 @@ public class RampPipeline implements VisionProcessor
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
+        roiMask = new Mat(height, width, 0);
 
+        MatOfPoint maskShape = new MatOfPoint();
+        maskShape.fromArray(ROI_POINTS);
+
+        List<MatOfPoint> polygons = new ArrayList<>();
+        polygons.add(maskShape);
+        Imgproc.fillPoly(roiMask, polygons, new Scalar(255));
     }
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+
+
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
-        Core.inRange(hsv, purpleLow1, purpleHigh1, purpleMask1);
-        Core.inRange(hsv, purpleLow2, purpleHigh2, purpleMask2);
-        Core.bitwise_or(purpleMask1, purpleMask2, purpleMask);
+//        Core.inRange(hsv, purpleLow1, purpleHigh1, purpleMask1);
+        Core.inRange(hsv, purpleLow, purpleHigh, purpleMask);
+//        Core.bitwise_or(purpleMask1, purpleMask2, purpleMask);
         Core.inRange(hsv, greenLow, greenHigh, greenMask);
 
         Mat combinedMask = new Mat();
         Core.bitwise_or(purpleMask, greenMask, combinedMask);
+        Core.bitwise_and(combinedMask, roiMask, combinedMask);
 
         // Find contours (blobs)
         List<MatOfPoint> contours = new ArrayList<>();
