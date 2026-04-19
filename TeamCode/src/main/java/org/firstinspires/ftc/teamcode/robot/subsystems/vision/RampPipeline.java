@@ -34,6 +34,8 @@ public class RampPipeline implements VisionProcessor
 
     private Mat roiMask = new Mat();
 
+    public static volatile double MIN_AREA = 50; // tune this for noise filtering
+
     public static Point[] ROI_POINTS = {
             new Point(40,100),
             new Point(40,140),
@@ -90,11 +92,9 @@ public class RampPipeline implements VisionProcessor
         // Clear old centers
         detectedCenters.clear();
 
-        double minArea = 500.0; // tune this for noise filtering
-
         for (MatOfPoint contour : contours) {
             double area = Imgproc.contourArea(contour);
-            if (area > minArea) {
+            if (area > MIN_AREA) {
                 Moments m = Imgproc.moments(contour);
                 if (m.m00 != 0) {
                     int cx = (int)(m.m10 / m.m00);
