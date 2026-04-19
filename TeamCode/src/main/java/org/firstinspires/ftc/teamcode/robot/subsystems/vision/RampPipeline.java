@@ -5,17 +5,15 @@ import android.graphics.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.firstinspires.ftc.teamcode.robot.init.Robot;
-import org.opencv.imgproc.Moments;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +70,8 @@ public class RampPipeline implements VisionProcessor
 //        Imgproc.morphologyEx(purpleMask, purpleMask, Imgproc.MORPH_OPEN, kernel);
 //        Imgproc.morphologyEx(greenMask, greenMask, Imgproc.MORPH_OPEN, kernel);
 
-        Core.inRange(hsv, ColorRange.RampAltValues.purpleLow, ColorRange.RampAltValues.purpleHigh, purpleMask);
-        Core.inRange(hsv, ColorRange.RampAltValues.greenLow, ColorRange.RampAltValues.greenHigh, greenMask);
+        Core.inRange(hsv, ColorRange.purpleLow, ColorRange.purpleHigh, purpleMask);
+        Core.inRange(hsv, ColorRange.greenLow, ColorRange.greenHigh, greenMask);
 
         Mat combinedMask = new Mat();
         Core.bitwise_or(purpleMask, greenMask, combinedMask);

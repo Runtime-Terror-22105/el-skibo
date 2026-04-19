@@ -121,6 +121,19 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
         // we can't spin shooter in init bc it's illegal
         robot.shooter.disableFlywheel = true;
+        robot.shooter.isAutoHoodOn = false;
+
+        // force an update of the hood servo
+        robot.shooter.goalPitchPos = Math.random();
+        robot.hardware.shooterPitch.setPosition(robot.shooter.goalPitchPos);
+        robot.hardware.shooterPitch.write();
+        sleep(200L);
+
+        robot.shooter.goalPitchPos = Math.random();
+        robot.hardware.shooterPitch.setPosition(robot.shooter.goalPitchPos);
+        robot.hardware.shooterPitch.write();
+        sleep(200L);
+
         robot.shooter.isAutoHoodOn = true;
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
