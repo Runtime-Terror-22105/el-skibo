@@ -229,10 +229,18 @@ public class CameraSubsystem extends SubsystemBase {
     // =======================
     @Override
     public void periodic() {
+        robot.telemetry.addData("Balls Seen", getBallsSeen());
+
         if(frontPortal != null) {
             frontPortal.setProcessorEnabled(ballPipeline, CVMode.equals(FRONT_CV_MODE.FAR));
             frontPortal.setProcessorEnabled(rampPipeline, CVMode.equals(FRONT_CV_MODE.RAMP));
+            if(frontPortal.getProcessorEnabled(rampPipeline))
+            {
+                this.ballsSeen = rampPipeline.getBalls();
+            }
         }
+
+
 
         // ensures camera settings are set in case they weren't already
 //        setCameraSettings();
@@ -482,7 +490,6 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void setBallsSeen(int ballsOnRamp){
         this.ballsSeen = ballsOnRamp;
-        robot.telemetry.addData("Balls Seen", ballsOnRamp);
     }
 
     public void setGlyphScanningEnabled(boolean state)
