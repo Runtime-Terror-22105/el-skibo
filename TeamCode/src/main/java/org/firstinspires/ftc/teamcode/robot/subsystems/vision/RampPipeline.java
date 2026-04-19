@@ -7,8 +7,8 @@ import android.graphics.Path;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -20,6 +20,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Config
@@ -38,6 +39,11 @@ public class RampPipeline implements VisionProcessor
     private Mat roiMask = new Mat();
     public static double minArea = 5; // tune this for noise filtering
 
+    //obvoiusly made up numbers that i am too lazy to find by porting to EOCV
+    public static double RED_SLOPE = -1;
+    public static double BLUE_SLOPE = 1;
+    public static double EFFECTIVE_SLOPE;
+
     public static Point[] ROI_POINTS = {
             new Point(40,100),
             new Point(40,140),
@@ -48,16 +54,20 @@ public class RampPipeline implements VisionProcessor
     };
 
     private final List<Point> detectedCenters = new ArrayList<>();
-    Telemetry telemetry;
 
     public int ballsSeen = 0;
 
-    public RampPipeline() {
+    public RampPipeline(Team team) {
         roiPaint = new Paint();
         roiPaint.setAntiAlias(true);
         roiPaint.setStyle(Paint.Style.STROKE);
         roiPaint.setStrokeCap(Paint.Cap.BUTT);
         roiPaint.setColor(Color.rgb(255, 255, 255));
+        EFFECTIVE_SLOPE = BLUE_SLOPE;
+        if(team.equals(Team.RED))
+        {
+            EFFECTIVE_SLOPE = RED_SLOPE;
+        }
     }
 
     @Override
@@ -123,10 +133,6 @@ public class RampPipeline implements VisionProcessor
                     Imgproc.putText(frame, "G", center,
                             Imgproc.FONT_HERSHEY_SIMPLEX, 0.7,
                             new Scalar(0, 255, 0), 2);
-
-                    if (telemetry != null) {
-                        telemetry.addData("Green Blob", "(%d, %d)", cx, cy);
-                    }
                 }
             }
         }
@@ -147,14 +153,29 @@ public class RampPipeline implements VisionProcessor
                             Imgproc.FONT_HERSHEY_SIMPLEX, 0.7,
                             new Scalar(255, 0, 255), 2);
 
-                    if (telemetry != null) {
-                        telemetry.addData("Purple Blob", "(%d, %d)", cx, cy);
-                    }
                 }
             }
         }
 
-        this.ballsSeen = detectedCenters.size();
+        //todo: one thing about this, the piepline still draws the colors
+        //so eventually do the drawing here instead
+        detectedCenters.sort(Comparator.comparingDouble(p -> p.y));
+        List<Point> filtered = new ArrayList<>();
+        filtered.add(detectedCenters.get(0));
+
+        for (int i = 1; i < detectedCenters.size(); i++) {
+            Point prev = filtered.get(filtered.size() - 1);
+            Point curr = detectedCenters.get(i);
+
+            double slope = (curr.y - prev.y) / (curr.x - prev.x + 1e-6);
+
+            if (Math.abs(slope - EFFECTIVE_SLOPE) < 0.5) {
+                filtered.add(curr);
+            }
+        }
+
+
+        this.ballsSeen = filtered.size();
 
         Mat masked = new Mat();
         Core.bitwise_and(frame, frame, masked, combinedMask);
