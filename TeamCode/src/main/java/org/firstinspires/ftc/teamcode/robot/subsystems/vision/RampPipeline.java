@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibra
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.opencv.imgproc.Moments;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -24,17 +25,15 @@ public class RampPipeline implements VisionProcessor
 {
     private final Mat hsv = new Mat();
 
-    public static double acceptPixelsAbove = 820;
-
-//    Mat purpleMask1 = new Mat();
-//    Mat purpleMask2 = new Mat();
     Mat purpleMask = new Mat();
 
     Mat greenMask = new Mat();
 
     private Mat roiMask = new Mat();
 
-    public static volatile double MIN_AREA = 50; // tune this for noise filtering
+    private Robot robot;
+
+    public static double minArea = 50; // tune this for noise filtering
 
     public static Point[] ROI_POINTS = {
             new Point(40,100),
@@ -45,12 +44,6 @@ public class RampPipeline implements VisionProcessor
             new Point(250,70),
     };
 
-    public int ballsInRamp = 0;
-
-    private void setBallsInRamp(int amount)
-    {
-        this.ballsInRamp = amount;
-    }
     private final List<Point> detectedCenters = new ArrayList<>();
     Telemetry telemetry;
 
@@ -75,57 +68,84 @@ public class RampPipeline implements VisionProcessor
 
 
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
-//        Core.inRange(hsv, purpleLow1, purpleHigh1, purpleMask1);
-        Core.inRange(hsv, ColorRange.purpleLow, ColorRange.purpleHigh, purpleMask);
-//        Core.bitwise_or(purpleMask1, purpleMask2, purpleMask);
-        Core.inRange(hsv, ColorRange.greenLow, ColorRange.greenHigh, greenMask);
+//        Imgproc.GaussianBlur(hsv,hsv,new Size(1,1),0);
+//        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5,5));
+//        Imgproc.morphologyEx(purpleMask, purpleMask, Imgproc.MORPH_OPEN, kernel);
+//        Imgproc.morphologyEx(greenMask, greenMask, Imgproc.MORPH_OPEN, kernel);
+
+        Core.inRange(hsv, ColorRange.RampAltValues.purpleLow, ColorRange.RampAltValues.purpleHigh, purpleMask);
+        Core.inRange(hsv, ColorRange.RampAltValues.greenLow, ColorRange.RampAltValues.greenHigh, greenMask);
 
         Mat combinedMask = new Mat();
         Core.bitwise_or(purpleMask, greenMask, combinedMask);
-        Core.bitwise_and(combinedMask, roiMask, combinedMask);
 
         // Find contours (blobs)
-        List<MatOfPoint> contours = new ArrayList<>();
+        List<MatOfPoint> greenContours = new ArrayList<>();
+        List<MatOfPoint> purpleContours = new ArrayList<>();
         Mat hierarchy = new Mat();
-        Imgproc.findContours(combinedMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        Imgproc.findContours(greenMask, greenContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(purpleMask, purpleContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Clear old centers
         detectedCenters.clear();
 
-        for (MatOfPoint contour : contours) {
+
+//        Mat combinedMask = new Mat();
+//        Core.bitwise_or(purpleMask, greenMask, combinedMask);
+//        Core.bitwise_and(combinedMask, roiMask, combinedMask);
+//        List<MatOfPoint> contours = new ArrayList<>();
+//        Mat hierarchy = new Mat();
+//        Imgproc.findContours(combinedMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+//        detectedCenters.clear();
+
+        for (MatOfPoint contour : greenContours) {
             double area = Imgproc.contourArea(contour);
-            if (area > MIN_AREA) {
+            if (area > minArea) {
                 Moments m = Imgproc.moments(contour);
                 if (m.m00 != 0) {
                     int cx = (int)(m.m10 / m.m00);
                     int cy = (int)(m.m01 / m.m00);
-                    if(cy>acceptPixelsAbove)
-                    {
-                        continue;
-                    }
                     Point center = new Point(cx, cy);
 
-                    String colorLabel = "Unknown";
-                    if (purpleMask.get(cy, cx)[0] > 0) {
-                        colorLabel = "P";
-                    } else if (greenMask.get(cy, cx)[0] > 0) {
-                        colorLabel = "G";
-                    }
-
-                    // Save center
                     detectedCenters.add(center);
-                    Imgproc.circle(frame, center, 5, new Scalar(255, 255, 255), -1);
-                    Imgproc.putText(frame, colorLabel, center, Imgproc.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255, 255, 255), 2);
 
+                    Imgproc.circle(frame, center, 5, new Scalar(0, 255, 0), -1);
+                    Imgproc.putText(frame, "G", center,
+                            Imgproc.FONT_HERSHEY_SIMPLEX, 0.7,
+                            new Scalar(0, 255, 0), 2);
 
                     if (telemetry != null) {
-                        telemetry.addData("Blob", "%s at (%d, %d)", colorLabel, cx, cy);
+                        telemetry.addData("Green Blob", "(%d, %d)", cx, cy);
                     }
                 }
             }
         }
 
-        setBallsInRamp(detectedCenters.size());
+        for (MatOfPoint contour : purpleContours) {
+            double area = Imgproc.contourArea(contour);
+            if (area > minArea) {
+                Moments m = Imgproc.moments(contour);
+                if (m.m00 != 0) {
+                    int cx = (int)(m.m10 / m.m00);
+                    int cy = (int)(m.m01 / m.m00);
+                    Point center = new Point(cx, cy);
+
+                    detectedCenters.add(center);
+
+                    Imgproc.circle(frame, center, 5, new Scalar(255, 0, 255), -1);
+                    Imgproc.putText(frame, "P", center,
+                            Imgproc.FONT_HERSHEY_SIMPLEX, 0.7,
+                            new Scalar(255, 0, 255), 2);
+
+                    if (telemetry != null) {
+                        telemetry.addData("Purple Blob", "(%d, %d)", cx, cy);
+                    }
+                }
+            }
+        }
+
+        robot.camera.setBallsSeen(detectedCenters.size());
 
         Mat masked = new Mat();
         Core.bitwise_and(frame, frame, masked, combinedMask);

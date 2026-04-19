@@ -30,9 +30,7 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
-
-import com.acmerobotics.dashboard.config.Config;
+package org.firstinspires.ftc.teamcode.robot.subsystems.vision.ramptest;
 
 import org.opencv.core.Scalar;
 
@@ -41,25 +39,15 @@ import org.opencv.core.Scalar;
  * range for a given color space}
  */
 // note: for simplicity, removed colorspace parameter. assume HSV
-@Config
 public class ColorRange
 {
     public final Scalar min;
     public final Scalar max;
 
-    public static Scalar purpleLow  = new Scalar(130,84,46);
-    public static Scalar purpleHigh = new Scalar(160, 255, 255);
-    public static Scalar greenLow  = new Scalar(80, 50, 0);
-    public static Scalar greenHigh = new Scalar(90,255,255);
-
-    @Config
-    public static class RampAltValues
-    {
-        public static Scalar purpleLow  = new Scalar(147.3, 83.6, 45.3);
-        public static Scalar purpleHigh = new Scalar(255, 255, 255);
-        public static Scalar greenLow  = new Scalar(46.8, 109.1, 0);
-        public static Scalar greenHigh = new Scalar(87.8, 255, 184.2);
-    }
+    public static Scalar purpleLow  = new Scalar(120.4, 76.5, 48.2);
+    public static Scalar purpleHigh = new Scalar(165.8, 255, 255);
+    public static Scalar greenLow  = new Scalar(46, 0, 0);
+    public static Scalar greenHigh = new Scalar(102, 255, 250);
 
     public ColorRange(Scalar min, Scalar max)
     {
