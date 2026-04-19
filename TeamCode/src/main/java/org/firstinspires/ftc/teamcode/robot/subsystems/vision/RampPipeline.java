@@ -30,9 +30,6 @@ public class RampPipeline implements VisionProcessor
     Mat greenMask = new Mat();
 
     private Mat roiMask = new Mat();
-
-    private Robot robot;
-
     public static double minArea = 50; // tune this for noise filtering
 
     public static Point[] ROI_POINTS = {
@@ -46,6 +43,8 @@ public class RampPipeline implements VisionProcessor
 
     private final List<Point> detectedCenters = new ArrayList<>();
     Telemetry telemetry;
+
+    public int ballsSeen = 0;
 
     public RampPipeline() {
 
@@ -145,11 +144,16 @@ public class RampPipeline implements VisionProcessor
             }
         }
 
-        robot.camera.setBallsSeen(detectedCenters.size());
+        this.ballsSeen = detectedCenters.size();
 
         Mat masked = new Mat();
         Core.bitwise_and(frame, frame, masked, combinedMask);
         return masked;
+    }
+
+    public int getBalls()
+    {
+        return this.ballsSeen;
     }
 
 
