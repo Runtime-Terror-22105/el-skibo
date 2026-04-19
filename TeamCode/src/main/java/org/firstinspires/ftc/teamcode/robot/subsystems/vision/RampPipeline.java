@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems.vision;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -22,6 +25,8 @@ import java.util.List;
 public class RampPipeline implements VisionProcessor
 {
     private final Mat hsv = new Mat();
+
+    private final Paint roiPaint;
 
     Mat purpleMask = new Mat();
 
@@ -45,7 +50,11 @@ public class RampPipeline implements VisionProcessor
     public int ballsSeen = 0;
 
     public RampPipeline() {
-
+        roiPaint = new Paint();
+        roiPaint.setAntiAlias(true);
+        roiPaint.setStyle(Paint.Style.STROKE);
+        roiPaint.setStrokeCap(Paint.Cap.BUTT);
+        roiPaint.setColor(Color.rgb(255, 255, 255));
     }
 
     @Override
@@ -65,10 +74,6 @@ public class RampPipeline implements VisionProcessor
 
 
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
-//        Imgproc.GaussianBlur(hsv,hsv,new Size(1,1),0);
-//        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5,5));
-//        Imgproc.morphologyEx(purpleMask, purpleMask, Imgproc.MORPH_OPEN, kernel);
-//        Imgproc.morphologyEx(greenMask, greenMask, Imgproc.MORPH_OPEN, kernel);
 
         Core.inRange(hsv, ColorRange.purpleLow, ColorRange.purpleHigh, purpleMask);
         Core.inRange(hsv, ColorRange.greenLow, ColorRange.greenHigh, greenMask);
@@ -76,7 +81,9 @@ public class RampPipeline implements VisionProcessor
         Mat combinedMask = new Mat();
         Core.bitwise_or(purpleMask, greenMask, combinedMask);
 
-        // Find contours (blobs)
+        Core.bitwise_and(greenMask, roiMask, greenMask);
+        Core.bitwise_and(purpleMask, roiMask, purpleMask);
+
         List<MatOfPoint> greenContours = new ArrayList<>();
         List<MatOfPoint> purpleContours = new ArrayList<>();
         Mat hierarchy = new Mat();
@@ -84,17 +91,7 @@ public class RampPipeline implements VisionProcessor
         Imgproc.findContours(greenMask, greenContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         Imgproc.findContours(purpleMask, purpleContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Clear old centers
         detectedCenters.clear();
-
-
-//        Mat combinedMask = new Mat();
-//        Core.bitwise_or(purpleMask, greenMask, combinedMask);
-//        Core.bitwise_and(combinedMask, roiMask, combinedMask);
-//        List<MatOfPoint> contours = new ArrayList<>();
-//        Mat hierarchy = new Mat();
-//        Imgproc.findContours(combinedMask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-//        detectedCenters.clear();
 
         for (MatOfPoint contour : greenContours) {
             double area = Imgproc.contourArea(contour);
@@ -157,6 +154,13 @@ public class RampPipeline implements VisionProcessor
 
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-
+        Path path = new Path();
+        Point[] contourPts = ROI_POINTS;
+        path.moveTo((float) (contourPts[0].x) * scaleBmpPxToCanvasPx, (float) (contourPts[0].y) * scaleBmpPxToCanvasPx);
+        for (int i = 1; i < contourPts.length; i++) {
+            path.lineTo((float) (contourPts[i].x) * scaleBmpPxToCanvasPx, (float) (contourPts[i].y) * scaleBmpPxToCanvasPx);
+        }
+        path.close();
+        canvas.drawPath(path, roiPaint);
     }
 }

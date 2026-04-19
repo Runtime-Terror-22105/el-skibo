@@ -52,15 +52,6 @@ public class ColorRange
     public static Scalar greenLow  = new Scalar(80, 50, 0);
     public static Scalar greenHigh = new Scalar(90,255,255);
 
-    @Config
-    public static class RampAltValues
-    {
-        public static Scalar purpleLow  = new Scalar(147.3, 83.6, 45.3);
-        public static Scalar purpleHigh = new Scalar(255, 255, 255);
-        public static Scalar greenLow  = new Scalar(46.8, 109.1, 0);
-        public static Scalar greenHigh = new Scalar(87.8, 255, 184.2);
-    }
-
     public ColorRange(Scalar min, Scalar max)
     {
         this.min = min;
