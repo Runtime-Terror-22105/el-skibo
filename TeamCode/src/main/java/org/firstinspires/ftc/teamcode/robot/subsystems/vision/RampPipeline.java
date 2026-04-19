@@ -82,9 +82,13 @@ public class RampPipeline implements VisionProcessor
         Mat combinedMask = new Mat();
         Core.bitwise_or(purpleMask, greenMask, combinedMask);
 
-        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(4,3));
-        Imgproc.morphologyEx(purpleMask, purpleMask, Imgproc.MORPH_OPEN, kernel);
-        Imgproc.morphologyEx(greenMask, greenMask, Imgproc.MORPH_OPEN, kernel);
+        Mat openKernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(2,2));
+        Imgproc.morphologyEx(purpleMask, purpleMask, Imgproc.MORPH_OPEN, openKernel);
+        Imgproc.morphologyEx(greenMask, greenMask, Imgproc.MORPH_OPEN, openKernel);
+
+        Mat closeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5));
+        Imgproc.morphologyEx(purpleMask, purpleMask, Imgproc.MORPH_CLOSE, closeKernel);
+        Imgproc.morphologyEx(greenMask, greenMask, Imgproc.MORPH_CLOSE, closeKernel);
 
         Core.bitwise_and(greenMask, roiMask, greenMask);
         Core.bitwise_and(purpleMask, roiMask, purpleMask);
