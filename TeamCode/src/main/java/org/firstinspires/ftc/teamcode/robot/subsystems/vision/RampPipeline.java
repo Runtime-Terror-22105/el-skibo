@@ -34,7 +34,7 @@ public class RampPipeline implements VisionProcessor
     Mat greenMask = new Mat();
 
     private Mat roiMask = new Mat();
-    public static double minArea = 50; // tune this for noise filtering
+    public static double minArea = 5; // tune this for noise filtering
 
     public static Point[] ROI_POINTS = {
             new Point(40,100),
