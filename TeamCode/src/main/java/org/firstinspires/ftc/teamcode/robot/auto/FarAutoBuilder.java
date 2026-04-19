@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand
 import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
+import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 
@@ -144,9 +145,8 @@ public final class FarAutoBuilder {
                 ),
                 new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
-                        new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
-                        new InstantCommand(() -> {
-                        }),
+                        new SetIntakeSpeedCommand(state.robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                        new InstantCommand(() -> {}),
                         () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
                 )
         );

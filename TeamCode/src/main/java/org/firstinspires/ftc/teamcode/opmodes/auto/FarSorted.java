@@ -38,7 +38,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
                 new InstantCommand(() -> {
                     //robot.shooter.USE_SOTM = false;
                     //robot.shooter.USE_SOTM_ACCEL = false;
-                    //robot.setAutoSort(true);
+                    robot.setAutoSort(true);
                 }),
                 FarAutoBuilder.intakeSpike2AndPushGate(state),
                 SortedAutoBuilder.shootSpike(state, 2),
@@ -52,7 +52,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
                 new InstantCommand(() -> {
                     //robot.shooter.USE_SOTM = true;
                     //robot.shooter.USE_SOTM_ACCEL = true;
-                    //robot.setAutoSort(false);
+                    robot.setAutoSort(false);
                 }),
 
                 //needs to be changed to use vision in the future
