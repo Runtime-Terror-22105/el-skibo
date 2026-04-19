@@ -219,7 +219,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         BallColor[] balls = getBallPositions();
         BallColor[] glyphArr = robot.camera.getGlyphCharArray();
 
-        if (glyphArr.length == 0){
+        if (glyphArr == null){
             return;
         }
 
