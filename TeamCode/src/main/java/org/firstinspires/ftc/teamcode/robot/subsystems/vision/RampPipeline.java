@@ -27,6 +27,8 @@ public class RampPipeline implements VisionProcessor
 {
     private final Mat hsv = new Mat();
 
+    private boolean pipelineActive = true;
+
     private final Paint roiPaint;
 
     Mat purpleMask = new Mat();
@@ -73,6 +75,10 @@ public class RampPipeline implements VisionProcessor
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
 
+        if(!pipelineActive)
+        {
+            return frame;
+        }
 
         Imgproc.cvtColor(frame, hsv, Imgproc.COLOR_RGB2HSV);
 
@@ -154,6 +160,14 @@ public class RampPipeline implements VisionProcessor
     public int getBalls()
     {
         return this.ballsSeen;
+    }
+
+    /**
+    *enabling/disabling the pipeline may have lag related issues associated with it, this allows us to insta stop it and then pipeline turn off afterward
+    */
+     public void setActiveScanning(boolean state)
+    {
+        this.pipelineActive = state;
     }
 
 
