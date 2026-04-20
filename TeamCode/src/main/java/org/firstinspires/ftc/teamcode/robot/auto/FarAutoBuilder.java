@@ -183,8 +183,7 @@ public final class FarAutoBuilder {
                 new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
-                        new InstantCommand(() -> {
-                        }),
+                        new InstantCommand(() -> {}),
                         () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
                 ),
                 new InstantCommand(() -> {
@@ -207,8 +206,7 @@ public final class FarAutoBuilder {
                 new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
-                        new InstantCommand(() -> {
-                        }),
+                        new InstantCommand(() -> {}),
                         () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
                 )
         );
@@ -302,8 +300,7 @@ public final class FarAutoBuilder {
                 ),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
-                        new InstantCommand(() -> {
-                        }),
+                        new InstantCommand(() -> {}),
                         () -> reverseIntake && !ArrayUtil.contains(state.robot.spindexer.getBallPositions(), BallColor.NONE)
                 ),
                 shootWallLong(state, flagArr)
