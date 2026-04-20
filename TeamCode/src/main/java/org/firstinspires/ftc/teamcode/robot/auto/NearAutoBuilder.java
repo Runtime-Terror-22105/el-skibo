@@ -78,7 +78,7 @@ public final class NearAutoBuilder {
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL_PUSH_GATE, INTAKE_2_POSE_PUSH_GATE, state.mirror, false, false)
                 .setHeadingInterpolation(HeadingInterpolator.piecewise(
                         new HeadingInterpolator.PiecewiseNode(0d, .7d,
-                                HeadingInterpolator.constant(INTAKE_2_CONTROL_PUSH_GATE.heading)
+                                HeadingInterpolator.constant(INTAKE_2_CONTROL_PUSH_GATE.mirror(state.mirror).heading)
                         ),
                         new HeadingInterpolator.PiecewiseNode(.7d, 1d,
                             HeadingInterpolator.linear(INTAKE_2_CONTROL_PUSH_GATE.mirror(state.mirror).heading, INTAKE_2_POSE_PUSH_GATE.mirror(state.mirror).heading)

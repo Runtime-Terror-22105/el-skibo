@@ -104,7 +104,7 @@ public final class SortedAutoBuilder {
 
         Supplier<Boolean> hasStartedPrepareShoot = () -> state.robot.robotState.equals(RobotState.READY_TO_SHOOT) || state.robot.robotState.equals(RobotState.TRANSFER);
         Supplier<Command> maybePrepareShootCommand = () -> new ConditionalCommand(
-                new PrepareShootCommand(state.robot, state.prepareShootTimeBeforeReverseIntake, true),
+                new PrepareShootCommand(state.robot, false),
                 new InstantCommand(() -> {
                 }),
                 () -> !(state.robot.robotState.equals(RobotState.READY_TO_SHOOT) || state.robot.robotState.equals(RobotState.TRANSFER))
@@ -145,7 +145,7 @@ public final class SortedAutoBuilder {
                 new WaitCommand(PRELOAD_PRE_SHOOT_DELAY),
                 new WaitForGlyphCommand(state.robot.camera).withTimeout(AutoConstants.WAIT_TIMEOUT_MOTIF),
                 new InstantCommand(() -> state.robot.camera.setAprilTagsEnabled(false)),
-                new PrepareShootCommand(state.robot),
+                new PrepareShootCommand(state.robot, false),
                 shootCommand(state, flags)
         );
     }

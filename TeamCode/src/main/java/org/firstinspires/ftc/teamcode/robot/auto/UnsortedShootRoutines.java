@@ -112,7 +112,7 @@ public final class UnsortedShootRoutines {
         shootPath.lastPath().setBrakingStrength(state.shootBrakingStrength);
 
         Supplier<Command> maybePrepareShootCommand = () -> new ConditionalCommand(
-                new PrepareShootCommand(state.robot, state.prepareShootTimeBeforeReverseIntake, false),
+                new PrepareShootCommand(state.robot, false),
                 new InstantCommand(() -> {}),
                 () -> !(state.robot.robotState.equals(RobotState.READY_TO_SHOOT) || state.robot.robotState.equals(RobotState.TRANSFER))
         );
