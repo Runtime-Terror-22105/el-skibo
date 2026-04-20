@@ -164,7 +164,7 @@ public class CameraSubsystem extends SubsystemBase {
             }
 
             if (!isManualExposureSet) {
-                this.isManualExposureSet = setManualExposure();
+                this.isManualExposureSet = setManualExposure();;
                 if (this.isManualExposureSet) Log.i(TAG, "Manual exposure settings applied");
             }
 
@@ -221,7 +221,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     private RampPipeline createRampPipeline()
     {
-        return new RampPipeline(robot.color);
+        return new RampPipeline();
     }
 
     // =======================
