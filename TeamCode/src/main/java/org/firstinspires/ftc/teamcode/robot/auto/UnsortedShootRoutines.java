@@ -113,8 +113,7 @@ public final class UnsortedShootRoutines {
 
         Supplier<Command> maybePrepareShootCommand = () -> new ConditionalCommand(
                 new PrepareShootCommand(state.robot, state.prepareShootTimeBeforeReverseIntake, false),
-                new InstantCommand(() -> {
-                }),
+                new InstantCommand(() -> {}),
                 () -> !(state.robot.robotState.equals(RobotState.READY_TO_SHOOT) || state.robot.robotState.equals(RobotState.TRANSFER))
         );
 
