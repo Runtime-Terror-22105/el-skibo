@@ -16,6 +16,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public static boolean debug = false;
 
+    public static double INTAKE_LEFT_DOWN = 0;
+    public static double INTAKE_LEFT_UP = 0;
+
+    public static double INTAKE_RIGHT_DOWN = 0;
+    public static double INTAKE_RIGHT_UP = 0;
+
+    private double leftEffective = INTAKE_LEFT_UP;
+    private double rightEffective = INTAKE_RIGHT_UP;
+
+    private boolean intakeDropped = false;
+
     private final Robot robot;
     private double targetSpeed;
 
@@ -32,6 +43,23 @@ public class IntakeSubsystem extends SubsystemBase {
         return this.targetSpeed;
     }
 
+    public void setIntakeDropped(boolean isDropped)
+    {
+        this.intakeDropped = isDropped;
+    }
+
+    /**
+     * i saw aadits face
+     * in a crowded place
+     * and i dont know what to do
+     * cause ill never pee pee poo :(
+     * (if the repo goes public its actually over for me)
+     */
+    public boolean getIntakeDropped()
+    {
+        return this.intakeDropped;
+    }
+
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("IntakeSubsystem")) {
@@ -40,6 +68,18 @@ public class IntakeSubsystem extends SubsystemBase {
                 robot.hardware.intake.setPower(0);
                 return;
             }
+
+            leftEffective = INTAKE_LEFT_UP;
+            rightEffective = INTAKE_RIGHT_UP;
+
+            if(getIntakeDropped())
+            {
+                leftEffective = INTAKE_LEFT_DOWN;
+                rightEffective = INTAKE_RIGHT_DOWN;
+            }
+
+            robot.hardware.intakeServoLeft.setPosition(leftEffective);
+            robot.hardware.intakeServoRight.setPosition(rightEffective);
 
             // When not intaking, increase the update period to reduce I2C load
             robot.hardware.colorSensors.setUpdatePeriod(RobotState.INTAKING.equals(robot.robotState) ? 1 : 1);
