@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.FieldConstants;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
+import org.firstinspires.ftc.teamcode.robot.command.intake.DropIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.AdjustTurretOffsetCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
@@ -237,17 +238,19 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () ->  robot.robotState == RESTING && lastState != INTAKING // if we are already intaking and 3 balls inside for resting, we don't want to immediately go back to intaking
         ));
         intakeButton.whenInactive(new ConditionalCommand( // if not full state, we will go to resting
-                new GoToRestingStateCommand(robot),
+                new ParallelCommandGroup(new GoToRestingStateCommand(robot), new DropIntakeCommand(robot.intake,false)),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING && robot.robotState != READY_TO_SHOOT && robot.robotState != TRANSFER && robot.robotState != HANGING
         ));
 
         reverseIntakeButton.whenActive(new ConditionalCommand(
-                new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                new SequentialCommandGroup(
+                        new DropIntakeCommand(robot.intake,true),
+                        new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED)),
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING //robot.robotState != FULL
         ));
-        reverseIntakeButton.whenInactive(new SetIntakeSpeedCommand(robot.intake, 0.0));
+        reverseIntakeButton.whenInactive(new ParallelCommandGroup(new SetIntakeSpeedCommand(robot.intake, 0.0), new DropIntakeCommand(robot.intake,false)));
 
         threeBallsAreInside.whenActive(new ConditionalCommand(
                 new SequentialCommandGroup(
