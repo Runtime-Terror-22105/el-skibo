@@ -21,8 +21,8 @@
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="motorFrontLeft" port="0" />
             <goBILDA5202SeriesMotor name="motorRearLeft" port="1" />
-            <goBILDA5202SeriesMotor name="motorFrontRight" port="2" />
-            <goBILDA5202SeriesMotor name="motorRearRight" port="3" />
+            <goBILDA5202SeriesMotor name="motorRearRight" port="2" />
+            <goBILDA5202SeriesMotor name="motorFrontRight" port="3" />
             <Servo name="intakeRight" port="0" />
             <Servo name="pto" port="3" />
             <Servo name="lights" port="4" />

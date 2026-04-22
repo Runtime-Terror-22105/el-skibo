@@ -165,6 +165,8 @@ public class RobotHardware {
 //        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.shooterLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.shooterRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.shooterLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.shooterRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         this.shooterPitch = new TerrorServo(hwMap, "hood", 0.003);
         this.publisher.subscribe(5, shooterPitch);
 
