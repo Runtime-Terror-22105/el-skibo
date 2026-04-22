@@ -25,7 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private double leftEffective = INTAKE_LEFT_UP;
     private double rightEffective = INTAKE_RIGHT_UP;
 
-    private boolean intakeDropped = false;
+    private boolean intakeLifted = false;
 
     private final Robot robot;
     private double targetSpeed;
@@ -43,9 +43,9 @@ public class IntakeSubsystem extends SubsystemBase {
         return this.targetSpeed;
     }
 
-    public void setIntakeDropped(boolean isDropped)
+    public void setIntakeLifted(boolean isLifted)
     {
-        this.intakeDropped = isDropped;
+        this.intakeLifted = isLifted;
     }
 
     /**
@@ -55,9 +55,9 @@ public class IntakeSubsystem extends SubsystemBase {
      * cause ill never pee pee poo :(
      * (if the repo goes public its actually over for me)
      */
-    public boolean getIntakeDropped()
+    public boolean getIntakeLifted()
     {
-        return this.intakeDropped;
+        return this.intakeLifted;
     }
 
     @Override
@@ -69,13 +69,13 @@ public class IntakeSubsystem extends SubsystemBase {
                 return;
             }
 
-            leftEffective = INTAKE_LEFT_UP;
-            rightEffective = INTAKE_RIGHT_UP;
+            leftEffective = INTAKE_LEFT_DOWN;
+            rightEffective = INTAKE_RIGHT_DOWN;
 
-            if(getIntakeDropped())
+            if(intakeLifted)
             {
-                leftEffective = INTAKE_LEFT_DOWN;
-                rightEffective = INTAKE_RIGHT_DOWN;
+                leftEffective = INTAKE_LEFT_UP;
+                rightEffective = INTAKE_RIGHT_UP;
             }
 
             robot.hardware.intakeServoLeft.setPosition(leftEffective);
