@@ -211,7 +211,7 @@ public class RobotHardware {
                 0.05,
                 1.0
         );
-        this.intake.setDirection(REVERSE);
+        this.intake.setDirection(FORWARD);
         this.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
