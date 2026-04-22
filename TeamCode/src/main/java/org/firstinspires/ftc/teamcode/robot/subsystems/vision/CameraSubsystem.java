@@ -254,7 +254,7 @@ public class CameraSubsystem extends SubsystemBase {
             Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
         }
 
-        if (backPortal == null || tagProcessor == null) return;
+        if (backPortal == null || tagProcessor == null || !backPortal.getProcessorEnabled(tagProcessor)) return;
 
         detections = tagProcessor.getDetections();
         AprilTagDetection localizationTag = null;
