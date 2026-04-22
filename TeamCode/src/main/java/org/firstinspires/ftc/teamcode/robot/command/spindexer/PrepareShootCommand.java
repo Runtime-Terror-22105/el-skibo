@@ -11,6 +11,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeUpCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
@@ -40,6 +41,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.shooter.isAutoVelOn = true),
                 new InstantCommand(() -> robot.shooter.isAutoHoodOn = true),
                 new SetSpindexerWallDown(robot.spindexer, false),
+                new SetIntakeUpCommand(robot.intake, true),
                 new ConditionalCommand(
                         new SequentialCommandGroup(
                             new WaitCommand(timeBeforeReverseIntake),
