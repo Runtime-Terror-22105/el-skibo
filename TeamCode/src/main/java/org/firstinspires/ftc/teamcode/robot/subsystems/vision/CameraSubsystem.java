@@ -82,7 +82,8 @@ public class CameraSubsystem extends SubsystemBase {
     public static double MAX_CONTOUR_AREA = 100000;
 
     public static int RELOCALIZE_WINDOW_MS = 200;
-    public static double CAMERA_OFFSET_IN = -8;
+    public static double CAMERA_OFFSET_IN_X = -8;
+    public static double CAMERA_OFFSET_IN_Y = 1.86;
 
     public static double VELOCITY_THRESHOLD = 5.0;
 
@@ -253,7 +254,7 @@ public class CameraSubsystem extends SubsystemBase {
             //Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
         }
 
-        if (backPortal == null || tagProcessor == null) return;
+        if (backPortal == null || tagProcessor == null || !backPortal.getProcessorEnabled(tagProcessor)) return;
 
         detections = tagProcessor.getDetections();
         AprilTagDetection localizationTag = null;
@@ -351,7 +352,7 @@ public class CameraSubsystem extends SubsystemBase {
                 heading
         );
 
-        Pose offset = new Pose(CAMERA_OFFSET_IN, 0, 0)
+        Pose offset = new Pose(CAMERA_OFFSET_IN_X, CAMERA_OFFSET_IN_Y, 0)
                 .rotate(raw.getHeading(), false);
 
         Pose finalPose = raw.minus(offset).setHeading(heading);
