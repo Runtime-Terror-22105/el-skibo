@@ -51,7 +51,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
     public static double SHOOTER_VEL_TOLERANCE = 50;  // Units are RPM
-    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 100;  // Units are RPM, used for quicker recovery while shooting multiple balls
+    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 200;  // Units are RPM, used for quicker recovery while shooting multiple balls
 
     public GoalPosLookupTable goalPosLookupTable;
     public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
@@ -80,8 +80,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretServoUpperBound = 1;
 
     // hood limits
-    public static double hoodPosMax = 0.74; //maximum position the servo can go to
-    public static double hoodPosMin = 0.05; //min position the servo can go to
+    public static double hoodPosMax = 0.97; //maximum position the servo can go to
+    public static double hoodPosMin = 0.32; //min position the servo can go to
     public static double hoodAngleMax = 1.0; //radian measure of hood at max pos
     public static double hoodAngleMin = 0.05; //radian measure of hood at min pos // todo: this being 0.05 is temporary since the hood keeps getting cooked at the bottom, please set it back to 0 eventually
 
@@ -478,9 +478,12 @@ public class ShooterSubsystem extends SubsystemBase {
         boolean useSmallPID = currentRpm < SHOOTER_PID_SWITCH;
         shooterPID.setPidfCoefficients(useSmallPID ? NEAR_PID_COEFFICIENTS : FAR_PID_COEFFICIENTS);
 
-        double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
+        double shooterPower = 0.0;
+//        double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
         if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
             shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
+        } else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+            shooterPower = 0;
         }
         return shooterPower;
     }

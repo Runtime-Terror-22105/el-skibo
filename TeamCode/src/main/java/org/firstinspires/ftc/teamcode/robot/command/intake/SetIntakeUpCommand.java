@@ -4,8 +4,8 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 
-public class IntakeLiftedCommand extends InstantCommand {
-    public IntakeLiftedCommand(IntakeSubsystem intake, boolean isUp) {
+public class SetIntakeUpCommand extends InstantCommand {
+    public SetIntakeUpCommand(IntakeSubsystem intake, boolean isUp) {
         super(() -> intake.setIntakeLifted(isUp));
     }
 }
