@@ -6,7 +6,7 @@
             <goBILDA5202SeriesMotor name="shooterRight" port="1" />
             <goBILDA5202SeriesMotor name="spindexer" port="2" />
             <goBILDA5202SeriesMotor name="intake" port="3" />
-            <Servo name="intakeLeft" port="5" />
+            <Servo name="intakeLeft" port="4" />
             <RevColorSensorV3 name="topSensor" port="0" bus="2" />
             <RevColorSensorV3 name="leftSensor" port="0" bus="1" />
         </LynxModule>
