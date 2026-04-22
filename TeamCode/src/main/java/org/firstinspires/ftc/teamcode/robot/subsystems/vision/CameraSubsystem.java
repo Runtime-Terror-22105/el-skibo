@@ -250,7 +250,7 @@ public class CameraSubsystem extends SubsystemBase {
             frontPortal.getCameraControl(ExposureControl.class).setMode(ExposureControl.Mode.Auto);
             frontPortal.getCameraControl(WhiteBalanceControl.class).setMode(WhiteBalanceControl.Mode.AUTO);
         } catch (Exception e) {
-            Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
+            //Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
         }
 
         if (backPortal == null || tagProcessor == null) return;
