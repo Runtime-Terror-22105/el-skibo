@@ -45,7 +45,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.55;
     public static double SHOOTER_RAMP_DEACTIVE = 0.8;
 
-    public static double MAX_POWER_SORTING = 0.8;
+    public static double MAX_POWER_SORTING = 0.5;
     public boolean useMaxPower = false;
 
     private enum WallState {
@@ -69,7 +69,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static PidfController.PidfCoefficients turningPidCoefficientsCcw =
             new PidfController.PidfCoefficients(0.23, 0, 0.0075, 0, 0.12);
     public static PidfController.PidfCoefficients turningPidCoefficientsCw =
-            new PidfController.PidfCoefficients(0.23, 0, 0.009, 0, 0.18);
+            new PidfController.PidfCoefficients(0.23, 0, 0.009, 0, 0.1);
     public static double yawPidTolerance = 0.05; // radians, used for kstatic
     public static double CHECKING_TOLERANCE = 0.09; // radians, only for checking if at target, not for PID tolerance
     private boolean pidEnabled = true;
