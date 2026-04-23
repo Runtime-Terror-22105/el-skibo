@@ -31,6 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = false;
+    public static boolean JUST_TURRET = false;
 
     public static boolean debug = false;
     public static boolean telemetry = true;
@@ -213,8 +214,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
         goalPos = recalculateGoalPosWithOffsets(goalPos);
+        Pose2d oldGoalPos = goalPos.copy();
         //Pose2d goalPos = this.robot.color.getGoalPos();
         double distToGoal = botPos.distanceFrom(goalPos.toPedro());
+        double oldDistToGoal = distToGoal;
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
 
@@ -246,7 +249,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         ShooterValues math;
-        math = shooterLookupTable.get(distToGoal);
+        if (JUST_TURRET){
+            math = shooterLookupTable.get(oldDistToGoal);
+        }
+        else math = shooterLookupTable.get(distToGoal);
         //calcVelcoity - in/sec
 
         if (telemetry) Robot.debugTelemetry.addData("Calculated Velocity (in/sec)", math.velocity);
