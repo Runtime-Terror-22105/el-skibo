@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.FAR_BALL_CV_DETECTION_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
@@ -12,7 +13,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WAL
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_TIMEOUT_DISTANCE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_WALL_VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.MAX_DRIVETRAIN_POWER_INTAKING;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_2_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_2_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_INTAKE_3_CONTROL_FAR;
@@ -21,6 +22,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CO
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_TRANSLATIONAL_CONSTRAINT;
 
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.HeadingInterpolator;
@@ -62,7 +64,7 @@ public final class FarAutoBuilder {
                 new ParallelCommandGroup(
 //                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
                         new SequentialCommandGroup(
-                                new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_DELAY),
+                                new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
                                 new WaitCommand(250)
                         )
                 ),
@@ -80,10 +82,10 @@ public final class FarAutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new ParallelRaceGroup(
-                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
+                        new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 24.0),
                         new WaitForIntakeCommand(state.robot)
-                ),
-                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY)
+                )
+//                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY)
         );
     }
 
@@ -136,6 +138,7 @@ public final class FarAutoBuilder {
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, INTAKE_WALL_POSE, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
+                .setTranslationalConstraint(WALL_TRANSLATIONAL_CONSTRAINT)
                 .build();
         return new SequentialCommandGroup(
                 new ParallelRaceGroup(
@@ -158,7 +161,7 @@ public final class FarAutoBuilder {
                 // note: intake needs to be down because otherwise it blocks the camera
                 new SetIntakeUpCommand(state.robot.intake, false),
                 new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
-                new WaitUntilCommand(() -> state.robot.camera.hasBlob()),
+                new WaitUntilCommand(() -> state.robot.camera.hasBlob()).withTimeout(FAR_BALL_CV_DETECTION_TIMEOUT),
                 new LogCatCommand("AutoBuilder", "blob found, preparing shoot")
         );
     }
@@ -168,6 +171,7 @@ public final class FarAutoBuilder {
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, state.robot.camera.offsetByBallCoords(wallCoords), false, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
+                .setTranslationalConstraint(WALL_TRANSLATIONAL_CONSTRAINT)
                 .build();
         return new SequentialCommandGroup(
                 new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(false)),
@@ -238,6 +242,7 @@ public final class FarAutoBuilder {
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, INTAKE_WALL_POSE, state.mirror, false, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
+                .setTranslationalConstraint(WALL_TRANSLATIONAL_CONSTRAINT)
                 .build();
         return new SequentialCommandGroup(
                 new GoToIntakeStateCommand(state.robot),

@@ -30,6 +30,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PUSH_GATE_
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SORTED_INTAKE_1_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_TRANSLATIONAL_CONSTRAINT;
 import static org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag.FIRST_WALL_SORTED;
 import static org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag.LONG_GATE_PAUSE;
 
@@ -171,6 +172,7 @@ public final class NearAutoBuilder {
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_WALL_CONTROL_NEAR_POSE, INTAKE_WALL_POSE_2, state.mirror, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
+                .setTranslationalConstraint(WALL_TRANSLATIONAL_CONSTRAINT)
                 .build();
 
         return new SequentialCommandGroup(

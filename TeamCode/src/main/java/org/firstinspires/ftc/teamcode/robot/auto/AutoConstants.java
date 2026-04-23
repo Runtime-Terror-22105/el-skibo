@@ -19,7 +19,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(53, 98, Math.toRadians(-124.7));
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 120, Math.toRadians(-124.7));
-    public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 8, Math.toRadians(180));
+    public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 10.5, Math.toRadians(180));
     public static Pose2d SHOOT_FAR_POSE_FORWARD_FACING = new Pose2d(48, 8, Math.toRadians(165));
 //    public static Pose2d SHOOT_FAR_POSE_FORWARD_FACING = SHOOT_FAR_POSE;
     public static Pose2d SHOOT_SORTED_POSE_2 = new Pose2d(62, 72, Math.toRadians(-124.7));
@@ -53,10 +53,10 @@ public class AutoConstants {
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 40);
-    public static Pose2d INTAKE_3_POSE = new Pose2d(18, 37, Math.toRadians(180));
-    public static Pose2d PREPARE_INTAKE_3_CONTROL_FAR = new Pose2d(50.0, 37.8);
-    public static Pose2d PREPARE_INTAKE_3_POSE_FAR = new Pose2d(36.42918454935622, 36, Math.toRadians(180));
-    public static Pose2d INTAKE_3_POSE_FAR = new Pose2d(11, PREPARE_INTAKE_3_POSE_FAR.y, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE = new Pose2d(18, 34, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_3_CONTROL_FAR = new Pose2d(49, 33);
+    public static Pose2d PREPARE_INTAKE_3_POSE_FAR = new Pose2d(36.42918454935622, 32, Math.toRadians(180));
+    public static Pose2d INTAKE_3_POSE_FAR = new Pose2d(19, PREPARE_INTAKE_3_POSE_FAR.y, Math.toRadians(180));
 
     // For pushing gate after a SPIKE STRIP.
     public static Pose2d PREPARE_PUSH_GATE_POSE = new Pose2d(25, 65, Math.toRadians(180));
@@ -77,16 +77,19 @@ public class AutoConstants {
     public static Pose2d INTAKE_TUNNEL_POSE = new Pose2d(11, 32, Math.toRadians(180));
     public static Pose2d VISION_POSE = new Pose2d(42, 18, Math.toRadians(180));
 
+    public static long FAR_BALL_CV_DETECTION_TIMEOUT = 3500;
+    public static long WALL_TRANSLATIONAL_CONSTRAINT = 10;
+
     public static Pose2d CONTROL_POSE_LONG_INTAKE = new Pose2d(17, 18, Math.toRadians(120));
     public static Pose2d START_POSE_LONG_INTAKE = new Pose2d(12, 18, Math.toRadians(120));
     public static Pose2d END_POSE_LONG_INTAKE = new Pose2d(12, 40, Math.toRadians(120));
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
-    public static int INTAKE_DELAY = 200;
+    public static int INTAKE_DELAY = 100;
     public static int GATE_INTAKE_DELAY = 600;
-    public static int WALL_INTAKE_DELAY = 300;
+    public static int WALL_INTAKE_DELAY = 200;
     public static int PRELOAD_PRE_SHOOT_DELAY = 0;
-    public static int PRELOAD_FAR_PRE_SHOOT_DELAY = 2900;
+    public static int PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT = 2900;
     public static int PRE_SHOOT_DELAY = 0;
     public static int SHOOT_DELAY = 0;
     public static int INTAKE_SPINDEX_TIMEOUT_HORIZ = 500;
@@ -100,12 +103,12 @@ public class AutoConstants {
 
     // Distance (in inches) from the target shoot pose for which early shoot begins
     // shooting
-    public static double EARLY_SHOOT_DISTANCE = 20.0;
+    public static double EARLY_SHOOT_DISTANCE = 15.0;
 
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
 
-    public static long CAMERA_WAIT_MINIMUM_TIME = 500;
+    public static long CAMERA_WAIT_MINIMUM_TIME = 0;
 
     public static int FLLYWHEEL_SPIN_UP_TIMEOUT_MS = 1500;
 

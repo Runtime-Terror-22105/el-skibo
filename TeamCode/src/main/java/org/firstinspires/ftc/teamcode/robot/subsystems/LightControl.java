@@ -68,14 +68,6 @@ public class LightControl extends SubsystemBase {
                         hardware.lights.setColor(TerrorLight.LightColors.RED);
                     }
                     break;
-                //i might be misunderstanding
-//           case FULL:
-//                hardware.lights.setColor(TerrorLight.LightColors.GREEN);
-//                break;
-
-                case NOT_READY:
-                    hardware.lights.setColor(TerrorLight.LightColors.RED);
-                    break;
 
                 case TRANSFER:
                     hardware.lights.setColor(TerrorLight.LightColors.ORANGE);
