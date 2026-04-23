@@ -152,16 +152,8 @@ public final class FarAutoBuilder {
     }
 
     public static Command prepareVision(AutoBuildState state) {
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, VISION_POSE, state.mirror, false, false)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .setNoDeceleration()
-                .build();
-
         return new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(true)),
-                        new FollowPathCommand(state.robot.follower, state.lastPath, true, 1)
-                ),
+                new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(true)),
                 new LogCatCommand("AutoBuilder", "finished path to vision, waiting for blob"),
                 new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
                 new WaitUntilCommand(() -> state.robot.camera.hasBlob()),
@@ -233,8 +225,10 @@ public final class FarAutoBuilder {
         return new DeferredCommand(() -> new SequentialCommandGroup(
                 new LogCatCommand("AutoBuilder", "running cycle vision!!!"),
                 intakeVision(state, reverseIntake),
-                shootWall(state, flagArr),
-                prepareVision(state)
+                new ParallelCommandGroup(
+                        shootWall(state, flagArr),
+                        prepareVision(state))
+
         ), null);
     }
 
