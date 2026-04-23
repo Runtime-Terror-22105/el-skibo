@@ -458,6 +458,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 //            this.spindexerPower = Math.copySign(Math.sqrt(Math.abs(tmp)), tmp);
             this.spindexerPower = hardware.getVoltageScale() * yawPid.calculatePower(getPositionRaw(), 0, true);
         }
+
+        if (robot.getAutoSort() && Math.abs(this.spindexerPower) > 0.3){
+            this.spindexerPower = Math.copySign(MAX_POWER_SORTING, this.spindexerPower);
+        }
     }
 
 
