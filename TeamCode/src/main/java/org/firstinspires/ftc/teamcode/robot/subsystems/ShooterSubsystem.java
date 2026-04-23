@@ -478,13 +478,13 @@ public class ShooterSubsystem extends SubsystemBase {
         boolean useSmallPID = currentRpm < SHOOTER_PID_SWITCH;
         shooterPID.setPidfCoefficients(useSmallPID ? NEAR_PID_COEFFICIENTS : FAR_PID_COEFFICIENTS);
 
-        double shooterPower = 0.0;
-//        double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
-        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
-            shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
-        } else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
-            shooterPower = 0;
-        }
+       // double shooterPower = 0.0;
+        double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
+//        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+//            shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
+//        } else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+//            shooterPower = 0;
+//        }
         return shooterPower;
     }
 

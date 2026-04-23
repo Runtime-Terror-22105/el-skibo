@@ -35,10 +35,11 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
         robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
 
         return new SequentialCommandGroup(
+                new InstantCommand(() -> {robot.camera.setAprilTagsEnabled(true);}),
                 FarAutoBuilder.shootPreload(state, ShootPathFlag.SOTM, ShootPathFlag.EARLY_LEAVE),
 
                 // we shoot at a different spot that goes better into the 2nd spike mark
-                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.FORWARD_FACING_SHOOT_SPOT),
+                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.FORWARD_FACING_SHOOT_SPOT),
                 new InstantCommand(() -> {
                     //robot.shooter.USE_SOTM = false;
                     //robot.shooter.USE_SOTM_ACCEL = false;

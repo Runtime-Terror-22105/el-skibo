@@ -24,7 +24,8 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
     public static double ANGLE_THRESHOLD_SPEED_CHANGE = 210;
     //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
     public static double SPINDEX_TRANSFER_POWER = -1;
-    public static int SPINDEX_TRANSFER_TIME = 600;  // milliseconds
+    public static int SPINDEX_TRANSFER_TIME = 600;// milliseconds
+    public static double SPINDEX_SORTING_TRANSFER_POWER = 0.7;
 
     public static int reverseIntakeTimeMS = 150;
     public static int SPINDEX_SORTING_TRANSFER_TIME = 1366;//(int) (700/SpindexerSubsystem.MAX_POWER_SORTING);  // milliseconds
@@ -39,7 +40,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
 
                 new SetSpindexPidEnabledCommand(robot.spindexer, false),
                 new ConditionalCommand(
-                        new SetSpindexPowerCommand(robot.spindexer, Math.copySign(SpindexerSubsystem.MAX_POWER_SORTING, SPINDEX_TRANSFER_POWER)),
+                        new SetSpindexPowerCommand(robot.spindexer, Math.copySign(SPINDEX_SORTING_TRANSFER_POWER, SPINDEX_TRANSFER_POWER)),
                         new SetSpindexPowerCommand(robot.spindexer, Math.copySign(transferPower, SPINDEX_TRANSFER_POWER)),
                         robot::getAutoSort
                 ),

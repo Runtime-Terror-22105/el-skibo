@@ -17,10 +17,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public static boolean debug = false;
 
     public static double INTAKE_LEFT_DOWN = 0.56;
-    public static double INTAKE_LEFT_UP = 0.21;
+    public static double INTAKE_LEFT_UP = 0.31;
 
     public static double INTAKE_RIGHT_DOWN = 0.55;
-    public static double INTAKE_RIGHT_UP = 0.2;
+    public static double INTAKE_RIGHT_UP = 0.3;
 
     private boolean intakeLifted = false;
 
