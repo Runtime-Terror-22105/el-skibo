@@ -78,7 +78,7 @@ public class CameraSubsystem extends SubsystemBase {
     // =======================
     // const
     // =======================
-    public static double MIN_CONTOUR_AREA = 300;
+    public static double MIN_CONTOUR_AREA = 200;
     public static double MAX_CONTOUR_AREA = 100000;
 
     public static int RELOCALIZE_WINDOW_MS = 200;

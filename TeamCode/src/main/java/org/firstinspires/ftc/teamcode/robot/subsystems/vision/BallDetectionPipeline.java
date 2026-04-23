@@ -52,8 +52,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     //use a set multiplier to calculate pixels off center into inches off center
     //return position with the offset of the balls
 
-    public static double LEFT_SIDE_PIXEL_VAL = 70;
-    public static double RIGHT_SIDE_PIXEL_VAL = 270;
+    public static double LEFT_SIDE_PIXEL_VAL = 33;
+    public static double RIGHT_SIDE_PIXEL_VAL = 195;
 
     public static double PIXEL_TO_INCHES_SCALE = (double) 0.3; // pixels * 1/3 = inches
 
@@ -128,7 +128,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     public double pixelXtoRealX(double pixelX) {
         return Math.max(
-                Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 24, -24),
+                Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 48-8, -8),
                 -24+12 // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
         );
     }
