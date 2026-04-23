@@ -256,7 +256,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if (this.isAutoVelOn) {
             this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
         }
-        if (this.isAutoHoodOn) {
+        if (this.isAutoHoodOn && !(robot.getState() == RobotState.SHOOTING && !USE_SOTM_ACCEL)) {
             this.goalPitch = math.rad;
             this.goalPitchPos = Algebra.mapRange(math.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
         }
