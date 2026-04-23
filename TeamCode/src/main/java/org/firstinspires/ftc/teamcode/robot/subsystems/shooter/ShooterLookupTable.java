@@ -15,8 +15,8 @@ public class ShooterLookupTable {
             new ShooterLookupTableInstance.VelocityLookupValue(90.7,540),
             new ShooterLookupTableInstance.VelocityLookupValue(104.4,555),
             new ShooterLookupTableInstance.VelocityLookupValue(122.7,685),
-            new ShooterLookupTableInstance.VelocityLookupValue(128.7,720),
-            new ShooterLookupTableInstance.VelocityLookupValue(140.2,755),
+            new ShooterLookupTableInstance.VelocityLookupValue(128.7,730),
+            new ShooterLookupTableInstance.VelocityLookupValue(140.2,765),
             new ShooterLookupTableInstance.VelocityLookupValue(155,780),
             new ShooterLookupTableInstance.VelocityLookupValue(165,800),
 
@@ -35,8 +35,8 @@ public class ShooterLookupTable {
             new ShooterLookupTableInstance.HoodLookupValue(67,0.45),
             new ShooterLookupTableInstance.HoodLookupValue(97.7,0.65),
             new ShooterLookupTableInstance.HoodLookupValue(126,.85),
-            new ShooterLookupTableInstance.HoodLookupValue(130,.9),
-            new ShooterLookupTableInstance.HoodLookupValue(140,.95),
+            new ShooterLookupTableInstance.HoodLookupValue(130,.87),
+            new ShooterLookupTableInstance.HoodLookupValue(140,.92),
             new ShooterLookupTableInstance.HoodLookupValue(155,1.0),
             //endpoint
 
