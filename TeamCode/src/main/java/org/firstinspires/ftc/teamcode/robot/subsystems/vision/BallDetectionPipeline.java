@@ -129,7 +129,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     public double pixelXtoRealX(double pixelX) {
         return Math.max(
                 Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 48-8, -8),
-                -24+12 // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
+                0 // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
         );
     }
 

@@ -20,7 +20,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_IN
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.VISION_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 
 import com.pedropathing.geometry.BezierLine;
@@ -41,6 +40,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
 import org.firstinspires.ftc.teamcode.robot.command.WaitForIntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeUpCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
@@ -155,6 +155,8 @@ public final class FarAutoBuilder {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(true)),
                 new LogCatCommand("AutoBuilder", "finished path to vision, waiting for blob"),
+                // note: intake needs to be down because otherwise it blocks the camera
+                new SetIntakeUpCommand(state.robot.intake, false),
                 new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
                 new WaitUntilCommand(() -> state.robot.camera.hasBlob()),
                 new LogCatCommand("AutoBuilder", "blob found, preparing shoot")
