@@ -566,6 +566,9 @@ public class ShooterSubsystem extends SubsystemBase {
             hardware.turretYawLeft.setPosition(goalTurretPos + difference);
             hardware.turretYawRight.setPosition(goalTurretPos - difference);
             Profiler.pop();
+
+            if (debug) Log.d("ShooterSubsystem", "goal hood angle" + this.goalPitch);
+            if (debug) Log.d("ShooterSubsystem", "goal hood pos" + this.goalPitchPos);
         }
     }
 }
