@@ -48,6 +48,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.55;
     public static double SHOOTER_RAMP_DEACTIVE = 0.85;
 
+    public static double BALL_BLOCKER_ACTIVE = 0.0; //this is when it is over the spindex and blocking
+    public static double BALL_BLOCKER_DEACTIVE = 0.0; //not blocking, can shoot
+
     public static double MAX_POWER_SORTING_UNJAMMING = 0.65;
     public static double MAX_POWER_SORTING = 0.65;
     public boolean useMaxPower = false;
@@ -63,6 +66,12 @@ public class SpindexerSubsystem extends SubsystemBase {
         DEACTIVE
     }
     private RampState shooterRampPosition = RampState.DEACTIVE;
+
+    private enum BallBlockerState {
+        BLOCKING,
+        OPEN
+    }
+    private BallBlockerState blockerState = BallBlockerState.BLOCKING;
 
     public double spindexerPower = 0.0;
 
@@ -208,6 +217,14 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public void disableRamp() {
         shooterRampPosition = RampState.DEACTIVE;
+    }
+
+    public void activateBlocker() {
+        blockerState = BallBlockerState.BLOCKING;
+    }
+
+    public void deactivateBlocker() {
+        blockerState = BallBlockerState.OPEN;
     }
 
     public BallColor[] getBallPositions() {
@@ -522,6 +539,7 @@ public class SpindexerSubsystem extends SubsystemBase {
             this.hardware.wallServoLeft.setPosition(isWallDown() ? INTAKE_WALL_LEFT_DOWN : INTAKE_WALL_LEFT_UP);
             this.hardware.wallServoRight.setPosition(isWallDown() ? INTAKE_WALL_RIGHT_DOWN : INTAKE_WALL_RIGHT_UP);
             this.hardware.transferRampServo.setPosition(shooterRampPosition.equals(RampState.ACTIVE) ? SHOOTER_RAMP_ACTIVE : SHOOTER_RAMP_DEACTIVE);
+            this.hardware.ballBlockerServo.setPosition(blockerState.equals(BallBlockerState.BLOCKING) ? BALL_BLOCKER_ACTIVE : BALL_BLOCKER_DEACTIVE);
 
 
             if (telemetry) Robot.debugTelemetry.addData("Spindexer Power", clampedPower);

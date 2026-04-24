@@ -42,6 +42,7 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.shooter.isAutoHoodOn = true),
                 new SetSpindexerWallDown(robot.spindexer, false),
                 new SetIntakeUpCommand(robot.intake, true),
+                new SetBallBlockerActiveCommand(robot.spindexer, false),
                 new ConditionalCommand(
                         new SequentialCommandGroup(
                             new WaitCommand(timeBeforeReverseIntake),

@@ -7,6 +7,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeUpCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
+import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetBallBlockerActiveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerWallDown;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -18,6 +19,7 @@ public class GoToIntakeStateCommand extends SequentialCommandGroup {
         super(
                 new ParallelCommandGroup(
                         new InstantCommand(() -> robot.robotState = RobotState.INTAKING),
+                        new SetBallBlockerActiveCommand(robot.spindexer, true),
                         new LogCatCommand("intake testing", "just set state"),
                         new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
                         new SetIntakeUpCommand(robot.intake,false),

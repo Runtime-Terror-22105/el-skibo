@@ -67,6 +67,7 @@ public class RobotHardware {
     public TerrorServo intakeServoLeft;
     public TerrorServo intakeServoRight;
     public TerrorServo transferRampServo;
+    public TerrorServo ballBlockerServo;
     public TerrorAnalogEncoder spindexerEncoder;
     public ColorSensorManager colorSensors;
 
@@ -195,6 +196,7 @@ public class RobotHardware {
         this.intakeServoLeft = new TerrorServo(hwMap, "intakeLeft");
         this.intakeServoRight = new TerrorServo(hwMap, "intakeRight");
         this.transferRampServo = new TerrorServo(hwMap, "ramp");
+        this.ballBlockerServo = new TerrorServo(hwMap, "ballBlocker");
         this.publisher.subscribe(10, wallServoLeft, wallServoRight, transferRampServo);
         this.publisher.subscribe(10, intakeServoLeft, intakeServoRight);
 
