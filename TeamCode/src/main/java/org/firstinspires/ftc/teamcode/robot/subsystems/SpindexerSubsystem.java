@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
+import org.firstinspires.ftc.teamcode.math.datastructures.CircularBuffer;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 
 @Config
 public class SpindexerSubsystem extends SubsystemBase {
+    public static double SPINDEX_SORT_OVERCOMING_JAMS_THRESHOLD = 0.3;
+    public final CircularBuffer<Double> lastPositions; // the last 5 positions, used to detect if the spindex is jammed
 
     public boolean inferMissingColorToSort = true;
 
@@ -43,9 +46,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double INTAKE_WALL_RIGHT_UP = 0;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.55;
-    public static double SHOOTER_RAMP_DEACTIVE = 0.8;
+    public static double SHOOTER_RAMP_DEACTIVE = 0.85;
 
-    public static double MAX_POWER_SORTING = 0.5;
+    public static double MAX_POWER_SORTING = 0.65;
     public boolean useMaxPower = false;
 
     private enum WallState {
@@ -93,6 +96,7 @@ public class SpindexerSubsystem extends SubsystemBase {
         this.yawPid.setTolerance(yawPidTolerance);
         this.yawPid.setTargetPosition(0.0);
         this.angleLUT = new SpindexerEncoderLUT(this.robot);
+        this.lastPositions = new CircularBuffer<>(5);
         goToAngle120(0);
     }
 
@@ -459,7 +463,8 @@ public class SpindexerSubsystem extends SubsystemBase {
             this.spindexerPower = hardware.getVoltageScale() * yawPid.calculatePower(getPositionRaw(), 0, true);
         }
 
-        if (robot.getAutoSort() && Math.abs(this.spindexerPower) > 0.3){
+        if (robot.getAutoSort() && (Math.abs(this.spindexerPower) > SPINDEX_SORT_OVERCOMING_JAMS_THRESHOLD
+        || (pidEnabled && !atTargetYaw() && lastPositions.getRange() < Math.toRadians(10)))) {
             this.spindexerPower = Math.copySign(MAX_POWER_SORTING, this.spindexerPower);
         }
     }
@@ -469,6 +474,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("SpindexerSubsystem")) {
+            lastPositions.add(getPositionRaw());
 
             if (robot.robotState.equals(RobotState.HANGING)) {
                 hardware.spindexer.setPower(0);

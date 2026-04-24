@@ -76,6 +76,19 @@ public class CircularBuffer<T extends Number & Comparable<T>> {
         return sum/size;
     }
 
+    public double getRange() {
+        if (size == 0) return 0;
+
+        T min = get(0);
+        T max = get(0);
+        for (int i = 1; i < size; i++) {
+            T val = get(i);
+            if (val.compareTo(min) < 0) min = val;
+            if (val.compareTo(max) > 0) max = val;
+        }
+        return max.doubleValue() - min.doubleValue();
+    }
+
     @NonNull
     @Override
     public String toString() {

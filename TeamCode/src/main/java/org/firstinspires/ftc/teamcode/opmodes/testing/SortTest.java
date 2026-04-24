@@ -44,6 +44,8 @@ public class SortTest extends LinearOpMode {
         }
         robot.camera.setBallsSeen(ballsOnRamp);
 
+        robot.setAutoSort(true);
+
         CommandScheduler.getInstance().schedule(new WaitCommand(500).andThen(new SortCommand(robot)));
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
