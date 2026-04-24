@@ -42,7 +42,6 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
                 FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.FORWARD_FACING_SHOOT_SPOT),
                 new InstantCommand(() -> {
                     //robot.shooter.USE_SOTM = false;
-                    //robot.shooter.USE_SOTM_ACCEL = false;
                     robot.setAutoSort(true);
                 }),
                 FarAutoBuilder.intakeSpike2AndPushGate(state),

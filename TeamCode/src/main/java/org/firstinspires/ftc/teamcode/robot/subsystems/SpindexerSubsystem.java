@@ -48,6 +48,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.55;
     public static double SHOOTER_RAMP_DEACTIVE = 0.85;
 
+    public static double MAX_POWER_SORTING_UNJAMMING = 0.65;
     public static double MAX_POWER_SORTING = 0.65;
     public boolean useMaxPower = false;
 
@@ -463,11 +464,8 @@ public class SpindexerSubsystem extends SubsystemBase {
             this.spindexerPower = hardware.getVoltageScale() * yawPid.calculatePower(getPositionRaw(), 0, true);
         }
 
-        if (robot.getAutoSort() && (
-                Math.abs(this.spindexerPower) > SPINDEX_SORT_OVERCOMING_JAMS_THRESHOLD
-            || (pidEnabled && !atTargetYaw() && lastPositions.getRange() < Math.toRadians(10))
-        )) {
-            this.spindexerPower = Math.copySign(MAX_POWER_SORTING, this.spindexerPower);
+        if (robot.getAutoSort() && (pidEnabled && !atTargetYaw() && lastPositions.getRange() < Math.toRadians(10))) {
+            this.spindexerPower = Math.copySign(MAX_POWER_SORTING_UNJAMMING, this.spindexerPower);
         }
     }
 
@@ -488,7 +486,7 @@ public class SpindexerSubsystem extends SubsystemBase {
             if (debug) Log.i("SpindexerSubsystem", "initial voltage: " + hardware.initialVoltage);
 
             double clampedPower;
-            if (useMaxPower && !overrideMaxPower){
+            if (useMaxPower && !overrideMaxPower && !(robot.getAutoSort() && spindexerPower == MAX_POWER_SORTING_UNJAMMING)) {
                  clampedPower = Math.max(-MAX_POWER_SORTING, Math.min(MAX_POWER_SORTING, spindexerPower));
             }
             else{

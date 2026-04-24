@@ -154,10 +154,13 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
                 robot.lightControl.setManualLightColor(TerrorLight.LightColors.BLUE);
             }
 
+
             hardware.write();
 
             FtcDashDrawing.drawDebug(robot.follower);
 //            this.showPoem();
+            robot.telemetry.addData("Goal Velocity", robot.shooter.getGoalVelocity());
+            robot.telemetry.addData("Current velocity", robot.shooter.getVelocityRpm());
             robot.telemetry.update();
         }
 
@@ -221,6 +224,10 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
             }
             robot.telemetry.addData("Auto Time (s)", String.format(Locale.getDefault(), "%.2f", (System.currentTimeMillis() - startTime) / 1000.0));
             robot.telemetry.addData("Auto Duration (s)", String.format(Locale.getDefault(), "%.2f", duration / 1000.0));
+
+            robot.telemetry.addData("Goal Velocity", robot.shooter.getGoalVelocity());
+            robot.telemetry.addData("Current velocity", robot.shooter.getVelocityRpm());
+
             robot.telemetry.update();
             Profiler.pop();
             // endregion

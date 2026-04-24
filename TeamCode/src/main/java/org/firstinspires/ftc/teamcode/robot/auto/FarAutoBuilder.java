@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAI
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.FAR_BALL_CV_DETECTION_TIMEOUT;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_CONTROL_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_2_POSE_FAR;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_3_POSE_FAR;
@@ -113,7 +114,7 @@ public final class FarAutoBuilder {
                                 new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 12.0),
                                 intakeSpike2(state)
                         ),
-                        new WaitForIntakeCommand(state.robot)
+                        new WaitForIntakeCommand(state.robot).alongWith(new WaitCommand(GATE_INTAKE_DELAY))
                 ),
                 new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY)
         );
@@ -143,6 +144,7 @@ public final class FarAutoBuilder {
                 .curveThrough(0, INTAKE_WALL_POSE_2.toPedro(state.mirror))
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setTranslationalConstraint(WALL_TRANSLATIONAL_CONSTRAINT)
+                .setHeadingConstraint(0.12)
 //                .setHeadingConstraint(0.5) // this is more than the amount we turn bc we won't actually be able to reach since it'll press into the wall
                 .build();
         return new SequentialCommandGroup(
