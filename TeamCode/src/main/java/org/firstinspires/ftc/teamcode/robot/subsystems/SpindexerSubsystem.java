@@ -48,6 +48,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_ACTIVE = 0.55;
     public static double SHOOTER_RAMP_DEACTIVE = 0.85;
 
+    public static double ARTIFACT_BLOCKER_OPEN = 0;
+    public static double ARTIFACT_BLOCKER_BLOCKING = 0;
+
     public static double MAX_POWER_SORTING_UNJAMMING = 0.65;
     public static double MAX_POWER_SORTING = 0.65;
     public boolean useMaxPower = false;
@@ -63,6 +66,12 @@ public class SpindexerSubsystem extends SubsystemBase {
         DEACTIVE
     }
     private RampState shooterRampPosition = RampState.DEACTIVE;
+
+    private enum ArtifactBlockerState {
+        BLOCKING,
+        OPENED
+    }
+    private ArtifactBlockerState artifactBlockerPosition = ArtifactBlockerState.BLOCKING;
 
     public double spindexerPower = 0.0;
 
@@ -210,6 +219,14 @@ public class SpindexerSubsystem extends SubsystemBase {
         shooterRampPosition = RampState.DEACTIVE;
     }
 
+    public void closeArtifactBlocker() {
+        artifactBlockerPosition = ArtifactBlockerState.BLOCKING;
+    }
+
+    public void openArtifactBlocker() {
+        artifactBlockerPosition = ArtifactBlockerState.OPENED;
+    }
+
     public BallColor[] getBallPositions() {
         return hardware.colorSensors.readBallColors();
     }
@@ -317,107 +334,6 @@ public class SpindexerSubsystem extends SubsystemBase {
     }
 
     /**
-     * <p>PLEASE DO NOT USE THIS WILLY NILLY!!!
-     * you gotta use the command because it only can do the senses when the balls get aligned</p>
-     *
-     * Newsort returns a boolean indicating whether or not the motif was detected.
-     * If it was detected, it returns true (99.99% of cases)
-//     * */
-//    public boolean newSort()
-//    {
-//        BallColor[] balls = getBallPositions();
-//        BallColor[] glyphArr;
-//        if(robot.camera.getRampCVEnabled())
-//        {
-//            glyphArr = robot.camera.getGlyphCharArray(
-//                    robot.camera.getIdealBallPattern()
-//            );
-//        }
-//        else
-//        {
-//            glyphArr = robot.camera.getGlyphCharArray();
-//        }
-//
-//        if (glyphArr == null) { return false; }
-//
-//        Log.d("SpindexerSubsystem", "sorting with the following balls: " + balls[0] + ","+balls[1]+","+balls[2]);
-//
-//        // todo: test if this works and isn't sus
-//        // we assume there are always 2 purples and 1 green, so even if one is none, we can infer what it is
-//        // if there's two purples and one none, we can infer the none is green
-//        // if there's one purple and one green, we can infer the none is purple
-//        if (inferMissingColorToSort && ArrayUtil.count(balls, BallColor.NONE) == 1) {
-//            if (ArrayUtil.count(balls, BallColor.PURPLE) == 2) {
-//                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
-//                balls[noneIndex] = BallColor.GREEN;
-//            } else if (ArrayUtil.count(balls, BallColor.PURPLE) == 1 &&
-//                    ArrayUtil.count(balls, BallColor.GREEN) == 1) {
-//                int noneIndex = ArrayUtil.indexOf(balls, BallColor.NONE);
-//                balls[noneIndex] = BallColor.PURPLE;
-//            }
-//        }
-//
-//        if (ArrayUtil.contains(balls, BallColor.NONE) ||
-//                !ArrayUtil.contains(balls, BallColor.GREEN) ||
-//                !ArrayUtil.contains(balls, BallColor.PURPLE))
-//        {
-//            Log.d("SpindexerSubsystem", "not enough balls to run logic");
-//            return true;
-//        }
-//
-//        if(ArrayUtil.count(balls, BallColor.GREEN) != 1)
-//        {
-//            Log.d("SpindexerSubsystem", "too many greens to run logic");
-//            return true;
-//        }
-//
-//        //# = ours-game
-//
-//        //OURS: PPG
-//        //GAME: GPP
-//        //+2 rotate forward
-//
-//        //OURS: PPG
-//        //GAME: PGP
-//        //+1 rotate backward
-//
-//        //OURS GPP
-//        //GAME: PGP
-//        //-1 rotate forward
-//
-//        //OURS GPP
-//        //GAME PPG
-//        //-2 rotate backward
-//
-//
-//        //rule
-//        //+2: rotate forward
-//        //+1 rotate backward
-//        //-1 rotate forward
-//        //-2 rotate backward
-//
-//        double rotateAmount = Math.toRadians(120);
-//
-//        switch(ArrayUtil.indexOf(balls, BallColor.GREEN) - ArrayUtil.indexOf(glyphArr, BallColor.GREEN))
-//        {
-//            case 0:
-//                this.rotate(READY_POSITION);
-//                break;
-//
-//            case 2:
-//            case -1:
-//                this.rotate(rotateAmount + SpindexerSubsystem.READY_POSITION);
-//                break;
-//
-//            case 1:
-//            case -2:
-//                this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
-//                break;
-//        }
-//        return true;
-//    }
-
-    /**
      * <p>Directly sets the angle of the spindexer.</p>
      * <p>This is deprecated, and only exists for the tuning files.
      * See {@link #goToAngle120(double)}, {@link #goToAngle360(double)}, and {@link #rotate(double)} for better alternatives.</p>
@@ -522,6 +438,7 @@ public class SpindexerSubsystem extends SubsystemBase {
             this.hardware.wallServoLeft.setPosition(isWallDown() ? INTAKE_WALL_LEFT_DOWN : INTAKE_WALL_LEFT_UP);
             this.hardware.wallServoRight.setPosition(isWallDown() ? INTAKE_WALL_RIGHT_DOWN : INTAKE_WALL_RIGHT_UP);
             this.hardware.transferRampServo.setPosition(shooterRampPosition.equals(RampState.ACTIVE) ? SHOOTER_RAMP_ACTIVE : SHOOTER_RAMP_DEACTIVE);
+            this.hardware.artifactBlockerServo.setPosition(artifactBlockerPosition.equals(ArtifactBlockerState.BLOCKING) ? ARTIFACT_BLOCKER_BLOCKING : ARTIFACT_BLOCKER_OPEN);
 
 
             if (telemetry) Robot.debugTelemetry.addData("Spindexer Power", clampedPower);

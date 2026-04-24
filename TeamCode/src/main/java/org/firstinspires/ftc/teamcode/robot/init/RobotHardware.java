@@ -67,6 +67,7 @@ public class RobotHardware {
     public TerrorServo intakeServoLeft;
     public TerrorServo intakeServoRight;
     public TerrorServo transferRampServo;
+    public TerrorServo artifactBlockerServo;
     public TerrorAnalogEncoder spindexerEncoder;
     public ColorSensorManager colorSensors;
 
@@ -195,7 +196,8 @@ public class RobotHardware {
         this.intakeServoLeft = new TerrorServo(hwMap, "intakeLeft");
         this.intakeServoRight = new TerrorServo(hwMap, "intakeRight");
         this.transferRampServo = new TerrorServo(hwMap, "ramp");
-        this.publisher.subscribe(10, wallServoLeft, wallServoRight, transferRampServo);
+        this.artifactBlockerServo = new TerrorServo(hwMap, "artifactBlocker");
+        this.publisher.subscribe(10, wallServoLeft, wallServoRight, transferRampServo, artifactBlockerServo);
         this.publisher.subscribe(10, intakeServoLeft, intakeServoRight);
 
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
