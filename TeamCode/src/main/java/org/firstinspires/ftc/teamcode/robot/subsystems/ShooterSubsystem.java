@@ -65,11 +65,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
-    public static double turretPosAt180 = 0.485; //pos pointed directly towards the back
-    public static double posChange90 = 0.275; //servo pos change that rotates turret 90 deg
+    public static double turretPosAt180 = 0.5295; //pos pointed directly towards the back
+    public static double posChange90 = 0.280; //servo pos change that rotates turret 90 deg
 //    public static double posChange90Left = 0.275; //servo pos change that rotates turret 90 deg
 //    public static double posChange90Right = 0.285; //servo pos change that rotates turret 90 deg
-    public static double turretServosDifference = 0.015; // we set the two servos to positions of +- 0.02 to reduce backlash by making them fight
+    public static double turretServosDifferenceSmall = 0.001; // we set the two servos to positions of +- 0.02 to reduce backlash by making them fight
+    public static double turretServosDifferenceLarge = 0.01;
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
@@ -568,6 +569,7 @@ public class ShooterSubsystem extends SubsystemBase {
             Robot.debugTelemetry.addData("Goal Turret Angle (deg)", Math.toDegrees(this.goalTurretAngle));
             double goalTurretPos = turretAngleToServoPos(this.goalTurretAngle) + this.turretOffset;
             this.turretInDeadzone = (goalTurretPos <= turretServoLowerBound) || (goalTurretPos >= turretServoUpperBound);
+            double turretServosDifference = (goalTurretPos < 0.3) ? turretServosDifferenceLarge : turretServosDifferenceSmall;
 
             boolean useDifferenceForBacklash = goalTurretPos + turretServosDifference <= turretServoUpperBound && goalTurretPos - turretServosDifference >= turretServoLowerBound;
             double difference = useDifferenceForBacklash ? turretServosDifference : 0;
