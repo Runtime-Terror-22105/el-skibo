@@ -30,6 +30,11 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
     }
 
     @Override
+    public boolean wantsCamera() {
+        return true;
+    }
+
+    @Override
     protected Command createAutoCommand(AutoBuildState state) {
         // TODO: REmove the following line!!!
         robot.camera.setGlyph(CameraSubsystem.GLYPH.PGP);
