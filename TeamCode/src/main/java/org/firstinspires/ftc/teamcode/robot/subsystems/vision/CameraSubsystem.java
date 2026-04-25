@@ -129,17 +129,17 @@ public class CameraSubsystem extends SubsystemBase {
     private void initCameras() {
         if (hardware.frontCamera != null) {
             Log.i("CameraSubsytem", "front camera built" );
-//            frontPortal = new VisionPortal.Builder()
-//                    .setCamera(hardware.frontCamera)
-//                    .setCameraResolution(new Size(320, 240))
-//                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-//                    .setLiveViewContainerId(visionPortalIDs[0])
-//                    .setAutoStartStreamOnBuild(false)
-//                    .setAutoStopLiveView(true)
-//                    .setShowStatsOverlay(true)
-//                    .addProcessor(this.ballPipeline)
-//                    .addProcessor(this.rampPipeline)
-//                    .build();
+            frontPortal = new VisionPortal.Builder()
+                    .setCamera(hardware.frontCamera)
+                    .setCameraResolution(new Size(320, 240))
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                    .setLiveViewContainerId(visionPortalIDs[0])
+                    .setAutoStartStreamOnBuild(false)
+                    .setAutoStopLiveView(true)
+                    .setShowStatsOverlay(true)
+                    .addProcessor(this.ballPipeline)
+                    .addProcessor(this.rampPipeline)
+                    .build();
 //            setCameraSettings();
         }
 
@@ -152,7 +152,7 @@ public class CameraSubsystem extends SubsystemBase {
                     // 640x480 is the best one that isn't super high resolution while still being very good, but 320x240 is most ideal for memory
                     // Btw MJPEG leads to like 10-15ms higher looptimes, likely because the compression takes a while
                     .setCameraResolution(new Size(320, 240))
-                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                     .setLiveViewContainerId(visionPortalIDs[1])
                     .setAutoStartStreamOnBuild(true)
                     .setAutoStopLiveView(true)

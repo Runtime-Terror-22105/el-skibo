@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
 import org.firstinspires.ftc.teamcode.robot.auto.KillTimerCommand;
 import org.firstinspires.ftc.teamcode.robot.auto.NearAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
+import org.firstinspires.ftc.teamcode.robot.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 public abstract class HorizontalSpam21 extends OneAutoToRuleThemAll {
@@ -29,6 +31,7 @@ public abstract class HorizontalSpam21 extends OneAutoToRuleThemAll {
     protected Command createAutoCommand(AutoBuildState state) {
         //robot.shooter.sotmOverride = false;
         return new SequentialCommandGroup(
+                new InstantCommand(() -> ShooterSubsystem.USE_SOTM_ACCEL=true),
                 NearAutoBuilder.shootPreload(state, ShootPathFlag.NEXT_HORIZ, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.intakeSpikeHorizontal(state, 1), NearAutoBuilder.shootSpike(state, 1, ShootPathFlag.NEXT_HORIZ, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.intakeSpikeHorizontal(state, 2), NearAutoBuilder.shootSpike(state, 2, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
@@ -36,6 +39,9 @@ public abstract class HorizontalSpam21 extends OneAutoToRuleThemAll {
                 NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LAST)
-        ).alongWith(new KillTimerCommand(robot));
+        ).alongWith(new SequentialCommandGroup(
+                new KillTimerCommand(robot),
+                new InstantCommand(() -> ShooterSubsystem.USE_SOTM_ACCEL=false)
+        ));
     }
 }
