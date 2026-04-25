@@ -17,8 +17,8 @@ public class HangSubsystem extends SubsystemBase {
 //    public static double HOLDING_POWER = 0.1;
 //    public static double FINAL_TOLERANCE = Math.toRadians(5);
 
-    public static double PTO_ENGAGE_POSITION = 0.6;
-    public static double PTO_DISENGAGE_POSITION = 0;
+    public static double PTO_ENGAGE_POSITION = 0;
+    public static double PTO_DISENGAGE_POSITION = 0.4;
 
     public static double PTO_INIT_POWER = -0.2;
     public static double PTO_RISE_POWER = -1;
@@ -59,13 +59,7 @@ public class HangSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
 
-        if(isPTOEngaged)
-        {
-            hardware.pto.setPosition(PTO_ENGAGE_POSITION);
-        }
-        else {
-            hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
-        }
+        hardware.pto.setPosition(isPTOEngaged ? PTO_ENGAGE_POSITION : PTO_DISENGAGE_POSITION);
 
         if(!robot.robotState.isHang() || !isPTOEngaged())
         {
