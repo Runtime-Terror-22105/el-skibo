@@ -47,7 +47,7 @@ public class AutoConstants {
     public static Pose2d PREPARE_INTAKE_2_CONTROL_FAR = new Pose2d(50, 44, Math.toRadians(180));
 
     public static Pose2d INTAKE_2_CONTROL_FAR = new Pose2d(20, 61, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(16, 67, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(19, 63, Math.toRadians(180));
 
 
 
@@ -68,7 +68,7 @@ public class AutoConstants {
     public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(12, 65);
     public static Pose2d AFTER_GATE = new Pose2d(10, 58.7, Math.toRadians(120));
 
-    public static Pose2d INTAKE_WALL_POSE = new Pose2d(17, 9, Math.toRadians(180));
+    public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 9, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(17, 8, Math.toRadians(195)); // rotate into the balls a bit to avoid jams
     public static Pose2d INTAKE_WALL_VISION_POSE = new Pose2d(13, 8, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_CONTROL_POSE = new Pose2d(20, 14, Math.toRadians(180));
