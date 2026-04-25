@@ -31,17 +31,17 @@ public abstract class HorizontalSpam21 extends OneAutoToRuleThemAll {
     protected Command createAutoCommand(AutoBuildState state) {
         //robot.shooter.sotmOverride = false;
         return new SequentialCommandGroup(
-                new InstantCommand(() -> ShooterSubsystem.USE_SOTM_ACCEL=true),
+                new InstantCommand(() -> ShooterSubsystem.USE_SOTM=false),
+                new InstantCommand(() -> ShooterSubsystem.USE_SOTM_ACCEL=false),
                 NearAutoBuilder.shootPreload(state, ShootPathFlag.NEXT_HORIZ, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.intakeSpikeHorizontal(state, 1), NearAutoBuilder.shootSpike(state, 1, ShootPathFlag.NEXT_HORIZ, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.intakeSpikeHorizontal(state, 2), NearAutoBuilder.shootSpike(state, 2, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LAST)
+                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT)
+//                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LAST)
         ).alongWith(new SequentialCommandGroup(
-                new KillTimerCommand(robot),
-                new InstantCommand(() -> ShooterSubsystem.USE_SOTM_ACCEL=false)
+                new KillTimerCommand(robot)
         ));
     }
 }

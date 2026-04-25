@@ -28,11 +28,11 @@ public class AutoConstants {
     public static Pose2d SHOOT_SORTED_POSE_1 = new Pose2d(SHOOT_SORTED_POSE_2.x, SHOOT_SORTED_POSE_2.y, Math.toRadians(235));
 
     public static Pose2d INTAKE_1_BEFORE_HORIZ_CONTROL = new Pose2d(24, 111, 0);
-    public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(25.67, 97, Math.toRadians(263));
+    public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(26, 97, Math.toRadians(263));
     public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 82, Math.toRadians(263));
-    public static Pose2d INTAKE_2_BEFORE_HORIZ_POSE = new Pose2d(25.67, 78, Math.toRadians(263));
+    public static Pose2d INTAKE_2_BEFORE_HORIZ_POSE = new Pose2d(26, 78, Math.toRadians(263));
     public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 63, Math.toRadians(263));
-    public static Pose2d INTAKE_3_BEFORE_HORIZ_POSE = new Pose2d(25.67, 54, Math.toRadians(263));
+    public static Pose2d INTAKE_3_BEFORE_HORIZ_POSE = new Pose2d(26, 54, Math.toRadians(263));
     public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 34, Math.toRadians(263));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
@@ -64,7 +64,7 @@ public class AutoConstants {
     public static Pose2d PUSH_GATE_POSE = new Pose2d(18.5, 70, Math.toRadians(180));
 
     // For CYCLING gate.
-    public static Pose2d GATE_CONTROL_POSE = new Pose2d(58, 68.5, Math.toRadians(180));
+    public static Pose2d GATE_CONTROL_POSE = new Pose2d(40, 65);
     public static Pose2d HITTING_GATE = new Pose2d(18, 71, Math.toRadians(180));
     public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(12, 65);
     public static Pose2d AFTER_GATE = new Pose2d(10, 58.7, Math.toRadians(120));
@@ -93,7 +93,7 @@ public class AutoConstants {
     public static int WALL_INTAKE_DELAY = 200;
     public static int PRELOAD_PRE_SHOOT_DELAY = 0;
     public static int PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT = 2000;
-    public static int PRE_SHOOT_DELAY = 0;
+    public static int PRE_SHOOT_DELAY = 670;
     public static int SHOOT_DELAY = 0;
     public static int INTAKE_SPINDEX_TIMEOUT_HORIZ = 500;
     public static int INTAKE_TIMEOUT_HORIZ = 200;
