@@ -22,6 +22,11 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
     public StartConfig getStartConfig() {
         return StartConfig.FAR_SORTED;
     }
+//
+//    @Override
+//    public void preInit() {
+//        CommandScheduler.getInstance().schedule(new SetCameraStreamingCommand(robot.camera, false, true));
+//    }
 
     @Override
     public boolean wantsAutoSort() {
@@ -30,7 +35,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
 
     @Override
     public boolean wantsCamera() {
-        return true;
+        return false;
     }
 
     @Override
@@ -42,6 +47,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
                 new InstantCommand(() -> {robot.camera.setAprilTagsEnabled(true);
                 robot.camera.setGlyphScanningEnabled(true);}),
                 FarAutoBuilder.shootPreload(state, ShootPathFlag.SOTM, ShootPathFlag.EARLY_LEAVE),
+//                new SetCameraStreamingCommand(robot.camera, true, false),
 
                 // we shoot at a different spot that goes better into the 2nd spike mark
                 FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.FORWARD_FACING_SHOOT_SPOT),

@@ -49,7 +49,6 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeUpCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
-import org.firstinspires.ftc.teamcode.robot.command.vision.WaitForGlyphCommand;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
@@ -66,11 +65,12 @@ public final class FarAutoBuilder {
                 .build();
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-//                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
-                        new TurnCommand(state.robot.follower, Math.PI/2, state.mirror),
+                        new SequentialCommandGroup(
+//                                new WaitForGlyphCommand(state.robot.camera).withTimeout(WAIT_TIMEOUT_MOTIF),
+                                new TurnCommand(state.robot.follower, Math.PI/2, state.mirror).withTimeout(100)
+                        ),
                         new SequentialCommandGroup(
                                 new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
-                                new WaitForGlyphCommand(state.robot.camera).withTimeout(5000),
                                 new WaitCommand(250)
                         )
                 ),

@@ -82,6 +82,9 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
     // Optional overrides:
 
+    protected void preInit() {
+    }
+
     // Called every init loop iteration
     protected void initLoop() {
     }
@@ -139,6 +142,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         sleep(200L);
 
         robot.shooter.isAutoHoodOn = true;
+        preInit();
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {
                 hub.clearBulkCache();

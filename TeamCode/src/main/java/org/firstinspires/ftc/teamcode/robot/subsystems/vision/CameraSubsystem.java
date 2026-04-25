@@ -129,17 +129,17 @@ public class CameraSubsystem extends SubsystemBase {
     private void initCameras() {
         if (hardware.frontCamera != null) {
             Log.i("CameraSubsytem", "front camera built" );
-            frontPortal = new VisionPortal.Builder()
-                    .setCamera(hardware.frontCamera)
-                    .setCameraResolution(new Size(320, 240))
-                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                    .setLiveViewContainerId(visionPortalIDs[0])
-                    .setAutoStartStreamOnBuild(false)
-                    .setAutoStopLiveView(true)
-                    .setShowStatsOverlay(true)
-                    .addProcessor(this.ballPipeline)
-                    .addProcessor(this.rampPipeline)
-                    .build();
+//            frontPortal = new VisionPortal.Builder()
+//                    .setCamera(hardware.frontCamera)
+//                    .setCameraResolution(new Size(320, 240))
+//                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+//                    .setLiveViewContainerId(visionPortalIDs[0])
+//                    .setAutoStartStreamOnBuild(false)
+//                    .setAutoStopLiveView(true)
+//                    .setShowStatsOverlay(true)
+//                    .addProcessor(this.ballPipeline)
+//                    .addProcessor(this.rampPipeline)
+//                    .build();
 //            setCameraSettings();
         }
 
@@ -154,7 +154,7 @@ public class CameraSubsystem extends SubsystemBase {
                     .setCameraResolution(new Size(320, 240))
                     .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                     .setLiveViewContainerId(visionPortalIDs[1])
-                    .setAutoStartStreamOnBuild(false)
+                    .setAutoStartStreamOnBuild(true)
                     .setAutoStopLiveView(true)
                     .setShowStatsOverlay(true)
                     .addProcessor(tagProcessor)
@@ -174,10 +174,14 @@ public class CameraSubsystem extends SubsystemBase {
     public void setFrontCameraStreamEnabled(boolean enabled) {
         if (frontPortal == null) return;
 
-        if (enabled) {
-            frontPortal.resumeStreaming();
-        } else {
-            frontPortal.stopStreaming();
+        try {
+            if (enabled) {
+                frontPortal.resumeStreaming();
+            } else {
+                frontPortal.stopStreaming();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting front camera stream enabled: " + e.getMessage());
         }
     }
 
@@ -193,10 +197,14 @@ public class CameraSubsystem extends SubsystemBase {
     public void setBackCameraStreamEnabled(boolean enabled) {
         if (backPortal == null) return;
 
-        if (enabled) {
-            backPortal.resumeStreaming();
-        } else {
-            backPortal.stopStreaming();
+        try {
+            if (enabled) {
+                backPortal.resumeStreaming();
+            } else {
+                backPortal.stopStreaming();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting back camera stream enabled: " + e.getMessage());
         }
     }
 
@@ -287,19 +295,15 @@ public class CameraSubsystem extends SubsystemBase {
                 this.lastBallsSeen = this.ballsSeen;
             }
 
-        }
-
-
-
-        // ensures camera settings are set in case they weren't already
-//        setCameraSettings();
-
-        try {
-            // todo: move this stuff to setcamerasettings and only call it when we need to change settings, not every frame
-            frontPortal.getCameraControl(ExposureControl.class).setMode(ExposureControl.Mode.Auto);
-            frontPortal.getCameraControl(WhiteBalanceControl.class).setMode(WhiteBalanceControl.Mode.AUTO);
-        } catch (Exception e) {
-            //Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
+            // ensures camera settings are set in case they weren't already
+//            setCameraSettings();
+            try {
+                // todo: move this stuff to setcamerasettings and only call it when we need to change settings, not every frame
+                frontPortal.getCameraControl(ExposureControl.class).setMode(ExposureControl.Mode.Auto);
+                frontPortal.getCameraControl(WhiteBalanceControl.class).setMode(WhiteBalanceControl.Mode.AUTO);
+            } catch (Exception e) {
+                //Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
+            }
         }
 
         if (backPortal == null || tagProcessor == null || !backPortal.getProcessorEnabled(tagProcessor)) return;

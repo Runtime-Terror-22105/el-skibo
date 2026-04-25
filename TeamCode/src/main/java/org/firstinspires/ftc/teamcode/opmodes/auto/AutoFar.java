@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
 import org.firstinspires.ftc.teamcode.robot.auto.FarAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.KillTimerCommand;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
+import org.firstinspires.ftc.teamcode.robot.command.vision.SetCameraStreamingCommand;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 public abstract class AutoFar extends OneAutoToRuleThemAll {
@@ -18,6 +20,11 @@ public abstract class AutoFar extends OneAutoToRuleThemAll {
     @Override
     public StartConfig getStartConfig() {
         return StartConfig.FAR;
+    }
+
+    @Override
+    public void preInit() {
+        CommandScheduler.getInstance().schedule(new SetCameraStreamingCommand(robot.camera, true, false));
     }
 
     @Override

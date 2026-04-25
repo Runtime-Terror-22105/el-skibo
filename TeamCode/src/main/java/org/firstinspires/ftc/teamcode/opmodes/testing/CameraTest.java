@@ -21,8 +21,8 @@ public class CameraTest extends LinearOpMode {
     public static boolean isBlue = false;
     public static boolean isInNearAuto = false;
 
-    public static volatile boolean streamFrontCamera = false;
-    public static volatile boolean streamBackCamera = true;
+//    public static volatile boolean streamFrontCamera = false;
+//    public static volatile boolean streamBackCamera = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -39,26 +39,26 @@ public class CameraTest extends LinearOpMode {
 //        }
 
 //        robot.camera.setBallPipelineEnabled(true);
-        robot.camera.setAprilTagsEnabled(true);
+//        robot.camera.setAprilTagsEnabled(false);
         waitForStart();
 
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
         // both are initially disabled, so we want to start streaming immediately
-        boolean streamFrontCameraLast = false;
-        boolean streamBackCameraLast = false;
+//        boolean streamFrontCameraLast = true;
+//        boolean streamBackCameraLast = true;
         while (opModeIsActive())
         {
-            // only update the camera streaming state if it has changed, since changing the streaming state is expensive and can cause frame drops
-            if (streamFrontCamera != streamFrontCameraLast) {
-                robot.camera.setFrontCameraStreamEnabled(streamFrontCamera);
-                streamFrontCameraLast = streamFrontCamera;
-            }
-            if (streamBackCamera != streamBackCameraLast) {
-                robot.camera.setBackCameraStreamEnabled(streamBackCamera);
-                streamBackCameraLast = streamBackCamera;
-            }
+//            // only update the camera streaming state if it has changed, since changing the streaming state is expensive and can cause frame drops
+//            if (streamFrontCamera != streamFrontCameraLast) {
+//                robot.camera.setFrontCameraStreamEnabled(streamFrontCamera);
+//                streamFrontCameraLast = streamFrontCamera;
+//            }
+//            if (streamBackCamera != streamBackCameraLast) {
+//                robot.camera.setBackCameraStreamEnabled(streamBackCamera);
+//                streamBackCameraLast = streamBackCamera;
+//            }
 
             CommandScheduler.getInstance().run();
             robot.telemetry.addData("seenglyph",robot.camera.getGlyph());
@@ -66,9 +66,6 @@ public class CameraTest extends LinearOpMode {
             timer.reset();
             robot.telemetry.update();
         }
-
-        // give the camera some time to update its state before closing it, otherwise it will cause a crash :(
-        sleep(100);
 
         robot.close();
 

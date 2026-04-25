@@ -11,19 +11,19 @@ public class SetCameraStreamingCommand extends InstantCommand {
     }
 
     public SetCameraStreamingCommand(CameraSubsystem camera, boolean frontCamera, boolean backCamera) {
-        super(() -> {
-            camera.setFrontCameraStreamEnabled(frontCamera);
-            camera.setBackCameraStreamEnabled(backCamera);
-        });
+//        super(() -> {
+//            camera.setFrontCameraStreamEnabled(frontCamera);
+//            camera.setBackCameraStreamEnabled(backCamera);
+//        });
     }
 
     public SetCameraStreamingCommand(CameraSubsystem camera, CameraType cameraType, boolean enabled) {
-        super(() -> {
-            if (cameraType == CameraType.FRONT) {
-                camera.setFrontCameraStreamEnabled(enabled);
-            } else {
-                camera.setBackCameraStreamEnabled(enabled);
-            }
-        });
+//        super(() -> {
+//            if (cameraType == CameraType.FRONT) {
+//                camera.setFrontCameraStreamEnabled(enabled);
+//            } else {
+//                camera.setBackCameraStreamEnabled(enabled);
+//            }
+//        });
     }
 }
