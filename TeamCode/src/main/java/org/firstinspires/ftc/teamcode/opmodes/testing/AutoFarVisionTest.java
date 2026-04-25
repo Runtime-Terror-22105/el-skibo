@@ -30,7 +30,7 @@ public class AutoFarVisionTest extends OneAutoToRuleThemAll {
 
 
     @Override
-    public boolean wantsBallCv() {
+    public boolean wantsCamera() {
         return true;
     }
 

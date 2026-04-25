@@ -70,7 +70,11 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
     public abstract boolean wantsAutoSort();
 
-    public boolean wantsBallCv() {
+    public boolean wantsCamera() {
+        return false;
+    }
+
+    public boolean wantsAtagCv() {
         return false;
     }
 
@@ -88,7 +92,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
 
     public void runOpMode() {
         Profiler.init();
-        if (wantsAutoSort() || wantsBallCv()) {
+        if (wantsAutoSort() || wantsCamera()) {
             Log.d("OneAutoToRuleThemAll", "Enabling camera in init due to auto sort or ball CV");
             hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
         } else {

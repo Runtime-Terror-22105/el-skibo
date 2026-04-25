@@ -33,6 +33,6 @@
             <goBILDAPinpoint name="pinpoint" port="1" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
-    <Webcam name="Back Webcam" serialNumber="UC762" />
+    <Webcam name="Back Webcam" serialNumber="2022051301" />
     <Webcam name="Front Webcam" serialNumber="VendorProduct:vendor=0x1e45|product=0x8022|connection=" />
 </Robot>
