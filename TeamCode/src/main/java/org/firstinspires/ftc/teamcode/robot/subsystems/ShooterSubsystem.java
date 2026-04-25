@@ -521,8 +521,8 @@ public class ShooterSubsystem extends SubsystemBase {
                 hardware.shooterLeft.setPower(0);
                 hardware.shooterRight.setPower(0);
                 double turretYaw = turretAngleToServoPos(Math.toRadians(180.0)) + this.turretOffset;
-                hardware.turretYawLeft.setPosition(turretYaw);
-                hardware.turretYawRight.setPosition(turretYaw);
+//                hardware.turretYawLeft.setPosition(turretYaw);
+//                hardware.turretYawRight.setPosition(turretYaw);
                 return;
             }
 

@@ -45,8 +45,8 @@ public class RobotHardware {
     public TerrorMotorNormal motorRearLeft;
 
     // Turret
-    public TerrorServo turretYawLeft;  // rotates the turret yaw
-    public TerrorServo turretYawRight; // rotates the turret yaw
+//    public TerrorServo turretYawLeft;  // rotates the turret yaw
+//    public TerrorServo turretYawRight; // rotates the turret yaw
 
 
     // gobuilda pwm lights
@@ -138,11 +138,11 @@ public class RobotHardware {
         this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
 
         // Initialize the turret
-        this.turretYawLeft = new TerrorServo(hwMap, "turretLeft", 0.0025);
-        this.turretYawRight = new TerrorServo(hwMap, "turretRight", 0.0025);
-        this.turretYawLeft.setPwmRange(500, 2500);
-        this.turretYawRight.setPwmRange(500, 2500);
-        this.publisher.subscribe(5, turretYawLeft, turretYawRight);
+//        this.turretYawLeft = new TerrorServo(hwMap, "turretLeft", 0.0025);
+//        this.turretYawRight = new TerrorServo(hwMap, "turretRight", 0.0025);
+//        this.turretYawLeft.setPwmRange(500, 2500);
+//        this.turretYawRight.setPwmRange(500, 2500);
+//        this.publisher.subscribe(5, turretYawLeft, turretYawRight);
 
 
         // Initialize the shooter
