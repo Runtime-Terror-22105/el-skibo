@@ -32,7 +32,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuildState state) {
         // TODO: REmove the following line!!!
-        robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
+        robot.camera.setGlyph(CameraSubsystem.GLYPH.PGP);
 
         return new SequentialCommandGroup(
                 new InstantCommand(() -> {robot.camera.setAprilTagsEnabled(true);

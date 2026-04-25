@@ -20,6 +20,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 120, Math.toRadians(-124.7));
     public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 10.5, Math.toRadians(180));
+    public static Pose2d AUTO_FAR_ROTATED_POSE = new Pose2d(48, 8, Math.toRadians(180));
     public static Pose2d SHOOT_FAR_POSE_FORWARD_FACING = new Pose2d(48, 8, Math.toRadians(165));
 //    public static Pose2d SHOOT_FAR_POSE_FORWARD_FACING = SHOOT_FAR_POSE;
     public static Pose2d SHOOT_SORTED_POSE_2 = new Pose2d(54, 80, Math.toRadians(-124.7));
@@ -47,7 +48,7 @@ public class AutoConstants {
     public static Pose2d PREPARE_INTAKE_2_CONTROL_FAR = new Pose2d(50, 44, Math.toRadians(180));
 
     public static Pose2d INTAKE_2_CONTROL_FAR = new Pose2d(20, 61, Math.toRadians(180));
-    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(16, 67, Math.toRadians(180));
+    public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(16, 61, Math.toRadians(180));
 
 
 
@@ -68,7 +69,7 @@ public class AutoConstants {
     public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(12, 65);
     public static Pose2d AFTER_GATE = new Pose2d(10, 58.7, Math.toRadians(120));
 
-    public static Pose2d INTAKE_WALL_POSE = new Pose2d(17, 9, Math.toRadians(180));
+    public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 9, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(17, 8, Math.toRadians(195)); // rotate into the balls a bit to avoid jams
     public static Pose2d INTAKE_WALL_VISION_POSE = new Pose2d(13, 8, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_CONTROL_POSE = new Pose2d(20, 14, Math.toRadians(180));
@@ -87,7 +88,7 @@ public class AutoConstants {
     public static Pose2d END_POSE_LONG_INTAKE = new Pose2d(12, 40, Math.toRadians(120));
 
     public static int WAIT_TIMEOUT_MOTIF = 5000;
-    public static int INTAKE_DELAY = 100;
+    public static int INTAKE_DELAY = 300;
     public static int GATE_INTAKE_DELAY = 600;
     public static int WALL_INTAKE_DELAY = 200;
     public static int PRELOAD_PRE_SHOOT_DELAY = 0;

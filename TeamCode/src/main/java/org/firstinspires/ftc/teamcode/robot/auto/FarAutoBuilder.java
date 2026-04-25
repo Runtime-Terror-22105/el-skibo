@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AUTO_FAR_ROTATED_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
@@ -38,6 +39,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
+import com.seattlesolvers.solverslib.pedroCommand.TurnCommand;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.pedroPathing.FixedHeadingInterpolator;
@@ -59,11 +61,12 @@ public final class FarAutoBuilder {
 
     public static Command shootPreload(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-//        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_PRELOAD_FAR_POSE, state.mirror, false, false)
-//                .build();
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, AUTO_FAR_ROTATED_POSE, state.mirror, false, false)
+                .build();
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
 //                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
+                        new TurnCommand(state.robot.follower, Math.PI/2, state.mirror),
                         new SequentialCommandGroup(
                                 new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
                                 new WaitCommand(250)
@@ -92,19 +95,6 @@ public final class FarAutoBuilder {
 
     public static Command intakeSpike2AndPushGate(AutoBuildState state) {
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, PREPARE_INTAKE_2_CONTROL_FAR, PREPARE_INTAKE_2_POSE_FAR, state.mirror, true, false)
-//                .setHeadingInterpolation(
-//                        HeadingInterpolator.piecewise(
-//                                new HeadingInterpolator.PiecewiseNode(0, 0.7,
-//                                        HeadingInterpolator.linear(
-//                                                SHOOT_FAR_POSE_FORWARD_FACING.mirror(state.mirror).heading,
-//                                                PREPARE_INTAKE_2_POSE_FAR.mirror(state.mirror).heading
-//                                        )
-//                                ),
-//                                new HeadingInterpolator.PiecewiseNode(0.7, 1.0,
-//                                        HeadingInterpolator.constant(PREPARE_INTAKE_2_POSE_FAR.mirror(state.mirror).heading)
-//                                )
-//                        )
-//                )
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
@@ -121,7 +111,7 @@ public final class FarAutoBuilder {
 
     public static Command intakeSpike2(AutoBuildState state) {
         state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, INTAKE_2_CONTROL_FAR, INTAKE_2_POSE_FAR, state.mirror, false, false)
-                .setConstantHeadingInterpolation(Math.toRadians(20))
+                .setConstantHeadingInterpolation(state.mirror ? Math.toRadians(20) : Math.toRadians(160))
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new FollowPathCommand(state.robot.follower, state.lastPath, false, MAX_DRIVETRAIN_POWER_INTAKING);

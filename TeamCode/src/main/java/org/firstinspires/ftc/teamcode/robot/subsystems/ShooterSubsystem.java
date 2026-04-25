@@ -80,8 +80,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // No angle limit for turret, but we have servo positions limits
     public static double turretLowerBound = Math.toRadians(0);
     public static double turretUpperBound = Math.toRadians(360);
-    public static double turretServoLowerBound = 0.03;
-    public static double turretServoUpperBound = 0.97;
+    public static double turretServoLowerBound = 0.0;
+    public static double turretServoUpperBound = 1;
 
     // hood limits
     public static double hoodPosMax = 0.8; //maximum position the servo can go to
@@ -573,8 +573,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
             boolean useDifferenceForBacklash = goalTurretPos + turretServosDifference <= turretServoUpperBound && goalTurretPos - turretServosDifference >= turretServoLowerBound;
             double difference = useDifferenceForBacklash ? turretServosDifference : 0;
-//            hardware.turretYawLeft.setPosition(goalTurretPos + difference);
-//            hardware.turretYawRight.setPosition(goalTurretPos - difference);
+            hardware.turretYawLeft.setPosition(goalTurretPos + difference);
+            hardware.turretYawRight.setPosition(goalTurretPos - difference);
             Profiler.pop();
 
             if (debug) Log.d("ShooterSubsystem", "goal hood angle" + this.goalPitch);
