@@ -79,6 +79,7 @@ public class AutoConstants {
     public static Pose2d VISION_POSE = new Pose2d(42, 18, Math.toRadians(180));
 
     public static long FAR_BALL_CV_DETECTION_TIMEOUT = 3500;
+    public static long RAMP_CV_TIMEOUT = 100;
     public static long WALL_TRANSLATIONAL_CONSTRAINT = 10;
 
     public static Pose2d CONTROL_POSE_LONG_INTAKE = new Pose2d(17, 18, Math.toRadians(120));
