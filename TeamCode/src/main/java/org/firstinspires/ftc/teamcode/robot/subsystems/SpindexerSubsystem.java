@@ -318,6 +318,7 @@ public class SpindexerSubsystem extends SubsystemBase {
                 this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
          */
 
+        Log.i("balls seen", ""+robot.camera.getBallsSeen());
         if (result.equals(ccw))
         {
             this.rotate(-rotateAmount + SpindexerSubsystem.READY_POSITION);
