@@ -49,6 +49,8 @@ public class AutoConstants {
     public static Pose2d INTAKE_2_CONTROL_FAR = new Pose2d(20, 61, Math.toRadians(180));
     public static Pose2d INTAKE_2_POSE_FAR = new Pose2d(16, 67, Math.toRadians(180));
 
+    public static Pose2d THROWAWAY = new Pose2d(48,8,Math.toRadians(180));
+
 
 
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));

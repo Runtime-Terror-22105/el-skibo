@@ -23,6 +23,7 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PREPARE_IN
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RELAXED_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_FAR_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.START_POSE_LONG_INTAKE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.THROWAWAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.WALL_TRANSLATIONAL_CONSTRAINT;
 
@@ -48,6 +49,7 @@ import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeUpCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.WaitForFlywheelCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.StopScanningForGlyphsCommand;
+import org.firstinspires.ftc.teamcode.robot.command.vision.WaitForGlyphCommand;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
@@ -60,13 +62,14 @@ public final class FarAutoBuilder {
 
     public static Command shootPreload(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
-//        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, SHOOT_PRELOAD_FAR_POSE, state.mirror, false, false)
-//                .build();
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, THROWAWAY, state.mirror, false, false)
+                .build();
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-//                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
+                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
                         new SequentialCommandGroup(
                                 new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
+                                new WaitForGlyphCommand(state.robot.camera).withTimeout(AutoConstants.WAIT_TIMEOUT_MOTIF),
                                 new WaitCommand(250)
                         )
                 ),
