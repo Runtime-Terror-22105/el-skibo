@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.testing;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,6 +20,9 @@ public class CameraTest extends LinearOpMode {
 
     public static boolean isBlue = false;
     public static boolean isInNearAuto = false;
+
+    public static volatile boolean streamFrontCamera = false;
+    public static volatile boolean streamBackCamera = true;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -41,6 +46,9 @@ public class CameraTest extends LinearOpMode {
         timer.reset();
         while (opModeIsActive())
         {
+            robot.camera.setFrontCameraStreamEnabled(streamFrontCamera);
+            robot.camera.setBackCameraStreamEnabled(streamBackCamera);
+
             CommandScheduler.getInstance().run();
             robot.telemetry.addData("seenglyph",robot.camera.getGlyph());
             robot.telemetry.addData("loop times", timer.milliseconds());
@@ -48,6 +56,11 @@ public class CameraTest extends LinearOpMode {
             robot.telemetry.update();
         }
 
+        // give the camera some time to update its state before closing it, otherwise it will cause a crash :(
+        sleep(100);
+
         robot.close();
+
+        Log.d("CameraTest", "OpMode finished, camera closed");
     }
 }

@@ -132,7 +132,7 @@ public class CameraSubsystem extends SubsystemBase {
             frontPortal = new VisionPortal.Builder()
                     .setCamera(hardware.frontCamera)
                     .setCameraResolution(new Size(320, 240))
-                    //.setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                     .setLiveViewContainerId(visionPortalIDs[0])
                     .setAutoStartStreamOnBuild(true)
                     .setAutoStopLiveView(true)
@@ -149,14 +149,54 @@ public class CameraSubsystem extends SubsystemBase {
                     .setCamera(hardware.backCamera)
                     // Logs say: Supported resolutions for MJPEG are: [1600x1200 @ 25FPS], [3264x2448 @ 15FPS], [2592x1944 @ 15FPS], [2048x1536 @ 15FPS], [1920x1080 @ 25FPS], [1280x960 @ 25FPS], [1280x720 @ 25FPS], [1024x768 @ 25FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
                     // Logs say: Supported resolutions for YUY2 are: [1920x1080 @ 5FPS], [3264x2448 @ 1FPS], [2592x1944 @ 2FPS], [2048x1536 @ 3FPS], [1600x1200 @ 5FPS], [1280x960 @ 5FPS], [1280x720 @ 10FPS], [1024x768 @ 10FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
-                    .setCameraResolution(new Size(640, 480))
-                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                    // 640x480 is the best one that isn't super high resolution while still being very good, but 320x240 is most ideal for memory
+                    // Btw MJPEG leads to like 10-15ms higher looptimes, likely because the compression takes a while
+                    .setCameraResolution(new Size(320, 240))
+                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                     .setLiveViewContainerId(visionPortalIDs[1])
                     .setAutoStartStreamOnBuild(true)
-                    .setAutoStopLiveView(true)
+                    .setAutoStopLiveView(false)
                     .setShowStatsOverlay(true)
                     .addProcessor(tagProcessor)
                     .build();
+        }
+    }
+
+    /**
+     * <p>Note: The stream being enabled/disabled is distinct from whether or not it shows
+     * up in the Live View on the driver station.</p>
+     * <p></p>
+     * <p>Disabling live view merely ensures it won't be shown to us, but the stream will still be
+     * running and can be processed by our CV pipelines. This is useful for saving CPU resources
+     * if we only want to use the camera for processing and not for streaming to the driver station.</p>
+     * @param enabled Whether or not the front camera stream should be enabled
+     */
+    public void setFrontCameraStreamEnabled(boolean enabled) {
+        if (frontPortal == null) return;
+
+        if (enabled) {
+            frontPortal.resumeStreaming();
+        } else {
+            frontPortal.stopStreaming();
+        }
+    }
+
+    /**
+     * <p>Note: The stream being enabled/disabled is distinct from whether or not it shows
+     * up in the Live View on the driver station.</p>
+     * <p></p>
+     * <p>Disabling live view merely ensures it won't be shown to us, but the stream will still be
+     * running and can be processed by our CV pipelines. This is useful for saving CPU resources
+     * if we only want to use the camera for processing and not for streaming to the driver station.</p>
+     * @param enabled Whether or not the back camera stream should be enabled
+     */
+    public void setBackCameraStreamEnabled(boolean enabled) {
+        if (backPortal == null) return;
+
+        if (enabled) {
+            backPortal.resumeStreaming();
+        } else {
+            backPortal.stopStreaming();
         }
     }
 
