@@ -38,8 +38,8 @@ public abstract class HorizontalSpam21 extends OneAutoToRuleThemAll {
                 NearAutoBuilder.intakeSpikeHorizontal(state, 2), NearAutoBuilder.shootSpike(state, 2, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
                 NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT)
-//                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LAST)
+//                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT),
+                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.LAST)
         ).alongWith(new SequentialCommandGroup(
                 new KillTimerCommand(robot)
         ));

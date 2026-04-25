@@ -16,7 +16,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_PRELOAD_FAR_POSE = new Pose2d(48, 8, Math.toRadians(180));
     public static Pose2d SHOOT_PRELOAD_FAR_POSE_ALT = new Pose2d(48, 10, Math.toRadians(125));
     public static Pose2d SHOOT_PRELOAD_HORIZ_POSE = new Pose2d(24, 115, Math.toRadians(225));
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(53, 98, Math.toRadians(-124.7));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(43, 88, Math.toRadians(-124.7));
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(50, 120, Math.toRadians(-124.7));
     public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 10.5, Math.toRadians(180));
@@ -28,11 +28,11 @@ public class AutoConstants {
     public static Pose2d SHOOT_SORTED_POSE_1 = new Pose2d(SHOOT_SORTED_POSE_2.x, SHOOT_SORTED_POSE_2.y, Math.toRadians(235));
 
     public static Pose2d INTAKE_1_BEFORE_HORIZ_CONTROL = new Pose2d(24, 111, 0);
-    public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(26, 97, Math.toRadians(263));
+    public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(24, 97, Math.toRadians(263));
     public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 82, Math.toRadians(263));
-    public static Pose2d INTAKE_2_BEFORE_HORIZ_POSE = new Pose2d(26, 78, Math.toRadians(263));
+    public static Pose2d INTAKE_2_BEFORE_HORIZ_POSE = new Pose2d(24, 78, Math.toRadians(263));
     public static Pose2d INTAKE_2_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 63, Math.toRadians(263));
-    public static Pose2d INTAKE_3_BEFORE_HORIZ_POSE = new Pose2d(26, 54, Math.toRadians(263));
+    public static Pose2d INTAKE_3_BEFORE_HORIZ_POSE = new Pose2d(24, 54, Math.toRadians(263));
     public static Pose2d INTAKE_3_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 34, Math.toRadians(263));
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
@@ -64,10 +64,10 @@ public class AutoConstants {
     public static Pose2d PUSH_GATE_POSE = new Pose2d(18.5, 70, Math.toRadians(180));
 
     // For CYCLING gate.
-    public static Pose2d GATE_CONTROL_POSE = new Pose2d(40, 65);
-    public static Pose2d HITTING_GATE = new Pose2d(18, 71, Math.toRadians(180));
+    public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 68.5);
+    public static Pose2d HITTING_GATE = new Pose2d(18, 68, Math.toRadians(180));
     public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(12, 65);
-    public static Pose2d AFTER_GATE = new Pose2d(10, 58.7, Math.toRadians(120));
+    public static Pose2d AFTER_GATE = new Pose2d(8, 60.2, Math.toRadians(120));
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 9, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(17, 8, Math.toRadians(195)); // rotate into the balls a bit to avoid jams

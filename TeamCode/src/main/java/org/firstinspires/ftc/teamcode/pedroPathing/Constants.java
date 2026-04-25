@@ -46,8 +46,8 @@ public class Constants {
 //            .forwardPodY(-5.465)
 //            .strafePodX(1.812)
             // ones below were measured physically, the ones above were obtained from pedro's offset tuner
-            .forwardPodY(1.87)
-            .strafePodX(-7.6)
+            .forwardPodY(1.89)
+            .strafePodX(-6.74)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
