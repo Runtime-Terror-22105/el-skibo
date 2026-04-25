@@ -135,7 +135,7 @@ public class CameraSubsystem extends SubsystemBase {
                     //.setStreamFormat(VisionPortal.StreamFormat.YUY2)
                     .setLiveViewContainerId(visionPortalIDs[0])
                     .setAutoStartStreamOnBuild(true)
-                    .setAutoStopLiveView(false)
+                    .setAutoStopLiveView(true)
                     .setShowStatsOverlay(true)
                     .addProcessor(this.ballPipeline)
                     .addProcessor(this.rampPipeline)
@@ -147,11 +147,13 @@ public class CameraSubsystem extends SubsystemBase {
             Log.i("CameraSubsytem", "back camera built" );
             backPortal = new VisionPortal.Builder()
                     .setCamera(hardware.backCamera)
-                    .setCameraResolution(new Size(1280, 800))
+                    // Logs say: Supported resolutions for MJPEG are: [1600x1200 @ 25FPS], [3264x2448 @ 15FPS], [2592x1944 @ 15FPS], [2048x1536 @ 15FPS], [1920x1080 @ 25FPS], [1280x960 @ 25FPS], [1280x720 @ 25FPS], [1024x768 @ 25FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
+                    // Logs say: Supported resolutions for YUY2 are: [1920x1080 @ 5FPS], [3264x2448 @ 1FPS], [2592x1944 @ 2FPS], [2048x1536 @ 3FPS], [1600x1200 @ 5FPS], [1280x960 @ 5FPS], [1280x720 @ 10FPS], [1024x768 @ 10FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
+                    .setCameraResolution(new Size(640, 480))
                     .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                     .setLiveViewContainerId(visionPortalIDs[1])
-                    .setAutoStartStreamOnBuild(false)
-                    .setAutoStopLiveView(false)
+                    .setAutoStartStreamOnBuild(true)
+                    .setAutoStopLiveView(true)
                     .setShowStatsOverlay(true)
                     .addProcessor(tagProcessor)
                     .build();
