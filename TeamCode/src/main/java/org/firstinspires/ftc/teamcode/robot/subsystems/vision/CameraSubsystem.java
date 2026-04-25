@@ -63,10 +63,13 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean relocalizeSucceeded = false;
     public boolean relocalizationEnabled = false;
 
+    private boolean ballCountChanged = false;
+
     public GLYPH gameGlyph;
     public FRONT_CV_MODE CVMode = FRONT_CV_MODE.NONE;
 
     private int ballsSeen = 0;
+    private int lastBallsSeen = ballsSeen;
     private final ElapsedTime relocalizeTimer = new ElapsedTime();
 
     // =======================
@@ -238,7 +241,10 @@ public class CameraSubsystem extends SubsystemBase {
             if(frontPortal.getProcessorEnabled(rampPipeline))
             {
                 this.ballsSeen = rampPipeline.getBalls();
+                setBallCountChanged(lastBallsSeen != this.ballsSeen);
+                this.lastBallsSeen = this.ballsSeen;
             }
+
         }
 
 
@@ -318,6 +324,16 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void resetBlob() {
         ballPipeline.unlockChosenBlob();
+    }
+
+    public void setBallCountChanged(boolean state)
+    {
+        this.ballCountChanged = state;
+    }
+
+    public boolean getBallCountChanged()
+    {
+        return this.ballCountChanged;
     }
 
 

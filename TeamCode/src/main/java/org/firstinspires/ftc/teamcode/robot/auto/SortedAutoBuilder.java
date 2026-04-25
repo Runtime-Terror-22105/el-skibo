@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.FAR_BALL_CV_DETECTION_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RAMP_CV_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_LAST_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_SORTED_POSE_1;
@@ -20,6 +23,7 @@ import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.math.Pose2d;
+import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeUpCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.WaitForSpindexerYawCommand;
@@ -27,6 +31,7 @@ import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateComman
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.vision.WaitForGlyphCommand;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.ArrayUtil;
 import org.firstinspires.ftc.teamcode.util.BallColor;
 
@@ -38,6 +43,18 @@ public final class SortedAutoBuilder {
     public static boolean TWO_SEGMENT_PARK_SORTED = false;
 
     private SortedAutoBuilder() {
+    }
+
+    public static Command prepareRampCV(AutoBuildState state) {
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> state.robot.camera.setCVMode(CameraSubsystem.FRONT_CV_MODE.RAMP)),
+                new LogCatCommand("AutoBuilder", "rampcv turned on"),
+                // note: intake needs to be down because otherwise it blocks the camera
+                new SetIntakeUpCommand(state.robot.intake, false),
+                new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
+                new WaitUntilCommand(() -> state.robot.camera.getBallCountChanged()).withTimeout(RAMP_CV_TIMEOUT),
+                new LogCatCommand("AutoBuilder", "ball count checker done")
+        );
     }
 
     private static PathChain shootPreloadPath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
