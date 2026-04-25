@@ -178,7 +178,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     turretPosAt180, turretPosAt180+posChange90Left
             );
         }
-        
+
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 
