@@ -44,10 +44,21 @@ public class CameraTest extends LinearOpMode {
 
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
+
+        // both are initially disabled, so we want to start streaming immediately
+        boolean streamFrontCameraLast = false;
+        boolean streamBackCameraLast = false;
         while (opModeIsActive())
         {
-            robot.camera.setFrontCameraStreamEnabled(streamFrontCamera);
-            robot.camera.setBackCameraStreamEnabled(streamBackCamera);
+            // only update the camera streaming state if it has changed, since changing the streaming state is expensive and can cause frame drops
+            if (streamFrontCamera != streamFrontCameraLast) {
+                robot.camera.setFrontCameraStreamEnabled(streamFrontCamera);
+                streamFrontCameraLast = streamFrontCamera;
+            }
+            if (streamBackCamera != streamBackCameraLast) {
+                robot.camera.setBackCameraStreamEnabled(streamBackCamera);
+                streamBackCameraLast = streamBackCamera;
+            }
 
             CommandScheduler.getInstance().run();
             robot.telemetry.addData("seenglyph",robot.camera.getGlyph());
