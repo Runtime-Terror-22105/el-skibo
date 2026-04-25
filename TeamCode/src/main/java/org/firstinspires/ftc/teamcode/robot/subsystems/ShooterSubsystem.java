@@ -67,8 +67,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretOffset = 0.00; //turret manual offset- servo pos
     public static double turretPosAt180 = 0.5295; //pos pointed directly towards the back
     public static double posChange90 = 0.280; //servo pos change that rotates turret 90 deg
-//    public static double posChange90Left = 0.275; //servo pos change that rotates turret 90 deg
-//    public static double posChange90Right = 0.285; //servo pos change that rotates turret 90 deg
+    public static double posChange90Right = 0.2845; //servo pos change that rotates turret 90 deg
+    public static double posChange90Left = 0.275; //servo pos change that rotates turret 90 deg
     public static double turretServosDifferenceSmall = 0.001; // we set the two servos to positions of +- 0.02 to reduce backlash by making them fight
     public static double turretServosDifferenceLarge = 0.01;
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
@@ -165,10 +165,20 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public static double turretAngleToServoPos(double angleRad) {
-        double unboundedServo = Algebra.mapRangeNoClamp(angleRad,
-                Math.toRadians(90), Math.toRadians(270),
-                turretPosAt180-posChange90, turretPosAt180+posChange90
-        );
+        double unboundedServo;
+        if (angleRad <= 180){
+             unboundedServo = Algebra.mapRangeNoClamp(angleRad,
+                    Math.toRadians(90), Math.toRadians(180),
+                    turretPosAt180-posChange90Right, turretPosAt180
+            );
+        }
+        else{
+            unboundedServo = Algebra.mapRangeNoClamp(angleRad,
+                    Math.toRadians(180), Math.toRadians(270),
+                    turretPosAt180, turretPosAt180+posChange90Left
+            );
+        }
+        
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 
