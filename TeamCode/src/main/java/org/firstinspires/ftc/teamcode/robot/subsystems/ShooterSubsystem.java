@@ -65,10 +65,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
-    public static double turretPosAt180 = 0.485; //pos pointed directly towards the back
-    public static double posChange90 = 0.275; //servo pos change that rotates turret 90 deg
-//    public static double posChange90Left = 0.275; //servo pos change that rotates turret 90 deg
-//    public static double posChange90Right = 0.285; //servo pos change that rotates turret 90 deg
+    public static double turretPosAt180 = 0.49; //pos pointed directly towards the back
+    public static double posChange90 = 0.285; //servo pos change that rotates turret 90 deg
     public static double turretServosDifference = 0.015; // we set the two servos to positions of +- 0.02 to reduce backlash by making them fight
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
@@ -79,8 +77,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // No angle limit for turret, but we have servo positions limits
     public static double turretLowerBound = Math.toRadians(0);
     public static double turretUpperBound = Math.toRadians(360);
-    public static double turretServoLowerBound = 0.03;
-    public static double turretServoUpperBound = 0.97;
+    public static double turretServoLowerBound = 0.0;
+    public static double turretServoUpperBound = 1;
 
     // hood limits
     public static double hoodPosMax = 0.8; //maximum position the servo can go to
@@ -571,8 +569,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
             boolean useDifferenceForBacklash = goalTurretPos + turretServosDifference <= turretServoUpperBound && goalTurretPos - turretServosDifference >= turretServoLowerBound;
             double difference = useDifferenceForBacklash ? turretServosDifference : 0;
-//            hardware.turretYawLeft.setPosition(goalTurretPos + difference);
-//            hardware.turretYawRight.setPosition(goalTurretPos - difference);
+            hardware.turretYawLeft.setPosition(goalTurretPos + difference);
+            hardware.turretYawRight.setPosition(goalTurretPos - difference);
             Profiler.pop();
 
             if (debug) Log.d("ShooterSubsystem", "goal hood angle" + this.goalPitch);
