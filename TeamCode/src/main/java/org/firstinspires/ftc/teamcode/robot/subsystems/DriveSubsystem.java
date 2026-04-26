@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -57,9 +55,9 @@ public class DriveSubsystem extends SubsystemBase {
 
         try (Profiler.Scope p = Profiler.enter("DriveSubsystem")) {
             robot.follower.update();
-            robot.robotZone.setPosition(robot.follower.getPose().getX(), robot.follower.getPose().getY());
-            robot.robotZone.setRotation(robot.follower.getHeading());
-            robot.telemetry.addData("isInShootZone",robot.isInTapeZone());
+//            robot.robotZone.setPosition(robot.follower.getPose().getX(), robot.follower.getPose().getY());
+//            robot.robotZone.setRotation(robot.follower.getHeading());
+//            robot.telemetry.addData("isInShootZone",robot.isInTapeZone());
         }
     }
 

@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.util.BallColor;
+import org.firstinspires.ftc.teamcode.util.Profiler;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -93,6 +94,9 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean isManualWhiteBalanceSet;
     private boolean isManualExposureSet;
     private boolean isManualGainSet;
+
+    private boolean isAutoExposureSet;
+    private boolean isAutoWhiteBalanceSet;
 
     public enum GLYPH {
         PPG(BallColor.PURPLE, BallColor.PURPLE, BallColor.GREEN),
@@ -283,47 +287,68 @@ public class CameraSubsystem extends SubsystemBase {
     // =======================
     @Override
     public void periodic() {
-        robot.telemetry.addData("Balls Seen", getBallsSeen());
+        try (Profiler.Scope p = Profiler.enter("CameraSubsystem")) {
+            robot.telemetry.addData("Balls Seen", getBallsSeen());
 
-        if(frontPortal != null) {
-            frontPortal.setProcessorEnabled(ballPipeline, CVMode.equals(FRONT_CV_MODE.FAR));
-            frontPortal.setProcessorEnabled(rampPipeline, CVMode.equals(FRONT_CV_MODE.RAMP));
-            if(frontPortal.getProcessorEnabled(rampPipeline))
-            {
-                this.ballsSeen = rampPipeline.getBalls();
-                setBallCountChanged(lastBallsSeen != this.ballsSeen);
-                this.lastBallsSeen = this.ballsSeen;
+            if (frontPortal != null) {
+                Profiler.push("frontPortal");
+                frontPortal.setProcessorEnabled(ballPipeline, CVMode.equals(FRONT_CV_MODE.FAR));
+                frontPortal.setProcessorEnabled(rampPipeline, CVMode.equals(FRONT_CV_MODE.RAMP));
+                if (frontPortal.getProcessorEnabled(rampPipeline)) {
+                    this.ballsSeen = rampPipeline.getBalls();
+                    setBallCountChanged(lastBallsSeen != this.ballsSeen);
+                    this.lastBallsSeen = this.ballsSeen;
+                }
+
+                if (!isAutoExposureSet || !isAutoWhiteBalanceSet) {
+                    Profiler.push("setAutoCameraMode");
+                    ensureAutoCameraMode();
+                    Profiler.pop();
+                }
+                Profiler.pop();
             }
 
-            // ensures camera settings are set in case they weren't already
-//            setCameraSettings();
-            try {
-                // todo: move this stuff to setcamerasettings and only call it when we need to change settings, not every frame
-                frontPortal.getCameraControl(ExposureControl.class).setMode(ExposureControl.Mode.Auto);
-                frontPortal.getCameraControl(WhiteBalanceControl.class).setMode(WhiteBalanceControl.Mode.AUTO);
-            } catch (Exception e) {
-                //Log.e(TAG, "Error checking camera control modes: " + e.getMessage());
+            if (backPortal == null || tagProcessor == null || !backPortal.getProcessorEnabled(tagProcessor)) return;
+
+            Profiler.push("backPortal");
+            detections = tagProcessor.getDetections();
+            AprilTagDetection localizationTag = null;
+
+            for (AprilTagDetection tag : detections) {
+                if (isGlyphTag(tag)) {
+                    handleGlyph(tag);
+                    continue;
+                }
+
+                localizationTag = tag;
             }
+
+            handleRelocalization(localizationTag);
+            Profiler.pop();
         }
+    }
 
-        if (backPortal == null || tagProcessor == null || !backPortal.getProcessorEnabled(tagProcessor)) return;
-
-        detections = tagProcessor.getDetections();
-        AprilTagDetection localizationTag = null;
-
-        for (AprilTagDetection tag : detections) {
-            if (isGlyphTag(tag)) {
-                handleGlyph(tag);
-                continue;
+    // setMode cooks loop times, so only retry until it succeeds
+    private void ensureAutoCameraMode() {
+        if (frontPortal == null) return;
+        try {
+            if (!isAutoExposureSet) {
+                ExposureControl exposureControl = frontPortal.getCameraControl(ExposureControl.class);
+                if (exposureControl != null && exposureControl.setMode(ExposureControl.Mode.Auto)) {
+                    isAutoExposureSet = true;
+                    Log.i(TAG, "Auto exposure mode set");
+                }
             }
-
-            localizationTag = tag;
-
+            if (!isAutoWhiteBalanceSet) {
+                WhiteBalanceControl whiteBalanceControl = frontPortal.getCameraControl(WhiteBalanceControl.class);
+                if (whiteBalanceControl != null && whiteBalanceControl.setMode(WhiteBalanceControl.Mode.AUTO)) {
+                    isAutoWhiteBalanceSet = true;
+                    Log.i(TAG, "Auto white balance mode set");
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting auto camera mode: " + e.getMessage());
         }
-
-        handleRelocalization(localizationTag);
-
-        //add some check here on which pieplines running or smth
     }
 
     // =======================

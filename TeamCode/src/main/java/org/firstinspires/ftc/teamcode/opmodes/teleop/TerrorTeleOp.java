@@ -396,24 +396,6 @@ most sorted correctly (brute force)
 
             Profiler.push("commands");
             CommandScheduler.getInstance().run();
-
-//            if (hangManualUpButton.get()) {
-//                robot.robotState = RobotState.HANGING_90;
-//                hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.FORWARD);
-//                hardware.hangRight.setPower(TerrorSwyftCRServo.Power.FORWARD);
-//            } else if (hangManualDownButton.get()) {
-//                robot.robotState = RobotState.HANGING_FINAL;
-//                hardware.hangLeft.setPower(TerrorSwyftCRServo.Power.HOME);
-//                hardware.hangRight.setPower(TerrorSwyftCRServo.Power.HOME);
-//            } else if (robot.getState() != HANGING_FINAL) { // don't disable the servos once we went to homing position
-//                hardware.hangLeft.setPwmEnable(false);
-//                hardware.hangRight.setPwmEnable(false);
-//            }
-
-            if (!lastState.equals(READY_TO_SHOOT) && robot.robotState.equals(READY_TO_SHOOT)) {
-//                robot.intake.setSpeed(IntakeSubsystem.REVERSE_SPEED_SLOW);
-            }
-
             Profiler.pop();
 
             Profiler.push("hwWrite");
