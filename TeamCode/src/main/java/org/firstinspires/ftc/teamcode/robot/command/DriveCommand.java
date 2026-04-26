@@ -40,7 +40,7 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void initialize() {
-
+//        robot.follower.startTeleOpDrive();
     }
 
     @Override
@@ -66,7 +66,8 @@ public class DriveCommand extends CommandBase {
         {
             return;
         }
-        robot.follower.setTeleOpDrive(left_y, left_x, rotation);
+        robot.follower.setTeleOpDrive(left_y, left_x, rotation,true);
+        robot.follower.update();
 //        robot.drivetrain.move(
 //                direction,
 //                rotation,
