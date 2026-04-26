@@ -190,40 +190,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton transferButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
 
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
-
-//        GamepadButton adjustTurretLeft = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_LEFT);
-//        GamepadButton adjustTurretRight = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_RIGHT);
-
-//        GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
         GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
-
-//        GamepadButton hangButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
-        GamepadButton hangManualUpButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_DOWN);
-        GamepadButton hangManualDownButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.DPAD_UP);
 
         GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
         Trigger threeBallsAreInside = new Trigger(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE));
-//        GamepadButton tapeZoneShoot = new GamepadButton(gamepad1ex, GamepadKeys.Button.CIRCLE);
-//        tapeZoneShoot.whenPressed(() -> robot.setShootInTapeZone(!robot.getShootInTapeZone()));
-//
-//        Trigger botInTapeZone = new Trigger(()-> robot.isInTapeZone() && robot.getShootInTapeZone() && threeBallsAreInside.get());
-//
-//        botInTapeZone.whenActive(()->new ConditionalCommand(
-//                new ConditionalCommand( // if we already did the transfer, just shoot immediately
-//                        new ShootThreeBallsCommand(robot),
-//                        new SequentialCommandGroup(
-//                                new PrepareShootCommand(robot, true),
-//                                new ShootThreeBallsCommand(robot)
-//                        ),
-//                        () -> robot.robotState == READY_TO_SHOOT
-//                ),
-//                new InstantCommand(() -> {} ),
-//                () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER
-//        ));
-
-        // todo: implement hang later
-//        hangButton.whenPressed(new ChangeHangStateCommand(robot));
 
         intakeButton.whenActive(new ConditionalCommand(
                 new GoToIntakeStateCommand(robot),
@@ -287,27 +258,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         ));
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
-
-//        double hangPos = 0.0;
-//        hangManualUpButton.whenPressed(() -> {
-//            hardware.hangLeft.setPosition(-1.0);
-//            hardware.hangRight.setPosition(1.0);
-//        });
-//        hangManualUpButton.whenReleased(() -> {
-//            hardware.hangLeft.setPosition(0);
-//            hardware.hangRight.setPosition(0);
-//        });
-//        hangManualDownButton.whenPressed(() -> {
-//            hardware.hangLeft.setPosition(1.0);
-//            hardware.hangRight.setPosition(-1.0);
-//        });
-//        hangManualDownButton.whenReleased(() -> {
-//            hardware.hangLeft.setPosition(0);
-//            hardware.hangRight.setPosition(0);
-//        });
-        //adjustSpindexerLeft.whileHeld(new AdjustSpindexZeroCommand(robot, false));
-        //adjustSpindexerRight.whileHeld(new AdjustSpindexZeroCommand(robot, true));
-
         sortButton.whenPressed(robot::toggleAutoSort);
 
         // driver 2
