@@ -64,14 +64,13 @@ public class HangSubsystem extends SubsystemBase {
         switch(robot.robotState)
         {
             case HANG_INIT:
-//                hardware.motorRearRight.setPower(PTO_INIT_POWER);
-//                hardware.motorRearLeft.setPower(PTO_INIT_POWER);
-
-                leftMotorPID.calculatePower(0,0);
-                rightMotorPID.calculatePower(0,0);
+                hardware.motorRearRight.setPower(leftMotorPID.calculatePower(hardware.motorRearLeft.getCurrentPosition(),0));
+                hardware.motorRearLeft.setPower(rightMotorPID.calculatePower(hardware.motorRearRight.getCurrentPosition(),0));
+                //this is proably wrong
 
                 //i lowk dunno what rahul means by pid to a specific angle
                 //are there encoders on the motors or smth
+                //as in like abs encoders i know there are general encoders
 
                 if(hangTimer.milliseconds() > INIT_HANG_TIMER_MILLISECONDS || (leftMotorPID.atTargetPosition() && rightMotorPID.atTargetPosition()) )
                 {

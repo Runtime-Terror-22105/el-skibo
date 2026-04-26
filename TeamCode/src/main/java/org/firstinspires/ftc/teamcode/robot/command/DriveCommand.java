@@ -62,6 +62,10 @@ public class DriveCommand extends CommandBase {
         if (robot.drive.isHeadingLocked()) {
             rotation = headingController.calculatePower(getHeadingError(), 0);
         }
+        if(robot.getState().isHang())
+        {
+            return;
+        }
         robot.follower.setTeleOpDrive(left_y, left_x, rotation);
 //        robot.drivetrain.move(
 //                direction,
