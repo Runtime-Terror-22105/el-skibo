@@ -44,6 +44,13 @@ public class RobotHardware {
     public TerrorMotorNormal motorFrontRight;
     public TerrorMotorNormal motorRearLeft;
 
+    // Drivetrain encoders (for lifting when pto is engaged)
+    public TerrorAnalogEncoder motorRearLeftEncoder; // TODO: fnd whch s the elc v1 or v2 and figure out which one is reversed or not
+    public TerrorAnalogEncoder motorRearRightEncoder;
+
+    // PTO for lift (rear wheels spinning will push the bottom plate down, which will lift the robot up)
+    public TerrorServo pto;
+
     // Turret
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
@@ -74,7 +81,6 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorServo pto;
 
     // Camera
     public int cameraMonitorViewId;
@@ -136,6 +142,24 @@ public class RobotHardware {
         motorRearLeft.setDirection(FORWARD);
         motorRearRight.setDirection(REVERSE);
         this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
+
+        // Initialize pto
+        this.pto = new TerrorServo(hwMap, "pto");
+        this.pto.setDirection(Servo.Direction.FORWARD);
+        this.publisher.subscribe(10, this.pto);
+
+        // Initialize dt encoders for lift
+        this.motorRearLeftEncoder = new TerrorAnalogEncoder(
+                hwMap.get(AnalogInput.class, "rearLeftEncoder"),
+                false,
+                0.0, 1.0 // assuming that this is the ELC encoder v1, w/ less precision
+        );
+        this.motorRearRightEncoder = new TerrorAnalogEncoder(
+                hwMap.get(AnalogInput.class, "rearRightEncoder"),
+                false,
+                0.00, 3.3 // assuming that this s the ELC encoder v2, w/ more precision and a wider voltage range
+        );
+
 
         // Initialize the turret
         this.turretYawLeft = new TerrorServo(hwMap, "turretLeft", 0.0025);
@@ -224,9 +248,6 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.pto = new TerrorServo(hwMap, "pto");
-        this.pto.setDirection(Servo.Direction.FORWARD);
-        this.publisher.subscribe(10, this.pto);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {
