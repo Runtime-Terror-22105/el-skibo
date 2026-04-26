@@ -27,6 +27,18 @@ public class HangSubsystem extends SubsystemBase {
         public double getRight() {
             return rightMotorPosition;
         }
+
+        public HangMotorPositionPair convertFromDegreesToRadians() {
+            return new HangMotorPositionPair(
+                    Math.toRadians(this.leftMotorPosition),
+                    Math.toRadians(this.rightMotorPosition)
+            );
+        }
+
+        @Override
+        public String toString() {
+            return "Left Motor Position: " + leftMotorPosition + ", Right Motor Position: " + rightMotorPosition;
+        }
     }
 
     public static double PTO_ENGAGE_POSITION = 0;
@@ -78,11 +90,17 @@ public class HangSubsystem extends SubsystemBase {
         rightMotorPID.setTargetPosition(targetPositions.getRight());
     }
 
-    public HangMotorPositionPair calculateHangMotorPowers() {
+    public HangMotorPositionPair getCurrentPositions()
+    {
         double leftMotorPosition = hardware.motorRearLeftAbsEncoder.getCurrentPosition();
         double rightMotorPosition = hardware.motorRearRightAbsEncoder.getCurrentPosition();
-        double leftMotorPower = leftMotorPID.calculatePower(leftMotorPosition, 0);
-        double rightMotorPower = rightMotorPID.calculatePower(rightMotorPosition,0);
+        return new HangMotorPositionPair(leftMotorPosition, rightMotorPosition);
+    }
+
+    public HangMotorPositionPair calculateHangMotorPowers() {
+        HangMotorPositionPair currentPositions = getCurrentPositions();
+        double leftMotorPower = leftMotorPID.calculatePower(currentPositions.getLeft(), 0);
+        double rightMotorPower = rightMotorPID.calculatePower(currentPositions.getRight(),0);
         return new HangMotorPositionPair(leftMotorPower, rightMotorPower);
     }
 
