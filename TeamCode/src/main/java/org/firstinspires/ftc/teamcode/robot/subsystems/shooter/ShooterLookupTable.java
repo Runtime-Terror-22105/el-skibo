@@ -34,9 +34,9 @@ public class ShooterLookupTable {
             new ShooterLookupTableInstance.HoodLookupValue(54,0.4),
             new ShooterLookupTableInstance.HoodLookupValue(67,0.45),
             new ShooterLookupTableInstance.HoodLookupValue(97.7,0.65),
-            new ShooterLookupTableInstance.HoodLookupValue(126,.85),
-            new ShooterLookupTableInstance.HoodLookupValue(130,.87),
-            new ShooterLookupTableInstance.HoodLookupValue(140,.92),
+            new ShooterLookupTableInstance.HoodLookupValue(126,.8),
+            new ShooterLookupTableInstance.HoodLookupValue(130,.82),
+            new ShooterLookupTableInstance.HoodLookupValue(140,.87),
             new ShooterLookupTableInstance.HoodLookupValue(155,1.0),
             //endpoint
     };
