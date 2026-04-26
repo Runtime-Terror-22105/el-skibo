@@ -45,8 +45,8 @@ public class RobotHardware {
     public TerrorMotorNormal motorRearLeft;
 
     // Drivetrain encoders (for lifting when pto is engaged)
-    public TerrorAnalogEncoder motorRearLeftAbsEncoder; // TODO: fnd whch s the elc v1 or v2 and figure out which one is reversed or not
-    public TerrorAnalogEncoder motorRearRightAbsEncoder;
+//    public TerrorAnalogEncoder motorRearLeftAbsEncoder; // TODO: fnd whch s the elc v1 or v2 and figure out which one is reversed or not
+//    public TerrorAnalogEncoder motorRearRightAbsEncoder;
 
     // PTO for lift (rear wheels spinning will push the bottom plate down, which will lift the robot up)
     public TerrorServo pto;
@@ -149,16 +149,16 @@ public class RobotHardware {
         this.publisher.subscribe(10, this.pto);
 
         // Initialize dt encoders for lift
-        this.motorRearLeftAbsEncoder = new TerrorAnalogEncoder(
-                hwMap.get(AnalogInput.class, "rearLeftEncoder"),
-                false,
-                0.0, 1.0 // assuming that this is the ELC encoder v1, w/ less precision
-        );
-        this.motorRearRightAbsEncoder = new TerrorAnalogEncoder(
-                hwMap.get(AnalogInput.class, "rearRightEncoder"),
-                false,
-                0.00, 3.3 // assuming that this s the ELC encoder v2, w/ more precision and a wider voltage range
-        );
+//        this.motorRearLeftAbsEncoder = new TerrorAnalogEncoder(
+//                hwMap.get(AnalogInput.class, "rearLeftEncoder"),
+//                false,
+//                0.0, 1.0 // assuming that this is the ELC encoder v1, w/ less precision
+//        );
+//        this.motorRearRightAbsEncoder = new TerrorAnalogEncoder(
+//                hwMap.get(AnalogInput.class, "rearRightEncoder"),
+//                false,
+//                0.00, 3.3 // assuming that this s the ELC encoder v2, w/ more precision and a wider voltage range
+//        );
 
 
         // Initialize the turret
