@@ -89,7 +89,10 @@ dependencies {
     implementation("dev.frozenmilk.sinister:Sloth:0.2.4")
     implementation("com.acmerobotics.slothboard:dashboard:0.2.4+0.5.1")
 
-    implementation "com.bylazar:fullpanels:${panelsVersion}"
+
+//    implementation "com.bylazar:fullpanels:${panelsVersion}"
+    implementation("com.bylazar.sloth:fullpanels:0.2.4+${panelsVersion}")
+
 
     // these are both old versions, but they need to be old
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
