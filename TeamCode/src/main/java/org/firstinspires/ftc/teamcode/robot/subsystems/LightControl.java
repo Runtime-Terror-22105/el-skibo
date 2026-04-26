@@ -40,7 +40,7 @@ public class LightControl extends SubsystemBase {
     @Override
     public void periodic()
     {
-        try (Profiler.Scope p = Profiler.enter("LightControl2")) {
+        try (Profiler.Scope p = Profiler.enter("LightControl")) {
             if (isManualLighting) {
                 return;
             }

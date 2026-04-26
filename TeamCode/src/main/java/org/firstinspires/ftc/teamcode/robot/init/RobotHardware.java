@@ -44,6 +44,13 @@ public class RobotHardware {
     public TerrorMotorNormal motorFrontRight;
     public TerrorMotorNormal motorRearLeft;
 
+    // Drivetrain encoders (for lifting when pto is engaged)
+//    public TerrorAnalogEncoder motorRearLeftAbsEncoder; // TODO: fnd whch s the elc v1 or v2 and figure out which one is reversed or not
+//    public TerrorAnalogEncoder motorRearRightAbsEncoder;
+
+    // PTO for lift (rear wheels spinning will push the bottom plate down, which will lift the robot up)
+    public TerrorServo pto;
+
     // Turret
     public TerrorServo turretYawLeft;  // rotates the turret yaw
     public TerrorServo turretYawRight; // rotates the turret yaw
@@ -74,7 +81,6 @@ public class RobotHardware {
     // Intake
     public TerrorMotorNormal intake;
 
-    public TerrorServo pto;
 
     // Camera
     public int cameraMonitorViewId;
@@ -136,6 +142,24 @@ public class RobotHardware {
         motorRearLeft.setDirection(FORWARD);
         motorRearRight.setDirection(REVERSE);
         this.publisher.subscribe(1, motorFrontLeft, motorFrontRight, motorRearLeft, motorRearRight);
+
+        // Initialize pto
+        this.pto = new TerrorServo(hwMap, "pto");
+        this.pto.setDirection(Servo.Direction.FORWARD);
+        this.publisher.subscribe(10, this.pto);
+
+        // Initialize dt encoders for lift
+//        this.motorRearLeftAbsEncoder = new TerrorAnalogEncoder(
+//                hwMap.get(AnalogInput.class, "rearLeftEncoder"),
+//                false,
+//                0.0, 1.0 // assuming that this is the ELC encoder v1, w/ less precision
+//        );
+//        this.motorRearRightAbsEncoder = new TerrorAnalogEncoder(
+//                hwMap.get(AnalogInput.class, "rearRightEncoder"),
+//                false,
+//                0.00, 3.3 // assuming that this s the ELC encoder v2, w/ more precision and a wider voltage range
+//        );
+
 
         // Initialize the turret
         this.turretYawLeft = new TerrorServo(hwMap, "turretLeft", 0.0025);
@@ -203,7 +227,11 @@ public class RobotHardware {
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
         // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
-        this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "spindexEncoder"), SPINDEXER_ENCODER_REVERSED);
+        this.spindexerEncoder = new TerrorAnalogEncoder(
+                hwMap.get(AnalogInput.class, "spindexEncoder"),
+                SPINDEXER_ENCODER_REVERSED,
+                0.041, 3.145
+        );
         this.spindexerEncoder.setOffset(Math.toRadians(SPINDEXER_ENCODER_OFFSET_DEGREES));
 
 //        this.spindexerEncoder.stop_and_reset();
@@ -220,9 +248,6 @@ public class RobotHardware {
         this.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.publisher.subscribe(10, intake);
 
-        this.pto = new TerrorServo(hwMap, "pto");
-        this.pto.setDirection(Servo.Direction.FORWARD);
-        this.publisher.subscribe(10, this.pto);
 
         // Other things
         if (Arrays.stream(options).anyMatch(opt -> opt == HardwareOptions.CAMERA)) {

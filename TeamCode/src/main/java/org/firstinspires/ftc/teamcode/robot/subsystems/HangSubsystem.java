@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -11,120 +11,136 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class HangSubsystem extends SubsystemBase {
-//    public static double FIRST_ANGLE = Math.PI/2;
-//    public static double SECOND_ANGLE = Math.toRadians(75);
-//    public static double SERVO_POWER = 1.0;
-//    public static double HOLDING_POWER = 0.1;
-//    public static double FINAL_TOLERANCE = Math.toRadians(5);
+    public static class HangMotorPositionPair {
+        public double leftMotorPosition;
+        public double rightMotorPosition;
+
+        public HangMotorPositionPair(double leftMotorPosition, double rightMotorPosition) {
+            this.leftMotorPosition = leftMotorPosition;
+            this.rightMotorPosition = rightMotorPosition;
+        }
+
+        public double getLeft() {
+            return leftMotorPosition;
+        }
+
+        public double getRight() {
+            return rightMotorPosition;
+        }
+
+        public HangMotorPositionPair convertFromDegreesToRadians() {
+            return new HangMotorPositionPair(
+                    Math.toRadians(this.leftMotorPosition),
+                    Math.toRadians(this.rightMotorPosition)
+            );
+        }
+
+        @Override
+        public String toString() {
+            return "Left Motor Position: " + leftMotorPosition + ", Right Motor Position: " + rightMotorPosition;
+        }
+    }
 
     public static double PTO_ENGAGE_POSITION = 0;
     public static double PTO_DISENGAGE_POSITION = 0.4;
+//    public static double PTO_RISE_POWER = -1;
+//    public ElapsedTime hangTimer = new ElapsedTime();
+//    public static double INIT_HANG_TIMER_MILLISECONDS = 250;
+//    public static double HANG_TIMER_MILLISECONDS = 4000;
 
-    public static double PTO_INIT_POWER = -0.2;
-    public static double PTO_RISE_POWER = -1;
+    // these angles are in radians and are the target angles for the rear motors to be at before engaging the PTO.
+    public static HangMotorPositionPair PID_ANGLES_TO_ENGAGE = new HangMotorPositionPair(0,0);
 
-    public static boolean debug = true;
+    // This is the angle of the encoder once the robot has lifted itself up fully
+    public static HangMotorPositionPair PID_ANGLES_AT_MAX_LIFT = new HangMotorPositionPair(0,0);
+//    public static double LEFT_PID_ANGLE_TO_ENGAGE = 0;
+//    public static double RIGHT_PID_ANGLE_TO_ENGAGE = 0;
 
-    public boolean isPTOEngaged = false;
+    // PID coeffs for rear motors
+    public static PidfController.PidfCoefficients LEFT_MOTOR_PID_COEFFICIENTS =
+            new PidfController.PidfCoefficients(0.35, 0, 0.015, 0, 0.12);
+    public static PidfController.PidfCoefficients RIGHT_MOTOR_PID_COEFFICIENTS =
+            new PidfController.PidfCoefficients(0.35, 0, 0.015, 0, 0.12);
 
-    public ElapsedTime hangTimer = new ElapsedTime();
-
-    public static double INIT_HANG_TIMER_MILLISECONDS = 250;
-    public static double HANG_TIMER_MILLISECONDS = 4000;
+    // Pid tolerances in radians
+    public static double LEFT_PID_TOLERANCE = Math.toRadians(3);
+    public static double RIGHT_PID_TOLERANCE = Math.toRadians(3);
 
     private final Robot robot;
     private final RobotHardware hardware;
 
+    private final PidfController leftMotorPID = new PidfController(LEFT_MOTOR_PID_COEFFICIENTS);
+    private final PidfController rightMotorPID = new PidfController(RIGHT_MOTOR_PID_COEFFICIENTS);
+
     public HangSubsystem(RobotHardware hardware,Robot robot) {
         this.robot = robot;
         this.hardware = hardware;
-        setPTOEngagement(false);
-    }
-
-    public void setPTOEngagement(boolean state)
-    {
-        this.isPTOEngaged = state;
-    }
-    public boolean isPTOEngaged()
-    {
-        return isPTOEngaged;
+        this.leftMotorPID.setTolerance(LEFT_PID_TOLERANCE);
+        this.rightMotorPID.setTolerance(RIGHT_PID_TOLERANCE);
     }
 
     public void beginHang()
     {
-        setPTOEngagement(true);
         robot.robotState = RobotState.HANG_INIT;
+    }
+
+    public void setPidTargetPositions(HangMotorPositionPair targetPositions)
+    {
+        leftMotorPID.setTargetPosition(targetPositions.getLeft());
+        rightMotorPID.setTargetPosition(targetPositions.getRight());
+    }
+
+    public HangMotorPositionPair getCurrentPositions()
+    {
+//        double leftMotorPosition = hardware.motorRearLeftAbsEncoder.getCurrentPosition();
+//        double rightMotorPosition = hardware.motorRearRightAbsEncoder.getCurrentPosition();
+        double leftMotorPosition = 0;
+        double rightMotorPosition = 0;
+        return new HangMotorPositionPair(leftMotorPosition, rightMotorPosition);
+    }
+
+    public HangMotorPositionPair calculateHangMotorPowers() {
+        HangMotorPositionPair currentPositions = getCurrentPositions();
+        double leftMotorPower = leftMotorPID.calculatePower(currentPositions.getLeft(), 0);
+        double rightMotorPower = rightMotorPID.calculatePower(currentPositions.getRight(),0);
+        return new HangMotorPositionPair(leftMotorPower, rightMotorPower);
     }
 
     @Override
     public void periodic() {
-
-        hardware.pto.setPosition(isPTOEngaged ? PTO_ENGAGE_POSITION : PTO_DISENGAGE_POSITION);
-
-        if(!robot.robotState.isHang() || !isPTOEngaged())
-        {
-            hangTimer.reset(); //could be cooked, lifes tough
-            return;
-        }
-//
-        switch(robot.robotState)
-        {
-            case HANG_INIT:
-                hardware.motorRearRight.setPower(PTO_INIT_POWER);
-                hardware.motorRearLeft.setPower(PTO_INIT_POWER);
-                if(hangTimer.milliseconds() > INIT_HANG_TIMER_MILLISECONDS)
-                {
-                    this.robot.robotState =  RobotState.HANGING;
-                    hangTimer.reset();
-                }
-                break;
-
-            case HANGING:
-                hardware.motorRearRight.setPower(PTO_RISE_POWER);
-                hardware.motorRearLeft.setPower(PTO_RISE_POWER);
-                if(hangTimer.milliseconds() > HANG_TIMER_MILLISECONDS)
-                {
-                    this.robot.robotState = RobotState.HANG_FINISH;
-                }
-                break;
-
-            case HANG_FINISH: //probably best to not ever do this
-                hardware.motorRearRight.setPower(0);
-                hardware.motorRearLeft.setPower(0);
-                break;
-
-            default:
-                break;
-        }
-//        }
-
-
-
         try (Profiler.Scope p = Profiler.enter("HangSubsystem")) {
-//            boolean do90 = robot.robotState.equals(RobotState.HANGING_90);
-//            boolean doFinal = robot.robotState.equals(RobotState.HANGING_FINAL);
-//            if (do90 || doFinal) {
-//                double robotPitch = robot.hardware.imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
-//                Robot.debugTelemetry.addData("Robot Pitch", robotPitch);
-//                Log.i("HangSubsystem", "Robot Pitch: " + robotPitch + " deg");
-//
-//                double goal = do90 ? FIRST_ANGLE : SECOND_ANGLE;
-//                double servoPower;
-//                if (Math.abs(robotPitch - Math.toDegrees(goal)) <= Math.toDegrees(FINAL_TOLERANCE)) {
-//                    servoPower = HOLDING_POWER;
-//                    if (debug) {
-//                        Log.i("HangSubsystem", "Reached goal angle: " + Math.toDegrees(goal) + " deg");
-//                    }
-//                } else if (robotPitch < Math.toDegrees(goal)) {
-//                    servoPower = SERVO_POWER;
-//                } else {
-//                    servoPower = -SERVO_POWER;
-//                }
-//
-////                robot.hardware.hangLeft.setPower(servoPower);
-////                robot.hardware.hangRight.setPower(servoPower);
-//            }
+            if(!robot.robotState.isHang())
+            {
+                hardware.pto.setPosition(PTO_DISENGAGE_POSITION);
+                return;
+            }
 
+            // we do this to ensure the PID coefficients are up to date in case they were changed on dashboard
+            leftMotorPID.setPidfCoefficients(LEFT_MOTOR_PID_COEFFICIENTS);
+            rightMotorPID.setPidfCoefficients(RIGHT_MOTOR_PID_COEFFICIENTS);
+
+            switch(robot.robotState)
+            {
+                // the drivetrain needs to be at the correct position before we can engage the PTO
+                case HANG_INIT:
+                    setPidTargetPositions(PID_ANGLES_TO_ENGAGE);
+                    if (leftMotorPID.atTargetPosition() && rightMotorPID.atTargetPosition()) {
+                        this.robot.robotState = RobotState.HANGING;
+                    }
+                    break;
+
+                case HANGING:
+                    hardware.pto.setPosition(PTO_ENGAGE_POSITION);
+                    setPidTargetPositions(PID_ANGLES_AT_MAX_LIFT);
+                    break;
+
+                default:
+                    break;
+            }
+
+            HangMotorPositionPair motorPowers = calculateHangMotorPowers();
+            hardware.motorRearRight.setPower(motorPowers.getRight());
+            hardware.motorRearLeft.setPower(motorPowers.getLeft());
         }
     }
 }

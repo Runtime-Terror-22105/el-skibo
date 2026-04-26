@@ -9,7 +9,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
-@TeleOp
+// I put this in a different group so it doesn't get mixed in with the other tests, since this is
+// more of a test of like our tooling than of the robot, and so I don't want it to crowd that category
+@TeleOp(name="Sloth Test", group="Sloth Testing")
 public class SlothTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
     private final Robot robot = new Robot();

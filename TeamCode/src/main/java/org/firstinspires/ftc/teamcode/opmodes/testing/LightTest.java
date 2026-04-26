@@ -9,19 +9,18 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
 @Config
-@TeleOp(name="Shooter Velocity Test", group="Testing")
-public class ShooterVelocityTest extends LinearOpMode {
-
+@TeleOp(name="Light Test", group="Testing")
+public class LightTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
+    private final Robot robot = new Robot();
 
-    public static double power = 0.0;
+    public static double color=0.5;
 
     @Override
     public void runOpMode() {
         hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
+        robot.init(hardware, this);
         waitForStart();
-
-        double maxvel=0;
 
         while (opModeIsActive()) {
             // Manually clear the bulk read cache. Deleting this would be catastrophic b/c stale
@@ -30,23 +29,17 @@ public class ShooterVelocityTest extends LinearOpMode {
                 hub.clearBulkCache();
             }
 
-            hardware.shooterLeft.setPower(power);
-            hardware.shooterRight.setPower(power);
 
+            robot.hardware.lights.setColor(color);
             hardware.write();
 
-            telemetry.addData("Current velocity (ticks/sec)", hardware.shooterEncoder.getVelocity());
 
-            // I'm pretty sure we're using this motor? https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
-            telemetry.addData("Current velocity (rpm)", hardware.shooterEncoder.getVelocity() * 60 / 145.1); // 145.1 ticks per revolution
-            maxvel=Math.max(maxvel, hardware.shooterEncoder.getVelocity() * 60 / 145.1);
-            telemetry.addData("Max Velocity(rpm)", maxvel); // 145.1 ticks per revolution
-            telemetry.update();
-
-            telemetry.update();
+            robot.telemetry.addData("Current Position", robot.spindexer.getPosition());
+            robot.telemetry.update();
 
         }
 
+        robot.close();
     }
 
 }

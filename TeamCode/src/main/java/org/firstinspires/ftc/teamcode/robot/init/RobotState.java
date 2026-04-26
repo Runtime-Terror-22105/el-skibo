@@ -19,7 +19,7 @@ public enum RobotState {
     SHOOTING(new StateTag[] {INTAKE_DOWN, INTAKE_REVERSE, FLYWHEEL_ON}),
     HANG_INIT(new StateTag[]{CLIMB}),
     HANGING(new StateTag[]{CLIMB}),
-    HANG_FINISH(new StateTag[]{CLIMB}),
+//    HANG_FINISH(new StateTag[]{CLIMB}),
 
     TRANSFER(new StateTag[] {}),
 

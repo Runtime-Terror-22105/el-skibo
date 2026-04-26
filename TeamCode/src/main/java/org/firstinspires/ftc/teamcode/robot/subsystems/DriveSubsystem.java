@@ -45,15 +45,15 @@ public class DriveSubsystem extends SubsystemBase {
             return;
         }
 
-        if (robot.robotState.isHang()) {
-            robot.hardware.motorFrontLeft.setPower(0);
-            robot.hardware.motorFrontRight.setPower(0);
-            robot.hardware.motorRearLeft.setPower(0);
-            robot.hardware.motorRearRight.setPower(0);
-
-            Log.d(TAG, "Currently hanging! State: " + robot.robotState);
-            return;
-        }
+//        if (robot.robotState.isHang()) {
+//            robot.hardware.motorFrontLeft.setPower(0);
+//            robot.hardware.motorFrontRight.setPower(0);
+//            robot.hardware.motorRearLeft.setPower(0);
+//            robot.hardware.motorRearRight.setPower(0);
+//
+//            Log.d(TAG, "Currently hanging! State: " + robot.robotState);
+//            return;
+//        }
 
         try (Profiler.Scope p = Profiler.enter("DriveSubsystem")) {
             robot.follower.update();

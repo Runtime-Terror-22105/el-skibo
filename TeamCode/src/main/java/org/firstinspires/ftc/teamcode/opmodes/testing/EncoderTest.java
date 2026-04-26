@@ -13,10 +13,6 @@ import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 @Config
 @TeleOp(name="Encoder Test", group="Testing")
 public class EncoderTest extends LinearOpMode {
-
-    double lowestVoltage = 1;
-    double highestVoltage = 0;
-
     private RobotHardware hardware = new RobotHardware();
 
     @Override
@@ -27,23 +23,21 @@ public class EncoderTest extends LinearOpMode {
         waitForStart();
         while(opModeIsActive())
         {
-            double voltage = hardware.hwMap.get(AnalogInput.class, "spindexEncoder").getVoltage();
-            if(voltage > highestVoltage)
-            {
-                highestVoltage = voltage;
-            }
-            if(voltage < lowestVoltage)
-            {
-                lowestVoltage = voltage;
-            }
-            telemetry.addData("lowestVoltage ",String.valueOf(lowestVoltage));
-            telemetry.addData("highestVoltage ",String.valueOf(highestVoltage));
-            telemetry.addLine("ANALOG ENCODER");
-            telemetry.addLine("--------------");
-            telemetry.addData("raw voltage (volts)",String.valueOf(voltage));
-            telemetry.addData("without offset (degrees)", Math.toDegrees(hardware.spindexerEncoder.getCurrentPositionWithoutOffset()));
-            telemetry.addData("with offset (degrees)", Math.toDegrees(hardware.spindexerEncoder.getCurrentPosition()));
-            telemetry.update();
+            double spindexVoltage = hardware.hwMap.get(AnalogInput.class, "spindexEncoder").getVoltage();
+            telemetry.addData("spindex - raw voltage (volts)", String.valueOf(spindexVoltage));
+            telemetry.addData("spindex - without offset (degrees)", Math.toDegrees(hardware.spindexerEncoder.getCurrentPositionWithoutOffset()));
+            telemetry.addData("spindex - with offset (degrees)", Math.toDegrees(hardware.spindexerEncoder.getCurrentPosition()));
+
+//            double motorRearLeftVoltage = hardware.hwMap.get(AnalogInput.class, "motorRearLeftEncoder").getVoltage();
+//            telemetry.addData("motor rear left - raw voltage (volts)", String.valueOf(motorRearLeftVoltage));
+//            telemetry.addData("motor rear left - without offset (degrees)", Math.toDegrees(hardware.motorRearLeftAbsEncoder.getCurrentPositionWithoutOffset()));
+//            telemetry.addData("motor rear left - with offset (degrees)", Math.toDegrees(hardware.motorRearLeftAbsEncoder.getCurrentPosition()));
+//
+//            double motorRearRightVoltage = hardware.hwMap.get(AnalogInput.class, "motorRearRightEncoder").getVoltage();
+//            telemetry.addData("motor rear right - raw voltage (volts)", String.valueOf(motorRearRightVoltage));
+//            telemetry.addData("motor rear right - without offset (degrees)", Math.toDegrees(hardware.motorRearRightAbsEncoder.getCurrentPositionWithoutOffset()));
+//            telemetry.addData("motor rear right - with offset (degrees)", Math.toDegrees(hardware.motorRearRightAbsEncoder.getCurrentPosition()));
+//            telemetry.update();
         }
     }
 }

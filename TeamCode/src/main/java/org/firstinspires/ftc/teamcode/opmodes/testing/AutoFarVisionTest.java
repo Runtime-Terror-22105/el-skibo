@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.auto.FarAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
-@Autonomous(name="Auto Far Vision Test (red)", group="testing")
+@Autonomous(name="Auto Far Vision Test (red)", group="Testing")
 public class AutoFarVisionTest extends OneAutoToRuleThemAll {
     public AutoFarVisionTest() {
         super(Team.RED);

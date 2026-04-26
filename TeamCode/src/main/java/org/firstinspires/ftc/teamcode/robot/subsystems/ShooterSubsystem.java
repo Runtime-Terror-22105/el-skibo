@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = false;
-    public static boolean JUST_TURRET = false;
+    public static boolean JUST_TURRET = true;
 
     public static boolean debug = false;
     public static boolean telemetry = true;
@@ -42,13 +42,13 @@ public class ShooterSubsystem extends SubsystemBase {
     // From my observations, the flywheel is more sensitive at lower velocities, so we use a less
     // aggressive feedforward at higher velocities to avoid overshooting and oscillation.
     public static PidfController.PidfCoefficients NEAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.00062, 0, 0, 0.000225, 0);
+            new PidfController.PidfCoefficients(0.0015, 0, 0, 0.000232, 0);
     public static PidfController.PidfCoefficients FAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0012, 0, 0, 0.000185, 0);
+            new PidfController.PidfCoefficients(0.0015, 0, 0, 0.000218, 0);
     private final PidfController shooterPID = new PidfController(NEAR_PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
-    public static double SHOOTER_PID_SWITCH = 3000;  // Units are RPM
+    public static double SHOOTER_PID_SWITCH = 2500;  // Units are RPM
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
     public static double SHOOTER_VEL_TOLERANCE = 1000;  // Units are RPM

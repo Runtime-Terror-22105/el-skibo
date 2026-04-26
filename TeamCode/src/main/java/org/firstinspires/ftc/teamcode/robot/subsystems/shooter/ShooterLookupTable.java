@@ -6,19 +6,19 @@ import com.acmerobotics.dashboard.config.Config;
 public class ShooterLookupTable {
     public static ShooterLookupTableInstance.VelocityLookupValue[] NORMAL_VEL_DATA_POINTS = new ShooterLookupTableInstance.VelocityLookupValue[]{
             // endpoint (prevent crashing)
-            new ShooterLookupTableInstance.VelocityLookupValue(0, 395),
+            new ShooterLookupTableInstance.VelocityLookupValue(0, 250),
 
-            new ShooterLookupTableInstance.VelocityLookupValue(27.7,405),
-            new ShooterLookupTableInstance.VelocityLookupValue(45.5,420),
-            new ShooterLookupTableInstance.VelocityLookupValue(68.7,490),
-            new ShooterLookupTableInstance.VelocityLookupValue(80,500),
-            new ShooterLookupTableInstance.VelocityLookupValue(90.7,540),
-            new ShooterLookupTableInstance.VelocityLookupValue(104.4,555),
-            new ShooterLookupTableInstance.VelocityLookupValue(122.7,680),
-            new ShooterLookupTableInstance.VelocityLookupValue(128.7,720),
-            new ShooterLookupTableInstance.VelocityLookupValue(140.2,755),
-            new ShooterLookupTableInstance.VelocityLookupValue(155,780),
-            new ShooterLookupTableInstance.VelocityLookupValue(165,800),
+            new ShooterLookupTableInstance.VelocityLookupValue(27.7,268),
+            new ShooterLookupTableInstance.VelocityLookupValue(45.5,272),
+            new ShooterLookupTableInstance.VelocityLookupValue(68.7,338),
+            new ShooterLookupTableInstance.VelocityLookupValue(80,350),
+            new ShooterLookupTableInstance.VelocityLookupValue(90.7,390),
+            new ShooterLookupTableInstance.VelocityLookupValue(104.4,400),
+            new ShooterLookupTableInstance.VelocityLookupValue(122.7,455),
+            new ShooterLookupTableInstance.VelocityLookupValue(128.7,550),
+            new ShooterLookupTableInstance.VelocityLookupValue(140.2,585),
+            new ShooterLookupTableInstance.VelocityLookupValue(155,580),
+            new ShooterLookupTableInstance.VelocityLookupValue(165,600),
 
             // other endpoint (prevent crashing)
 

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.hardware.sensors.TerrorColorSensor;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 
-@TeleOp
+@TeleOp(name="Color Sensor Test", group="Testing")
 public class ColorSensorTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
 
