@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.FastTelemetryImpl;
 
-@TeleOp(name = "Telemetry performance test")
+@TeleOp(name = "Telemetry performance test", group = "Testing")
 public class TelemetryTest extends LinearOpMode {
 
     // Make telemetry go nyyyyOOOOOOMMMMM

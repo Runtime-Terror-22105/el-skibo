@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
-@TeleOp(name="Spindex Sort Test", group="Test")
+@TeleOp(name="Spindex Sort Test", group="Testing")
 @Config
 public class SortTest extends LinearOpMode {
     private final RobotHardware hardware = new RobotHardware();
