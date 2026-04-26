@@ -11,7 +11,7 @@ public class FieldConstants {
 
     // We do not store red start poses, as these are calculated by mirroring the blue
     // start poses.
-    public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-132));
+    public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-127));
     public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 8, Math.toRadians(90));
     public static Pose2d BLUE_START_POS_FAR_SORTED = new Pose2d(48, 8, Math.toRadians(270));
 

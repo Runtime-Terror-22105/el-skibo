@@ -134,7 +134,7 @@ public class CameraSubsystem extends SubsystemBase {
                     .setCameraResolution(new Size(320, 240))
                     .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                     .setLiveViewContainerId(visionPortalIDs[0])
-                    .setAutoStartStreamOnBuild(false)
+                    .setAutoStartStreamOnBuild(true)
                     .setAutoStopLiveView(true)
                     .setShowStatsOverlay(true)
                     .addProcessor(this.ballPipeline)
