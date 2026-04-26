@@ -46,7 +46,7 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> {robot.camera.setAprilTagsEnabled(true);
                 robot.camera.setGlyphScanningEnabled(true);}),
-                FarAutoBuilder.shootPreload(state, ShootPathFlag.SOTM, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.shootPreloadSortedAuto(state, ShootPathFlag.SOTM, ShootPathFlag.EARLY_LEAVE),
 //                new SetCameraStreamingCommand(robot.camera, true, false),
 
                 // we shoot at a different spot that goes better into the 2nd spike mark

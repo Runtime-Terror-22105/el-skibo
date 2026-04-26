@@ -61,6 +61,28 @@ public final class FarAutoBuilder {
 
     public static Command shootPreload(AutoBuildState state, ShootPathFlag... flagArr) {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
+
+        double turnAmt = Math.toRadians(40);
+        Pose2d rotatedPose = state.startPoseBlue.copy();
+        rotatedPose.heading += turnAmt;
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, rotatedPose, state.mirror, false, false)
+                .build();
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+//                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
+                        new TurnCommand(state.robot.follower, turnAmt, state.mirror).withTimeout(100),
+                        new SequentialCommandGroup(
+                                new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
+                                new WaitCommand(250)
+                        )
+                ),
+                UnsortedShootRoutines.shootCommand(state, flags),
+                new StopScanningForGlyphsCommand(state.robot.camera)
+        );
+    }
+
+    public static Command shootPreloadSortedAuto(AutoBuildState state, ShootPathFlag... flagArr) {
+        EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, AUTO_FAR_ROTATED_POSE, state.mirror, false, false)
                 .build();
         return new SequentialCommandGroup(

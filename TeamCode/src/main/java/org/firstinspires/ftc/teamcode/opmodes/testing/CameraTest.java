@@ -38,7 +38,7 @@ public class CameraTest extends LinearOpMode {
 //            robot.camera.setAuto(true,false);
 //        }
 
-//        robot.camera.setBallPipelineEnabled(true);
+        robot.camera.setBallPipelineEnabled(true);
 //        robot.camera.setAprilTagsEnabled(false);
         waitForStart();
 
