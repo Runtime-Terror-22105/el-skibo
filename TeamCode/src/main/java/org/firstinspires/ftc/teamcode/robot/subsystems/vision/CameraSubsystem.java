@@ -48,6 +48,9 @@ public class CameraSubsystem extends SubsystemBase {
     private VisionPortal frontPortal;
     private VisionPortal backPortal;
 
+    private boolean frontStreaming = true;
+    private boolean backStreaming = false;
+
     private AprilTagProcessor tagProcessor;
     private final BallDetectionPipeline ballPipeline;
 
@@ -138,7 +141,7 @@ public class CameraSubsystem extends SubsystemBase {
                     .setCameraResolution(new Size(320, 240))
                     .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                     .setLiveViewContainerId(visionPortalIDs[0])
-                    .setAutoStartStreamOnBuild(true)
+                    .setAutoStartStreamOnBuild(frontStreaming)
                     .setAutoStopLiveView(false)
                     .setShowStatsOverlay(true)
                     .addProcessor(this.ballPipeline)
@@ -176,7 +179,8 @@ public class CameraSubsystem extends SubsystemBase {
      * @param enabled Whether or not the front camera stream should be enabled
      */
     public void setFrontCameraStreamEnabled(boolean enabled) {
-        if (frontPortal == null) return;
+        if (frontPortal == null || frontStreaming==enabled) return;
+        frontStreaming = enabled;
 
         try {
             if (enabled) {
@@ -199,8 +203,8 @@ public class CameraSubsystem extends SubsystemBase {
      * @param enabled Whether or not the back camera stream should be enabled
      */
     public void setBackCameraStreamEnabled(boolean enabled) {
-        if (backPortal == null) return;
-
+        if (backPortal == null || enabled == backStreaming) return;
+        backStreaming = enabled;
         try {
             if (enabled) {
                 backPortal.resumeStreaming();
@@ -521,10 +525,12 @@ public class CameraSubsystem extends SubsystemBase {
 
     public void close() {
         if (frontPortal != null) {
+            frontPortal.stopStreaming();
             frontPortal.close();
             frontPortal = null;
         }
         if (backPortal != null) {
+            backPortal.stopStreaming();
             backPortal.close();
             backPortal = null;
         }
