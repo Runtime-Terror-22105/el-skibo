@@ -203,7 +203,11 @@ public class RobotHardware {
         // gear ratio for spindexer:motor is 5.6:1, motor itself is geared 5.2:1 (which is 1+46/11),
         // and motor has 28 ticks per revolution
         // https://www.gobilda.com/5202-series-yellow-jacket-planetary-gear-motor-5-2-1-ratio-1150-rpm-3-3-5v-encoder/
-        this.spindexerEncoder = new TerrorAnalogEncoder(hwMap.get(AnalogInput.class, "spindexEncoder"), SPINDEXER_ENCODER_REVERSED);
+        this.spindexerEncoder = new TerrorAnalogEncoder(
+                hwMap.get(AnalogInput.class, "spindexEncoder"),
+                SPINDEXER_ENCODER_REVERSED,
+                0.041, 3.145
+        );
         this.spindexerEncoder.setOffset(Math.toRadians(SPINDEXER_ENCODER_OFFSET_DEGREES));
 
 //        this.spindexerEncoder.stop_and_reset();
