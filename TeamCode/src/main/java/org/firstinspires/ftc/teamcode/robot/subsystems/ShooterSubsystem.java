@@ -500,7 +500,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
        // double shooterPower = 0.0;
         double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
-        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+        if ((getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE)&& robot.getState().equals(RobotState.SHOOTING)) {
             shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
         }
 //        else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
