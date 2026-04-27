@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = false;
-    public static boolean JUST_TURRET = true;
+    public static boolean JUST_TURRET = false;
 
     public static boolean debug = false;
     public static boolean telemetry = true;
@@ -499,9 +499,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
        // double shooterPower = 0.0;
         double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
-        if (robot.getState().equals(RobotState.SHOOTING) && getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
-            shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
-        }
+//        if (robot.getState().equals(RobotState.SHOOTING) && getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+//            shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
+//        }
 //        else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
 //            shooterPower = 0;
 //        }
