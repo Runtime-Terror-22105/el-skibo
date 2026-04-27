@@ -99,6 +99,8 @@ public class HangSubsystem extends SubsystemBase {
         return new HangMotorPositionPair(leftMotorPosition, rightMotorPosition);
     }
 
+    // Note: takeShortestPath is when we want to set the wheel to a specific angle, and take shortest path like in swerve
+    // when we're actually lifting the robot, we're not trying to get to a specific angle, we want to keep going and so it doesn't make sense
     public HangMotorPositionPair calculateHangMotorPowers(boolean takeShortestPath) {
         HangMotorPositionPair currentPositions = getCurrentPositions();
         double leftMotorPower = leftMotorPID.calculatePower(currentPositions.getLeft(), 0, takeShortestPath);
