@@ -42,9 +42,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // From my observations, the flywheel is more sensitive at lower velocities, so we use a less
     // aggressive feedforward at higher velocities to avoid overshooting and oscillation.
     public static PidfController.PidfCoefficients NEAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.001, 0, 0, 0.00022, 0);
+            new PidfController.PidfCoefficients(0.0007, 0, 0, 0.000225, 0);
     public static PidfController.PidfCoefficients FAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.001, 0, 0, 0.00022, 0);
+            new PidfController.PidfCoefficients(0.0007, 0, 0, 0.000207, 0);
     private final PidfController shooterPID = new PidfController(NEAR_PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
