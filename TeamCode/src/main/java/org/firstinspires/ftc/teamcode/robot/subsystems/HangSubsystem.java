@@ -92,10 +92,8 @@ public class HangSubsystem extends SubsystemBase {
 
     public HangMotorPositionPair getCurrentPositions()
     {
-//        double leftMotorPosition = hardware.motorRearLeftAbsEncoder.getCurrentPosition();
-//        double rightMotorPosition = hardware.motorRearRightAbsEncoder.getCurrentPosition();
-        double leftMotorPosition = 0;
-        double rightMotorPosition = 0;
+        double leftMotorPosition = hardware.motorRearLeftAbsEncoder.getCurrentPosition();
+        double rightMotorPosition = hardware.motorRearRightAbsEncoder.getCurrentPosition();
         return new HangMotorPositionPair(leftMotorPosition, rightMotorPosition);
     }
 

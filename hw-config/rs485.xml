@@ -9,6 +9,7 @@
             <Servo name="intakeLeft" port="3" />
             <RevColorSensorV3 name="topSensor" port="0" bus="2" />
             <RevColorSensorV3 name="leftSensor" port="0" bus="1" />
+            <AnalogInput name="rearRightEncoder" port="2" />
         </LynxModule>
         <ServoHub name="Servo Hub 3" port="3">
             <Servo name="hood" port="0" />
@@ -28,6 +29,7 @@
             <Servo name="lights" port="4" />
             <Servo name="ballBlocker" port="5" />
             <AnalogInput name="spindexEncoder" port="0" />
+            <AnalogInput name="rearLeftEncoder" port="2" />
             <RevColorSensorV3 name="rightSensor" port="0" bus="1" />
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
             <goBILDAPinpoint name="pinpoint" port="1" bus="0" />
