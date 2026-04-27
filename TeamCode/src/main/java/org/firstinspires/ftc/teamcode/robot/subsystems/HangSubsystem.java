@@ -99,10 +99,10 @@ public class HangSubsystem extends SubsystemBase {
         return new HangMotorPositionPair(leftMotorPosition, rightMotorPosition);
     }
 
-    public HangMotorPositionPair calculateHangMotorPowers() {
+    public HangMotorPositionPair calculateHangMotorPowers(boolean takeShortestPath) {
         HangMotorPositionPair currentPositions = getCurrentPositions();
-        double leftMotorPower = leftMotorPID.calculatePower(currentPositions.getLeft(), 0);
-        double rightMotorPower = rightMotorPID.calculatePower(currentPositions.getRight(),0);
+        double leftMotorPower = leftMotorPID.calculatePower(currentPositions.getLeft(), 0, takeShortestPath);
+        double rightMotorPower = rightMotorPID.calculatePower(currentPositions.getRight(),0, takeShortestPath);
         return new HangMotorPositionPair(leftMotorPower, rightMotorPower);
     }
 
@@ -119,28 +119,32 @@ public class HangSubsystem extends SubsystemBase {
             leftMotorPID.setPidfCoefficients(LEFT_MOTOR_PID_COEFFICIENTS);
             rightMotorPID.setPidfCoefficients(RIGHT_MOTOR_PID_COEFFICIENTS);
 
-            switch(robot.robotState)
-            {
+            HangMotorPositionPair motorPowers;
+            switch(robot.robotState) {
                 // the drivetrain needs to be at the correct position before we can engage the PTO
                 case HANG_INIT:
                     setPidTargetPositions(PID_ANGLES_TO_ENGAGE);
                     if (leftMotorPID.atTargetPosition() && rightMotorPID.atTargetPosition()) {
                         this.robot.robotState = RobotState.HANGING;
                     }
+
+                    motorPowers = calculateHangMotorPowers(true);
+                    hardware.motorRearRight.setPower(motorPowers.getRight());
+                    hardware.motorRearLeft.setPower(motorPowers.getLeft());
                     break;
 
                 case HANGING:
                     hardware.pto.setPosition(PTO_ENGAGE_POSITION);
                     setPidTargetPositions(PID_ANGLES_AT_MAX_LIFT);
+
+                    motorPowers = calculateHangMotorPowers(false);
+                    hardware.motorRearRight.setPower(motorPowers.getRight());
+                    hardware.motorRearLeft.setPower(motorPowers.getLeft());
                     break;
 
                 default:
                     break;
             }
-
-            HangMotorPositionPair motorPowers = calculateHangMotorPowers();
-            hardware.motorRearRight.setPower(motorPowers.getRight());
-            hardware.motorRearLeft.setPower(motorPowers.getLeft());
         }
     }
 }
