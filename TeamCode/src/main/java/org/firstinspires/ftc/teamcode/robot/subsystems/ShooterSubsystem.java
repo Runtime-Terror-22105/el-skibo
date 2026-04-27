@@ -43,9 +43,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // From my observations, the flywheel is more sensitive at lower velocities, so we use a less
     // aggressive feedforward at higher velocities to avoid overshooting and oscillation.
     public static PidfController.PidfCoefficients NEAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.00125, 0, 0, 0.000232, 0);
+            new PidfController.PidfCoefficients(0.001, 0, 0, 0.00022, 0);
     public static PidfController.PidfCoefficients FAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.00125, 0, 0, 0.000218, 0);
+            new PidfController.PidfCoefficients(0.001, 0, 0, 0.00022, 0);
     private final PidfController shooterPID = new PidfController(NEAR_PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
@@ -53,7 +53,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
     public static double SHOOTER_VEL_TOLERANCE = 1000;  // Units are RPM
-    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 200;  // Units are RPM, used for quicker recovery while shooting multiple balls
+    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 0;  // Units are RPM, used for quicker recovery while shooting multiple balls
 
     public GoalPosLookupTable goalPosLookupTable;
     public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
@@ -500,9 +500,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
        // double shooterPower = 0.0;
         double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
-//        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
-//            shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
-//        } else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+            shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
+        }
+//        else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
 //            shooterPower = 0;
 //        }
         return shooterPower;
@@ -571,8 +572,8 @@ public class ShooterSubsystem extends SubsystemBase {
             Profiler.push("flywheel");
             double shooterPower = this.updateShooter();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
-            //hardware.shooterLeft.setPower(shooterPower);
-            //hardware.shooterRight.setPower(shooterPower);
+            hardware.shooterLeft.setPower(shooterPower);
+            hardware.shooterRight.setPower(shooterPower);
             Profiler.pop();
 
             //turret
