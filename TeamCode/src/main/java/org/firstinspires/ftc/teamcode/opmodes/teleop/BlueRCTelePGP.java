@@ -4,13 +4,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
-@TeleOp(name = "🟦 Blue RC TeleOp", group = "ATeleOp")
+@TeleOp(name = "🟦 Blue RC TeleOp PGP 🟣🟢🟣", group = "ATeleOp")
 @Config
-public class BlueRCTele extends TerrorTeleOp {
+public class BlueRCTelePGP extends TerrorTeleOp {
 
-    public BlueRCTele(){
-        super(Team.BLUE);
+    public BlueRCTelePGP(){
+        super(Team.BLUE, CameraSubsystem.GLYPH.PGP);
     }
 
     @Override
