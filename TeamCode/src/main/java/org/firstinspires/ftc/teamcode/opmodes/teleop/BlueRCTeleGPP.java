@@ -4,13 +4,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Team;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 
-@TeleOp(name = "🟥 Red RC TeleOp", group = "ATeleOp")
+@TeleOp(name = "🟦 Blue RC TeleOp GPP 🟢🟣🟣", group = "ATeleOp")
 @Config
-public class RedRCTele extends TerrorTeleOp {
+public class BlueRCTeleGPP extends TerrorTeleOp {
 
-    public RedRCTele(){
-        super(Team.RED);
+    public BlueRCTeleGPP(){
+        super(Team.BLUE, CameraSubsystem.GLYPH.GPP);
     }
 
     @Override
