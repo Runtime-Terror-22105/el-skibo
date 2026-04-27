@@ -184,8 +184,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                         () -> (double) gamepad1.right_stick_x, robot)
                        );
 
-        GamepadButton manualSpindexLeft = new GamepadButton(gamepad1ex,GamepadKeys.Button.DPAD_LEFT);
-        GamepadButton manualSpindexRight = new GamepadButton(gamepad1ex,GamepadKeys.Button.DPAD_RIGHT);
+        GamepadButton manualRestingState = new GamepadButton(gamepad1ex,GamepadKeys.Button.DPAD_DOWN);
+
 
         Trigger intakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
         Trigger reverseIntakeButton = new Trigger(() -> gamepad1ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
@@ -241,9 +241,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState == RESTING || robot.robotState == INTAKING
         ));
 
-        manualSpindexLeft.whileHeld(new AdjustTurretOffsetCommand(robot, true));
-
-        manualSpindexRight.whileHeld(new AdjustTurretOffsetCommand(robot, false));
+        manualRestingState.whenPressed(new GoToRestingStateCommand(robot));
 
         slowSpeedButton.whenPressed(() -> robot.drive.toggleSlowSpeed());
 
