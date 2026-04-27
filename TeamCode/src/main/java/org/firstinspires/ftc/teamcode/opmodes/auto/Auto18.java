@@ -32,7 +32,8 @@ public abstract class Auto18 extends OneAutoToRuleThemAll {
                 NearAutoBuilder.cycleGate(state, true),
                 NearAutoBuilder.cycleGate(state, true),
                 NearAutoBuilder.cycleGate(state, true),
-                NearAutoBuilder.cycleSpike(state, 3),
+                NearAutoBuilder.cycleGate(state, true),
+//                NearAutoBuilder.cycleSpike(state, 3),
                 NearAutoBuilder.cycleSpike(state, 1, ShootPathFlag.LAST)
         );
     }
