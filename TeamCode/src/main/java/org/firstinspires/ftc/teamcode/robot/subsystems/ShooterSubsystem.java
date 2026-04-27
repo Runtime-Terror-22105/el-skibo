@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.math.datastructures.CircularBuffer;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
+import org.firstinspires.ftc.teamcode.robot.init.CycleState;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -30,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
-    public static boolean USE_SOTM_ACCEL = false;
+    public static boolean USE_SOTM_ACCEL = true;
     public static boolean JUST_TURRET = true;
 
     public static boolean debug = false;
@@ -234,7 +235,7 @@ public class ShooterSubsystem extends SubsystemBase {
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
 
-        if (useVelocityCompensation) {
+        if (useVelocityCompensation && robot.getCycleState().equals(CycleState.CLOSE)) {
             double flightTime = FlightTimeLookupTable.get(distToGoal);
             Vector robotVel = robot.follower.getVelocity();
             if (useAccelCompensation) {

@@ -66,6 +66,7 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
     public Pose2d goalPos;
     private boolean autoSort;
+    public CycleState cycleState = CycleState.FAR;
 
 
     // Camera stuff TODO
@@ -159,6 +160,23 @@ public class Robot extends com.seattlesolvers.solverslib.command.Robot {
 
         if (autoSort) {
             this.shooter.shooterLookupTable = ShooterLookupTable.SORTED_TABLE;
+        }
+    }
+
+    public CycleState getCycleState(){
+        return this.cycleState;
+    }
+
+    public void setCycleState(CycleState newState){
+        this.cycleState = newState;
+    }
+
+    public void toggleCycleState(){
+        if (this.cycleState.equals(CycleState.FAR)){
+            this.cycleState = CycleState.CLOSE;
+        }
+        else{
+            this.cycleState = CycleState.FAR;
         }
     }
 

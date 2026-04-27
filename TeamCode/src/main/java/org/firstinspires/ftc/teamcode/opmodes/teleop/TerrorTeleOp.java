@@ -200,6 +200,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
+        GamepadButton farZoneToggle = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
+
+
         Trigger threeBallsAreInside = new Trigger(() -> !ArrayUtil.contains(robot.spindexer.getBallPositions(), BallColor.NONE));
 
         intakeButton.whenActive(new ConditionalCommand(
@@ -262,6 +265,9 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER && robot.robotState != READY_TO_SHOOT
         ));
+        farZoneToggle.whenPressed(
+                new InstantCommand(() -> {this.robot.toggleCycleState();})
+        );
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
         sortButton.whenPressed(robot::toggleAutoSort);
