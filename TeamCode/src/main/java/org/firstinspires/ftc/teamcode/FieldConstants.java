@@ -15,6 +15,7 @@ public class FieldConstants {
     public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-132));
     public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 6, Math.toRadians(90));
     public static Pose2d BLUE_START_POS_FAR_SORTED = new Pose2d(48, 8, Math.toRadians(270));
+    public static Pose2d BLUE_START_POS_FAR_SIDE = new Pose2d(48, 6, Math.toRadians(180));
 
     // note: the 8,8 part is to account for the robot's size
     public static Pose2d RED_HUMAN_PLAYER_CORNER = new Pose2d(9.5, 8, Math.toRadians(180));
