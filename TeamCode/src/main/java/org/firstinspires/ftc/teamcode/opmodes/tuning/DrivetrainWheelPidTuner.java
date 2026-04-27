@@ -26,7 +26,7 @@ public class DrivetrainWheelPidTuner extends LinearOpMode {
         while (opModeIsActive()) {
             HangSubsystem.HangMotorPositionPair currentPositions = robot.hang.getCurrentPositions();
             robot.hang.setPidTargetPositions(MOTOR_POSITIONS_DEGREES.convertFromDegreesToRadians());
-            HangSubsystem.HangMotorPositionPair powers = robot.hang.calculateHangMotorPowers();
+            HangSubsystem.HangMotorPositionPair powers = robot.hang.calculateHangMotorPowers(false);
             hardware.motorRearLeft.setPower(powers.getLeft());
             hardware.motorRearRight.setPower(powers.getRight());
 
