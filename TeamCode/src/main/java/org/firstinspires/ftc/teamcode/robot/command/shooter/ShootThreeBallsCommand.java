@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexPowerCom
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
+import org.firstinspires.ftc.teamcode.robot.init.CycleState;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
@@ -39,6 +40,13 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
 
                 new SetSpindexPidEnabledCommand(robot.spindexer, false),
+                new ConditionalCommand(
+                        new InstantCommand(() -> {robot.drive.setHoldPos(true);}),
+                        new InstantCommand(() -> {}),
+                        () -> robot.getCycleState().equals(CycleState.FAR)
+
+                ),
+
                 new ConditionalCommand(
                         new SetSpindexPowerCommand(robot.spindexer, Math.copySign(SPINDEX_SORTING_TRANSFER_POWER, SPINDEX_TRANSFER_POWER)),
                         new SetSpindexPowerCommand(robot.spindexer, Math.copySign(transferPower, SPINDEX_TRANSFER_POWER)),
@@ -69,6 +77,9 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                         new InstantCommand(),
                         () -> isTeleop
                 ),
+
+                new InstantCommand(() -> {robot.drive.setHoldPos(true);}),
+
                 new GoToRestingStateCommand(robot),
             new InstantCommand(() -> robot.spindexer.useMaxPower = false)
         );

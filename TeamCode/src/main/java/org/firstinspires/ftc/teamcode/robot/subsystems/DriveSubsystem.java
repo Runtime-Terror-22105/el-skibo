@@ -12,6 +12,7 @@ public class DriveSubsystem extends SubsystemBase {
     public boolean killMotors;
     public boolean slowSpeed;
     private boolean headingLock;
+    private boolean holdPosition;
 
     public DriveSubsystem(Robot robot) {
         this.robot = robot;
@@ -26,6 +27,12 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void toggleHeadingLock() {
         this.headingLock = !headingLock;
+    }
+    public void setHoldPos(boolean value){
+        this.holdPosition = value;
+    }
+    public boolean isHoldPosition(){
+        return this.holdPosition;
     }
 
     @Override

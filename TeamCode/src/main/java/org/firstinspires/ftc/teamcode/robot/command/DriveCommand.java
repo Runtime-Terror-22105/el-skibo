@@ -62,7 +62,11 @@ public class DriveCommand extends CommandBase {
         if (robot.drive.isHeadingLocked()) {
             rotation = headingController.calculatePower(getHeadingError(), 0);
         }
-        if(robot.getState().isHang())
+        if (robot.drive.isHoldPosition()){
+            robot.follower.holdPoint(robot.follower.getPose());
+
+        }
+        if(robot.getState().isHang() || robot.drive.isHoldPosition())
         {
             return;
         }
