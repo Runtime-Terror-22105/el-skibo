@@ -394,6 +394,7 @@ most sorted correctly (brute force)
             robot.telemetry.addData("Robot position", robot.follower.getPose().toString());
             robot.telemetry.addData("Goal Velocity", robot.shooter.getGoalVelocity());
             robot.telemetry.addData("Current velocity", robot.shooter.getVelocityRpm());
+            robot.telemetry.addData("Is autosort enabled? ", robot.getAutoSort());
 
             robot.telemetry.update();
             Profiler.pop();
