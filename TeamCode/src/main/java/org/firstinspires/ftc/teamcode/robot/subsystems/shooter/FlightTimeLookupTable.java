@@ -24,24 +24,25 @@ public class FlightTimeLookupTable {
 
     public static final class FlightTimeLookupValue {
         public final double distance;
-        public final double timeMs;
+        public final double timeSec;
 
-        public FlightTimeLookupValue(double distance, double timeMs) {
+        public FlightTimeLookupValue(double distance, double timeSec) {
             this.distance = distance;
-            this.timeMs = timeMs;
+            this.timeSec = timeSec;
         }
     }
 
     public static FlightTimeLookupValue[] DATA_POINTS = new FlightTimeLookupValue[]{
-//            new FlightTimeLookupValue(83.5,1.530-.690)
-            new FlightTimeLookupValue(27.7,0.71),
-            //new FlightTimeLookupValue(45.5,0.66), //im sorry aadit
-            new FlightTimeLookupValue(68.7,0.62), //im sorry aadit
-            new FlightTimeLookupValue(90.7,0.77),
-            //new FlightTimeLookupValue(104.4,0.68),
-            new FlightTimeLookupValue(122.7,0.8),
-            new FlightTimeLookupValue(140.2,0.9),
+            new FlightTimeLookupValue(37,0.6),
+            new FlightTimeLookupValue(51,0.68),
+            new FlightTimeLookupValue(61.6,0.66),
+            new FlightTimeLookupValue(72.6,0.66),
+            new FlightTimeLookupValue(79,0.67),
+            new FlightTimeLookupValue(93.3,0.85),
 
+            new FlightTimeLookupValue(128.5,0.82),
+            new FlightTimeLookupValue(136,0.77),
+            new FlightTimeLookupValue(151,0.83),
     };
 
     // Note: Due to usage of InterpLUTSafe, the LUT will simply cap values outside the known range
@@ -49,7 +50,7 @@ public class FlightTimeLookupTable {
     public static InterpLUTSafe FLIGHT_TIME_LUT = new InterpLUTSafe();
     static {
         for (int i = 0; i < DATA_POINTS.length; i++) {
-            FLIGHT_TIME_LUT.add(DATA_POINTS[i].distance, DATA_POINTS[i].timeMs);
+            FLIGHT_TIME_LUT.add(DATA_POINTS[i].distance, DATA_POINTS[i].timeSec);
             Log.i("FlightTimeLookUpTable", "point added");
         }
         FLIGHT_TIME_LUT.createLUT();
