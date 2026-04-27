@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
@@ -13,6 +15,7 @@ public class DriveSubsystem extends SubsystemBase {
     public boolean slowSpeed;
     private boolean headingLock;
     private boolean holdPosition;
+    public Pose positionHeld;
 
     public DriveSubsystem(Robot robot) {
         this.robot = robot;
@@ -30,6 +33,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
     public void setHoldPos(boolean value){
         this.holdPosition = value;
+        this.positionHeld = robot.follower.getPose();
     }
     public boolean isHoldPosition(){
         return this.holdPosition;
