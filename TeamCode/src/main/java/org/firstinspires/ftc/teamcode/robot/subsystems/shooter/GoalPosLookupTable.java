@@ -44,12 +44,12 @@ public class GoalPosLookupTable {
             new GoalLookupValue(0.3, 9),
             new GoalLookupValue(0.6, 3),
             new GoalLookupValue(0.7, 5),
-            new GoalLookupValue(0.85, 1),
+            new GoalLookupValue(0.85, 3),
             new GoalLookupValue(0.92, 2.5),
-            new GoalLookupValue(1.01, 14),
-            new GoalLookupValue(1.09, 14),
-            new GoalLookupValue(1.18, 14),
-            new GoalLookupValue(1.2, 13.5),
+            new GoalLookupValue(1.01, 12),
+            new GoalLookupValue(1.09, 12),
+            new GoalLookupValue(1.18, 12),
+            new GoalLookupValue(1.2, 11.5),
     };
 
     private static void updateDataPoints() {

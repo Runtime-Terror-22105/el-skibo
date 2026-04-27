@@ -52,7 +52,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
     public static double SHOOTER_VEL_TOLERANCE = 1000;  // Units are RPM
-    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 0;  // Units are RPM, used for quicker recovery while shooting multiple balls
+    public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 500;// Units are RPM, used for quicker recovery while shooting multiple balls
+    public static double POWER_ADD = 0.3;
 
     public GoalPosLookupTable goalPosLookupTable;
     public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
@@ -498,10 +499,14 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterPID.setPidfCoefficients(useSmallPID ? NEAR_PID_COEFFICIENTS : FAR_PID_COEFFICIENTS);
 
        // double shooterPower = 0.0;
+        double distToGoal = robot.follower.getPose().distanceFrom(robot.color.getGoalPos().toPedro());
         double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
-//        if (robot.getState().equals(RobotState.SHOOTING) && getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
-//            shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
-//        }
+        if ((getGoalVelocity() - currentRpm < SHOOTER_VEL_MAXPOWER_TOLERANCE)
+                && (getGoalVelocity() - currentRpm > 0) &&
+                robot.getState().equals(RobotState.SHOOTING)
+                && distToGoal > 100) {
+            shooterPower += POWER_ADD; // if we're too far below the target, just go full power to get there faster
+        }
 //        else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
 //            shooterPower = 0;
 //        }

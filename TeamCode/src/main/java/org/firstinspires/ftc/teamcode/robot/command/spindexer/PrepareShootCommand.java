@@ -43,31 +43,35 @@ public class PrepareShootCommand extends SequentialCommandGroup {
                 new SetSpindexerWallDown(robot.spindexer, false),
                 new SetIntakeUpCommand(robot.intake, true),
                 new SetBallBlockerActiveCommand(robot.spindexer, false),
-                new ConditionalCommand(
-                        new SequentialCommandGroup(
-                            new WaitCommand(timeBeforeReverseIntake),
-                            new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
-                            new WaitCommand(REVERSE_INTAKE_TIME_MS)
+                new ParallelCommandGroup(
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new WaitCommand(timeBeforeReverseIntake),
+                                        new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.REVERSE_SPEED),
+                                        new WaitCommand(REVERSE_INTAKE_TIME_MS)
+                                ),
+                                new InstantCommand(() -> {}),
+                                // do not reverse in auto sort since it will jam the spindex
+                                () -> doReverseIntake && !robot.getAutoSort()
                         ),
-                        new InstantCommand(() -> {}),
-                        // do not reverse in auto sort since it will jam the spindex
-                        () -> doReverseIntake && !robot.getAutoSort()
-                ),
-                new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO),
+                        new LogCatCommand("PrepareShootCommand", "Phase 1 done", Log.INFO),
 
-                // Phase 2/3: Sort the balls, spin to pre-transfer yaw
-                new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING),// todo: adjust this delay based on how long it takes for these two servos
-                                new SortCommand(robot),
-                                new SetSpindexerRampActive(robot.spindexer, true),
-                                new InstantCommand(() -> robot.spindexer.useMaxPower = true)
-                        ),
-                        new ParallelCommandGroup(
-                                new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
-                                new SetSpindexerRampActive(robot.spindexer, true)),
-                        robot::getAutoSort
+                        // Phase 2/3: Sort the balls, spin to pre-transfer yaw
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new WaitCommand(DELAY_BEFORE_CHANGING_SPINDEXER_YAW_IF_SORTING),// todo: adjust this delay based on how long it takes for these two servos
+                                        new SortCommand(robot),
+                                        new SetSpindexerRampActive(robot.spindexer, true),
+                                        new InstantCommand(() -> robot.spindexer.useMaxPower = true)
+                                ),
+                                new ParallelCommandGroup(
+                                        new SetSpindexerYawCommand(robot.spindexer, SpindexerSubsystem.READY_POSITION),
+                                        new SetSpindexerRampActive(robot.spindexer, true)),
+                                robot::getAutoSort
+                        )
+
                 ),
+
                 new LogCatCommand("PrepareShootCommand", "Phase 2/3 done", Log.INFO),
 
                 // Phase 4: drop down ramp and start intake

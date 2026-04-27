@@ -11,7 +11,7 @@ public class ShooterLookupTable {
             new ShooterLookupTableInstance.VelocityLookupValue(27.7,330),
             new ShooterLookupTableInstance.VelocityLookupValue(45.5,350),
             new ShooterLookupTableInstance.VelocityLookupValue(68.7,338),
-            new ShooterLookupTableInstance.VelocityLookupValue(80,365),
+            new ShooterLookupTableInstance.VelocityLookupValue(80,375),
             new ShooterLookupTableInstance.VelocityLookupValue(90.7,415),
             new ShooterLookupTableInstance.VelocityLookupValue(104.4,410),
             new ShooterLookupTableInstance.VelocityLookupValue(122.7,505),
@@ -53,17 +53,17 @@ public class ShooterLookupTable {
             // endpoint (prevent crashing)
             new ShooterLookupTableInstance.VelocityLookupValue(0, 250),
 
-            new ShooterLookupTableInstance.VelocityLookupValue(27.7,320),
-            new ShooterLookupTableInstance.VelocityLookupValue(45.5,340),
-            new ShooterLookupTableInstance.VelocityLookupValue(68.7,328),
-            new ShooterLookupTableInstance.VelocityLookupValue(80,355),
-            new ShooterLookupTableInstance.VelocityLookupValue(90.7,395),
-            new ShooterLookupTableInstance.VelocityLookupValue(104.4,400),
-            new ShooterLookupTableInstance.VelocityLookupValue(122.7,455),
-            new ShooterLookupTableInstance.VelocityLookupValue(128.7,520),
-            new ShooterLookupTableInstance.VelocityLookupValue(140.2,535),
-            new ShooterLookupTableInstance.VelocityLookupValue(155,550),
-            new ShooterLookupTableInstance.VelocityLookupValue(165,570),
+            new ShooterLookupTableInstance.VelocityLookupValue(27.7,330),
+            new ShooterLookupTableInstance.VelocityLookupValue(45.5,365),
+            new ShooterLookupTableInstance.VelocityLookupValue(68.7,358),
+            new ShooterLookupTableInstance.VelocityLookupValue(80,435),
+            new ShooterLookupTableInstance.VelocityLookupValue(90.7,455),
+            new ShooterLookupTableInstance.VelocityLookupValue(104.4,455),
+            new ShooterLookupTableInstance.VelocityLookupValue(122.7,597),
+            new ShooterLookupTableInstance.VelocityLookupValue(128.7,537),
+            new ShooterLookupTableInstance.VelocityLookupValue(140.2,537),
+            new ShooterLookupTableInstance.VelocityLookupValue(155,553),
+            new ShooterLookupTableInstance.VelocityLookupValue(165,573),
 
             // other endpoint (prevent crashing)
 

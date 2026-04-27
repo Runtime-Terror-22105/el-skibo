@@ -24,7 +24,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
     //    public static double SPINDEX_ROTATIONS = -4.5;  // revolutions, negative bc clockwise
     public static double SPINDEX_TRANSFER_POWER = -1;
     public static int SPINDEX_TRANSFER_TIME = 500;// milliseconds
-    public static double SPINDEX_SORTING_TRANSFER_POWER = 0.7;
+    public static double SPINDEX_SORTING_TRANSFER_POWER = 0.6;
 
     public static int reverseIntakeTimeMS = 150;
     public static int SPINDEX_SORTING_TRANSFER_TIME = 1366;//(int) (700/SpindexerSubsystem.MAX_POWER_SORTING);  // milliseconds
@@ -79,12 +79,14 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                         () -> isTeleop
                 ),
 
-                new InstantCommand(() -> {
-                    robot.drive.setHoldPos(false);
-                    robot.follower.breakFollowing();
-                    robot.follower.startTeleOpDrive();
-                    robot.follower.setTeleOpDrive(0,0,0,true);
-                }),
+                new ConditionalCommand(
+                    new InstantCommand(() -> {
+                        robot.drive.setHoldPos(false);
+                        robot.follower.breakFollowing();
+                        robot.follower.startTeleOpDrive();
+                        robot.follower.setTeleOpDrive(0,0,0,true);}),
+                    new InstantCommand(()->{}),
+                        () -> robot.drive.usePositionLock),
 
                 new GoToRestingStateCommand(robot),
             new InstantCommand(() -> robot.spindexer.useMaxPower = false)
