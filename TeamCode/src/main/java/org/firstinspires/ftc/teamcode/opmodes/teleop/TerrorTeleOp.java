@@ -95,7 +95,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public void runOpMode() {
         Profiler.init();
 
-        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL, RobotHardware.HardwareOptions.CAMERA);
+        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 //        hardware.init(hardwareMap, LynxModule.BulkCachingMode.MANUAL,Rob);
         robot.init(hardware, this);
 
@@ -297,12 +297,12 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         adjustGoalRight.whenPressed(() -> robot.shooter.incrementGoalPosOffset(0,MANUAL_AIM_INCREMENT_HORIZONTAL));
         adjustGoalDown.whenPressed(() -> robot.shooter.incrementGoalPosOffset(-MANUAL_AIM_INCREMENT_VERTICAL,0));
 
-        cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
-
-        cornerRelocalizeButton.whenActive(new InstantCommand(()->{
-            robot.follower.poseTracker.setPose(FieldConstants.RED_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.BLUE)));
-            robot.shooter.resetGoalPosOffset();
-        }));
+//        cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
+//
+//        cornerRelocalizeButton.whenActive(new InstantCommand(()->{
+//            robot.follower.poseTracker.setPose(FieldConstants.RED_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.BLUE)));
+//            robot.shooter.resetGoalPosOffset();
+//        }));
 
         //consider making this a trigger so its harder to misinput
         GamepadButton resetGoalPos = new GamepadButton(gamepad2ex, GamepadKeys.Button.A);
