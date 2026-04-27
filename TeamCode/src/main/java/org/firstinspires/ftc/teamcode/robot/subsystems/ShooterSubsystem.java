@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
-    public static boolean USE_SOTM_ACCEL = true;
+    public static boolean USE_SOTM_ACCEL = false;
     public static boolean JUST_TURRET = true;
 
     public static boolean debug = false;
@@ -235,7 +235,7 @@ public class ShooterSubsystem extends SubsystemBase {
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
 
-        if (useVelocityCompensation && robot.getCycleState().equals(CycleState.CLOSE)) {
+        if (useVelocityCompensation) {
             double flightTime = FlightTimeLookupTable.get(distToGoal);
             Vector robotVel = robot.follower.getVelocity();
             if (useAccelCompensation) {
@@ -571,8 +571,8 @@ public class ShooterSubsystem extends SubsystemBase {
             Profiler.push("flywheel");
             double shooterPower = this.updateShooter();
             Robot.debugTelemetry.addData("Shooter Power", shooterPower);
-            hardware.shooterLeft.setPower(shooterPower);
-            hardware.shooterRight.setPower(shooterPower);
+            //hardware.shooterLeft.setPower(shooterPower);
+            //hardware.shooterRight.setPower(shooterPower);
             Profiler.pop();
 
             //turret

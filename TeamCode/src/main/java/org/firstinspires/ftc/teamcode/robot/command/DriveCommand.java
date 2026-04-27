@@ -59,18 +59,16 @@ public class DriveCommand extends CommandBase {
         }
 
         double rotation = right_x * rotationMultiplier;
-        if (robot.drive.isHeadingLocked()) {
+        if (robot.drive.isHeadingLocked() ) {
             rotation = headingController.calculatePower(getHeadingError(), 0);
         }
-        if (robot.drive.isHoldPosition()){
-            robot.follower.holdPoint(robot.drive.positionHeld);
-
-        }
-        if(robot.getState().isHang() || robot.drive.isHoldPosition())
+        if(robot.getState().isHang())
         {
             return;
         }
-        robot.follower.setTeleOpDrive(left_y, left_x, rotation,true);
+        else if(!(robot.drive.isHoldPosition() && robot.drive.usePositionLock)){
+            robot.follower.setTeleOpDrive(left_y, left_x, rotation,true);
+        }
         robot.follower.update();
 //        robot.drivetrain.move(
 //                direction,

@@ -40,12 +40,15 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
 
                 new SetSpindexPidEnabledCommand(robot.spindexer, false),
-                new ConditionalCommand(
-                        new InstantCommand(() -> {robot.drive.setHoldPos(true);}),
-                        new InstantCommand(() -> {}),
-                        () -> robot.getCycleState().equals(CycleState.FAR)
-
-                ),
+//                new ConditionalCommand(
+//                        new InstantCommand(() -> {
+//                            robot.drive.setHoldPos(true);
+//                            robot.follower.holdPoint(robot.drive.positionHeld);
+//                        }),
+//                        new InstantCommand(() -> {}),
+//                        () -> robot.drive.usePositionLock
+//
+//                ),
 
                 new ConditionalCommand(
                         new SetSpindexPowerCommand(robot.spindexer, Math.copySign(SPINDEX_SORTING_TRANSFER_POWER, SPINDEX_TRANSFER_POWER)),
@@ -78,7 +81,10 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                         () -> isTeleop
                 ),
 
-                new InstantCommand(() -> {robot.drive.setHoldPos(true);}),
+//                new InstantCommand(() -> {
+//                    robot.drive.setHoldPos(false);
+//                    robot.follower.breakFollowing();
+//                    robot.follower.setTeleOpDrive(0,0,0,true);}),
 
                 new GoToRestingStateCommand(robot),
             new InstantCommand(() -> robot.spindexer.useMaxPower = false)

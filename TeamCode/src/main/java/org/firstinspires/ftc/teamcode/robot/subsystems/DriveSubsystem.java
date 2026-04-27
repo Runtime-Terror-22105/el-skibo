@@ -16,6 +16,7 @@ public class DriveSubsystem extends SubsystemBase {
     private boolean headingLock;
     private boolean holdPosition;
     public Pose positionHeld;
+    public boolean usePositionLock = false;
 
     public DriveSubsystem(Robot robot) {
         this.robot = robot;
