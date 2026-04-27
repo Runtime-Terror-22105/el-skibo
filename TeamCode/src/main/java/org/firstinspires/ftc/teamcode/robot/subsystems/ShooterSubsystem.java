@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.math.controllers.PidfController;
 import org.firstinspires.ftc.teamcode.math.datastructures.CircularBuffer;
 import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
-import org.firstinspires.ftc.teamcode.robot.init.CycleState;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
@@ -500,7 +499,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
        // double shooterPower = 0.0;
         double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
-        if (getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
+        if (robot.getState().equals(RobotState.SHOOTING) && getGoalVelocity() - currentRpm > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
             shooterPower = 1.0; // if we're too far below the target, just go full power to get there faster
         }
 //        else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {
