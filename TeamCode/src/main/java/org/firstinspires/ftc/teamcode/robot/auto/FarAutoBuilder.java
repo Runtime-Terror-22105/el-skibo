@@ -93,7 +93,7 @@ public final class FarAutoBuilder {
                         ),
                         new SequentialCommandGroup(
                                 //new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
-                                new WaitCommand(1500)
+                                new WaitCommand(2000)
                         )
                 ),
                 UnsortedShootRoutines.shootCommand(state, flags),
