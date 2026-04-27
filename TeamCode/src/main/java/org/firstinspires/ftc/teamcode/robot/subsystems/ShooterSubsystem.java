@@ -42,9 +42,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // From my observations, the flywheel is more sensitive at lower velocities, so we use a less
     // aggressive feedforward at higher velocities to avoid overshooting and oscillation.
     public static PidfController.PidfCoefficients NEAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0015, 0, 0, 0.000232, 0);
+            new PidfController.PidfCoefficients(0.00125, 0, 0, 0.000232, 0);
     public static PidfController.PidfCoefficients FAR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.0015, 0, 0, 0.000218, 0);
+            new PidfController.PidfCoefficients(0.00125, 0, 0, 0.000218, 0);
     private final PidfController shooterPID = new PidfController(NEAR_PID_COEFFICIENTS);
 
     // SHOOTER_PID_SWITCH determines when we switch between the two PIDs.
@@ -68,7 +68,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double turretPosAt180 = 0.5295; //pos pointed directly towards the back
     public static double posChange90 = 0.280; //servo pos change that rotates turret 90 deg
     public static double posChange90Right = 0.2845; //servo pos change that rotates turret 90 deg
-    public static double posChange90Left = 0.275; //servo pos change that rotates turret 90 deg
+    public static double posChange90Left = 0.28; //servo pos change that rotates turret 90 deg
     public static double turretServosDifferenceSmall = 0.001; // we set the two servos to positions of +- 0.02 to reduce backlash by making them fight
     public static double turretServosDifferenceLarge = 0.01;
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
