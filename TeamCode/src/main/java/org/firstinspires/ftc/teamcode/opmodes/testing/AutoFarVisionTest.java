@@ -20,7 +20,7 @@ public class AutoFarVisionTest extends OneAutoToRuleThemAll {
     // start the robot facing towards the wall
     @Override
     public StartConfig getStartConfig() {
-        return StartConfig.FAR_SORTED;
+        return StartConfig.FAR_SIDE;
     }
 
     @Override
