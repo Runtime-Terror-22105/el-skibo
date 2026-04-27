@@ -499,7 +499,14 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterPID.setPidfCoefficients(useSmallPID ? NEAR_PID_COEFFICIENTS : FAR_PID_COEFFICIENTS);
 
        // double shooterPower = 0.0;
-        double distToGoal = robot.follower.getPose().distanceFrom(robot.color.getGoalPos().toPedro());
+        double distToGoal;
+        if (robot.color == null){
+            distToGoal = 0;
+        }
+        else{
+            distToGoal = robot.follower.getPose().distanceFrom(robot.color.getGoalPos().toPedro());
+
+        }
         double shooterPower = hardware.getVoltageScale() * shooterPID.calculatePower(currentRpm, getGoalVelocity(), false);
         if ((getGoalVelocity() - currentRpm < SHOOTER_VEL_MAXPOWER_TOLERANCE)
                 && (getGoalVelocity() - currentRpm > 0) &&
