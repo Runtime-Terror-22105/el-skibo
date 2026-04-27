@@ -154,20 +154,20 @@ public class CameraSubsystem extends SubsystemBase {
 
         if (hardware.backCamera != null) {
             Log.i("CameraSubsytem", "back camera built" );
-//            backPortal = new VisionPortal.Builder()
-//                    .setCamera(hardware.backCamera)
-//                    // Logs say: Supported resolutions for MJPEG are: [1600x1200 @ 25FPS], [3264x2448 @ 15FPS], [2592x1944 @ 15FPS], [2048x1536 @ 15FPS], [1920x1080 @ 25FPS], [1280x960 @ 25FPS], [1280x720 @ 25FPS], [1024x768 @ 25FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
-//                    // Logs say: Supported resolutions for YUY2 are: [1920x1080 @ 5FPS], [3264x2448 @ 1FPS], [2592x1944 @ 2FPS], [2048x1536 @ 3FPS], [1600x1200 @ 5FPS], [1280x960 @ 5FPS], [1280x720 @ 10FPS], [1024x768 @ 10FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
-//                    // 640x480 is the best one that isn't super high resolution while still being very good, but 320x240 is most ideal for memory
-//                    // Btw MJPEG leads to like 10-15ms higher looptimes, likely because the compression takes a while
-//                    .setCameraResolution(new Size(320, 240))
-//                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-//                    .setLiveViewContainerId(visionPortalIDs[1])
-//                    .setAutoStartStreamOnBuild(true)
-//                    .setAutoStopLiveView(true)
-//                    .setShowStatsOverlay(true)
-//                    .addProcessor(tagProcessor)
-//                    .build();
+            backPortal = new VisionPortal.Builder()
+                    .setCamera(hardware.backCamera)
+                    // Logs say: Supported resolutions for MJPEG are: [1600x1200 @ 25FPS], [3264x2448 @ 15FPS], [2592x1944 @ 15FPS], [2048x1536 @ 15FPS], [1920x1080 @ 25FPS], [1280x960 @ 25FPS], [1280x720 @ 25FPS], [1024x768 @ 25FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
+                    // Logs say: Supported resolutions for YUY2 are: [1920x1080 @ 5FPS], [3264x2448 @ 1FPS], [2592x1944 @ 2FPS], [2048x1536 @ 3FPS], [1600x1200 @ 5FPS], [1280x960 @ 5FPS], [1280x720 @ 10FPS], [1024x768 @ 10FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
+                    // 640x480 is the best one that isn't super high resolution while still being very good, but 320x240 is most ideal for memory
+                    // Btw MJPEG leads to like 10-15ms higher looptimes, likely because the compression takes a while
+                    .setCameraResolution(new Size(640, 480))
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                    .setLiveViewContainerId(visionPortalIDs[1])
+                    .setAutoStartStreamOnBuild(true)
+                    .setAutoStopLiveView(true)
+                    .setShowStatsOverlay(true)
+                    .addProcessor(tagProcessor)
+                    .build();
         }
     }
 
@@ -255,7 +255,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setLensIntrinsics(910.121, 910.121, 648.374, 394.354)
                 .build();
 
-        processor.setDecimation(1f);
+        processor.setDecimation(0f);
         processor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
         return processor;
     }
