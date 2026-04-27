@@ -72,7 +72,7 @@ public class CameraSubsystem extends SubsystemBase {
     public GLYPH gameGlyph;
     public FRONT_CV_MODE CVMode = FRONT_CV_MODE.NONE;
 
-    private int ballsSeen = 0;
+    private int ballsSeen;
     private int lastBallsSeen = ballsSeen;
     private final ElapsedTime relocalizeTimer = new ElapsedTime();
 
@@ -129,6 +129,8 @@ public class CameraSubsystem extends SubsystemBase {
         this.rampPipeline = createRampPipeline();
 
         this.visionPortalIDs =  VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
+
+        this.ballsSeen = 0;
 
         initCameras();
     }
