@@ -142,6 +142,7 @@ public abstract class OneAutoToRuleThemAll extends LinearOpMode {
         sleep(200L);
 
         robot.shooter.isAutoHoodOn = true;
+        robot.shooter.isAutoTurretOn = true;
         preInit();
         while (opModeInInit()) {
             for (LynxModule hub : hardware.allHubs) {

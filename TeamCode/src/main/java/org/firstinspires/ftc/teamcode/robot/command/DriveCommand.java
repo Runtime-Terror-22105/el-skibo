@@ -72,7 +72,6 @@ public class DriveCommand extends CommandBase {
             Log.d("DriveCommand", "Doing teleop drive");
             robot.follower.setTeleOpDrive(left_y, left_x, rotation,true);
         }
-        robot.follower.update();
 //        robot.drivetrain.move(
 //                direction,
 //                rotation,
