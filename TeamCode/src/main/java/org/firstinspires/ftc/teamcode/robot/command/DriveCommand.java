@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.command;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.math.MathFunctions;
 import com.seattlesolvers.solverslib.command.CommandBase;
@@ -66,7 +68,8 @@ public class DriveCommand extends CommandBase {
         {
             return;
         }
-        else if(!(robot.drive.isHoldPosition() && robot.drive.usePositionLock)){
+        else if(!(robot.drive.isHoldPosition() && robot.drive.usePositionLock)) {
+            Log.d("DriveCommand", "Doing teleop drive");
             robot.follower.setTeleOpDrive(left_y, left_x, rotation,true);
         }
         robot.follower.update();

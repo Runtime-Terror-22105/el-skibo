@@ -14,11 +14,9 @@ import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexPowerCom
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerRampActive;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.SetSpindexerYawCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
-import org.firstinspires.ftc.teamcode.robot.init.CycleState;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotState;
 import org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.robot.subsystems.SpindexerSubsystem;
 
 @Config
 public class ShootThreeBallsCommand extends SequentialCommandGroup {
@@ -40,15 +38,15 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                 new SetIntakeSpeedCommand(robot.intake, IntakeSubsystem.DEFAULT_SPEED),
 
                 new SetSpindexPidEnabledCommand(robot.spindexer, false),
-//                new ConditionalCommand(
-//                        new InstantCommand(() -> {
-//                            robot.drive.setHoldPos(true);
-//                            robot.follower.holdPoint(robot.drive.positionHeld);
-//                        }),
-//                        new InstantCommand(() -> {}),
-//                        () -> robot.drive.usePositionLock
-//
-//                ),
+                new ConditionalCommand(
+                        new InstantCommand(() -> {
+                            robot.drive.setHoldPos(true);
+                            robot.follower.holdPoint(robot.drive.positionHeld);
+                        }),
+                        new InstantCommand(() -> {}),
+                        () -> robot.drive.usePositionLock
+
+                ),
 
                 new ConditionalCommand(
                         new SetSpindexPowerCommand(robot.spindexer, Math.copySign(SPINDEX_SORTING_TRANSFER_POWER, SPINDEX_TRANSFER_POWER)),
@@ -81,10 +79,11 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                         () -> isTeleop
                 ),
 
-//                new InstantCommand(() -> {
-//                    robot.drive.setHoldPos(false);
-//                    robot.follower.breakFollowing();
-//                    robot.follower.setTeleOpDrive(0,0,0,true);}),
+                new InstantCommand(() -> {
+                    robot.drive.setHoldPos(false);
+                    robot.follower.breakFollowing();
+                    robot.follower.setTeleOpDrive(0,0,0,true);
+                }),
 
                 new GoToRestingStateCommand(robot),
             new InstantCommand(() -> robot.spindexer.useMaxPower = false)

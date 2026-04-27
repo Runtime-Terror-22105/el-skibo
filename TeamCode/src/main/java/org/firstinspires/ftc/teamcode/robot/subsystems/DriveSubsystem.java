@@ -4,7 +4,6 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
-import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.util.Profiler;
 
@@ -23,6 +22,9 @@ public class DriveSubsystem extends SubsystemBase {
         this.killMotors = false;
         this.slowSpeed = false;
         this.headingLock = false;
+
+        this.holdPosition = false;
+        this.usePositionLock = false;
     }
 
     public boolean isHeadingLocked() {
