@@ -170,8 +170,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         lastState = robot.robotState;
 //        robot.camera.stopCamera();
 
-        robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
-
         robot.lightControl.setIsManualLighting(false);
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
         GamepadEx gamepad2ex = new GamepadEx(gamepad2);
@@ -400,6 +398,7 @@ most sorted correctly (brute force)
             robot.telemetry.addData("Robot position", robot.follower.getPose().toString());
             robot.telemetry.addData("Goal Velocity", robot.shooter.getGoalVelocity());
             robot.telemetry.addData("Current velocity", robot.shooter.getVelocityRpm());
+            robot.telemetry.addData("Is autosort enabled? ", robot.getAutoSort());
 
             robot.telemetry.update();
             Profiler.pop();
