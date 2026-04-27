@@ -170,8 +170,6 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         lastState = robot.robotState;
 //        robot.camera.stopCamera();
 
-        robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
-
         robot.lightControl.setIsManualLighting(false);
         GamepadEx gamepad1ex = new GamepadEx(gamepad1);
         GamepadEx gamepad2ex = new GamepadEx(gamepad2);
