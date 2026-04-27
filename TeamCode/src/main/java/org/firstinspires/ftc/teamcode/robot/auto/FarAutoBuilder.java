@@ -72,8 +72,8 @@ public final class FarAutoBuilder {
 //                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
                         new TurnCommand(state.robot.follower, turnAmt, state.mirror).withTimeout(100),
                         new SequentialCommandGroup(
-                                new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
-                                new WaitCommand(250)
+                                //new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
+                                new WaitCommand(1500)
                         )
                 ),
                 UnsortedShootRoutines.shootCommand(state, flags),
@@ -92,8 +92,8 @@ public final class FarAutoBuilder {
                                 new TurnCommand(state.robot.follower, Math.PI/2, state.mirror).withTimeout(100)
                         ),
                         new SequentialCommandGroup(
-                                new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
-                                new WaitCommand(250)
+                                //new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
+                                new WaitCommand(1500)
                         )
                 ),
                 UnsortedShootRoutines.shootCommand(state, flags),
