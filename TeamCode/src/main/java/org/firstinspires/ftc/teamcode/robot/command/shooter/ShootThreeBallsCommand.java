@@ -82,6 +82,7 @@ public class ShootThreeBallsCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> {
                     robot.drive.setHoldPos(false);
                     robot.follower.breakFollowing();
+                    robot.follower.startTeleOpDrive();
                     robot.follower.setTeleOpDrive(0,0,0,true);
                 }),
 
