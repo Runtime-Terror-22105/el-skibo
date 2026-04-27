@@ -37,7 +37,8 @@ public class EncoderTest extends LinearOpMode {
 //            telemetry.addData("motor rear right - raw voltage (volts)", String.valueOf(motorRearRightVoltage));
 //            telemetry.addData("motor rear right - without offset (degrees)", Math.toDegrees(hardware.motorRearRightAbsEncoder.getCurrentPositionWithoutOffset()));
 //            telemetry.addData("motor rear right - with offset (degrees)", Math.toDegrees(hardware.motorRearRightAbsEncoder.getCurrentPosition()));
-//            telemetry.update();
+
+            telemetry.update();
         }
     }
 }
