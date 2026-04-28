@@ -4,7 +4,6 @@ import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE_2;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GOING_TO_SPIKE_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.HITTING_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_BEFORE_HORIZ_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_BEFORE_HORIZ_POSE;
@@ -129,8 +128,7 @@ public final class NearAutoBuilder {
 
     private static Command intakeSpikeFollowingPath(AutoBuildState state, PathChain path, double wallTimeoutDistance) {
         Command followPathCommand = new FollowPathAndWaitForWallCommand(state.robot, path, true, MAX_DRIVETRAIN_POWER_INTAKING, wallTimeoutDistance)
-                .raceWith(new WaitForIntakeCommand(state.robot))
-                .withTimeout(GOING_TO_SPIKE_TIMEOUT);
+                .raceWith(new WaitForIntakeCommand(state.robot));
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                     new GoToIntakeStateCommand(state.robot),

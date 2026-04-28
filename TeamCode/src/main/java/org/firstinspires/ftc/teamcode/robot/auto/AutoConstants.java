@@ -27,8 +27,6 @@ public class AutoConstants {
     public static Pose2d SHOOT_SORTED_POSE_3 = new Pose2d(SHOOT_SORTED_POSE_2.x, SHOOT_SORTED_POSE_2.y, Math.toRadians(180));
     public static Pose2d SHOOT_SORTED_POSE_1 = new Pose2d(SHOOT_SORTED_POSE_2.x, SHOOT_SORTED_POSE_2.y, Math.toRadians(235));
 
-    public static long GOING_TO_SPIKE_TIMEOUT = 3000;
-
     public static Pose2d INTAKE_1_BEFORE_HORIZ_CONTROL = new Pose2d(24, 111, 0);
     public static Pose2d INTAKE_1_BEFORE_HORIZ_POSE = new Pose2d(27, 97, Math.toRadians(263));
     public static Pose2d INTAKE_1_HORIZ_POSE = new Pose2d(INTAKE_1_BEFORE_HORIZ_POSE.x, 82, Math.toRadians(263));
