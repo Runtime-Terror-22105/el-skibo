@@ -47,6 +47,8 @@ public class RobotHardware {
     // Drivetrain encoders (for lifting when pto is engaged)
     public TerrorAnalogEncoder motorRearLeftAbsEncoder; // TODO: fnd whch s the elc v1 or v2 and figure out which one is reversed or not
     public TerrorAnalogEncoder motorRearRightAbsEncoder;
+    public static double MOTOR_REAR_LEFT_ENCODER_OFFSET_DEGREES = -285.16;
+    public static double MOTOR_REAR_RIGHT_ENCODER_OFFSET_DEGREES = -220;
 
     // PTO for lift (rear wheels spinning will push the bottom plate down, which will lift the robot up)
     public TerrorServo pto;
@@ -152,13 +154,15 @@ public class RobotHardware {
         this.motorRearLeftAbsEncoder = new TerrorAnalogEncoder(
                 hwMap.get(AnalogInput.class, "rearLeftEncoder"),
                 false,
-                0.0, 1.0 // assuming that this is the ELC encoder v1, w/ less precision
+                0.00, 3.3 // assuming that this s the ELC encoder v2, w/ more precision and a wider voltage range
         );
         this.motorRearRightAbsEncoder = new TerrorAnalogEncoder(
                 hwMap.get(AnalogInput.class, "rearRightEncoder"),
                 false,
-                0.00, 3.3 // assuming that this s the ELC encoder v2, w/ more precision and a wider voltage range
+                0.0, 1.0 // assuming that this is the ELC encoder v1, w/ less precision
         );
+        this.motorRearLeftAbsEncoder.setOffset(Math.toRadians(MOTOR_REAR_LEFT_ENCODER_OFFSET_DEGREES));
+        this.motorRearRightAbsEncoder.setOffset(Math.toRadians(MOTOR_REAR_RIGHT_ENCODER_OFFSET_DEGREES));
 
 
         // Initialize the turret

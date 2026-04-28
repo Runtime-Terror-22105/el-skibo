@@ -66,7 +66,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // turret positions
     public static double turretOffset = 0.00; //turret manual offset- servo pos
-    public static double turretPosAt180 = 0.5295; //pos pointed directly towards the back
+    public static double turretPosAt180 = 0.5225; //pos pointed directly towards the back
     public static double posChange90 = 0.280; //servo pos change that rotates turret 90 deg
     public static double posChange90Right = 0.2845; //servo pos change that rotates turret 90 deg
     public static double posChange90Left = 0.28; //servo pos change that rotates turret 90 deg
@@ -179,7 +179,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     turretPosAt180, turretPosAt180+posChange90Left
             );
         }
-        
+
         return MathFunctions.clamp(unboundedServo, turretServoLowerBound, turretServoUpperBound);
     }
 

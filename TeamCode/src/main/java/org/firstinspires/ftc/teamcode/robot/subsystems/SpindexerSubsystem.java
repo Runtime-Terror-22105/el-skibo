@@ -49,7 +49,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static double SHOOTER_RAMP_DEACTIVE = 0.85;
 
     public static double BALL_BLOCKER_ACTIVE = 0.9; //this is when it is over the spindex and blocking
-    public static double BALL_BLOCKER_DEACTIVE = 0.16; //not blocking, can shoot
+    public static double BALL_BLOCKER_DEACTIVE = 0.07; //not blocking, can shoot
 
     public static double MAX_POWER_SORTING_UNJAMMING = 0.65;
     public static double MAX_POWER_SORTING = 0.65;
