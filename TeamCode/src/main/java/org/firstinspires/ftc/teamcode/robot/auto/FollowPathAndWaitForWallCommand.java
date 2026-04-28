@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
@@ -13,6 +14,8 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
         COMPLETED
     }
 
+    public static double WALL_WAITING_TIMEOUT = 1500; // only wait for the wall for 1.5 sec before just moving on
+
     private final Robot robot;
     private final PathChain pathChain;
     private final boolean holdEnd;
@@ -20,6 +23,7 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
     private final double wallTimeoutDistance;
 
     private boolean wallDistanceIsForRemaining;
+    private final ElapsedTime waitingForWallTimer;
 
     private State state = State.INITIAL_PATH;
 
@@ -36,6 +40,8 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
         this.maxPower = maxPower;
         this.wallTimeoutDistance = wallTimeoutDistance;
         this.wallDistanceIsForRemaining = false;
+
+        this.waitingForWallTimer = new ElapsedTime();
     }
 
     /**
@@ -67,13 +73,14 @@ public class FollowPathAndWaitForWallCommand extends CommandBase {
                     if (robot.spindexer.isWallDown()) {
                         state = State.FINAL_PATH;
                     } else {
+                        waitingForWallTimer.reset();
                         state = State.WAITING_FOR_WALL;
                         robot.follower.pausePathFollowing();
                     }
                 }
                 break;
             case WAITING_FOR_WALL:
-                if (robot.spindexer.isWallDown()) {
+                if (robot.spindexer.isWallDown() || waitingForWallTimer.milliseconds() > WALL_WAITING_TIMEOUT) {
                     state = State.FINAL_PATH;
                     robot.follower.resumePathFollowing();
                 }
