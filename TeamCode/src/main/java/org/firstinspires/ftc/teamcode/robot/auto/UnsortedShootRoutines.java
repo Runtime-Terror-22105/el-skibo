@@ -71,9 +71,9 @@ public final class UnsortedShootRoutines {
         return state.lastPath;
     }
 
-    private static PathChain shootSpikePath(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
+    private static PathChain shootSpikePath(AutoBuildState state, EnumSet<ShootPathFlag> flags, int spikeNumber) {
         PathBuilder builder = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, getShootPose(ShootPathType.EDGE, flags), state.mirror, true, true)
-                .setConstraintsForLast(RELAXED_CONSTRAINTS);
+                    .setConstraintsForLast(RELAXED_CONSTRAINTS);
         state.lastPath = builder.build();
         return state.lastPath;
     }
@@ -163,7 +163,7 @@ public final class UnsortedShootRoutines {
         EnumSet<ShootPathFlag> flags = ArrayUtil.toEnumSet(flagArr, ShootPathFlag.class);
         PathChain path = flags.contains(ShootPathFlag.PRELOAD_SHOOT_SPOT)
                 ? shootPreloadPath(state, flags)
-                : shootSpikePath(state, flags);
+                : shootSpikePath(state, flags, spikeNumber);
 
         return createFollowShootPathAndShootCommand(state, path, flags);
     }
