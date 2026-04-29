@@ -29,7 +29,10 @@ public abstract class Auto18 extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuildState state) {
         return new SequentialCommandGroup(
-                new InstantCommand(() -> robot.shooter.sotmOverride = false),
+                new InstantCommand(() -> robot.shooter.sotmOverride = true),
+                new InstantCommand(() -> robot.shooter.sotmAccelOverride = true),
+                new InstantCommand(() -> robot.shooter.USE_SOTM_ACCEL = true),
+                new InstantCommand(() -> robot.shooter.USE_SOTM = true),
                 NearAutoBuilder.shootPreload(state),
                 NearAutoBuilder.cycleSpike(state, 2),
                 NearAutoBuilder.cycleGateNormal(state, true),

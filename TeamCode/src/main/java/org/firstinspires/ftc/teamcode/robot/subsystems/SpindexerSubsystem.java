@@ -80,9 +80,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficientsCcw =
-            new PidfController.PidfCoefficients(0.25, 0, 0.0135, 0, 0.09);
+            new PidfController.PidfCoefficients(0.22, 0, 0.0135, 0, 0.09);
     public static PidfController.PidfCoefficients turningPidCoefficientsCw =
-            new PidfController.PidfCoefficients(0.28, 0, 0.014, 0, 0.12);
+            new PidfController.PidfCoefficients(0.22, 0, 0.014, 0, 0.12);
     public static double yawPidTolerance = 0.05; // radians, used for kstatic
     public static double CHECKING_TOLERANCE = 0.05; // radians, only for checking if at target, not for PID tolerance
     private boolean pidEnabled = true;
