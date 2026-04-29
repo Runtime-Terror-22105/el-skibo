@@ -53,8 +53,10 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     //use a set multiplier to calculate pixels off center into inches off center
     //return position with the offset of the balls
 
-    public static double LEFT_SIDE_PIXEL_VAL = 33;
-    public static double RIGHT_SIDE_PIXEL_VAL = 195;
+    public static double RED_LEFT_SIDE_PIXEL_VAL = 33;
+    public static double RED_RIGHT_SIDE_PIXEL_VAL = 195;
+    public static double BLUE_LEFT_SIDE_PIXEL_VAL = 121;
+    public static double BLUE_RIGHT_SIDE_PIXEL_VAL = 266;
 
     public static double PIXEL_TO_INCHES_SCALE = (double) 0.3; // pixels * 1/3 = inches
 
@@ -129,17 +131,15 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     public double pixelXtoRealX(double pixelX, Team color) {
         double value;
-        if (color.equals(Team.RED)){
-            value = Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
+        if (color.equals(Team.RED)) {
+            value = Algebra.mapRangeNoClamp(pixelX, RED_LEFT_SIDE_PIXEL_VAL, RED_RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
         }
         else {
-            value = Algebra.mapRangeNoClamp(pixelX, RIGHT_SIDE_PIXEL_VAL, LEFT_SIDE_PIXEL_VAL, 48-8, -8);
-
+            value = Algebra.mapRangeNoClamp(pixelX, BLUE_LEFT_SIDE_PIXEL_VAL, BLUE_RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
         }
 
-
         return Math.max(
-                Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 48-8, -8),
+                value,
                 0 // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
         );
     }
