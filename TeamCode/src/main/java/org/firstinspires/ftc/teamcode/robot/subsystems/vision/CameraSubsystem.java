@@ -386,7 +386,7 @@ public class CameraSubsystem extends SubsystemBase {
 //        double pixelX = blob.getCircle().getCenter().x;
         double pixelX = blob.getCenter().x;
         Log.d(TAG, "Ball Pixel Coordinates" + pixelX);
-        double offset = ballPipeline.pixelXtoRealX(pixelX);
+        double offset = ballPipeline.pixelXtoRealX(pixelX, robot.color);
         tempPos.y += offset;
         Log.d(TAG, "Ball Pixel Offset (in): " + offset);
         Log.d(TAG, "Ball Pixel Offset (in): " + offset);
