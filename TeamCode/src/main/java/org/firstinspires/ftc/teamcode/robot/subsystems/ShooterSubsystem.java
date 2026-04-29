@@ -33,7 +33,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SIZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
-    public static boolean USE_SOTM_ACCEL = false;
+    public static boolean USE_SOTM_ACCEL = true;
     public static boolean USE_ROTATION_COMPENSATION = true;
     public static boolean JUST_TURRET = false;
 
@@ -57,7 +57,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // SHOOTER_VEL_TOLERANCE determines when we consider the shooter to be "at velocity"
     public static double SHOOTER_VEL_TOLERANCE = 1000;  // Units are RPM
     public static double SHOOTER_VEL_MAXPOWER_TOLERANCE = 300;// Units are RPM, used for quicker recovery while shooting multiple balls
-    public static double POWER_ADD = 0.2;
+    public static double POWER_ADD = 0.4;
 
     public GoalPosLookupTable goalPosLookupTable;
     public ShooterLookupTableInstance shooterLookupTable = ShooterLookupTable.NORMAL_TABLE;
@@ -529,6 +529,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 && (getGoalVelocity() - currentRpm > 0) &&
                 robot.getState().equals(RobotState.SHOOTING)
                 && distToGoal < 100) {
+            Log.d("ShooterSubsystem", "adding power");
             shooterPower += POWER_ADD; // if we're too far below the target, just go full power to get there faster
         }
 //        else if (currentRpm - getGoalVelocity() > SHOOTER_VEL_MAXPOWER_TOLERANCE) {

@@ -37,7 +37,7 @@ public class AutoConstants {
 
     public static Pose2d INTAKE_1_CONTROL = new Pose2d(58, 83, 0);
     public static Pose2d SORTED_INTAKE_1_CONTROL = new Pose2d(40, 83, 0);
-    public static Pose2d INTAKE_1_POSE = new Pose2d(25, 85.149, Math.toRadians(180));
+    public static Pose2d INTAKE_1_POSE = new Pose2d(25, 83, Math.toRadians(180));
 
     public static Pose2d INTAKE_2_CONTROL = new Pose2d(58, 58, 0);
     public static Pose2d INTAKE_2_POSE = new Pose2d(22, 60, Math.toRadians(150));
@@ -64,13 +64,13 @@ public class AutoConstants {
 
     // For CYCLING gate.
     public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 68.5);
-    public static Pose2d HITTING_GATE = new Pose2d(18, 67, Math.toRadians(180));
+    public static Pose2d HITTING_GATE = new Pose2d(17, 65, Math.toRadians(180));
     public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(15.9, 61.42);
-    public static Pose2d AFTER_GATE = new Pose2d(12, 57, Math.toRadians(120));
+    public static Pose2d AFTER_GATE = new Pose2d(11, 57, Math.toRadians(115));
 
     // For doing normal gate cycling
-    public static Pose2d GATE_CONTROL_POSE_NORMAL = new Pose2d(30, 60.8);
-    public static Pose2d HITTING_GATE_NORMAL = new Pose2d(10.5, 62,  Math.toRadians(145));
+    public static Pose2d GATE_CONTROL_POSE_NORMAL = new Pose2d(40, 58);
+    public static Pose2d HITTING_GATE_NORMAL = new Pose2d(10.5, 60.5,  Math.toRadians(155));
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 9, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(17, 8, Math.toRadians(195)); // rotate into the balls a bit to avoid jams
@@ -117,6 +117,8 @@ public class AutoConstants {
     public static long CAMERA_WAIT_MINIMUM_TIME = 80;
 
     public static int FLLYWHEEL_SPIN_UP_TIMEOUT_MS = 1500;
+
+    public static double ANGLE_NEAR_TURRET = 4.85;
 
     public static PathConstraints RELAXED_CONSTRAINTS;
     static {
