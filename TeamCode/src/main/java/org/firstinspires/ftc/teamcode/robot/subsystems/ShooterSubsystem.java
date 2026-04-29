@@ -27,10 +27,12 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+    public static double ROTATION_COMPENSATION_MULTIPLIER = 1;
     public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = false;
+    public static boolean USE_ROTATION_COMPENSATION = true;
     public static boolean JUST_TURRET = false;
 
     public static boolean debug = false;
@@ -222,7 +224,7 @@ public class ShooterSubsystem extends SubsystemBase {
         return goalPos.plus(horizontalOffet).plus(verticalOffset);
     }
 
-    public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation) {
+    public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation, boolean useRotationCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
@@ -258,7 +260,7 @@ public class ShooterSubsystem extends SubsystemBase {
         //currently limited to 90 - 270 degrees, can be changed by changing the values in the map range below
         // also currently only updates when in the tape zone or every 10 loops to reduce wrtes
         if (isAutoTurretOn && (alwaysUpdateTurret || loopCount == 0 || robot.isInTapeZone())) {
-            this.setTurretAngle(this.findYawAngle(botPos, goalPos));
+            this.setTurretAngle(this.findYawAngle(botPos, goalPos, useRotationCompensation));
         }
 
 
@@ -305,7 +307,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         if (isAutoTurretOn && (alwaysUpdateTurret || loopCount == 0 || robot.isInTapeZone())) {
-            this.setTurretAngle(this.findYawAngle(botPos, goalPos));
+            this.setTurretAngle(this.findYawAngle(botPos, goalPos, USE_ROTATION_COMPENSATION));
         }
 
         ShooterValues math;
@@ -346,7 +348,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), goalPos));
+        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), goalPos, USE_ROTATION_COMPENSATION));
     }
 
     public void manualAimAutoTurret(double velocity, double pitch) {
@@ -356,7 +358,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithOffsets(goalPosLookupTable.get())));
+        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithOffsets(goalPosLookupTable.get()),, USE_ROTATION_COMPENSATION));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {
@@ -371,7 +373,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.setTurretAngle(turretYaw);
     }
 
-    private double findYawAngle(Pose botPos, Pose2d goalPos){
+    private double findYawAngle(Pose botPos, Pose2d goalPos, boolean useRotationCompensation){
         /** all in rad **/
 //        Pose robotVector = new Pose(turretToRobotCenterOffset.x, turretToRobotCenterOffset.y, 0)
 //                .rotate(botPos.getHeading(), false);
@@ -389,6 +391,10 @@ public class ShooterSubsystem extends SubsystemBase {
         if (telemetry) robot.telemetry.addData("follower heading (deg)",botHeading*180D/Math.PI );
 
         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
+
+        if (useRotationCompensation) {
+            angleTurret += ROTATION_COMPENSATION_MULTIPLIER * robot.follower.getAngularVelocity();
+        }
 
         if (debug) Log.d("ShooterSubsystem", "turret angle (deg): " + Math.toDegrees(angleTurret));
         if (debug) Log.d("ShooterSubsystem", "calculated servo pos: " + turretAngleToServoPos(angleTurret));
@@ -568,7 +574,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 Pose robotPos = this.robot.follower.getPose();
                 boolean useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
                 boolean useSotmAccel = sotmAccelOverride != null ? sotmAccelOverride : USE_SOTM_ACCEL;
-                this.doAutoShoot(robotPos, useSotm, useSotmAccel);
+                this.doAutoShoot(robotPos, useSotm, useSotmAccel, USE_ROTATION_COMPENSATION);
             }
             else Log.e("ShooterSubsystem", "robot.goalPos is null! Skipping autoshoot...");
 
