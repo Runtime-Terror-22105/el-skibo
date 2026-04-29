@@ -284,7 +284,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         ballsMod0Button.whenPressed(()->robot.camera.setBallsSeen(0));
         ballsMod1Button.whenPressed(()->robot.camera.setBallsSeen(1)); //you could also set this to be 67
         ballsMod2Button.whenPressed(()->robot.camera.setBallsSeen(2));
-        Trigger cameraRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
+//        Trigger cameraRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
         Trigger cornerRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
 
         GamepadButton adjustGoalUp = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_UP);
@@ -299,10 +299,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
 //        cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
 //
-//        cornerRelocalizeButton.whenActive(new InstantCommand(()->{
-//            robot.follower.poseTracker.setPose(FieldConstants.RED_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.BLUE)));
-//            robot.shooter.resetGoalPosOffset();
-//        }));
+        cornerRelocalizeButton.whenActive(new InstantCommand(()->{
+            robot.follower.poseTracker.setPose(FieldConstants.RED_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.BLUE)));
+            robot.shooter.resetGoalPosOffset();
+        }));
 
         //consider making this a trigger so its harder to misinput
         GamepadButton resetGoalPos = new GamepadButton(gamepad2ex, GamepadKeys.Button.A);
