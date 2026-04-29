@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
@@ -28,11 +29,12 @@ public abstract class Auto18 extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuildState state) {
         return new SequentialCommandGroup(
-                NearAutoBuilder.shootPreload(state, ShootPathFlag.EARLY_LEAVE),
-                NearAutoBuilder.cycleSpike(state, 2, ShootPathFlag.EARLY_LEAVE),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_LEAVE),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_LEAVE),
-                NearAutoBuilder.cycleGate(state, true, ShootPathFlag.EARLY_LEAVE),
+                new InstantCommand(() -> robot.shooter.sotmOverride = false),
+                NearAutoBuilder.shootPreload(state),
+                NearAutoBuilder.cycleSpike(state, 2),
+                NearAutoBuilder.cycleGateNormal(state, true),
+                NearAutoBuilder.cycleGateNormal(state, true),
+                NearAutoBuilder.cycleGateNormal(state, true),
                 NearAutoBuilder.cycleSpike(state, 1, ShootPathFlag.LAST)
         ).alongWith(new KillTimerCommand(robot));
     }

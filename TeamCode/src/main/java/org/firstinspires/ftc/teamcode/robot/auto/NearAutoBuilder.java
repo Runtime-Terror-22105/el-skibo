@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.robot.auto;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AFTER_GATE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE_2;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_CONTROL_POSE_NORMAL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.GATE_INTAKE_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.HITTING_GATE;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.HITTING_GATE_NORMAL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_BEFORE_HORIZ_CONTROL;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_BEFORE_HORIZ_POSE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.INTAKE_1_CONTROL;
@@ -313,6 +315,16 @@ public final class NearAutoBuilder {
         );
     }
 
+    public static Command intakeGateNormal(AutoBuildState state, EnumSet<ShootPathFlag> flags) {
+        state.lastPath = PathUtil.addPathBuilderCurve(state.robot, state.startPoseBlue, state.lastPath, GATE_CONTROL_POSE_NORMAL, HITTING_GATE_NORMAL, state.mirror, false, false)
+                .setNoDeceleration()
+                .build();
+        return new SequentialCommandGroup(
+                new FollowPathCommand(state.robot.follower, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING),
+                new WaitForIntakeCommand(state.robot).withTimeout(GATE_INTAKE_DELAY)
+        );
+    }
+
     public static Command shootGate(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
         return UnsortedShootRoutines.shootGate(state, reverseIntake, flagArr);
     }
@@ -321,6 +333,14 @@ public final class NearAutoBuilder {
         EnumSet<ShootPathFlag> flagArray = ArrayUtil.toEnumSet(flags, ShootPathFlag.class);
         return new SequentialCommandGroup(
                 intakeGate(state, flagArray),
+                shootGate(state, reverseIntake, flags)
+        );
+    }
+
+    public static Command cycleGateNormal(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flags) {
+        EnumSet<ShootPathFlag> flagArray = ArrayUtil.toEnumSet(flags, ShootPathFlag.class);
+        return new SequentialCommandGroup(
+                intakeGateNormal(state, flagArray),
                 shootGate(state, reverseIntake, flags)
         );
     }
