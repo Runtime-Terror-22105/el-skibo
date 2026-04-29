@@ -82,9 +82,12 @@ public class LightControl extends SubsystemBase {
                 case SHOOTING:
                     hardware.lights.setColor(TerrorLight.LightColors.YELLOW);
                     break;
+                case HANG_INIT:
+                    hardware.lights.setColor(TerrorLight.LightColors.AZURE);
+                    break;
 
                 case HANGING:
-                    hardware.lights.setColor(TerrorLight.LightColors.AZURE);
+                    hardware.lights.setColor(TerrorLight.LightColors.VIOLET);
                     break;
 
                 default:
