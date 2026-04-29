@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -126,7 +127,17 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     public static volatile StreamType streamType = StreamType.IMAGE_DRAWING;
 
-    public double pixelXtoRealX(double pixelX) {
+    public double pixelXtoRealX(double pixelX, Team color) {
+        double value;
+        if (color.equals(Team.RED)){
+            value = Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
+        }
+        else {
+            value = Algebra.mapRangeNoClamp(pixelX, RIGHT_SIDE_PIXEL_VAL, LEFT_SIDE_PIXEL_VAL, 48-8, -8);
+
+        }
+
+
         return Math.max(
                 Algebra.mapRangeNoClamp(pixelX, LEFT_SIDE_PIXEL_VAL, RIGHT_SIDE_PIXEL_VAL, 48-8, -8),
                 0 // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide

@@ -385,7 +385,7 @@ public class CameraSubsystem extends SubsystemBase {
         Pose2d tempPos = pose.copy();
 //        double pixelX = blob.getCircle().getCenter().x;
         double pixelX = blob.getCenter().x;
-        double offset = ballPipeline.pixelXtoRealX(pixelX);
+        double offset = ballPipeline.pixelXtoRealX(pixelX, robot.color);
         tempPos.y += offset;
         Log.d(TAG, "Ball Pixel Offset (in): " + offset);
         Log.d(TAG, "Ball Pixel Offset (in): " + offset);
