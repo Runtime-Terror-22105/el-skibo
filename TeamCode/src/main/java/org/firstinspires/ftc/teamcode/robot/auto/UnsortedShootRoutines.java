@@ -91,7 +91,7 @@ public final class UnsortedShootRoutines {
         if (!flags.contains(ShootPathFlag.LAST)) {
             command = command.andThen(
                     new GoToRestingStateCommand(state.robot),
-                    new WaitUntilCommand(() -> state.robot.spindexer.isWallDown()),
+//                    new WaitForSpindexerWallCommand(state.robot.spindexer),
                     new GoToIntakeStateCommand(state.robot),
                     new LogCatCommand("AutoBuilder", "ending shoot")
             );

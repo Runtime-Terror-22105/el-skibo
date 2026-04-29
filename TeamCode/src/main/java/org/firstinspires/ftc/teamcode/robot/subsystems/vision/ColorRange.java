@@ -53,6 +53,14 @@ public class ColorRange
     public static Scalar greenLow  = new Scalar(63, 102, 0);
     public static Scalar greenHigh = new Scalar(86, 255, 255);
 
+
+//    // Actual field's values
+//    public static Scalar purpleLow  = new Scalar(142 , 83, 0);
+//    public static Scalar purpleHigh = new Scalar(163 , 255, 255);
+//    public static Scalar greenLow  = new Scalar(66, 66, 0);
+//    public static Scalar greenHigh = new Scalar(96, 255, 255);
+
+
     public ColorRange(Scalar min, Scalar max)
     {
         this.min = min;

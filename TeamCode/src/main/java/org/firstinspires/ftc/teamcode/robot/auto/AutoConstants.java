@@ -16,7 +16,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_PRELOAD_FAR_POSE = new Pose2d(48, 8, Math.toRadians(180));
     public static Pose2d SHOOT_PRELOAD_FAR_POSE_ALT = new Pose2d(48, 10, Math.toRadians(125));
     public static Pose2d SHOOT_PRELOAD_HORIZ_POSE = new Pose2d(24, 115, Math.toRadians(225));
-    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(45, 85, Math.toRadians(-124.7));
+    public static Pose2d SHOOT_EDGE_POSE = new Pose2d(47, 78, Math.toRadians(-124.7));
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(57, 95, Math.toRadians(-124.7));
     public static Pose2d SHOOT_FAR_POSE = new Pose2d(48, 12, Math.toRadians(180));
@@ -69,8 +69,8 @@ public class AutoConstants {
     public static Pose2d AFTER_GATE = new Pose2d(12, 57, Math.toRadians(120));
 
     // For doing normal gate cycling
-    public static Pose2d GATE_CONTROL_POSE_NORMAL = new Pose2d(30, 63.33);
-    public static Pose2d HITTING_GATE_NORMAL = new Pose2d(10.5, 62.5,  Math.toRadians(143));
+    public static Pose2d GATE_CONTROL_POSE_NORMAL = new Pose2d(30, 60.8);
+    public static Pose2d HITTING_GATE_NORMAL = new Pose2d(10.5, 62,  Math.toRadians(145));
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 9, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(17, 8, Math.toRadians(195)); // rotate into the balls a bit to avoid jams
