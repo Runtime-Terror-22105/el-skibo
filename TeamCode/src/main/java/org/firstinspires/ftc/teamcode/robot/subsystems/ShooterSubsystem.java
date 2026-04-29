@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 public class ShooterSubsystem extends SubsystemBase {
     public static double ROTATION_COMPENSATION_COEFFIICIENT = -0.13;
     public static int ACCEL_BUFFER_SZE = 3;
-    public static double ACCELERATION_COEFFICIENT = 0.1;
+    public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = true;
     public static boolean USE_ROTATION_COMPENSATION = true;
