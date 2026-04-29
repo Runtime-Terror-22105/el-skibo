@@ -27,8 +27,10 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
+    public static int LOOPTIME_BUFFER_SIZE = 5;
     public static double ROTATION_COMPENSATION_COEFFIICIENT = -0.13;
-    public static int ACCEL_BUFFER_SZE = 3;
+
+    public static int ACCEL_BUFFER_SIZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = false;
@@ -134,8 +136,12 @@ public class ShooterSubsystem extends SubsystemBase {
     // flag used for lighting feedback for driver
     public boolean turretInDeadzone = false;
 
-    private CircularBuffer<Double> accelBufferX = new CircularBuffer<>(ACCEL_BUFFER_SZE);
-    private CircularBuffer<Double> accelBufferY = new CircularBuffer<>(ACCEL_BUFFER_SZE);
+    private final CircularBuffer<Double> accelBufferX;
+    private final CircularBuffer<Double> accelBufferY;
+
+    private final CircularBuffer<Double> loopTimeBuffer;
+
+    private ElapsedTime loopTimer;
 
     public static class ShooterValues {
         public double velocity;
@@ -153,6 +159,11 @@ public class ShooterSubsystem extends SubsystemBase {
         this.shooterPID.setTargetPosition(0.0);
 
         this.goalPosLookupTable = new GoalPosLookupTable(this.robot);
+        this.loopTimer = new ElapsedTime();
+
+        this.accelBufferX = new CircularBuffer<>(ACCEL_BUFFER_SIZE);
+        this.accelBufferY = new CircularBuffer<>(ACCEL_BUFFER_SIZE);
+        this.loopTimeBuffer = new CircularBuffer<>(LOOPTIME_BUFFER_SIZE);
 //        for (int i=0; i < rollingValLen; i++){
 //            velValues.put(0D, 0D);
 //        }
@@ -393,7 +404,7 @@ public class ShooterSubsystem extends SubsystemBase {
         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
 
         if (useRotationCompensation) {
-            angleTurret += ROTATION_COMPENSATION_COEFFIICIENT * robot.follower.getAngularVelocity();
+            angleTurret += ROTATION_COMPENSATION_COEFFIICIENT * robot.follower.getAngularVelocity() * loopTimeBuffer.getMedian();
         }
 
         if (debug) Log.d("ShooterSubsystem", "turret angle (deg): " + Math.toDegrees(angleTurret));
@@ -555,6 +566,9 @@ public class ShooterSubsystem extends SubsystemBase {
 //                hardware.turretYawRight.setPosition(turretYaw);
                 return;
             }
+
+            loopTimeBuffer.add(loopTimer.milliseconds());
+            loopTimer.reset();
 
             Profiler.push("ball shot logic");
 //            updateRollingVelValues();
