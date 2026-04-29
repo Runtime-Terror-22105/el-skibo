@@ -72,7 +72,7 @@ public final class FarAutoBuilder {
 //                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
                         new TurnCommand(state.robot.follower, turnAmt, state.mirror).withTimeout(100),
                         new SequentialCommandGroup(
-                                new WaitCommand(700),
+                                new WaitCommand(3000),
                                 new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT)
                         )
                 ),
