@@ -69,8 +69,8 @@ public class AutoConstants {
     public static Pose2d AFTER_GATE = new Pose2d(12, 57, Math.toRadians(120));
 
     // For doing normal gate cycling
-    public static Pose2d GATE_CONTROL_POSE_NORMAL = new Pose2d(32.61, 70.25);
-    public static Pose2d HITTING_GATE_NORMAL = new Pose2d(10.5, 62,  Math.toRadians(143));
+    public static Pose2d GATE_CONTROL_POSE_NORMAL = new Pose2d(30, 63.33);
+    public static Pose2d HITTING_GATE_NORMAL = new Pose2d(10.5, 62.5,  Math.toRadians(143));
 
     public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 9, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(17, 8, Math.toRadians(195)); // rotate into the balls a bit to avoid jams
