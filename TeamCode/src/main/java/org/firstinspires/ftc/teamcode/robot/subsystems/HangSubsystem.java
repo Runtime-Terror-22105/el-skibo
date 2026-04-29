@@ -59,9 +59,9 @@ public class HangSubsystem extends SubsystemBase {
 
     // PID coeffs for rear motors
     public static PidfController.PidfCoefficients LEFT_MOTOR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.35, 0, 0.015, 0, 0.12);
+            new PidfController.PidfCoefficients(0.09, 0, 0,0, 0.06);
     public static PidfController.PidfCoefficients RIGHT_MOTOR_PID_COEFFICIENTS =
-            new PidfController.PidfCoefficients(0.35, 0, 0.015, 0, 0.12);
+            new PidfController.PidfCoefficients(0, 0, 0, 0, 0.07);
 
     // Pid tolerances in radians
     public static double LEFT_PID_TOLERANCE = Math.toRadians(3);
