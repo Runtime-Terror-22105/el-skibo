@@ -47,6 +47,7 @@ public class ColorRange
     public final Scalar min;
     public final Scalar max;
 
+    // Cade's field Hampton conference room values
     public static Scalar purpleLow  = new Scalar(122, 51, 0);
     public static Scalar purpleHigh = new Scalar(179, 255, 255);
     public static Scalar greenLow  = new Scalar(63, 102, 0);
