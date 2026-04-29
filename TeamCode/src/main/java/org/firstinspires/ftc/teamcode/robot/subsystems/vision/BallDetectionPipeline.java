@@ -116,7 +116,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     private Mat roiMat;
 
     private String TAG = "BallDetectionPipeline";
-    private List<Blob> userBlobs;
+    private volatile List<Blob> userBlobs;
     private int frameWidth;
     private int frameHeight;
 
@@ -249,6 +249,11 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
         Log.i(TAG, "Processing frame...");
+        if (chosenBlobIsLocked) {
+            Log.i(TAG, "Chosen blob is locked! Returning...");
+            userBlobs = new ArrayList<>();
+            return userBlobs;
+        }
 
 //        if (frame == null || frame.empty()) {
 //            Log.e(TAG, "Received empty frame, skipping processing.");
@@ -321,6 +326,10 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
         sort(blobs);
         chosenBlob = (BlobImpl) blobs.get(0);
+        Log.d(TAG, "ChosenBlob: " + chosenBlob.toString());
+        if (chosenBlob != null) {
+            chosenBlobIsLocked = true;
+        }
 
         Bitmap outputBitmap = createOutputBitmap(frame, colorMask, blobs);
         lastFrame.set(outputBitmap);

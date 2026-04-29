@@ -52,7 +52,7 @@ public class CameraSubsystem extends SubsystemBase {
     private boolean backStreaming = false;
 
     private AprilTagProcessor tagProcessor;
-    private final BallDetectionPipeline ballPipeline;
+    public final BallDetectionPipeline ballPipeline;
 
     private final RampPipeline rampPipeline;
 
@@ -137,7 +137,7 @@ public class CameraSubsystem extends SubsystemBase {
 
     private void initCameras() {
         if (hardware.frontCamera != null) {
-            Log.i("CameraSubsytem", "front camera built" );
+            Log.i(TAG, "front camera built" );
             frontPortal = new VisionPortal.Builder()
                     .setCamera(hardware.frontCamera)
                     .setCameraResolution(new Size(320, 240))
@@ -153,7 +153,7 @@ public class CameraSubsystem extends SubsystemBase {
         }
 
         if (hardware.backCamera != null) {
-            Log.i("CameraSubsytem", "back camera built" );
+            Log.i(TAG, "back camera built" );
 //            backPortal = new VisionPortal.Builder()
 //                    .setCamera(hardware.backCamera)
 //                    // Logs say: Supported resolutions for MJPEG are: [1600x1200 @ 25FPS], [3264x2448 @ 15FPS], [2592x1944 @ 15FPS], [2048x1536 @ 15FPS], [1920x1080 @ 25FPS], [1280x960 @ 25FPS], [1280x720 @ 25FPS], [1024x768 @ 25FPS], [800x600 @ 25FPS], [640x480 @ 25FPS], [320x240 @ 25FPS],
@@ -385,6 +385,7 @@ public class CameraSubsystem extends SubsystemBase {
         Pose2d tempPos = pose.copy();
 //        double pixelX = blob.getCircle().getCenter().x;
         double pixelX = blob.getCenter().x;
+        Log.d(TAG, "Ball Pixel Coordinates" + pixelX);
         double offset = ballPipeline.pixelXtoRealX(pixelX);
         tempPos.y += offset;
         Log.d(TAG, "Ball Pixel Offset (in): " + offset);

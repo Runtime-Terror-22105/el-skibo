@@ -72,8 +72,8 @@ public final class FarAutoBuilder {
 //                        new FollowPathCommand(state.robot.follower, state.lastPath, true),
                         new TurnCommand(state.robot.follower, turnAmt, state.mirror).withTimeout(100),
                         new SequentialCommandGroup(
-                                //new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT),
-                                new WaitCommand(1500)
+                                new WaitCommand(700),
+                                new WaitForFlywheelCommand(state.robot.shooter).withTimeout(PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT)
                         )
                 ),
                 UnsortedShootRoutines.shootCommand(state, flags),
@@ -180,6 +180,7 @@ public final class FarAutoBuilder {
                 // note: intake needs to be down because otherwise it blocks the camera
                 new SetIntakeUpCommand(state.robot.intake, false),
                 new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
+                new InstantCommand(() -> state.robot.camera.ballPipeline.unlockChosenBlob()),
                 new WaitUntilCommand(() -> state.robot.camera.hasBlob()).withTimeout(FAR_BALL_CV_DETECTION_TIMEOUT),
                 new LogCatCommand("AutoBuilder", "blob found, preparing shoot")
         );
@@ -187,7 +188,8 @@ public final class FarAutoBuilder {
 
     public static Command intakeVision(AutoBuildState state, boolean reverseIntake) {
         Pose2d wallCoords = INTAKE_WALL_VISION_POSE.mirror(state.mirror);
-        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, state.robot.camera.offsetByBallCoords(wallCoords), false, true, false)
+        Pose2d newPose = state.robot.camera.offsetByBallCoords(wallCoords);
+        state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, newPose, false, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .setNoDeceleration()
                 .setTranslationalConstraint(WALL_TRANSLATIONAL_CONSTRAINT)

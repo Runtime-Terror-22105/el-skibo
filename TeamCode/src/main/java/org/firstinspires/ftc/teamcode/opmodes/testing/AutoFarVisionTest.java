@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.Team;
@@ -11,10 +12,10 @@ import org.firstinspires.ftc.teamcode.robot.auto.FarAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
-@Autonomous(name="Auto Far Vision Test (red)", group="Testing")
+@Autonomous(name="Auto Far Vision Test (blue)", group="Testing")
 public class AutoFarVisionTest extends OneAutoToRuleThemAll {
     public AutoFarVisionTest() {
-        super(Team.RED);
+        super(Team.BLUE);
     }
 
     // start the robot facing towards the wall
@@ -37,6 +38,7 @@ public class AutoFarVisionTest extends OneAutoToRuleThemAll {
     @Override
     protected Command createAutoCommand(AutoBuildState state) {
         return new SequentialCommandGroup(
+                new InstantCommand(() -> robot.camera.setBallPipelineEnabled(true)),
 //                FarAutoBuilder.shootPreload(state, ShootPathFlag.EARLY_LEAVE),
                 FarAutoBuilder.prepareVision(state),
                 FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE)
