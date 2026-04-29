@@ -40,9 +40,9 @@ public class FlightTimeLookupTable {
             new FlightTimeLookupValue(79,0.67),
             new FlightTimeLookupValue(93.3,0.85),
 
-            new FlightTimeLookupValue(128.5,0.82),
-            new FlightTimeLookupValue(136,0.77),
-            new FlightTimeLookupValue(151,0.83),
+            new FlightTimeLookupValue(128.5,0.83),
+            new FlightTimeLookupValue(136,0.78),
+            new FlightTimeLookupValue(151,0.84),
     };
 
     // Note: Due to usage of InterpLUTSafe, the LUT will simply cap values outside the known range
