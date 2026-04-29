@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public class ShooterSubsystem extends SubsystemBase {
-    public static double ROTATION_COMPENSATION_MULTIPLIER = 1;
+    public static double ROTATION_COMPENSATION_COEFFIICIENT = -0.13;
     public static int ACCEL_BUFFER_SZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
@@ -358,7 +358,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithOffsets(goalPosLookupTable.get()),, USE_ROTATION_COMPENSATION));
+        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithOffsets(goalPosLookupTable.get()), USE_ROTATION_COMPENSATION));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {
@@ -393,7 +393,7 @@ public class ShooterSubsystem extends SubsystemBase {
         double angleTurret = Angle.normalize(absoluteGoalAngle - botHeading);
 
         if (useRotationCompensation) {
-            angleTurret += ROTATION_COMPENSATION_MULTIPLIER * robot.follower.getAngularVelocity();
+            angleTurret += ROTATION_COMPENSATION_COEFFIICIENT * robot.follower.getAngularVelocity();
         }
 
         if (debug) Log.d("ShooterSubsystem", "turret angle (deg): " + Math.toDegrees(angleTurret));
