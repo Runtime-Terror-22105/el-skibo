@@ -40,10 +40,10 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double READY_POSITION = 0.52359877559829887307710723054658;
 
-    public static double INTAKE_WALL_LEFT_DOWN = 0.05;
+    public static double INTAKE_WALL_LEFT_DOWN = 0.08;
     public static double INTAKE_WALL_LEFT_UP = 0.9;
-    public static double INTAKE_WALL_RIGHT_DOWN = 0.92;
-    public static double INTAKE_WALL_RIGHT_UP = 0.07;
+    public static double INTAKE_WALL_RIGHT_DOWN = 0.91;
+    public static double INTAKE_WALL_RIGHT_UP = 0.09;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.55;
     public static double SHOOTER_RAMP_DEACTIVE = 0.85;
