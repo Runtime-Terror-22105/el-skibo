@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.ANGLE_NEAR_TURRET;
+
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -34,10 +36,13 @@ public abstract class Auto18 extends OneAutoToRuleThemAll {
                 new InstantCommand(() -> robot.shooter.USE_SOTM_ACCEL = true),
                 new InstantCommand(() -> robot.shooter.USE_SOTM = true),
                 NearAutoBuilder.shootPreload(state),
+                new InstantCommand(() -> {robot.shooter.isAutoTurretOn = false;}),
+                new InstantCommand(() -> {robot.shooter.setTurretAngle(ANGLE_NEAR_TURRET);}),
                 NearAutoBuilder.cycleSpike(state, 2),
-                NearAutoBuilder.cycleGateNormal(state, true),
-                NearAutoBuilder.cycleGateNormal(state, true),
-                NearAutoBuilder.cycleGateNormal(state, true),
+                NearAutoBuilder.cycleGate(state, true),
+                NearAutoBuilder.cycleGate(state, true),
+                NearAutoBuilder.cycleGate(state, true),
+                new InstantCommand(() -> {robot.shooter.isAutoTurretOn = true;}),
                 NearAutoBuilder.cycleSpike(state, 1, ShootPathFlag.LAST)
         ).alongWith(new KillTimerCommand(robot));
     }
