@@ -95,7 +95,11 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     private boolean goingToMoveWallsDownButHaventMovedThemDownYet;
     private ElapsedTime goingToMoveWallsDownTimer = new ElapsedTime();
+    private ElapsedTime goingToMoveWallsDownTimer2 = new ElapsedTime();
     private boolean goingToMoveWallsDownTimerStarted = false;
+    private boolean goingToMoveWallsDownTimerStarted2 = false;
+    public static double TIMEOUT_TO_PUT_WALL_DOWN = 1000;
+
     public boolean overrideMaxPower;
 
     public SpindexerSubsystem(RobotHardware hardware, Robot robot) {
@@ -420,11 +424,17 @@ public class SpindexerSubsystem extends SubsystemBase {
                     desiredAngle % (2 * Math.PI / 3) < Math.toRadians(2) && // and we are setting the angle to a flat side (a multiple of 120 degrees)
                     pidEnabled
             ) {
-                if (atTargetYaw()) {
+                if (!goingToMoveWallsDownTimerStarted2) {
+                    goingToMoveWallsDownTimerStarted2 = true;
+                    goingToMoveWallsDownTimer2.reset();
+                }
+
+                if (atTargetYaw() || goingToMoveWallsDownTimer2.milliseconds() > TIMEOUT_TO_PUT_WALL_DOWN) {
                     if (goingToMoveWallsDownTimerStarted &&
                             goingToMoveWallsDownTimer.milliseconds() > TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX) {
                         wallState = WallState.DOWN;
                         goingToMoveWallsDownButHaventMovedThemDownYet = false;
+                        goingToMoveWallsDownTimerStarted2 = false;
                     } else if (!goingToMoveWallsDownTimerStarted) {
                         goingToMoveWallsDownButHaventMovedThemDownYet = true;
                         goingToMoveWallsDownTimerStarted = true;
