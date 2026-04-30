@@ -33,7 +33,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public static int ACCEL_BUFFER_SIZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
-    public static boolean USE_SOTM_ACCEL = true;
+    public static boolean USE_SOTM_ACCEL = false;
     public static boolean USE_ROTATION_COMPENSATION = true;
     public static boolean JUST_TURRET = false;
 
