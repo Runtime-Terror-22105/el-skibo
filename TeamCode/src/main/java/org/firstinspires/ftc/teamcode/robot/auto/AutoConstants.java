@@ -117,7 +117,7 @@ public class AutoConstants {
 
     public static int FLLYWHEEL_SPIN_UP_TIMEOUT_MS = 1500;
 
-    public static double ANGLE_NEAR_TURRET = 4.85;
+    public static double ANGLE_NEAR_TURRET_BLUE = 4.85;
 
     public static PathConstraints RELAXED_CONSTRAINTS;
     static {
