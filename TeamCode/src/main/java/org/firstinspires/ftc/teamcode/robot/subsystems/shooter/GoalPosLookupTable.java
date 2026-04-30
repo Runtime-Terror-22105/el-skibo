@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Angle;
 import org.firstinspires.ftc.teamcode.math.InterpLUTSafe;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.opmodes.teleop.TerrorTeleOp;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
 @Config
@@ -101,13 +100,13 @@ public class GoalPosLookupTable {
             newGoalPos.x -= Math.abs(change);
         }
 
-        newGoalPos.y += robot.shooter.manualYOffset;
-        newGoalPos.x += robot.shooter.manualXOffset;
-
         if (robot.color == Team.BLUE) {
             if (debug) Log.d("GoalPosLookupTable", "before mirror"+newGoalPos);
             newGoalPos = newGoalPos.mirror();
         }
+
+
+
 
         if (debug) Log.d("GoalPosLookupTable", "old goal pos" + robot.goalPos);
         if (debug) Log.d("GoalPosLookupTable", "new goal pos " + newGoalPos);

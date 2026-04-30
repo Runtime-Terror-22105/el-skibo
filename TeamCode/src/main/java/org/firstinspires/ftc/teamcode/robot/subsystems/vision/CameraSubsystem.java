@@ -295,7 +295,6 @@ public class CameraSubsystem extends SubsystemBase {
     public void periodic() {
         try (Profiler.Scope p = Profiler.enter("CameraSubsystem")) {
             robot.telemetry.addData("Balls Seen", getBallsSeen());
-            robot.telemetry.addData("GameGlyph",gameGlyph);
 
             if (frontPortal != null) {
                 Profiler.push("frontPortal");
