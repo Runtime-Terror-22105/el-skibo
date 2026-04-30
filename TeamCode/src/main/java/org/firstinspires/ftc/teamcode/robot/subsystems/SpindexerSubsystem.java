@@ -84,7 +84,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     public static PidfController.PidfCoefficients turningPidCoefficientsCw =
             new PidfController.PidfCoefficients(0.22, 0, 0.014, 0, 0.12);
     public static double yawPidTolerance = 0.05; // radians, used for kstatic
-    public static double CHECKING_TOLERANCE = 0.05; // radians, only for checking if at target, not for PID tolerance
+    public static double CHECKING_TOLERANCE = Math.toRadians(4.5); // radians, only for checking if at target, not for PID tolerance
     private boolean pidEnabled = true;
     public final PidfController yawPid = new PidfController(turningPidCoefficientsCcw);
 
@@ -98,7 +98,7 @@ public class SpindexerSubsystem extends SubsystemBase {
     private ElapsedTime goingToMoveWallsDownTimer2 = new ElapsedTime();
     private boolean goingToMoveWallsDownTimerStarted = false;
     private boolean goingToMoveWallsDownTimerStarted2 = false;
-    public static double TIMEOUT_TO_PUT_WALL_DOWN = 1000;
+    public static double TIMEOUT_TO_PUT_WALL_DOWN = 1500;
 
     public boolean overrideMaxPower;
 
