@@ -39,16 +39,16 @@ public abstract class AutoVisionFar extends OneAutoToRuleThemAll {
 
                 // Do not reverse intake on first since they're guaranteed
                 FarAutoBuilder.intakeSpike3(state),
-                FarAutoBuilder.shootSpike3(state, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.shootSpike3(state),
 
-                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT, ShootPathFlag.EARLY_LEAVE),
+                FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT),
 
                 FarAutoBuilder.prepareVision(state),
-                FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),
-                FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),
-                FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),
-                FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE),
-                FarAutoBuilder.cycleVision(state, true, ShootPathFlag.EARLY_LEAVE)
+                FarAutoBuilder.cycleVision(state, true),
+                FarAutoBuilder.cycleVision(state, true),
+                FarAutoBuilder.cycleVision(state, true),
+                FarAutoBuilder.cycleVision(state, true),
+                FarAutoBuilder.cycleVision(state, true)
         ).alongWith(new KillTimerCommand(robot));
     }
 }

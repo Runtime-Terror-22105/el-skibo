@@ -85,8 +85,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // No angle limit for turret, but we have servo positions limits
     public static double turretLowerBound = Math.toRadians(0);
     public static double turretUpperBound = Math.toRadians(360);
-    public static double turretServoLowerBound = 0.05;
-    public static double turretServoUpperBound = 0.95;
+    public static double turretServoLowerBound = 0.03;
+    public static double turretServoUpperBound = 0.97;
 
     // hood limits
     public static double hoodPosMax = 0.98; //maximum position the servo can go to

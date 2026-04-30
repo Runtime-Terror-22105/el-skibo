@@ -64,6 +64,7 @@ public final class FarAutoBuilder {
 
         double turnAmt = Math.toRadians(40);
         Pose2d rotatedPose = state.startPoseBlue.copy();
+//        rotatedPose.y += 4;
         rotatedPose.heading += turnAmt;
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, rotatedPose, state.mirror, false, false)
                 .build();
@@ -109,10 +110,15 @@ public final class FarAutoBuilder {
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
                 .build();
         return new SequentialCommandGroup(
+                new LogCatCommand("AutoBuilder", "Just entered intakeSpike3"),
                 new ParallelRaceGroup(
                         new FollowPathAndWaitForWallCommand(state.robot, state.lastPath, true, MAX_DRIVETRAIN_POWER_INTAKING, 24.0),
-                        new WaitForIntakeCommand(state.robot)
-                )
+                        new SequentialCommandGroup(
+                                new WaitCommand(800),
+                                new WaitForIntakeCommand(state.robot)
+                        )
+                ),
+                new LogCatCommand("AutoBuilder", "Finished intaking spike 3")
 //                new WaitForIntakeCommand(state.robot).withTimeout(INTAKE_DELAY)
         );
     }

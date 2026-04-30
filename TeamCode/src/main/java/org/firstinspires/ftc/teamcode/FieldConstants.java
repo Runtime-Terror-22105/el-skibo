@@ -13,7 +13,7 @@ public class FieldConstants {
     // start poses.
 //    public static Pose2d BLUE_START_POS_NEAR = new Pose2d(17.44, 121.144, Math.toRadians(-127));
     public static Pose2d BLUE_START_POS_NEAR = new Pose2d(20, 123, Math.toRadians(-132));
-    public static Pose2d BLUE_START_POS_FAR = new Pose2d(48, 6, Math.toRadians(90));
+    public static Pose2d BLUE_START_POS_FAR = new Pose2d(44.685, 4, Math.toRadians(90));
     public static Pose2d BLUE_START_POS_FAR_SORTED = new Pose2d(48, 8, Math.toRadians(270));
     public static Pose2d BLUE_START_POS_FAR_SIDE = new Pose2d(48, 6, Math.toRadians(180));
 
