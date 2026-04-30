@@ -40,6 +40,7 @@ import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsComma
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToRestingStateCommand;
+import org.firstinspires.ftc.teamcode.robot.command.toggleAccelCompCommand;
 import org.firstinspires.ftc.teamcode.robot.hardware.TerrorLight;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.teamcode.robot.init.RobotHardware;
@@ -262,10 +263,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 new InstantCommand(() -> {} ),
                 () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER && robot.robotState != READY_TO_SHOOT
         ));
-        accelCompToggle.whenPressed(
-                new InstantCommand(() -> {
-                    robot.shooter.USE_SOTM_ACCEL = !robot.shooter.USE_SOTM_ACCEL;})
-        );
+        accelCompToggle.whenPressed(new toggleAccelCompCommand(robot.shooter));
         positionHoldToggle.whenPressed(
                 new InstantCommand(() -> {
                     robot.drive.usePositionLock = !robot.drive.usePositionLock;})
