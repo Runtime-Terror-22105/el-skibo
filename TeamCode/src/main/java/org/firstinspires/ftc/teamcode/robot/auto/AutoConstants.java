@@ -19,7 +19,7 @@ public class AutoConstants {
     public static Pose2d SHOOT_EDGE_POSE = new Pose2d(47, 78, Math.toRadians(-124.7));
     public static Pose2d SHOOT_EDGE_HORIZ_POSE = new Pose2d(36, 104, Math.toRadians(225));
     public static Pose2d SHOOT_LAST_POSE = new Pose2d(57, 95, Math.toRadians(-124.7));
-    public static Pose2d SHOOT_FAR_POSE = new Pose2d(48-3.315, 10, Math.toRadians(180));
+    public static Pose2d SHOOT_FAR_POSE = new Pose2d(48-3.315, 14, Math.toRadians(180));
     public static Pose2d AUTO_FAR_ROTATED_POSE = new Pose2d(48, 8, Math.toRadians(180));
     public static Pose2d SHOOT_FAR_POSE_FORWARD_FACING = new Pose2d(48, 8, Math.toRadians(165));
 //    public static Pose2d SHOOT_FAR_POSE_FORWARD_FACING = SHOOT_FAR_POSE;
@@ -54,8 +54,8 @@ public class AutoConstants {
     public static Pose2d PREPARE_INTAKE_3_POSE = new Pose2d(52.598, 37, Math.toRadians(180));
     public static Pose2d INTAKE_3_CONTROL = new Pose2d(56.751, 40);
     public static Pose2d INTAKE_3_POSE = new Pose2d(18, 34, Math.toRadians(180));
-    public static Pose2d PREPARE_INTAKE_3_CONTROL_FAR = new Pose2d(49-3.315, 31);
-    public static Pose2d PREPARE_INTAKE_3_POSE_FAR = new Pose2d(36.42918454935622-3.315, 30, Math.toRadians(180));
+    public static Pose2d PREPARE_INTAKE_3_CONTROL_FAR = new Pose2d(49-3.315, 35);
+    public static Pose2d PREPARE_INTAKE_3_POSE_FAR = new Pose2d(36.42918454935622-3.315, 34, Math.toRadians(180));
     public static Pose2d INTAKE_3_POSE_FAR = new Pose2d(19-3.315, PREPARE_INTAKE_3_POSE_FAR.y, Math.toRadians(180));
 
     // For pushing gate after a SPIKE STRIP.
@@ -72,15 +72,14 @@ public class AutoConstants {
     public static Pose2d GATE_CONTROL_POSE_NORMAL = new Pose2d(40, 58);
     public static Pose2d HITTING_GATE_NORMAL = new Pose2d(10.5, 60.5,  Math.toRadians(155));
 
-    public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 8.2, Math.toRadians(180));
+    public static Pose2d INTAKE_WALL_POSE = new Pose2d(12, 12, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_POSE_2 = new Pose2d(17, 8, Math.toRadians(195)); // rotate into the balls a bit to avoid jams
-    public static Pose2d INTAKE_WALL_VISION_POSE = new Pose2d(13-3.315, 6, Math.toRadians(180));
+    public static Pose2d INTAKE_WALL_VISION_POSE = new Pose2d(13-3.315, 10, Math.toRadians(180));
     public static Pose2d INTAKE_WALL_CONTROL_POSE = new Pose2d(20, 14, Math.toRadians(180));
     public static double INTAKE_WALL_TIMEOUT_DISTANCE = 18.0;  // if the spindex walls don't go down after 18 in on the path to the wall, we stop and wait
     public static Pose2d INTAKE_WALL_CONTROL_NEAR_POSE = new Pose2d(5, 32, Math.toRadians(-90));
     public static Pose2d INTAKE_WALL_POSE_NEARAUTO = new Pose2d(8, 10, Math.toRadians(180));
     public static Pose2d INTAKE_TUNNEL_POSE = new Pose2d(11, 32, Math.toRadians(180));
-    public static Pose2d VISION_POSE = new Pose2d(42, 18, Math.toRadians(180));
 
     public static long FAR_BALL_CV_DETECTION_TIMEOUT = 100;
     public static long RAMP_CV_TIMEOUT = 100;

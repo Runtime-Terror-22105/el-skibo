@@ -132,10 +132,10 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     public double pixelXtoRealX(double pixelX, Team color) {
         double value;
         if (color.equals(Team.RED)) {
-            value = Algebra.mapRangeNoClamp(pixelX, RED_LEFT_SIDE_PIXEL_VAL, RED_RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
+            value = Algebra.mapRange(pixelX, RED_LEFT_SIDE_PIXEL_VAL, RED_RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
         }
         else {
-            value = Algebra.mapRangeNoClamp(pixelX, BLUE_LEFT_SIDE_PIXEL_VAL, BLUE_RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
+            value = Algebra.mapRange(pixelX, BLUE_LEFT_SIDE_PIXEL_VAL, BLUE_RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
         }
 
         return Math.max(
