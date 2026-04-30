@@ -56,8 +56,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     // todo: delete this once hang is tested
     public static double MANUAL_HANG_SPEED = 0.5;
 
-    public static double MANUAL_AIM_INCREMENT_HORIZONTAL = 0.5;
-    public static double MANUAL_AIM_INCREMENT_VERTICAL = 0.5;
+    public static double MANUAL_AIM_INCREMENT_HORIZONTAL = 1;
+    public static double MANUAL_AIM_INCREMENT_VERTICAL = 1;
 
     public static boolean LOG_MOTOR_CURRENT = false;
 
