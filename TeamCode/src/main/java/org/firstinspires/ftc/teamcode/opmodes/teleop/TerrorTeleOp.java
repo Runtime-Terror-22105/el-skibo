@@ -194,7 +194,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton transferButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.LEFT_BUMPER);
 
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
-        GamepadButton sortButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.B);
+        GamepadButton sortButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.A);
 
         GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
@@ -303,7 +303,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         }));
 
         //consider making this a trigger so its harder to misinput
-        GamepadButton resetGoalPos = new GamepadButton(gamepad2ex, GamepadKeys.Button.A);
+        GamepadButton resetGoalPos = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
 
         resetGoalPos.whenPressed(() -> robot.shooter.resetGoalPosOffset());
         //this sounds like a lot of work
