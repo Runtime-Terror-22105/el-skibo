@@ -201,7 +201,7 @@ public final class FarAutoBuilder {
         Pose2d newPose = state.robot.camera.offsetByBallCoords(wallCoords);
         state.lastPath = PathUtil.addPathBuilderLine(state.robot, state.startPoseBlue, state.lastPath, newPose, false, true, false)
                 .setConstraintsForLast(RELAXED_CONSTRAINTS)
-                .setNoDeceleration()
+//                .setNoDeceleration()
                 .setTranslationalConstraint(WALL_TRANSLATIONAL_CONSTRAINT)
                 .build();
         return new SequentialCommandGroup(

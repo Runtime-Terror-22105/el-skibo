@@ -56,8 +56,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     // todo: delete this once hang is tested
     public static double MANUAL_HANG_SPEED = 0.5;
 
-    public static double MANUAL_AIM_INCREMENT_HORIZONTAL = 1;
-    public static double MANUAL_AIM_INCREMENT_VERTICAL = 1;
+    public static double MANUAL_AIM_INCREMENT_HORIZONTAL = 2;
+    public static double MANUAL_AIM_INCREMENT_VERTICAL = 2;
 
     public static boolean LOG_MOTOR_CURRENT = false;
 
@@ -298,7 +298,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 //        cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
 //
         cornerRelocalizeButton.whenActive(new InstantCommand(()->{
-            robot.follower.poseTracker.setPose(FieldConstants.RED_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.BLUE)));
+            robot.follower.poseTracker.setPose(FieldConstants.BLUE_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.RED)));
             robot.shooter.resetGoalPosOffset();
         }));
 
