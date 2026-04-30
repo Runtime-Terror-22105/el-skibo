@@ -104,8 +104,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public double goalPosVerticalOffset = 0;
     public double goalPosHorizontalOffset = 0;
 
-    Pose2d horizontalOffet = new Pose2d(0,0,0);
-    Pose2d verticalOffset = new Pose2d(0,0,0);
+    public double manualXOffset = 0;
+    public double manualYOffset = 0;
 
     private final RobotHardware hardware;
     private final Robot robot;
@@ -194,42 +194,43 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void resetGoalPosOffset()
     {
-        setGoalPosOffset(0,0);
+        this.manualXOffset = 0;
+        this.manualYOffset = 0;
     }
 
     public void incrementGoalPosOffset(double vertical, double horizontal)
     {
         this.goalPosVerticalOffset += vertical;
         this.goalPosHorizontalOffset += horizontal;
-        goalHeight += vertical;
+//        goalHeight += vertical;
     }
 
-    public Pose2d recalculateGoalPosWithOffsets(Pose2d goalPos)
-    {
-        if(goalPosHorizontalOffset == 0 && goalPosVerticalOffset == 0)
-        {
-            return goalPos;
-        }
-        double goalPosMagnitude = Math.hypot(goalPos.x-center.x,goalPos.y-center.y);
-        Pose2d normalizedGoalPos = new Pose2d((goalPos.x-center.x)/ goalPosMagnitude,(goalPos.y-center.y) / goalPosMagnitude);
-        double xShift = goalPosHorizontalOffset *normalizedGoalPos.x;
-        double yShift = goalPosVerticalOffset *normalizedGoalPos.y;
-
-        verticalOffset.x = xShift;
-        verticalOffset.y = yShift;
-
-        horizontalOffet.x = yShift;
-        horizontalOffet.y = -xShift;
-
-        return goalPos.plus(horizontalOffet).plus(verticalOffset);
-    }
+//    public Pose2d recalculateGoalPosWithOffsets(Pose2d goalPos)
+//    {
+//        if(goalPosHorizontalOffset == 0 && goalPosVerticalOffset == 0)
+//        {
+//            return goalPos;
+//        }
+//        double goalPosMagnitude = Math.hypot(goalPos.x-center.x,goalPos.y-center.y);
+//        Pose2d normalizedGoalPos = new Pose2d((goalPos.x-center.x)/ goalPosMagnitude,(goalPos.y-center.y) / goalPosMagnitude);
+//        double xShift = goalPosHorizontalOffset *normalizedGoalPos.x;
+//        double yShift = goalPosVerticalOffset *normalizedGoalPos.y;
+//
+//        verticalOffset.x = xShift;
+//        verticalOffset.y = yShift;
+//
+//        horizontalOffet.x = yShift;
+//        horizontalOffet.y = -xShift;
+//
+//        return goalPos.plus(horizontalOffet).plus(verticalOffset);
+//    }
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation, boolean useRotationCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
+
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
-        goalPos = recalculateGoalPosWithOffsets(goalPos);
         Pose2d oldGoalPos = goalPos.copy();
         //Pose2d goalPos = this.robot.color.getGoalPos();
         double distToGoal = botPos.distanceFrom(goalPos.toPedro());
@@ -358,7 +359,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithOffsets(goalPosLookupTable.get()), USE_ROTATION_COMPENSATION));
+        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), goalPosLookupTable.get(), USE_ROTATION_COMPENSATION));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {

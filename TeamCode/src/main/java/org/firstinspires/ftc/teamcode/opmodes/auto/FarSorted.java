@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.auto.KillTimerCommand;
 import org.firstinspires.ftc.teamcode.robot.auto.NearAutoBuilder;
 import org.firstinspires.ftc.teamcode.robot.auto.ShootPathFlag;
 import org.firstinspires.ftc.teamcode.robot.auto.SortedAutoBuilder;
+import org.firstinspires.ftc.teamcode.robot.subsystems.vision.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.util.StartConfig;
 
 public abstract class FarSorted extends OneAutoToRuleThemAll {
@@ -40,8 +41,8 @@ public abstract class FarSorted extends OneAutoToRuleThemAll {
 
     @Override
     protected Command createAutoCommand(AutoBuildState state) {
-        // TODO: REmove the following line!!!
-//        robot.camera.setGlyph(CameraSubsystem.GLYPH.PGP);
+        // TODO: REmove the following line!!!, but i think its probably chill actually
+        robot.camera.setGlyph(CameraSubsystem.GLYPH.PPG);
 
         return new SequentialCommandGroup(
                 new InstantCommand(() -> {robot.camera.setAprilTagsEnabled(true);
