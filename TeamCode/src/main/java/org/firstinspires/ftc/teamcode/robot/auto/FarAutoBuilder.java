@@ -244,7 +244,10 @@ public final class FarAutoBuilder {
     }
 
     public static Command shootWall(AutoBuildState state, ShootPathFlag... flagArr) {
-        return UnsortedShootRoutines.shootWall(state, flagArr);
+        return new SequentialCommandGroup(
+                new WaitCommand(300),
+                UnsortedShootRoutines.shootWall(state, flagArr)
+        );
     }
 
     public static Command cycleTunnel(AutoBuildState state, boolean reverseIntake, ShootPathFlag... flagArr) {
@@ -267,7 +270,8 @@ public final class FarAutoBuilder {
                 intakeVision(state, reverseIntake),
                 new ParallelCommandGroup(
                         shootWall(state, flagArr),
-                        prepareVision(state))
+                        prepareVision(state)
+                )
 
         ), null);
     }

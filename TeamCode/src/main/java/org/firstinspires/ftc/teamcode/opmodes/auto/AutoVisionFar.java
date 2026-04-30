@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.robot.auto.AutoBuildState;
@@ -35,11 +37,12 @@ public abstract class AutoVisionFar extends OneAutoToRuleThemAll {
         state.prepareShootTimeBeforeReverseIntake = 0;
         state.shootBrakingStrength = 0.75;
         return new SequentialCommandGroup(
+                new InstantCommand(() -> robot.shooter.sotmOverride = false),
                 FarAutoBuilder.shootPreload(state, ShootPathFlag.EARLY_LEAVE),
 
                 // Do not reverse intake on first since they're guaranteed
                 FarAutoBuilder.intakeSpike3(state),
-                FarAutoBuilder.shootSpike3(state),
+                new WaitCommand(300), FarAutoBuilder.shootSpike3(state),
 
                 FarAutoBuilder.cycleWall(state, false, ShootPathFlag.EARLY_SHOOT),
 
@@ -47,7 +50,7 @@ public abstract class AutoVisionFar extends OneAutoToRuleThemAll {
                 FarAutoBuilder.cycleVision(state, true),
                 FarAutoBuilder.cycleVision(state, true),
                 FarAutoBuilder.cycleVision(state, true),
-                FarAutoBuilder.cycleVision(state, true),
+//                FarAutoBuilder.cycleVision(state, true),
                 FarAutoBuilder.cycleVision(state, true)
         ).alongWith(new KillTimerCommand(robot));
     }

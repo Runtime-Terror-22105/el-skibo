@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Algebra;
+import org.firstinspires.ftc.teamcode.math.NumCompare;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.Circle;
@@ -55,8 +56,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     public static double RED_LEFT_SIDE_PIXEL_VAL = 33;
     public static double RED_RIGHT_SIDE_PIXEL_VAL = 195;
-    public static double BLUE_LEFT_SIDE_PIXEL_VAL = 121;
-    public static double BLUE_RIGHT_SIDE_PIXEL_VAL = 266;
+    public static double BLUE_LEFT_SIDE_PIXEL_VAL = 120;
+    public static double BLUE_RIGHT_SIDE_PIXEL_VAL = 249;
 
     public static double PIXEL_TO_INCHES_SCALE = (double) 0.3; // pixels * 1/3 = inches
 
@@ -135,12 +136,13 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
             value = Algebra.mapRange(pixelX, RED_LEFT_SIDE_PIXEL_VAL, RED_RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
         }
         else {
-            value = Algebra.mapRange(pixelX, BLUE_LEFT_SIDE_PIXEL_VAL, BLUE_RIGHT_SIDE_PIXEL_VAL, 48-8, -8);
+            value = Algebra.mapRange(pixelX, BLUE_LEFT_SIDE_PIXEL_VAL, BLUE_RIGHT_SIDE_PIXEL_VAL, -14.5, 35);
         }
 
-        return Math.max(
+        return NumCompare.clamp(
                 value,
-                0 // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
+                0, // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
+                40-5 // stop our bot from killing the near zone bot
         );
     }
 
@@ -260,11 +262,11 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
         Log.i(TAG, "Processing frame...");
-        if (chosenBlobIsLocked) {
-            Log.i(TAG, "Chosen blob is locked! Returning...");
-            userBlobs = new ArrayList<>();
-            return userBlobs;
-        }
+//        if (chosenBlobIsLocked) {
+//            Log.i(TAG, "Chosen blob is locked! Returning...");
+//            userBlobs = new ArrayList<>();
+//            return userBlobs;
+//        }
 
 //        if (frame == null || frame.empty()) {
 //            Log.e(TAG, "Received empty frame, skipping processing.");

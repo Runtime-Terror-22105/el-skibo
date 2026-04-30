@@ -377,7 +377,7 @@ public class CameraSubsystem extends SubsystemBase {
         robot.telemetry.addData("Glyph", gameGlyph);
     }
 
-    public Pose2d offsetByBallCoords(Pose2d pose){
+    public Pose2d offsetByBallCoords(Pose2d pose) {
         BallDetectionPipeline.BlobImpl blob = this.ballPipeline.getChosenBlob();
         if (blob == null) {
             return pose;
@@ -392,7 +392,6 @@ public class CameraSubsystem extends SubsystemBase {
         Log.d(TAG, "Ball Pixel Offset (in): " + offset);
         Log.d(TAG, "New Pose: " + tempPos);
         return tempPos;
-
     }
 
     public boolean hasBlob()
