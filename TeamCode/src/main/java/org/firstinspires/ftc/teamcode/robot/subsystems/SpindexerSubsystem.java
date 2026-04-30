@@ -40,9 +40,9 @@ public class SpindexerSubsystem extends SubsystemBase {
 
     public static double READY_POSITION = 0.52359877559829887307710723054658;
 
-    public static double INTAKE_WALL_LEFT_DOWN = 0.08;
+    public static double INTAKE_WALL_LEFT_DOWN = 0.05;
     public static double INTAKE_WALL_LEFT_UP = 0.9;
-    public static double INTAKE_WALL_RIGHT_DOWN = 0.91;
+    public static double INTAKE_WALL_RIGHT_DOWN = 0.96;
     public static double INTAKE_WALL_RIGHT_UP = 0.09;
 
     public static double SHOOTER_RAMP_ACTIVE = 0.55;
@@ -80,9 +80,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficientsCcw =
-            new PidfController.PidfCoefficients(0.22, 0, 0.01, 0, 0.12);
+            new PidfController.PidfCoefficients(0.22, 0, 0.01, 0, 0.09);
     public static PidfController.PidfCoefficients turningPidCoefficientsCw =
-            new PidfController.PidfCoefficients(0.22, 0, 0.015, 0, 0.12);
+            new PidfController.PidfCoefficients(0.22, 0, 0.013, 0, 0.09);
     public static double yawPidTolerance = 0.05; // radians, used for kstatic
     public static double CHECKING_TOLERANCE = Math.toRadians(4.5); // radians, only for checking if at target, not for PID tolerance
     private boolean pidEnabled = true;
@@ -444,6 +444,9 @@ public class SpindexerSubsystem extends SubsystemBase {
                         goingToMoveWallsDownButHaventMovedThemDownYet = true;
                     goingToMoveWallsDownTimerStarted = false;
                 }
+            } else {
+                goingToMoveWallsDownTimerStarted2 = false;
+                goingToMoveWallsDownTimer2.reset();
             }
 
             this.hardware.wallServoLeft.setPosition(isWallDown() ? INTAKE_WALL_LEFT_DOWN : INTAKE_WALL_LEFT_UP);
