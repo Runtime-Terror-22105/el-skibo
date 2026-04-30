@@ -221,18 +221,21 @@ public class ShooterSubsystem extends SubsystemBase {
         {
             return goalPos;
         }
-        double goalPosMagnitude = Math.hypot(goalPos.x-center.x,goalPos.y-center.y);
-        Pose2d normalizedGoalPos = new Pose2d((goalPos.x-center.x)/ goalPosMagnitude,(goalPos.y-center.y) / goalPosMagnitude);
-        double xShift = goalPosHorizontalOffset *normalizedGoalPos.x;
-        double yShift = goalPosVerticalOffset *normalizedGoalPos.y;
+//        double goalPosMagnitude = Math.hypot(goalPos.x-center.x,goalPos.y-center.y);
+//        Pose2d normalizedGoalPos = new Pose2d((goalPos.x-center.x)/ goalPosMagnitude,(goalPos.y-center.y) / goalPosMagnitude);
+//        double xShift = goalPosHorizontalOffset *normalizedGoalPos.x;
+//        double yShift = goalPosVerticalOffset *normalizedGoalPos.y;
+//
+//        verticalOffset.x = xShift;
+//        verticalOffset.y = yShift;
+//
+//        horizontalOffet.x = yShift;
+//        horizontalOffet.y = -xShift;
+//
+//        return goalPos.plus(horizontalOffet).plus(verticalOffset);
 
-        verticalOffset.x = xShift;
-        verticalOffset.y = yShift;
-
-        horizontalOffet.x = yShift;
-        horizontalOffet.y = -xShift;
-
-        return goalPos.plus(horizontalOffet).plus(verticalOffset);
+        Pose2d offset = new Pose2d(goalPosHorizontalOffset, goalPosVerticalOffset);
+        return goalPos.plus(offset);
     }
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation, boolean useRotationCompensation) {
