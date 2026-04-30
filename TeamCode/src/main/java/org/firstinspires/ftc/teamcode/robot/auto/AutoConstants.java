@@ -63,8 +63,8 @@ public class AutoConstants {
     public static Pose2d PUSH_GATE_POSE = new Pose2d(18.5, 70, Math.toRadians(180));
 
     // For CYCLING gate.
-    public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 68.5);
-    public static Pose2d HITTING_GATE = new Pose2d(17, 65, Math.toRadians(180));
+    public static Pose2d GATE_CONTROL_POSE = new Pose2d(55, 70.0);
+    public static Pose2d HITTING_GATE = new Pose2d(17, 66.5, Math.toRadians(180));
     public static Pose2d GATE_CONTROL_POSE_2 = new Pose2d(15.9, 61.42);
     public static Pose2d AFTER_GATE = new Pose2d(11, 57, Math.toRadians(115));
 
@@ -117,7 +117,8 @@ public class AutoConstants {
 
     public static int FLLYWHEEL_SPIN_UP_TIMEOUT_MS = 1500;
 
-    public static double ANGLE_NEAR_TURRET_BLUE = 4.85;
+    public static double ANGLE_NEAR_TURRET_BLUE = Math.toRadians(277.885);
+    public static double ANGLE_NEAR_TURRET_RED = Math.toRadians(82.115);
 
     public static PathConstraints RELAXED_CONSTRAINTS;
     static {
