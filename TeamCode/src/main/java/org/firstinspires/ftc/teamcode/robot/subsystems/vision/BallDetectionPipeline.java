@@ -141,7 +141,7 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
         return NumCompare.clamp(
                 value,
-                0, // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
+                -6, // prevents bot from trying to go off the field in case they're on the edge bc the bot is wide
                 40-5 // stop our bot from killing the near zone bot
         );
     }
