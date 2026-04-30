@@ -211,8 +211,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void incrementGoalPosOffset(double vertical, double horizontal)
     {
-        this.manualYOffset += vertical;
-        this.manualXOffset += horizontal;
+        this.goalPosVerticalOffset += vertical;
+        this.goalPosHorizontalOffset += horizontal;
 //        goalHeight += vertical;
     }
 
