@@ -197,8 +197,11 @@ public final class FarAutoBuilder {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(false)),
                 new GoToIntakeStateCommand(state.robot),
+                new LogCatCommand("AutoBuilder", "Just finished going to intake state"),
                 new FollowPathCommand(state.robot.follower, state.lastPath, true),
+                new LogCatCommand("AutoBuilder", "Just finished following path to the detected blob"),
                 new WaitForIntakeCommand(state.robot).withTimeout(WALL_INTAKE_DELAY),
+                new LogCatCommand("AutoBuilder", "Finished waiting for intake"),
                 new ConditionalCommand(
                         new SetIntakeSpeedCommand(state.robot.intake, org.firstinspires.ftc.teamcode.robot.subsystems.IntakeSubsystem.REVERSE_SPEED),
                         new InstantCommand(() -> {}),
