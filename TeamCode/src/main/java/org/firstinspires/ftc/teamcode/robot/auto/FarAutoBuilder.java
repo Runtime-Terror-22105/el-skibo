@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.AUTO_FAR_ROTATED_POSE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CONTROL_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.END_POSE_LONG_INTAKE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.FAR_BALL_CV_DETECTION_TIMEOUT;
@@ -175,14 +175,18 @@ public final class FarAutoBuilder {
 
     public static Command prepareVision(AutoBuildState state) {
         return new SequentialCommandGroup(
-                new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(true)),
                 new LogCatCommand("AutoBuilder", "finished path to vision, waiting for blob"),
                 // note: intake needs to be down because otherwise it blocks the camera
                 new SetIntakeUpCommand(state.robot.intake, false),
-                new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
+                new WaitCommand(TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE),
+                new InstantCommand(() -> state.robot.camera.setBallPipelineEnabled(true)),
                 new InstantCommand(() -> state.robot.camera.ballPipeline.unlockChosenBlob()),
                 new WaitUntilCommand(() -> state.robot.camera.hasBlob()).withTimeout(FAR_BALL_CV_DETECTION_TIMEOUT),
-                new LogCatCommand("AutoBuilder", "blob found, preparing shoot")
+                new ConditionalCommand(
+                        new LogCatCommand("AutoBuilder", "blob found, preparing shoot"),
+                        new LogCatCommand("AutoBuilder", "blob not found but hit timeout, preparing shoot"),
+                        state.robot.camera::hasBlob
+                )
         );
     }
 

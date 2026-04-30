@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.auto;
 
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.CAMERA_WAIT_MINIMUM_TIME;
+import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.EARLY_SHOOT_DISTANCE;
-import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.FAR_BALL_CV_DETECTION_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.PRELOAD_PRE_SHOOT_DELAY;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.RAMP_CV_TIMEOUT;
 import static org.firstinspires.ftc.teamcode.robot.auto.AutoConstants.SHOOT_DELAY;
@@ -51,7 +50,7 @@ public final class SortedAutoBuilder {
                 new LogCatCommand("AutoBuilder", "rampcv turned on"),
                 // note: intake needs to be down because otherwise it blocks the camera
                 new SetIntakeUpCommand(state.robot.intake, false),
-                new WaitCommand(CAMERA_WAIT_MINIMUM_TIME),
+                new WaitCommand(TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE),
                 new WaitUntilCommand(() -> state.robot.camera.getBallCountChanged()).withTimeout(RAMP_CV_TIMEOUT),
                 new LogCatCommand("AutoBuilder", "ball count checker done")
         );

@@ -82,7 +82,7 @@ public class AutoConstants {
     public static Pose2d INTAKE_TUNNEL_POSE = new Pose2d(11, 32, Math.toRadians(180));
     public static Pose2d VISION_POSE = new Pose2d(42, 18, Math.toRadians(180));
 
-    public static long FAR_BALL_CV_DETECTION_TIMEOUT = 3500;
+    public static long FAR_BALL_CV_DETECTION_TIMEOUT = 200;
     public static long RAMP_CV_TIMEOUT = 100;
     public static long WALL_TRANSLATIONAL_CONSTRAINT = 10;
 
@@ -114,7 +114,7 @@ public class AutoConstants {
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
 
-    public static long CAMERA_WAIT_MINIMUM_TIME = 80;
+    public static long TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE = 130;
 
     public static int FLLYWHEEL_SPIN_UP_TIMEOUT_MS = 1500;
 
