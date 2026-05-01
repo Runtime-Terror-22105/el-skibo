@@ -266,7 +266,8 @@ public class CameraSubsystem extends SubsystemBase {
                 -1, -1, -1,
                 Color.rgb(255, 120, 31),
                 Color.rgb(255, 255, 255),
-                Color.rgb(3, 227, 252)
+                Color.rgb(3, 227, 252),
+                robot
         );
 
         pipeline.addFilter(new ColorBlobLocatorProcessor.BlobFilter(
