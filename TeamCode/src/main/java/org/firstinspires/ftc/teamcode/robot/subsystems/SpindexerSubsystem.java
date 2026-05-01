@@ -80,9 +80,9 @@ public class SpindexerSubsystem extends SubsystemBase {
     double[] yawOffsets = {0, (2.0 / 3) * Math.PI, -((2.0 / 3) * Math.PI)};
 
     public static PidfController.PidfCoefficients turningPidCoefficientsCcw =
-            new PidfController.PidfCoefficients(0.22, 0, 0.01, 0, 0.09);
+            new PidfController.PidfCoefficients(0.24, 0, 0.01, 0, 0.09);
     public static PidfController.PidfCoefficients turningPidCoefficientsCw =
-            new PidfController.PidfCoefficients(0.22, 0, 0.013, 0, 0.09);
+            new PidfController.PidfCoefficients(0.24, 0, 0.01, 0, 0.09);
     public static double yawPidTolerance = 0.05; // radians, used for kstatic
     public static double CHECKING_TOLERANCE = Math.toRadians(4.5); // radians, only for checking if at target, not for PID tolerance
     private boolean pidEnabled = true;
@@ -429,7 +429,8 @@ public class SpindexerSubsystem extends SubsystemBase {
                     goingToMoveWallsDownTimer2.reset();
                 }
 
-                if (atTargetYaw() || goingToMoveWallsDownTimer2.milliseconds() > TIMEOUT_TO_PUT_WALL_DOWN) {
+                // || goingToMoveWallsDownTimer2.milliseconds() > TIMEOUT_TO_PUT_WALL_DOWN
+                if (atTargetYaw()) {
                     if (goingToMoveWallsDownTimerStarted &&
                             goingToMoveWallsDownTimer.milliseconds() > TIME_TO_PUT_DOWN_WALLS_AFTER_SPINDEX) {
                         wallState = WallState.DOWN;
