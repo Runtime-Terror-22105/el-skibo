@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
@@ -13,9 +12,9 @@ public class DriveSubsystem extends SubsystemBase {
     public boolean killMotors;
     public boolean slowSpeed;
     private boolean headingLock;
-    private boolean holdPosition;
-    public Pose positionHeld;
-    public boolean usePositionLock = false;
+//    private boolean holdPosition;
+//    public Pose positionHeld;
+//    public boolean usePositionLock = false;
 
     public DriveSubsystem(Robot robot) {
         this.robot = robot;
@@ -23,8 +22,8 @@ public class DriveSubsystem extends SubsystemBase {
         this.slowSpeed = false;
         this.headingLock = false;
 
-        this.holdPosition = false;
-        this.usePositionLock = false;
+//        this.holdPosition = false;
+//        this.usePositionLock = false;
     }
 
     public boolean isHeadingLocked() {
@@ -34,13 +33,13 @@ public class DriveSubsystem extends SubsystemBase {
     public void toggleHeadingLock() {
         this.headingLock = !headingLock;
     }
-    public void setHoldPos(boolean value){
-        this.holdPosition = value;
-        this.positionHeld = robot.follower.getPose();
-    }
-    public boolean isHoldPosition(){
-        return this.holdPosition;
-    }
+//    public void setHoldPos(boolean value){
+//        this.holdPosition = value;
+//        this.positionHeld = robot.follower.getPose();
+//    }
+//    public boolean isHoldPosition(){
+//        return this.holdPosition;
+//    }
 
     @Override
     public void periodic() {

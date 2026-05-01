@@ -199,7 +199,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
         GamepadButton accelCompToggle = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
-        GamepadButton positionHoldToggle = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
+//        GamepadButton positionHoldToggle = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
 
 
 
@@ -264,10 +264,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER && robot.robotState != READY_TO_SHOOT
         ));
         accelCompToggle.whenPressed(new toggleAccelCompCommand(robot.shooter));
-        positionHoldToggle.whenPressed(
-                new InstantCommand(() -> {
-                    robot.drive.usePositionLock = !robot.drive.usePositionLock;})
-        );
+//        positionHoldToggle.whenPressed(
+//                new InstantCommand(() -> {
+//                    robot.drive.usePositionLock = !robot.drive.usePositionLock;})
+//        );
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
         sortButton.whenPressed(robot::toggleAutoSort);

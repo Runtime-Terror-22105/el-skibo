@@ -66,10 +66,10 @@ public class DriveCommand extends CommandBase {
         {
             return;
         }
-        else if(!(robot.drive.isHoldPosition() && robot.drive.usePositionLock)) {
+//        else if(!(robot.drive.isHoldPosition() && robot.drive.usePositionLock)) {
 //            Log.d("DriveCommand", "Doing teleop drive");
             robot.follower.setTeleOpDrive(left_y, left_x, rotation,true);
-        }
+//        }
 //        robot.drivetrain.move(
 //                direction,
 //                rotation,
