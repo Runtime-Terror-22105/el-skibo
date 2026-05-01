@@ -265,10 +265,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
                 () -> robot.robotState != SHOOTING && robot.robotState != TRANSFER && robot.robotState != READY_TO_SHOOT
         ));
         accelCompToggle.whenPressed(new toggleAccelCompCommand(robot.shooter));
-        positionHoldToggle.whenPressed(
-                new InstantCommand(() -> {
-                    robot.drive.usePositionLock = !robot.drive.usePositionLock;})
-        );
+//        positionHoldToggle.whenPressed(
+//                new InstantCommand(() -> {
+//                    robot.drive.usePositionLock = !robot.drive.usePositionLock;})
+//        );
 
         resetPinpointButton.whenPressed(new InstantCommand(() -> robot.follower.setStartingPose(robot.follower.getPose())));
         sortButton.whenPressed(robot::toggleAutoSort);
@@ -284,7 +284,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         ballsMod1Button.whenPressed(()->robot.camera.setBallsSeen(1)); //you could also set this to be 67
         ballsMod2Button.whenPressed(()->robot.camera.setBallsSeen(2));
 //        Trigger cameraRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
-        Trigger cornerRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
+        Trigger cornerRelocalizeButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
 
         GamepadButton adjustGoalUp = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_UP);
         GamepadButton adjustGoalLeft = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_LEFT);
@@ -292,8 +292,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton adjustGoalDown = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_DOWN);
 
         adjustGoalUp.whenPressed(() -> robot.shooter.incrementGoalPosOffset(MANUAL_AIM_INCREMENT_VERTICAL));
-        adjustGoalLeft.whenPressed(new AdjustTurretOffsetCommand(robot, false));
-        adjustGoalRight.whenPressed(new AdjustTurretOffsetCommand(robot, true));
+        adjustGoalLeft.whenPressed(new AdjustTurretOffsetCommand(robot, true));
+        adjustGoalRight.whenPressed(new AdjustTurretOffsetCommand(robot, false));
         adjustGoalDown.whenPressed(() -> robot.shooter.incrementGoalPosOffset(-MANUAL_AIM_INCREMENT_VERTICAL));
 
 //        cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
@@ -309,11 +309,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         resetGoalPos.whenPressed(() -> robot.shooter.resetGoalPosOffset());
         //this sounds like a lot of work
 
-        GamepadButton headingLockButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
-        GamepadButton toggleSOTM = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
-        toggleSOTM.whenPressed(() -> robot.shooter.toggleSOTMOverride());
+        //GamepadButton headingLockButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
+        //GamepadButton toggleSOTM = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
+        //toggleSOTM.whenPressed(() -> robot.shooter.toggleSOTMOverride());
 
-        headingLockButton.whenPressed(() -> robot.drive.toggleHeadingLock());
+        //headingLockButton.whenPressed(() -> robot.drive.toggleHeadingLock());
 
         /*
         toggle SOTM
