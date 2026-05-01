@@ -36,6 +36,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeUpCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.AdjustTurretOffsetCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -56,8 +57,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     // todo: delete this once hang is tested
     public static double MANUAL_HANG_SPEED = 0.5;
 
-    public static double MANUAL_AIM_INCREMENT_HORIZONTAL = 2;
-    public static double MANUAL_AIM_INCREMENT_VERTICAL = 2;
+    public static double MANUAL_AIM_INCREMENT_HORIZONTAL = 1;
+    public static double MANUAL_AIM_INCREMENT_VERTICAL = 3;
 
     public static boolean LOG_MOTOR_CURRENT = false;
 
@@ -283,22 +284,22 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         ballsMod1Button.whenPressed(()->robot.camera.setBallsSeen(1)); //you could also set this to be 67
         ballsMod2Button.whenPressed(()->robot.camera.setBallsSeen(2));
 //        Trigger cameraRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.3);
-        Trigger cornerRelocalizeButton = new Trigger(() -> gamepad2ex.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.3);
+        Trigger cornerRelocalizeButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
 
         GamepadButton adjustGoalUp = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_UP);
         GamepadButton adjustGoalLeft = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_LEFT);
         GamepadButton adjustGoalRight = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_RIGHT);
         GamepadButton adjustGoalDown = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_DOWN);
 
-        adjustGoalUp.whenPressed(() -> robot.shooter.incrementGoalPosOffset(MANUAL_AIM_INCREMENT_VERTICAL,0));
-        adjustGoalLeft.whenPressed(() -> robot.shooter.incrementGoalPosOffset(0,-MANUAL_AIM_INCREMENT_HORIZONTAL));
-        adjustGoalRight.whenPressed(() -> robot.shooter.incrementGoalPosOffset(0,MANUAL_AIM_INCREMENT_HORIZONTAL));
-        adjustGoalDown.whenPressed(() -> robot.shooter.incrementGoalPosOffset(-MANUAL_AIM_INCREMENT_VERTICAL,0));
+        adjustGoalUp.whenPressed(() -> robot.shooter.incrementGoalPosOffset(MANUAL_AIM_INCREMENT_VERTICAL));
+        adjustGoalLeft.whenPressed(new AdjustTurretOffsetCommand(robot, true));
+        adjustGoalRight.whenPressed(new AdjustTurretOffsetCommand(robot, false));
+        adjustGoalDown.whenPressed(() -> robot.shooter.incrementGoalPosOffset(-MANUAL_AIM_INCREMENT_VERTICAL));
 
 //        cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
 //
         cornerRelocalizeButton.whenActive(new InstantCommand(()->{
-            robot.follower.poseTracker.setPose(FieldConstants.BLUE_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.RED)));
+            robot.follower.poseTracker.setPose(FieldConstants.RED_HUMAN_PLAYER_CORNER.toPedro(color.equals(Team.BLUE)));
             robot.shooter.resetGoalPosOffset();
         }));
 
@@ -308,11 +309,11 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         resetGoalPos.whenPressed(() -> robot.shooter.resetGoalPosOffset());
         //this sounds like a lot of work
 
-        GamepadButton headingLockButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
-        GamepadButton toggleSOTM = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
-        toggleSOTM.whenPressed(() -> robot.shooter.toggleSOTMOverride());
+        //GamepadButton headingLockButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.LEFT_BUMPER);
+        //GamepadButton toggleSOTM = new GamepadButton(gamepad2ex, GamepadKeys.Button.RIGHT_BUMPER);
+        //toggleSOTM.whenPressed(() -> robot.shooter.toggleSOTMOverride());
 
-        headingLockButton.whenPressed(() -> robot.drive.toggleHeadingLock());
+        //headingLockButton.whenPressed(() -> robot.drive.toggleHeadingLock());
 
         /*
         toggle SOTM

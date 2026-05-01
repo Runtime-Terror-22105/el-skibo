@@ -30,12 +30,15 @@ public class ShooterSubsystem extends SubsystemBase {
     public static int LOOPTIME_BUFFER_SIZE = 5;
     public static double ROTATION_COMPENSATION_COEFFIICIENT = -0.0052;
 
+    public double distanceOffset;
+
     public static int ACCEL_BUFFER_SIZE = 3;
     public static double ACCELERATION_COEFFICIENT = 0.05;
     public static boolean USE_SOTM = true;
     public static boolean USE_SOTM_ACCEL = false;
     public static boolean USE_ROTATION_COMPENSATION = false;
     public static boolean JUST_TURRET = false;
+
 
     public static boolean debug = false;
     public static boolean telemetry = true;
@@ -205,48 +208,48 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void resetGoalPosOffset()
     {
-        setGoalPosOffset(0,0);
+        distanceOffset = 0;
+        turretOffset = 0;
     }
 
-    public void incrementGoalPosOffset(double vertical, double horizontal)
+    public void incrementGoalPosOffset(double offset)
     {
-        this.goalPosVerticalOffset += vertical;
-        this.goalPosHorizontalOffset += horizontal;
-        goalHeight += vertical;
+        this.distanceOffset += offset;
+//        goalHeight += vertical;
     }
 
-    public Pose2d recalculateGoalPosWithOffsets(Pose2d goalPos)
-    {
-        if(goalPosHorizontalOffset == 0 && goalPosVerticalOffset == 0)
-        {
-            return goalPos;
-        }
-//        double goalPosMagnitude = Math.hypot(goalPos.x-center.x,goalPos.y-center.y);
-//        Pose2d normalizedGoalPos = new Pose2d((goalPos.x-center.x)/ goalPosMagnitude,(goalPos.y-center.y) / goalPosMagnitude);
-//        double xShift = goalPosHorizontalOffset *normalizedGoalPos.x;
-//        double yShift = goalPosVerticalOffset *normalizedGoalPos.y;
+//    public Pose2d recalculateGoalPosWithOffsets(Pose2d goalPos)
+//    {
+//        if(goalPosHorizontalOffset == 0 && goalPosVerticalOffset == 0)
+//        {
+//            return goalPos;
+//        }
+////        double goalPosMagnitude = Math.hypot(goalPos.x-center.x,goalPos.y-center.y);
+////        Pose2d normalizedGoalPos = new Pose2d((goalPos.x-center.x)/ goalPosMagnitude,(goalPos.y-center.y) / goalPosMagnitude);
+////        double xShift = goalPosHorizontalOffset *normalizedGoalPos.x;
+////        double yShift = goalPosVerticalOffset *normalizedGoalPos.y;
+////
+////        verticalOffset.x = xShift;
+////        verticalOffset.y = yShift;
+////
+////        horizontalOffet.x = yShift;
+////        horizontalOffet.y = -xShift;
+////
+////        return goalPos.plus(horizontalOffet).plus(verticalOffset);
 //
-//        verticalOffset.x = xShift;
-//        verticalOffset.y = yShift;
-//
-//        horizontalOffet.x = yShift;
-//        horizontalOffet.y = -xShift;
-//
-//        return goalPos.plus(horizontalOffet).plus(verticalOffset);
-
-        Pose2d offset = new Pose2d(goalPosHorizontalOffset, goalPosVerticalOffset);
-        return goalPos.plus(offset);
-    }
+//        Pose2d offset = new Pose2d(goalPosHorizontalOffset, goalPosVerticalOffset);
+//        return goalPos.plus(offset);
+//    }
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation, boolean useRotationCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
         this.isAutoAimOn = true;
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
-        goalPos = recalculateGoalPosWithOffsets(goalPos);
+//        goalPos = recalculateGoalPosWithOffsets(goalPos);
         Pose2d oldGoalPos = goalPos.copy();
         //Pose2d goalPos = this.robot.color.getGoalPos();
-        double distToGoal = botPos.distanceFrom(goalPos.toPedro());
+        double distToGoal = botPos.distanceFrom(goalPos.toPedro()) + this.distanceOffset;
         double oldDistToGoal = distToGoal;
         FtcDashDrawing.drawDot(goalPos.toPedro(), "#000000");
 
@@ -265,7 +268,7 @@ public class ShooterSubsystem extends SubsystemBase {
             }
             Vector goalAdjAmt = robotVel.times(flightTime);
             goalPos = Pose2d.minus(goalPos, goalAdjAmt);
-            distToGoal = botPos.distanceFrom(goalPos.toPedro());
+            distToGoal = botPos.distanceFrom(goalPos.toPedro()) + this.distanceOffset;
 
             if (debug) Log.d("ShooterSubsystem", "Adjusted goal pos for velocity: " + goalAdjAmt);
             FtcDashDrawing.drawDot(goalPos.toPedro(), "#0000FF");
@@ -334,7 +337,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setTurretAngle(double angleRad) {
-        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad));
+        this.goalTurretAngle = Math.max(turretLowerBound, Math.min(turretUpperBound, angleRad + turretOffset));
     }
 
     public void calcHoodPod(Pose2d botPos, Pose2d goalPos, double arcHeight) {
@@ -372,7 +375,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this.goalPitch = pitch;
         this.goalPitchPos = Algebra.mapRange(pitch, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
 
-        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), recalculateGoalPosWithOffsets(goalPosLookupTable.get()), USE_ROTATION_COMPENSATION));
+        this.setTurretAngle(this.findYawAngle(this.robot.follower.getPose(), goalPosLookupTable.get(), USE_ROTATION_COMPENSATION));
     }
 
     public void manualAim(double velocity, double pitch, double turretYaw) {

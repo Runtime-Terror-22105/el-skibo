@@ -5,12 +5,12 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import org.firstinspires.ftc.teamcode.robot.init.Robot;
 
 public class AdjustTurretOffsetCommand extends InstantCommand {
-    public static double INCREASE_AMOUNT_POS = 0.01;
+    public static double INCREASE_AMOUNT_DEG = 0.2;
 
     public AdjustTurretOffsetCommand(Robot robot, boolean increase) {
         super(() -> {
-                    if (increase) robot.shooter.addTurretOffset(INCREASE_AMOUNT_POS);
-                    else robot.shooter.addTurretOffset(-INCREASE_AMOUNT_POS);
+                    if (increase) robot.shooter.addTurretOffset(Math.toRadians(INCREASE_AMOUNT_DEG));
+                    else robot.shooter.addTurretOffset(Math.toRadians(-INCREASE_AMOUNT_DEG));
 
                 }
         );
