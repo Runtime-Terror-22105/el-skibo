@@ -74,8 +74,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public static double posChange90 = 0.280; //servo pos change that rotates turret 90 deg
     public static double posChange90Right = 0.2845; //servo pos change that rotates turret 90 deg
     public static double posChange90Left = 0.28; //servo pos change that rotates turret 90 deg
-    public static double turretServosDifferenceSmall = 0.001; // we set the two servos to positions of +- 0.02 to reduce backlash by making them fight
-    public static double turretServosDifferenceLarge = 0.01;
+    public static double turretServosDifferenceSmall = 0.015; // we set the two servos to positions of +- 0.02 to reduce backlash by making them fight
+    public static double turretServosDifferenceLarge = 0.015;
     public static Coordinate turretToRobotCenterOffset = new Coordinate(-1.61417, 0);
 
     // in loops, how often to update the turret position servo when outside of the shooting zone
