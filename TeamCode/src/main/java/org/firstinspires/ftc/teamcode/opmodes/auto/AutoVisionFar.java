@@ -37,7 +37,7 @@ public abstract class AutoVisionFar extends OneAutoToRuleThemAll {
         state.prepareShootTimeBeforeReverseIntake = 0;
         state.shootBrakingStrength = 0.75;
         return new SequentialCommandGroup(
-                new InstantCommand(() -> robot.shooter.incrementGoalPosOffset(0, state.mirror ? 7 : -7)),
+                new InstantCommand(() -> robot.shooter.incrementGoalPosOffset(Math.toRadians(2))),
 
                 new InstantCommand(() -> robot.shooter.sotmOverride = false),
                 FarAutoBuilder.shootPreload(state, ShootPathFlag.EARLY_LEAVE),

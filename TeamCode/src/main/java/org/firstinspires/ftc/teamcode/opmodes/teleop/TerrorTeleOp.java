@@ -36,6 +36,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.FtcDashDrawing;
 import org.firstinspires.ftc.teamcode.robot.command.DriveCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeSpeedCommand;
 import org.firstinspires.ftc.teamcode.robot.command.intake.SetIntakeUpCommand;
+import org.firstinspires.ftc.teamcode.robot.command.shooter.AdjustTurretOffsetCommand;
 import org.firstinspires.ftc.teamcode.robot.command.shooter.ShootThreeBallsCommand;
 import org.firstinspires.ftc.teamcode.robot.command.spindexer.PrepareShootCommand;
 import org.firstinspires.ftc.teamcode.robot.command.states.GoToIntakeStateCommand;
@@ -57,7 +58,7 @@ public abstract class TerrorTeleOp extends LinearOpMode {
     public static double MANUAL_HANG_SPEED = 0.5;
 
     public static double MANUAL_AIM_INCREMENT_HORIZONTAL = 1;
-    public static double MANUAL_AIM_INCREMENT_VERTICAL = 1;
+    public static double MANUAL_AIM_INCREMENT_VERTICAL = 3;
 
     public static boolean LOG_MOTOR_CURRENT = false;
 
@@ -290,10 +291,10 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton adjustGoalRight = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_RIGHT);
         GamepadButton adjustGoalDown = new GamepadButton(gamepad2ex, GamepadKeys.Button.DPAD_DOWN);
 
-        adjustGoalUp.whenPressed(() -> robot.shooter.incrementGoalPosOffset(MANUAL_AIM_INCREMENT_VERTICAL,0));
-        adjustGoalLeft.whenPressed(() -> robot.shooter.incrementGoalPosOffset(0,-MANUAL_AIM_INCREMENT_HORIZONTAL));
-        adjustGoalRight.whenPressed(() -> robot.shooter.incrementGoalPosOffset(0,MANUAL_AIM_INCREMENT_HORIZONTAL));
-        adjustGoalDown.whenPressed(() -> robot.shooter.incrementGoalPosOffset(-MANUAL_AIM_INCREMENT_VERTICAL,0));
+        adjustGoalUp.whenPressed(() -> robot.shooter.incrementGoalPosOffset(MANUAL_AIM_INCREMENT_VERTICAL));
+        adjustGoalLeft.whenPressed(new AdjustTurretOffsetCommand(robot, false));
+        adjustGoalRight.whenPressed(new AdjustTurretOffsetCommand(robot, true));
+        adjustGoalDown.whenPressed(() -> robot.shooter.incrementGoalPosOffset(-MANUAL_AIM_INCREMENT_VERTICAL));
 
 //        cameraRelocalizeButton.whenActive(new InstantCommand(() -> robot.robotState = RobotState.SCANNING));
 //
