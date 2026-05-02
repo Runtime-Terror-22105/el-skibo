@@ -54,7 +54,7 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public abstract class TerrorTeleOp extends LinearOpMode {
-    public static Double FIXED_DISTANCE_BUTTON = 128D;
+    public static Double FIXED_DISTANCE_BUTTON = 86.64D;
 
     // todo: delete this once hang is tested
     public static double MANUAL_HANG_SPEED = 0.5;
