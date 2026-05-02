@@ -113,7 +113,7 @@ public class AutoConstants {
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
 
-    public static long TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE = 450;
+    public static long TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE = 550;
 
     public static int FLLYWHEEL_SPIN_UP_TIMEOUT_MS = 1500;
 

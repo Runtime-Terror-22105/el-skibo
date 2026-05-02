@@ -54,6 +54,8 @@ import org.firstinspires.ftc.teamcode.util.Profiler;
 
 @Config
 public abstract class TerrorTeleOp extends LinearOpMode {
+    public static Double FIXED_DISTANCE_BUTTON = 128D;
+
     // todo: delete this once hang is tested
     public static double MANUAL_HANG_SPEED = 0.5;
 
@@ -197,7 +199,8 @@ public abstract class TerrorTeleOp extends LinearOpMode {
         GamepadButton resetPinpointButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.BACK);
         GamepadButton sortButton = new GamepadButton(gamepad2ex, GamepadKeys.Button.A);
 
-        GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
+//        GamepadButton slowSpeedButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
+        GamepadButton setShooterToFixedDistanceAndTurretButton = new GamepadButton(gamepad1ex, GamepadKeys.Button.A);
 
         GamepadButton accelCompToggle = new GamepadButton(gamepad1ex, GamepadKeys.Button.X);
 //        GamepadButton positionHoldToggle = new GamepadButton(gamepad1ex, GamepadKeys.Button.Y);
@@ -244,7 +247,14 @@ public abstract class TerrorTeleOp extends LinearOpMode {
 
         manualRestingState.whenPressed(new GoToRestingStateCommand(robot));
 
-        slowSpeedButton.whenPressed(() -> robot.drive.toggleSlowSpeed());
+//        slowSpeedButton.whenPressed(() -> robot.drive.toggleSlowSpeed());
+        setShooterToFixedDistanceAndTurretButton.whenPressed(() -> {
+            if (robot.shooter.isUsingFixedDistance()) {
+                robot.shooter.setShooterToFixedDistanceAndTurret(null);
+            } else {
+                robot.shooter.setShooterToFixedDistanceAndTurret(FIXED_DISTANCE_BUTTON);
+            }
+        });
 
         shoot3button.whenPressed(new ConditionalCommand(
                 new ConditionalCommand( // if we already did the transfer, just shoot immediately

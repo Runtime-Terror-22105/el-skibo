@@ -146,6 +146,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private ElapsedTime loopTimer;
 
+    private Double setDistance;
+
     public static class ShooterValues {
         public double velocity;
         public double rad;
@@ -179,6 +181,17 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoHoodOn = true;
         this.isAutoTurretOn = true;
         this.turretInDeadzone = false;
+
+        this.setDistance = null;
+    }
+
+    public boolean isUsingFixedDistance() {
+        return this.setDistance != null;
+    }
+
+    // sets the shooter to a fixed distance, sets the turret to 180 deg straight ahead
+    public void setShooterToFixedDistanceAndTurret(Double distance) {
+        this.setDistance = distance;
     }
 
     public static double turretAngleToServoPos(double angleRad) {
@@ -243,7 +256,20 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void doAutoShoot(Pose botPos, boolean useVelocityCompensation, boolean useAccelCompensation, boolean useRotationCompensation) {
         if (debug) Log.d("ShooterSubsystem", "Doing autoshoot!");
+
+
         this.isAutoAimOn = true;
+
+        if (this.setDistance != null) {
+            this.setTurretAngle(Math.PI);
+
+            ShooterValues values = shooterLookupTable.get(this.setDistance);
+            this.setSpeed(velToRPM(values.velocity));
+            this.goalPitch = values.rad;
+            this.goalPitchPos = Algebra.mapRange(values.rad, hoodAngleMin, hoodAngleMax, hoodPosMin, hoodPosMax);
+
+            return;
+        }
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
 //        goalPos = recalculateGoalPosWithOffsets(goalPos);
@@ -293,7 +319,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //velocity is in inches/second, if this doesnt match the encoder we'll have to fix
         if (this.isAutoVelOn) {
-            this.setSpeed(this.velToRPM(math.velocity)); // todo: add back
+            this.setSpeed(velToRPM(math.velocity)); // todo: add back
         }
         if (this.isAutoHoodOn && !(robot.getState() == RobotState.SHOOTING && !USE_SOTM_ACCEL)) {
             this.goalPitch = math.rad;
@@ -592,7 +618,10 @@ public class ShooterSubsystem extends SubsystemBase {
             Profiler.push("autoshoot");
             loopCount = (loopCount + 1) % TURRET_UPDATE_FREQUENCY;
             if (robot.goalPos != null && isAutoAimOn) {
-                Pose robotPos = this.robot.follower.getPose();
+                Pose robotPos = null;
+                if (this.setDistance == null) {
+                    robotPos = this.robot.follower.getPose();
+                }
                 boolean useSotm = sotmOverride != null ? sotmOverride : USE_SOTM;
                 boolean useSotmAccel = sotmAccelOverride != null ? sotmAccelOverride : USE_SOTM_ACCEL;
                 this.doAutoShoot(robotPos, useSotm, useSotmAccel, USE_ROTATION_COMPENSATION);
