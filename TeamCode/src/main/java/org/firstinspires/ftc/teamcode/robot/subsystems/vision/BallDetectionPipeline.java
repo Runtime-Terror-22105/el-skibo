@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.Team;
 import org.firstinspires.ftc.teamcode.math.Algebra;
 import org.firstinspires.ftc.teamcode.math.NumCompare;
 import org.firstinspires.ftc.teamcode.math.Pose2d;
-import org.firstinspires.ftc.teamcode.robot.init.Robot;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.Circle;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
@@ -125,8 +124,6 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
     private int frameWidth;
     private int frameHeight;
 
-    public Robot robot;
-
     public enum StreamType {
         RAW, MASK, IMAGE_DRAWING
     }
@@ -185,13 +182,12 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
     public BallDetectionPipeline(ContourMode contourMode,
                                       int erodeSize, int dilateSize, int blurSize,
-                                      @ColorInt int boundingBoxColor, @ColorInt int roiColor, @ColorInt int contourColor, Robot robot)
+                                      @ColorInt int boundingBoxColor, @ColorInt int roiColor, @ColorInt int contourColor)
     {
         Log.i(TAG, "Initializing BallDetectionPipeline");
         this.boundingBoxColor = boundingBoxColor;
         this.roiColor = roiColor;
         this.contourColor = contourColor;
-        this.robot = robot;
 
         if (blurSize > 0) {
             // enforce Odd blurSize
@@ -341,8 +337,8 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
 
         Log.d(TAG, "Found " + blobs.size() + " BLOBS ");
 
-
-        chosenBlob = sort(blobs);
+        sort(blobs);
+        chosenBlob = (BlobImpl) blobs.get(0);
         Log.d(TAG, "ChosenBlob: " + chosenBlob.toString());
         if (chosenBlob != null) {
             chosenBlobIsLocked = true;
@@ -399,32 +395,10 @@ public class BallDetectionPipeline extends ColorBlobLocatorProcessor implements 
         }
     }
 
-
-    private BlobImpl sort(List<Blob> blobs) {
-        double greatestValue = 0;
-        Blob greatestBlob = null;
-
-
-        for (Blob i : blobs){
-            double bias = 0;
-            double x = ((BlobImpl) i).getCenter().x;
-            if (robot.color == Team.RED){
-                bias  = Algebra.mapRange(x, RED_LEFT_SIDE_PIXEL_VAL, RED_RIGHT_SIDE_PIXEL_VAL, 1, 2);
-
-            }
-            if (robot.color == Team.BLUE){
-                bias  = Algebra.mapRange(x, BLUE_LEFT_SIDE_PIXEL_VAL, BLUE_RIGHT_SIDE_PIXEL_VAL, 1, 2);
-
-            }
-            double value = i.getContourArea()*bias;
-            if (value > greatestValue){
-                greatestValue = value;
-                greatestBlob = i;
-            }
-
+    private void sort(List<Blob> blobs) {
+        if (sort != null) {
+            Util.sortByCriteria(sort.criteria, sort.sortOrder, blobs);
         }
-        return (BlobImpl) greatestBlob;
-
     }
 
     /**
