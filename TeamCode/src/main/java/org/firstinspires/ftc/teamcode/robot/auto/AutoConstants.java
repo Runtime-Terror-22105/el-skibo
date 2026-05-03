@@ -92,7 +92,7 @@ public class AutoConstants {
     public static int WAIT_TIMEOUT_MOTIF = 5000;
     public static int INTAKE_DELAY = 300;
     public static int GATE_INTAKE_DELAY = 900;
-    public static int WALL_INTAKE_DELAY = 200;
+    public static int WALL_INTAKE_DELAY = 300;
     public static int PRELOAD_PRE_SHOOT_DELAY = 0;
     public static int PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT = 2000;
     public static int PRE_SHOOT_DELAY = 670;
