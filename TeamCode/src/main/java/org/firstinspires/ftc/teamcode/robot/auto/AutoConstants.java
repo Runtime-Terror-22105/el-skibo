@@ -92,7 +92,7 @@ public class AutoConstants {
     public static int WAIT_TIMEOUT_MOTIF = 5000;
     public static int INTAKE_DELAY = 300;
     public static int GATE_INTAKE_DELAY = 900;
-    public static int WALL_INTAKE_DELAY = 200;
+    public static int WALL_INTAKE_DELAY = 300;
     public static int PRELOAD_PRE_SHOOT_DELAY = 0;
     public static int PRELOAD_FAR_PRE_SHOOT_SPINUP_TIMEOUT = 2000;
     public static int PRE_SHOOT_DELAY = 670;
@@ -113,7 +113,7 @@ public class AutoConstants {
     public static double MAX_DRIVETRAIN_POWER = 1.0;
     public static double MAX_DRIVETRAIN_POWER_INTAKING = 1.0;
 
-    public static long TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE = 450;
+    public static long TIME_TO_WAIT_FOR_INTAKE_TO_GO_UP_BEFORE_CAMERA_USAGE = 550;
 
     public static int FLLYWHEEL_SPIN_UP_TIMEOUT_MS = 1500;
 
