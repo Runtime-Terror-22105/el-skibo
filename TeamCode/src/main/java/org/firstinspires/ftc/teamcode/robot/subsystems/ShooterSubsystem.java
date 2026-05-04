@@ -246,6 +246,8 @@ public class ShooterSubsystem extends SubsystemBase {
         this.isAutoAimOn = true;
 
         Pose2d goalPos = this.goalPosLookupTable.getForPose(botPos);
+        Pose2d ofsets = new Pose2d(goalPosHorizontalOffset, goalPosVerticalOffset);
+        goalPos = goalPos.plus(ofsets);
 //        goalPos = recalculateGoalPosWithOffsets(goalPos);
         Pose2d oldGoalPos = goalPos.copy();
         //Pose2d goalPos = this.robot.color.getGoalPos();
